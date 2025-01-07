@@ -1,0 +1,111 @@
+﻿//namespaces
+
+using System;
+using System.Drawing;
+using System.Collections;
+using System.ComponentModel;
+using System.Windows.Forms;
+
+using Epi;
+using Epi.Fields;
+
+//namespaces
+
+
+namespace Epi.Windows.MakeView.Dialogs.FieldDefinitionDialogs
+{
+
+
+
+    public         class CheckBoxFieldDefinition : TextFieldDefinition
+ {
+  //Fields
+
+  private CheckBoxField field;
+
+  //
+
+  //Constructors
+
+
+
+
+        public CheckBoxFieldDefinition()
+        {
+            InitializeComponent();
+        }
+
+
+
+
+
+
+        public CheckBoxFieldDefinition(MainForm frm, Page page) : base(frm)
+  {
+   InitializeComponent();
+   this.mode = FormMode.Create;
+   this.page = page;
+  }
+
+
+
+
+
+
+        public CheckBoxFieldDefinition(MainForm frm, CheckBoxField field) : base(frm)
+  {
+   InitializeComponent();
+   this.mode = FormMode.Edit;
+   this.field = field;
+   this.page = field.Page;
+   LoadFormData();
+  }
+  //Constructors
+
+  //Private Methods
+  private void LoadFormData()
+  {
+            SetFontStyles(field);
+
+            txtPrompt.Text = field.PromptText;
+   txtFieldName.Text = field.Name;
+   chkReadOnly.Checked = field.IsReadOnly;
+   chkRepeatLast.Checked = field.ShouldRepeatLast;
+   promptFont = field.PromptFont;
+            checkBoxPlaceBoxOnRight.Checked = field.BoxOnRight;
+  }
+  //
+
+  //Public Methods
+
+
+
+
+        protected override void SetFieldProperties()
+        {
+            field.PromptText = txtPrompt.Text;
+            field.Name = txtFieldName.Text;
+            if (promptFont != null)
+            {
+                field.PromptFont = promptFont;
+            }
+            field.IsReadOnly = chkReadOnly.Checked;
+            field.ShouldRepeatLast = chkRepeatLast.Checked;
+            field.BoxOnRight = checkBoxPlaceBoxOnRight.Checked;
+        }
+
+
+
+
+  public override RenderableField Field
+  {
+   get
+   {
+    return field;
+   }
+  }
+  //
+ }
+}
+
+ 

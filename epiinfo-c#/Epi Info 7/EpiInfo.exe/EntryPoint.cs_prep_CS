@@ -1,0 +1,66 @@
+﻿using System;
+using System.IO;
+using Epi.Windows;
+using EpiInfo.Plugin;
+using System.Reflection;
+
+namespace Epi.Windows.EpiInfo
+{
+
+
+
+ public class EntryPoint : IApplicationPluginHost
+ {
+
+
+
+  [STAThread]
+  static void Main(string[] args)
+  {
+            System.Windows.Forms.Application.EnableVisualStyles();
+
+            EntryPoint entryPoint = new EntryPoint();
+            entryPoint.StartUp(args);
+  }
+
+        private void StartUp(string[] args)
+        {
+            string PluginAssemblyName = System.Configuration.ConfigurationManager.AppSettings["PluginAssemblyName"].ToString();
+
+            IApplicationPlugin ApplicationPlugin = null;
+
+
+
+            Assembly a = Assembly.Load(PluginAssemblyName);
+
+            Type myType = a.GetType(System.Configuration.ConfigurationManager.AppSettings["PluginStartupClass"].ToString());
+
+
+            ApplicationPlugin = (IApplicationPlugin)Activator.CreateInstance(myType);
+            ApplicationPlugin.Host = this;
+
+
+            WriteGC(ApplicationPlugin);
+
+
+            ApplicationPlugin.Start(args);
+        }
+
+        public bool Register(IApplicationPlugin applicationPlugin)
+        {
+            applicationPlugin.Host = this;
+            return true;
+        }
+
+
+        private void WriteGC(object o)
+        {
+            Console.WriteLine("******* Garbage Collector Status ******");
+            Console.WriteLine("Estimated bytes on heap: {0}", GC.GetTotalMemory(false));
+            Console.WriteLine("This OS has {0} object generations.\n", GC.MaxGeneration + 1);
+            Console.WriteLine("Generation of parameter object is: {0}",GC.GetGeneration(o));
+        }
+
+    }
+}
+ 

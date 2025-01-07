@@ -1,0 +1,60 @@
+﻿using System;
+
+namespace Epi.Windows.MakeView
+{
+
+
+
+ public enum WizardType
+ {
+
+
+
+  NewProject = 1,
+
+
+
+  Import = 2,
+ }
+
+
+
+
+ public enum WizardPanel
+ {
+
+
+
+  AccessMetadata,
+
+
+
+  Database_Format,
+
+
+
+  Sql_Meta_Data,
+
+
+
+  Sql_Project_Data,
+
+
+
+  Setup,
+
+
+
+  Create_Project,
+
+
+
+  Access_Project_Data,
+
+
+
+        ViewInfo
+ }
+}
+
+ 

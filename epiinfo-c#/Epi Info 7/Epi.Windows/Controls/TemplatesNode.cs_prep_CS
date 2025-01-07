@@ -1,0 +1,26 @@
+﻿//Namespaces
+using System;
+// 
+
+namespace Epi.Windows.Controls
+{
+
+
+
+ public class TemplateNode : FieldNode
+    {
+        //Constructors
+
+
+
+
+        public TemplateNode()
+            : base()
+  {
+        }
+
+        // 
+    }
+}
+
+ 

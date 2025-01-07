@@ -1,0 +1,34 @@
+﻿
+namespace Epi
+{
+
+
+
+    public        class ConnectionStringKeys
+    {
+
+  public const string DATA_SOURCE = "Data Source";
+
+        public const string DBQ = "Dbq";
+
+        public const string DRIVER = "Driver";
+
+        public const string EXCLUSIVE = "Exclusive";
+
+        public const string EXTENDED_PROPERTIES = "Extended Properties";
+
+        public const string INITIAL_CATALOG = "Initial Catalog";
+
+        public const string INTEGRATED_SECURITY = "Integrated Security";
+
+  public const string PASSWORD = "Password";
+
+        public const string POOLING = "Pooling";
+
+        public const string PROVIDER = "Provider";
+
+        public const string USER_ID = "User ID";
+    } 
+}
+
+ 

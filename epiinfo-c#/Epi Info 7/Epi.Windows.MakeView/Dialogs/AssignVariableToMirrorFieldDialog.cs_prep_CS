@@ -1,0 +1,93 @@
+﻿using System;
+using System.Data;
+using System.Drawing;
+using System.Collections;
+using System.ComponentModel;
+using System.Windows.Forms;
+using Epi;
+using Epi.Windows.Dialogs;
+
+namespace Epi.Windows.MakeView.Dialogs
+{
+    public         class AssignVariableToMirrorFieldDialog : DialogBase
+ {
+  //Private Class Members
+  private DataTable mirrorableFields;
+  private int sourceFieldId;
+  private FormMode mode;
+  //
+
+  //Constructor
+
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+        public AssignVariableToMirrorFieldDialog()
+        {
+            InitializeComponent();
+        }
+
+
+
+
+
+
+
+
+  public AssignVariableToMirrorFieldDialog(MainForm frm, DataTable fields, string fieldName, FormMode formMode) : base(frm)
+  {
+   InitializeComponent();
+   mirrorableFields = fields;
+   lblFieldName.Text = fieldName;
+   mode = formMode;
+  }
+  //Constructors
+
+  //Public Properties
+
+
+
+
+  public int SourceFieldId
+  {
+   get
+   {
+    return (sourceFieldId);
+   }
+  }
+  //
+
+  //Event Handlers
+  private void AssignVariableToMirrorField_Load(object sender, System.EventArgs e)
+  {
+   LoadFields();
+  }
+
+  private void btnCancel_Click(object sender, System.EventArgs e)
+  {
+   this.Hide();
+  }
+
+  private void btnOK_Click(object sender, System.EventArgs e)
+  {
+   sourceFieldId = Int32.Parse(lbxFields.SelectedValue.ToString());
+   this.DialogResult = DialogResult.OK;
+   this.Hide();
+  }
+  //
+
+  //Private Methods
+  private void LoadFields()
+  {
+   System.Data.DataView dv = mirrorableFields.DefaultView;
+   dv.Sort = ColumnNames.NAME;
+   lbxFields.DataSource = dv;
+   lbxFields.DisplayMember = ColumnNames.NAME;
+   lbxFields.ValueMember = ColumnNames.ID;
+  }
+  //
+ }
+}
+
+ 

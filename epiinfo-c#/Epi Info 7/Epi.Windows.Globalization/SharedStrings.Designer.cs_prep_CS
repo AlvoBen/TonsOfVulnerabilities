@@ -1,0 +1,245 @@
+﻿
+
+
+
+
+
+
+
+
+
+namespace Epi.Windows.Globalization {
+    using System;
+
+
+
+
+
+
+
+
+
+    [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [        System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    internal class SharedStrings {
+
+        private static         System.Resources.ResourceManager resourceMan;
+
+        private static         System.Globalization.CultureInfo resourceCulture;
+
+        [        System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        internal SharedStrings() {
+        }
+
+
+
+
+        [        System.ComponentModel.EditorBrowsableAttribute(        System.ComponentModel.EditorBrowsableState.Advanced)]
+        internal static         System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
+                            System.Resources.ResourceManager temp = new         System.Resources.ResourceManager("Epi.Windows.Globalization.SharedStrings", typeof(SharedStrings).Assembly);
+                    resourceMan = temp;
+                }
+                return resourceMan;
+            }
+        }
+
+
+
+
+
+        [        System.ComponentModel.EditorBrowsableAttribute(        System.ComponentModel.EditorBrowsableState.Advanced)]
+        internal static         System.Globalization.CultureInfo Culture {
+            get {
+                return resourceCulture;
+            }
+            set {
+                resourceCulture = value;
+            }
+        }
+
+
+
+
+        internal static string ADDING_SPACE {
+            get {
+                return ResourceManager.GetString("ADDING_SPACE", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string CANNOT_AUTO_TRANSLATE {
+            get {
+                return ResourceManager.GetString("CANNOT_AUTO_TRANSLATE", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string COMPLETE_PERIOD {
+            get {
+                return ResourceManager.GetString("COMPLETE_PERIOD", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string CONFIRM_LANGUAGE_DELETION {
+            get {
+                return ResourceManager.GetString("CONFIRM_LANGUAGE_DELETION", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string DELETED_ALL_ROWS {
+            get {
+                return ResourceManager.GetString("DELETED_ALL_ROWS", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string DELETING_EXISTING_RECORDS {
+            get {
+                return ResourceManager.GetString("DELETING_EXISTING_RECORDS", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string ERROR_MESSAGE {
+            get {
+                return ResourceManager.GetString("ERROR_MESSAGE", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string EXTRACTION_COMPLETE {
+            get {
+                return ResourceManager.GetString("EXTRACTION_COMPLETE", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string EXTRACTION_COUNT {
+            get {
+                return ResourceManager.GetString("EXTRACTION_COUNT", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string FAILED {
+            get {
+                return ResourceManager.GetString("FAILED", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string FOUND_LANGUAGE {
+            get {
+                return ResourceManager.GetString("FOUND_LANGUAGE", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string INSTALLING_LANGUAGE {
+            get {
+                return ResourceManager.GetString("INSTALLING_LANGUAGE", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string INVALID_BUILD_FOLDER {
+            get {
+                return ResourceManager.GetString("INVALID_BUILD_FOLDER", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string LANGUAGE_DELETION_CONFIRM {
+            get {
+                return ResourceManager.GetString("LANGUAGE_DELETION_CONFIRM", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string LOADED_RESOURCES {
+            get {
+                return ResourceManager.GetString("LOADED_RESOURCES", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string NO_LANGUAGES_FOUND {
+            get {
+                return ResourceManager.GetString("NO_LANGUAGES_FOUND", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string SATELLITE_INSTALLATION {
+            get {
+                return ResourceManager.GetString("SATELLITE_INSTALLATION", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string SEARCHING_LANGUAGES {
+            get {
+                return ResourceManager.GetString("SEARCHING_LANGUAGES", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string TRANSLATING {
+            get {
+                return ResourceManager.GetString("TRANSLATING", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string WARNING {
+            get {
+                return ResourceManager.GetString("WARNING", resourceCulture);
+            }
+        }
+    }
+}
+
+ 

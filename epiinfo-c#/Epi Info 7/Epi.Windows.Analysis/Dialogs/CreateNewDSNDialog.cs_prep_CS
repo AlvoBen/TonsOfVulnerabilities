@@ -1,0 +1,36 @@
+﻿using System;
+using System.Drawing;
+using System.Collections;
+using System.ComponentModel;
+using System.Windows.Forms;
+using Epi.Windows.Dialogs;
+
+namespace Epi.Windows.Analysis.Dialogs
+{
+
+
+
+
+    public         class CreateNewDSNDialog : DialogBase
+ {
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+  public CreateNewDSNDialog()
+  {
+   InitializeComponent();
+  }
+
+
+
+
+
+  public CreateNewDSNDialog(Epi.Windows.Analysis.Forms.AnalysisMainForm frm)
+            : base(frm)
+        {
+            InitializeComponent();
+        }
+ }
+}
+ 

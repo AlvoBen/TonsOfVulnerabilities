@@ -1,0 +1,268 @@
+﻿using System;
+using System.ComponentModel;
+using System.Data;
+using System.Xml;
+using Epi;
+using Epi.Data;
+
+namespace Epi.Fields
+{
+
+
+
+ public class CheckBoxField : InputFieldWithoutSeparatePrompt, IFieldWithCheckCodeAfter, IFieldWithCheckCodeBefore, IFieldWithCheckCodeClick
+ {
+  //Private Members
+
+        private string checkCodeBefore = string.Empty;
+  private string checkCodeAfter = string.Empty;
+        private string checkCodeClick = string.Empty;
+        private string checkCodeValue = string.Empty;
+        private XmlElement viewElement;
+        private XmlNode fieldNode;
+        private BackgroundWorker _updater;
+        private BackgroundWorker _inserter;
+        private bool _boxOnRight = false;
+
+
+  // 
+
+  //Public Events
+  //
+
+  //Constructors
+
+
+
+
+
+  public CheckBoxField(Page page) : base(page)
+  {
+   Construct();
+  }
+
+
+
+
+
+
+        public CheckBoxField(Page page, XmlElement viewElement)
+            : base(page)
+        {
+            this.viewElement = viewElement;
+            this.Page = page;
+            Construct();
+        }
+
+
+
+
+
+  public CheckBoxField(View view) : base(view)
+  {
+   Construct();
+  }
+
+
+
+
+
+
+        public CheckBoxField(View view, XmlNode fieldNode) : base(view)
+        {
+            this.fieldNode = fieldNode;
+            this.view.Project.Metadata.GetFieldData(this, this.fieldNode);
+            Construct();
+        }
+
+  private void Construct()
+  {
+            genericDbColumnType = GenericDbColumnType.Boolean;
+            this.dbColumnType = DbType.Boolean;
+   IsControlResizable = false;
+  }
+
+
+
+
+
+        public override void LoadFromRow(DataRow row)
+        {
+            base.LoadFromRow(row);
+
+            object pattern = row["Pattern"];
+
+            if (pattern != null && (pattern is System.DBNull == false) && pattern.ToString() == "BoxOnRight")
+            {
+                _boxOnRight = true;
+            }
+        }
+
+        public CheckBoxField Clone()
+        {
+            CheckBoxField clone = (CheckBoxField)this.MemberwiseClone();
+            base.AssignMembers(clone);
+            return clone;
+        }
+
+  //Constructors
+
+  //Public Properties
+
+
+
+
+        public override MetaFieldType FieldType
+        {
+            get
+            {
+                return MetaFieldType.Checkbox;
+            }
+        }
+
+
+
+
+        public bool CurrentRecordValue
+        {
+            get
+            {
+                if (base.CurrentRecordValueObject == null) return false;
+                else return (bool)base.CurrentRecordValueObject;
+            }
+            set
+            {
+                base.CurrentRecordValueObject = value;
+            }
+        }
+
+
+
+
+  public override string CurrentRecordValueString
+  {
+   get
+   {
+    Page.AssertDataEntryMode();
+                return checkCodeValue;
+   }
+   set
+   {
+                checkCodeValue = value;
+   }
+  }
+
+        public bool BoxOnRight
+        {
+            get { return _boxOnRight; }
+            set { _boxOnRight = value; }
+        }
+
+
+
+
+  public string CheckCodeAfter
+  {
+   get
+   {
+    return checkCodeAfter;
+   }
+   set
+   {
+    checkCodeAfter = value;
+   }
+  }
+
+
+
+
+
+        public string CheckCodeBefore
+        {
+            get
+            {
+                return checkCodeBefore;
+            }
+            set
+            {
+                checkCodeBefore = value;
+            }
+        }
+
+
+
+
+        public string CheckCodeClick
+        {
+            get
+            {
+                return checkCodeClick;
+            }
+            set
+            {
+                checkCodeClick = value;
+            }
+        }
+
+  //Public Properties
+
+  //Protected Properties
+
+  //Protected Properties
+
+  //Public Methods
+
+
+
+
+  public override void Delete()
+  {
+   GetMetadata().DeleteField(this);
+            view.MustRefreshFieldCollection = true;
+  }
+
+
+
+
+        public XmlElement ViewElement
+        {
+            get
+            {
+                return viewElement;
+            }
+            set
+            {
+                viewElement = value;
+            }
+        }
+  //
+
+  //Private Methods
+
+
+
+
+        protected override void InsertField()
+        {
+            this.Id = GetMetadata().CreateField(this);
+            base.OnFieldAdded();
+        }
+
+
+
+
+
+        protected override void UpdateField()
+        {
+            GetMetadata().UpdateField(this);
+        }
+
+  //
+
+  //Event Handlers
+
+  //
+
+ }
+}
+ 

@@ -1,0 +1,97 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+
+using Epi;
+using Epi.Windows;
+using Epi.ImportExport;
+using Epi.Windows.ImportExport.Dialogs;
+
+namespace Epi.Windows.ImportExport
+{
+
+
+
+    public abstract class UpgradeAssistant
+    {
+
+
+
+
+
+
+        public static Project UpgradeEpi2000Project(string filePath, MainForm parentForm)
+        {
+            Epi.Epi2000.Project sourceProject = new Epi.Epi2000.Project(filePath);
+
+
+
+
+
+
+
+
+
+
+
+
+
+            UpgradeProblemDisplayDialog problemDialog = new UpgradeProblemDisplayDialog(sourceProject);
+            DialogResult result = problemDialog.ShowDialog();
+
+
+            if (result == DialogResult.Cancel)
+            {
+                return null;
+            }
+
+            sourceProject.LoadViews();
+
+            ProjectUpgradeDialog dialog = new ProjectUpgradeDialog(sourceProject, parentForm);
+            DialogResult ImportResult = dialog.ShowDialog();
+
+            if (ImportResult == DialogResult.OK)
+            {
+                ProjectUpgradeManager upgradeManager;
+
+                Project targetProject = dialog.Project;
+
+                try
+                {
+                    parentForm.BeginBusy(SharedStrings.UPGRADING_PROJECT);
+
+
+                    upgradeManager = new ProjectUpgradeManager(sourceProject, targetProject);
+
+                    upgradeManager.ImportStarted += new ImportStartedEventHandler(parentForm.UpgradeProjectManager_ImportStarted);
+                    upgradeManager.ImportStatus += new ImportStatusEventHandler(parentForm.UpgradeProjectManager_ImportStatus);
+                    upgradeManager.ImportEnded += new SimpleEventHandler(parentForm.UpgradeProjectManager_ImportEnded);
+                    upgradeManager.ArtifactImported += new EventHandler(parentForm.UpgradeProjectManager_ProgressReportUpdate);
+
+                    bool upgraded = upgradeManager.Import(                   );
+
+                    if (upgraded)
+                    {
+                        return targetProject;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MsgBox.ShowException(ex);
+                }
+                finally
+                {
+                    parentForm.EndBusy();
+                }
+            }
+            return null;
+        }
+    }
+}
+ 

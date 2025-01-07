@@ -1,0 +1,416 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using com.calitha.goldparser;
+
+namespace EpiMenu.CommandPlugin
+{
+    public class Rule_Statement : Rule
+    {
+        private Rule reduction = null;
+
+        public Rule_Statement(Rule_Context pContext, NonterminalToken pToken) : base(pContext)
+        {
+
+            NonterminalToken T = (NonterminalToken) pToken.Tokens[0];
+
+            if (!this.Context.RunOneCommand)
+            {
+                this.Context.ProgramText.Append(pToken.Tokens[0].ToString());
+
+            }
+            else
+            {
+                if (!this.Context.IsFirstStatement)
+                {
+                    this.Context.ProgramText.Length = 0;
+                    this.Context.ProgramText.Append(this.ExtractTokens(pToken.Tokens));
+                    this.Context.IsFirstStatement = true;
+                }
+            }
+
+            /*
+            switch (pToken.Rule.Rhs[0].ToString())
+            {
+
+                case "":
+                    this.reduction = new Rule_Always(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                case "":
+                    this.reduction = new Rule_Assign(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                    this.reduction = new Rule_If_Then_Else_End(pContext, T);
+                    break;
+
+                case "":
+                    this.reduction = new Rule_Define(pContext, T);
+                    break;
+
+                case "":
+                    this.reduction = new Rule_FunctionCall(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                    this.reduction = new Rule_Hide(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                    this.reduction = new Rule_UnHide(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                    this.reduction = new Rule_GoTo(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                    this.reduction = new Rule_Dialog(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                    this.reduction = new Rule_Read_Epi_Statement(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                case "":
+                case "":
+                    this.reduction = new Rule_Merge(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                case "":
+                    this.reduction = new Rule_Write(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                case "":
+                    this.reduction = new Rule_Select(pContext, T);
+                    break;
+
+                case "":
+                    this.reduction = new Rule_Recode(pContext, T);
+                    break;
+                case "":
+                    this.reduction = new Rule_CommentLine(pContext, T);
+                    break;
+
+
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                    this.reduction = new Rule_Execute(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                case "":
+
+                    this.reduction = new Rule_List(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                    this.reduction = new Rule_Tables(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                case "":
+                    this.reduction = new Rule_Freq(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                case "":
+                    this.reduction = new Rule_Sort(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                    this.reduction = new Rule_Means(pContext, T);
+                    break;
+
+                case "":
+                    this.reduction = new Rule_Relate_Table(pContext, T);
+                    break;
+                case "":
+                    this.reduction = new Rule_Relate_Db_Table_Identifier(pContext, T);
+                    break;
+                case "":
+                    this.reduction = new Rule_Relate_Epi_Table(pContext, T);
+                    break;
+
+                case "":
+                    this.reduction = new Rule_Beep(pContext, T);
+                    break;
+
+                case "":
+                    this.reduction = new Rule_AutoSearch(pContext, T);
+                    break;
+
+                case "":
+                    this.reduction = new Rule_Quit();
+                    break;
+
+                case "":
+                    this.reduction = new Rule_Clear(pContext, T);
+                    break;
+
+                case "":
+                    this.reduction = new Rule_Delete_Table_Long(pContext, T);
+                    break;
+                case "":
+                    this.reduction = new Rule_Delete_File(pContext, T);
+                    break;
+                case "":
+                    this.reduction = new Rule_Delete_Table(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                case "":
+                case "":
+                    this.reduction = new Rule_Typeout(pContext, T);
+                    break;
+
+                case "":
+                    this.reduction = new Rule_NewRecord(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                case "":
+                    this.reduction = new Rule_RouteOut(pContext, T);
+                    break;
+
+                case "":
+                    this.reduction = new Rule_CloseOut(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                case "":
+                    this.reduction = new Rule_Display(pContext, T);
+                    break;
+
+                case "":
+                case "":
+                case "":
+                    this.reduction = new Rule_Header(pContext, T);
+                    break;
+
+
+                case "":
+                    this.reduction = new Rule_Undefine(pContext, T);
+                    break;
+
+                case "":
+                    this.reduction = new Rule_Run_File_PGM_Statement(pContext, T);
+                    break;
+                case "":
+                    this.reduction = new Rule_Run_String_Statement(pContext, T);
+                    break;
+                case "":
+                    this.reduction = new Rule_Run_PGM_In_Db_Statement(pContext, T);
+                    break;
+
+
+                case "":
+                    this.reduction = new Rule_Delete_Records_All_Statement(pContext, T);
+                    break;
+                case "":
+                    this.reduction = new Rule_Delete_Records_Selected_Statement(pContext, T);
+                    break;
+
+
+                case "":
+                case "":
+                    this.reduction = new Rule_Printout(pContext, T);
+                    break;
+
+                case "":
+
+                //**these are not yet implemented; move up when completed
+                //**these are not yet implemented; move up when completed
+                //**these are not yet implemented; move up when completed
+                //**these are not yet implemented; move up when completed
+                //**these are not yet implemented; move up when completed
+
+                case "":
+                case "":
+
+
+                case "":
+
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+
+                case "":
+                case "":
+
+
+                case "":
+                case "":
+                case "":
+
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+
+                case "":
+                case "":
+                case "":
+                case "":
+
+
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+
+                case "":
+
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                case "":
+                default:
+                    break;
+            }*/
+        }
+
+
+
+
+        public override object Execute()
+        {
+
+            object result = null;
+            if (this.reduction != null)
+            {
+                result = this.reduction.Execute();
+            }
+            return result;
+        }
+    }
+}
+
+ 

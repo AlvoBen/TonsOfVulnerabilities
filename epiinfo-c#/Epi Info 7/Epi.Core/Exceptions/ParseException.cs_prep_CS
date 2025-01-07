@@ -1,0 +1,78 @@
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using com.calitha.goldparser;
+using System.Security.Permissions;
+
+namespace Epi
+{
+
+
+
+    [Serializable]
+    public class ParseException : GeneralException
+ {
+  //Private Members
+  private ParseErrorEventArgs args;
+  //Private Members
+
+  //Constructors
+
+
+
+        public ParseException()
+            : base(null)
+        {
+        }
+
+
+
+
+
+        public ParseException(ParseErrorEventArgs arg)
+            : base(SharedStrings.WARNING_COMMAND_SYNTAX_ERROR + "\r\r" + SharedStrings.UNEXPECTED_TOKEN, arg.UnexpectedToken.Text)
+  {
+   args = arg;
+  }
+
+
+
+
+
+
+        public ParseException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+  //Constructors
+
+        //Public Methods
+
+
+
+
+
+        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+        }
+        //Public Methods
+
+        //Public properties
+
+
+
+  public TerminalToken UnexpectedToken
+  {
+   get
+   {
+    return args.UnexpectedToken;
+   }
+  }
+  //Public properties
+
+ }
+}
+
+ 

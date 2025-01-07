@@ -1,0 +1,153 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using Epi.Data;
+
+namespace Epi.Data
+{
+
+
+
+ public abstract class Query : IQuery
+ {
+  //Private Members
+
+
+
+        protected string sqlStatement;
+
+
+
+        protected List parameterCollection;  
+  //Private Members
+
+  //Constructors
+
+
+
+        public Query()
+        {
+            parameterCollection = new List();
+        }
+
+
+
+
+
+  public Query(string ansiSqlStatement) : this()
+  {
+            this.sqlStatement = ansiSqlStatement;
+  }
+  //Constructors
+
+  //Public Properties
+
+
+
+        public virtual List Parameters
+  {
+   get
+   {
+    return parameterCollection;
+   }
+   set
+   {
+    parameterCollection = value;
+   }
+  }
+
+
+
+
+  public virtual string SqlStatement
+  {
+   get
+   {
+                return this.sqlStatement;
+   }
+
+  }
+  //Public Properties
+
+        //Public Methods
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public abstract string GetInsertValue(string pvalues);  
+
+        //
+
+        //Protected Methods
+
+
+
+
+
+           protected string GetBooleanExpr(string pEpiBoolean)
+            {
+                switch (pEpiBoolean)
+                {
+                    case "(+)":
+                        return " is True";
+                    case "(-)":
+                        return " is False";
+                    case "(.)":
+                        return " is Null";
+                    default:
+                        return " is Null";
+
+                }
+            }
+
+        //
+
+ }
+
+
+
+
+
+    public struct RangeName
+    {
+
+
+
+        public string Low;
+
+
+
+        public string  High;
+
+
+
+        public string Name;
+
+
+
+
+
+
+        public RangeName(string  Low, string  High, string Name)
+        {
+            this.Low = Low;
+            this.High = High;
+            this.Name = Name;
+        }
+    }
+}
+
+ 

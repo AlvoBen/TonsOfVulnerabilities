@@ -1,0 +1,896 @@
+﻿
+
+
+
+
+
+
+
+
+
+#pragma warning disable 1591
+
+namespace Epi.DataSets {
+
+
+
+
+
+    [        System.Serializable()]
+    [        System.ComponentModel.DesignerCategoryAttribute("code")]
+    [        System.ComponentModel.ToolboxItem(true)]
+    [        System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedDataSetSchema")]
+    [        System.Xml.Serialization.XmlRootAttribute("TableKeysSchema")]
+    [        System.ComponentModel.Design.HelpKeywordAttribute("vs.data.DataSet")]
+    public         class TableKeysSchema :         System.Data.DataSet {
+
+        private Primary_KeysDataTable tablePrimary_Keys;
+
+        private         System.Data.SchemaSerializationMode _schemaSerializationMode =         System.Data.SchemaSerializationMode.IncludeSchema;
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public TableKeysSchema() {
+            this.BeginInit();
+            this.InitClass();
+                    System.ComponentModel.CollectionChangeEventHandler schemaChangedHandler = new         System.ComponentModel.CollectionChangeEventHandler(this.SchemaChanged);
+            base.Tables.CollectionChanged += schemaChangedHandler;
+            base.Relations.CollectionChanged += schemaChangedHandler;
+            this.EndInit();
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected TableKeysSchema(        System.Runtime.Serialization.SerializationInfo info,         System.Runtime.Serialization.StreamingContext context) :
+                base(info, context, false) {
+            if ((this.IsBinarySerialized(info, context) == true)) {
+                this.InitVars(false);
+                        System.ComponentModel.CollectionChangeEventHandler schemaChangedHandler1 = new         System.ComponentModel.CollectionChangeEventHandler(this.SchemaChanged);
+                this.Tables.CollectionChanged += schemaChangedHandler1;
+                this.Relations.CollectionChanged += schemaChangedHandler1;
+                return;
+            }
+            string strSchema = ((string)(info.GetValue("XmlSchema", typeof(string))));
+            if ((this.DetermineSchemaSerializationMode(info, context) ==         System.Data.SchemaSerializationMode.IncludeSchema)) {
+                        System.Data.DataSet ds = new         System.Data.DataSet();
+                ds.ReadXmlSchema(new         System.Xml.XmlTextReader(new         System.IO.StringReader(strSchema)));
+                if ((ds.Tables["Primary_Keys"] != null)) {
+                    base.Tables.Add(new Primary_KeysDataTable(ds.Tables["Primary_Keys"]));
+                }
+                this.DataSetName = ds.DataSetName;
+                this.Prefix = ds.Prefix;
+                this.Namespace = ds.Namespace;
+                this.Locale = ds.Locale;
+                this.CaseSensitive = ds.CaseSensitive;
+                this.EnforceConstraints = ds.EnforceConstraints;
+                this.Merge(ds, false,         System.Data.MissingSchemaAction.Add);
+                this.InitVars();
+            }
+            else {
+                this.ReadXmlSchema(new         System.Xml.XmlTextReader(new         System.IO.StringReader(strSchema)));
+            }
+            this.GetSerializationData(info, context);
+                    System.ComponentModel.CollectionChangeEventHandler schemaChangedHandler = new         System.ComponentModel.CollectionChangeEventHandler(this.SchemaChanged);
+            base.Tables.CollectionChanged += schemaChangedHandler;
+            this.Relations.CollectionChanged += schemaChangedHandler;
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [        System.ComponentModel.Browsable(false)]
+        [        System.ComponentModel.DesignerSerializationVisibility(        System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public Primary_KeysDataTable Primary_Keys {
+            get {
+                return this.tablePrimary_Keys;
+            }
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [        System.ComponentModel.BrowsableAttribute(true)]
+        [        System.ComponentModel.DesignerSerializationVisibilityAttribute(        System.ComponentModel.DesignerSerializationVisibility.Visible)]
+        public override         System.Data.SchemaSerializationMode SchemaSerializationMode {
+            get {
+                return this._schemaSerializationMode;
+            }
+            set {
+                this._schemaSerializationMode = value;
+            }
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [        System.ComponentModel.DesignerSerializationVisibilityAttribute(        System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+        public new         System.Data.DataTableCollection Tables {
+            get {
+                return base.Tables;
+            }
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [        System.ComponentModel.DesignerSerializationVisibilityAttribute(        System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+        public new         System.Data.DataRelationCollection Relations {
+            get {
+                return base.Relations;
+            }
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected override void InitializeDerivedDataSet() {
+            this.BeginInit();
+            this.InitClass();
+            this.EndInit();
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public override         System.Data.DataSet Clone() {
+            TableKeysSchema cln = ((TableKeysSchema)(base.Clone()));
+            cln.InitVars();
+            cln.SchemaSerializationMode = this.SchemaSerializationMode;
+            return cln;
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected override bool ShouldSerializeTables() {
+            return false;
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected override bool ShouldSerializeRelations() {
+            return false;
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected override void ReadXmlSerializable(        System.Xml.XmlReader reader) {
+            if ((this.DetermineSchemaSerializationMode(reader) ==         System.Data.SchemaSerializationMode.IncludeSchema)) {
+                this.Reset();
+                        System.Data.DataSet ds = new         System.Data.DataSet();
+                ds.ReadXml(reader);
+                if ((ds.Tables["Primary_Keys"] != null)) {
+                    base.Tables.Add(new Primary_KeysDataTable(ds.Tables["Primary_Keys"]));
+                }
+                this.DataSetName = ds.DataSetName;
+                this.Prefix = ds.Prefix;
+                this.Namespace = ds.Namespace;
+                this.Locale = ds.Locale;
+                this.CaseSensitive = ds.CaseSensitive;
+                this.EnforceConstraints = ds.EnforceConstraints;
+                this.Merge(ds, false,         System.Data.MissingSchemaAction.Add);
+                this.InitVars();
+            }
+            else {
+                this.ReadXml(reader);
+                this.InitVars();
+            }
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected override         System.Xml.Schema.XmlSchema GetSchemaSerializable() {
+                    System.IO.MemoryStream stream = new         System.IO.MemoryStream();
+            this.WriteXmlSchema(new         System.Xml.XmlTextWriter(stream, null));
+            stream.Position = 0;
+            return         System.Xml.Schema.XmlSchema.Read(new         System.Xml.XmlTextReader(stream), null);
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        internal void InitVars() {
+            this.InitVars(true);
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        internal void InitVars(bool initTable) {
+            this.tablePrimary_Keys = ((Primary_KeysDataTable)(base.Tables["Primary_Keys"]));
+            if ((initTable == true)) {
+                if ((this.tablePrimary_Keys != null)) {
+                    this.tablePrimary_Keys.InitVars();
+                }
+            }
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private void InitClass() {
+            this.DataSetName = "TableKeysSchema";
+            this.Prefix = "";
+            this.EnforceConstraints = true;
+            this.SchemaSerializationMode =         System.Data.SchemaSerializationMode.IncludeSchema;
+            this.tablePrimary_Keys = new Primary_KeysDataTable();
+            base.Tables.Add(this.tablePrimary_Keys);
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private bool ShouldSerializePrimary_Keys() {
+            return false;
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private void SchemaChanged(object sender,         System.ComponentModel.CollectionChangeEventArgs e) {
+            if ((e.Action ==         System.ComponentModel.CollectionChangeAction.Remove)) {
+                this.InitVars();
+            }
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public static         System.Xml.Schema.XmlSchemaComplexType GetTypedDataSetSchema(        System.Xml.Schema.XmlSchemaSet xs) {
+            TableKeysSchema ds = new TableKeysSchema();
+                    System.Xml.Schema.XmlSchemaComplexType type = new         System.Xml.Schema.XmlSchemaComplexType();
+                    System.Xml.Schema.XmlSchemaSequence sequence = new         System.Xml.Schema.XmlSchemaSequence();
+                    System.Xml.Schema.XmlSchemaAny any = new         System.Xml.Schema.XmlSchemaAny();
+            any.Namespace = ds.Namespace;
+            sequence.Items.Add(any);
+            type.Particle = sequence;
+                    System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+            if (xs.Contains(dsSchema.TargetNamespace)) {
+                        System.IO.MemoryStream s1 = new         System.IO.MemoryStream();
+                        System.IO.MemoryStream s2 = new         System.IO.MemoryStream();
+                try {
+                            System.Xml.Schema.XmlSchema schema = null;
+                    dsSchema.Write(s1);
+                    for (        System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                        schema = ((        System.Xml.Schema.XmlSchema)(schemas.Current));
+                        s2.SetLength(0);
+                        schema.Write(s2);
+                        if ((s1.Length == s2.Length)) {
+                            s1.Position = 0;
+                            s2.Position = 0;
+                            for (; ((s1.Position != s1.Length)
+                                        && (s1.ReadByte() == s2.ReadByte())); ) {
+                                ;
+                            }
+                            if ((s1.Position == s1.Length)) {
+                                return type;
+                            }
+                        }
+                    }
+                }
+                finally {
+                    if ((s1 != null)) {
+                        s1.Close();
+                    }
+                    if ((s2 != null)) {
+                        s2.Close();
+                    }
+                }
+            }
+            xs.Add(dsSchema);
+            return type;
+        }
+
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public delegate void Primary_KeysRowChangeEventHandler(object sender, Primary_KeysRowChangeEvent e);
+
+
+
+
+        [        System.Serializable()]
+        [        System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public         class Primary_KeysDataTable :         System.Data.TypedTableBase {
+
+            private         System.Data.DataColumn columnTABLE_CATALOG;
+
+            private         System.Data.DataColumn columnTABLE_SCHEMA;
+
+            private         System.Data.DataColumn columnTABLE_NAME;
+
+            private         System.Data.DataColumn columnCOLUMN_NAME;
+
+            private         System.Data.DataColumn columnCOLUMN_GUID;
+
+            private         System.Data.DataColumn columnCOLUMN_PROPID;
+
+            private         System.Data.DataColumn columnORDINAL;
+
+            private         System.Data.DataColumn columnPK_NAME;
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public Primary_KeysDataTable() {
+                this.TableName = "Primary_Keys";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal Primary_KeysDataTable(        System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected Primary_KeysDataTable(        System.Runtime.Serialization.SerializationInfo info,         System.Runtime.Serialization.StreamingContext context) :
+                    base(info, context) {
+                this.InitVars();
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataColumn TABLE_CATALOGColumn {
+                get {
+                    return this.columnTABLE_CATALOG;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataColumn TABLE_SCHEMAColumn {
+                get {
+                    return this.columnTABLE_SCHEMA;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataColumn TABLE_NAMEColumn {
+                get {
+                    return this.columnTABLE_NAME;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataColumn COLUMN_NAMEColumn {
+                get {
+                    return this.columnCOLUMN_NAME;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataColumn COLUMN_GUIDColumn {
+                get {
+                    return this.columnCOLUMN_GUID;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataColumn COLUMN_PROPIDColumn {
+                get {
+                    return this.columnCOLUMN_PROPID;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataColumn ORDINALColumn {
+                get {
+                    return this.columnORDINAL;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataColumn PK_NAMEColumn {
+                get {
+                    return this.columnPK_NAME;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            [        System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public Primary_KeysRow this[int index] {
+                get {
+                    return ((Primary_KeysRow)(this.Rows[index]));
+                }
+            }
+
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event Primary_KeysRowChangeEventHandler Primary_KeysRowChanging;
+
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event Primary_KeysRowChangeEventHandler Primary_KeysRowChanged;
+
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event Primary_KeysRowChangeEventHandler Primary_KeysRowDeleting;
+
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event Primary_KeysRowChangeEventHandler Primary_KeysRowDeleted;
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void AddPrimary_KeysRow(Primary_KeysRow row) {
+                this.Rows.Add(row);
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public Primary_KeysRow AddPrimary_KeysRow(string TABLE_CATALOG, string TABLE_SCHEMA, string TABLE_NAME, string COLUMN_NAME, System.Guid COLUMN_GUID, long COLUMN_PROPID, long ORDINAL, string PK_NAME) {
+                Primary_KeysRow rowPrimary_KeysRow = ((Primary_KeysRow)(this.NewRow()));
+                object[] columnValuesArray =  CxNull
+
+
+
+
+
+
+
+;
+                rowPrimary_KeysRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowPrimary_KeysRow);
+                return rowPrimary_KeysRow;
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public override         System.Data.DataTable Clone() {
+                Primary_KeysDataTable cln = ((Primary_KeysDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override         System.Data.DataTable CreateInstance() {
+                return new Primary_KeysDataTable();
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal void InitVars() {
+                this.columnTABLE_CATALOG = base.Columns["TABLE_CATALOG"];
+                this.columnTABLE_SCHEMA = base.Columns["TABLE_SCHEMA"];
+                this.columnTABLE_NAME = base.Columns["TABLE_NAME"];
+                this.columnCOLUMN_NAME = base.Columns["COLUMN_NAME"];
+                this.columnCOLUMN_GUID = base.Columns["COLUMN_GUID"];
+                this.columnCOLUMN_PROPID = base.Columns["COLUMN_PROPID"];
+                this.columnORDINAL = base.Columns["ORDINAL"];
+                this.columnPK_NAME = base.Columns["PK_NAME"];
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            private void InitClass() {
+                this.columnTABLE_CATALOG = new         System.Data.DataColumn("TABLE_CATALOG", typeof(string), null,         System.Data.MappingType.Element);
+                base.Columns.Add(this.columnTABLE_CATALOG);
+                this.columnTABLE_SCHEMA = new         System.Data.DataColumn("TABLE_SCHEMA", typeof(string), null,         System.Data.MappingType.Element);
+                base.Columns.Add(this.columnTABLE_SCHEMA);
+                this.columnTABLE_NAME = new         System.Data.DataColumn("TABLE_NAME", typeof(string), null,         System.Data.MappingType.Element);
+                base.Columns.Add(this.columnTABLE_NAME);
+                this.columnCOLUMN_NAME = new         System.Data.DataColumn("COLUMN_NAME", typeof(string), null,         System.Data.MappingType.Element);
+                base.Columns.Add(this.columnCOLUMN_NAME);
+                this.columnCOLUMN_GUID = new         System.Data.DataColumn("COLUMN_GUID", typeof(        System.Guid), null,         System.Data.MappingType.Element);
+                base.Columns.Add(this.columnCOLUMN_GUID);
+                this.columnCOLUMN_PROPID = new         System.Data.DataColumn("COLUMN_PROPID", typeof(long), null,         System.Data.MappingType.Element);
+                base.Columns.Add(this.columnCOLUMN_PROPID);
+                this.columnORDINAL = new         System.Data.DataColumn("ORDINAL", typeof(long), null,         System.Data.MappingType.Element);
+                base.Columns.Add(this.columnORDINAL);
+                this.columnPK_NAME = new         System.Data.DataColumn("PK_NAME", typeof(string), null,         System.Data.MappingType.Element);
+                base.Columns.Add(this.columnPK_NAME);
+                this.Locale = new         System.Globalization.CultureInfo("");
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public Primary_KeysRow NewPrimary_KeysRow() {
+                return ((Primary_KeysRow)(this.NewRow()));
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override         System.Data.DataRow NewRowFromBuilder(        System.Data.DataRowBuilder builder) {
+                return new Primary_KeysRow(builder);
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override         System.Type GetRowType() {
+                return typeof(Primary_KeysRow);
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanged(        System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.Primary_KeysRowChanged != null)) {
+                    this.Primary_KeysRowChanged(this, new Primary_KeysRowChangeEvent(((Primary_KeysRow)(e.Row)), e.Action));
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanging(        System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.Primary_KeysRowChanging != null)) {
+                    this.Primary_KeysRowChanging(this, new Primary_KeysRowChangeEvent(((Primary_KeysRow)(e.Row)), e.Action));
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleted(        System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.Primary_KeysRowDeleted != null)) {
+                    this.Primary_KeysRowDeleted(this, new Primary_KeysRowChangeEvent(((Primary_KeysRow)(e.Row)), e.Action));
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleting(        System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.Primary_KeysRowDeleting != null)) {
+                    this.Primary_KeysRowDeleting(this, new Primary_KeysRowChangeEvent(((Primary_KeysRow)(e.Row)), e.Action));
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void RemovePrimary_KeysRow(Primary_KeysRow row) {
+                this.Rows.Remove(row);
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public static         System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(        System.Xml.Schema.XmlSchemaSet xs) {
+                        System.Xml.Schema.XmlSchemaComplexType type = new         System.Xml.Schema.XmlSchemaComplexType();
+                        System.Xml.Schema.XmlSchemaSequence sequence = new         System.Xml.Schema.XmlSchemaSequence();
+                TableKeysSchema ds = new TableKeysSchema();
+                        System.Xml.Schema.XmlSchemaAny any1 = new         System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents =         System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                        System.Xml.Schema.XmlSchemaAny any2 = new         System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents =         System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                        System.Xml.Schema.XmlSchemaAttribute attribute1 = new         System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                        System.Xml.Schema.XmlSchemaAttribute attribute2 = new         System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "Primary_KeysDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                        System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                            System.IO.MemoryStream s1 = new         System.IO.MemoryStream();
+                            System.IO.MemoryStream s2 = new         System.IO.MemoryStream();
+                    try {
+                                System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (        System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((        System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length)
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+
+
+
+
+        public         class Primary_KeysRow :         System.Data.DataRow {
+
+            private Primary_KeysDataTable tablePrimary_Keys;
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal Primary_KeysRow(        System.Data.DataRowBuilder rb) :
+                    base(rb) {
+                this.tablePrimary_Keys = ((Primary_KeysDataTable)(this.Table));
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string TABLE_CATALOG {
+                get {
+                    try {
+                        return ((string)(this[this.tablePrimary_Keys.TABLE_CATALOGColumn]));
+                    }
+                    catch (        System.InvalidCastException e) {
+                        throw new         System.Data.StrongTypingException("The value for column \'TABLE_CATALOG\' in table \'Primary_Keys\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePrimary_Keys.TABLE_CATALOGColumn] = value;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string TABLE_SCHEMA {
+                get {
+                    try {
+                        return ((string)(this[this.tablePrimary_Keys.TABLE_SCHEMAColumn]));
+                    }
+                    catch (        System.InvalidCastException e) {
+                        throw new         System.Data.StrongTypingException("The value for column \'TABLE_SCHEMA\' in table \'Primary_Keys\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePrimary_Keys.TABLE_SCHEMAColumn] = value;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string TABLE_NAME {
+                get {
+                    try {
+                        return ((string)(this[this.tablePrimary_Keys.TABLE_NAMEColumn]));
+                    }
+                    catch (        System.InvalidCastException e) {
+                        throw new         System.Data.StrongTypingException("The value for column \'TABLE_NAME\' in table \'Primary_Keys\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePrimary_Keys.TABLE_NAMEColumn] = value;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string COLUMN_NAME {
+                get {
+                    try {
+                        return ((string)(this[this.tablePrimary_Keys.COLUMN_NAMEColumn]));
+                    }
+                    catch (        System.InvalidCastException e) {
+                        throw new         System.Data.StrongTypingException("The value for column \'COLUMN_NAME\' in table \'Primary_Keys\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePrimary_Keys.COLUMN_NAMEColumn] = value;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public System.Guid COLUMN_GUID {
+                get {
+                    try {
+                        return ((        System.Guid)(this[this.tablePrimary_Keys.COLUMN_GUIDColumn]));
+                    }
+                    catch (        System.InvalidCastException e) {
+                        throw new         System.Data.StrongTypingException("The value for column \'COLUMN_GUID\' in table \'Primary_Keys\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePrimary_Keys.COLUMN_GUIDColumn] = value;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public long COLUMN_PROPID {
+                get {
+                    try {
+                        return ((long)(this[this.tablePrimary_Keys.COLUMN_PROPIDColumn]));
+                    }
+                    catch (        System.InvalidCastException e) {
+                        throw new         System.Data.StrongTypingException("The value for column \'COLUMN_PROPID\' in table \'Primary_Keys\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePrimary_Keys.COLUMN_PROPIDColumn] = value;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public long ORDINAL {
+                get {
+                    try {
+                        return ((long)(this[this.tablePrimary_Keys.ORDINALColumn]));
+                    }
+                    catch (        System.InvalidCastException e) {
+                        throw new         System.Data.StrongTypingException("The value for column \'ORDINAL\' in table \'Primary_Keys\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePrimary_Keys.ORDINALColumn] = value;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string PK_NAME {
+                get {
+                    try {
+                        return ((string)(this[this.tablePrimary_Keys.PK_NAMEColumn]));
+                    }
+                    catch (        System.InvalidCastException e) {
+                        throw new         System.Data.StrongTypingException("The value for column \'PK_NAME\' in table \'Primary_Keys\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePrimary_Keys.PK_NAMEColumn] = value;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsTABLE_CATALOGNull() {
+                return this.IsNull(this.tablePrimary_Keys.TABLE_CATALOGColumn);
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetTABLE_CATALOGNull() {
+                this[this.tablePrimary_Keys.TABLE_CATALOGColumn] =         System.Convert.DBNull;
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsTABLE_SCHEMANull() {
+                return this.IsNull(this.tablePrimary_Keys.TABLE_SCHEMAColumn);
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetTABLE_SCHEMANull() {
+                this[this.tablePrimary_Keys.TABLE_SCHEMAColumn] =         System.Convert.DBNull;
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsTABLE_NAMENull() {
+                return this.IsNull(this.tablePrimary_Keys.TABLE_NAMEColumn);
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetTABLE_NAMENull() {
+                this[this.tablePrimary_Keys.TABLE_NAMEColumn] =         System.Convert.DBNull;
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsCOLUMN_NAMENull() {
+                return this.IsNull(this.tablePrimary_Keys.COLUMN_NAMEColumn);
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetCOLUMN_NAMENull() {
+                this[this.tablePrimary_Keys.COLUMN_NAMEColumn] =         System.Convert.DBNull;
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsCOLUMN_GUIDNull() {
+                return this.IsNull(this.tablePrimary_Keys.COLUMN_GUIDColumn);
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetCOLUMN_GUIDNull() {
+                this[this.tablePrimary_Keys.COLUMN_GUIDColumn] =         System.Convert.DBNull;
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsCOLUMN_PROPIDNull() {
+                return this.IsNull(this.tablePrimary_Keys.COLUMN_PROPIDColumn);
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetCOLUMN_PROPIDNull() {
+                this[this.tablePrimary_Keys.COLUMN_PROPIDColumn] =         System.Convert.DBNull;
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsORDINALNull() {
+                return this.IsNull(this.tablePrimary_Keys.ORDINALColumn);
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetORDINALNull() {
+                this[this.tablePrimary_Keys.ORDINALColumn] =         System.Convert.DBNull;
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsPK_NAMENull() {
+                return this.IsNull(this.tablePrimary_Keys.PK_NAMEColumn);
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetPK_NAMENull() {
+                this[this.tablePrimary_Keys.PK_NAMEColumn] =         System.Convert.DBNull;
+            }
+        }
+
+
+
+
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public class Primary_KeysRowChangeEvent :         System.EventArgs {
+
+            private Primary_KeysRow eventRow;
+
+            private         System.Data.DataRowAction eventAction;
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public Primary_KeysRowChangeEvent(Primary_KeysRow row,         System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public Primary_KeysRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+    }
+}
+
+#pragma warning restore 1591
+ 

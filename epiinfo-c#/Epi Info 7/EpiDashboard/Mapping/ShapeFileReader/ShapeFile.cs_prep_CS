@@ -1,0 +1,619 @@
+﻿using System;
+using System.Net;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Shapes;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Text;
+using System.Linq;
+using System.Collections.Generic;
+
+namespace EpiDashboard.Mapping.ShapeFileReader
+{
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public class ShapeFile
+    {
+        //Constants
+        private const int expectedFileCode = 9994;
+        //Constants
+
+        //Private static fields
+        private static byte[] intBytes = new byte[ 4 ];
+        private static byte[] doubleBytes = new byte[ 8 ];
+        //Private static fields
+
+        //Private fields
+
+        private ShapeFileHeader fileHeader = new ShapeFileHeader();
+
+
+        private Collection records = new Collection();
+        //Private fields
+
+        //Constructor
+
+
+
+        public ShapeFile()
+        {
+        }
+        //Constructor
+
+        //Properties
+
+
+
+        public ShapeFileHeader FileHeader
+        {
+            get
+            {
+                return this.fileHeader;
+            }
+        }
+
+
+
+
+        public Collection Records
+        {
+            get
+            {
+                return this.records;
+            }
+        }
+        //Properties
+
+        //Public methods
+
+        public void Read( FileInfo shapeFile, FileInfo dbfFile )
+        {
+            FileStream sfs = shapeFile.OpenRead();
+            ReadShapes( sfs );
+            FileStream dfs = dbfFile.OpenRead();
+            ReadAttributes( dfs );
+        }
+
+
+
+
+
+        public void ReadShapes( FileInfo shapeFile )
+        {
+            FileStream sfs = shapeFile.OpenRead();
+            ReadShapes( sfs );
+        }
+
+
+
+
+
+        public void ReadShapes( Stream stream )
+        {
+
+            this.ReadShapeFileHeader( stream );
+
+
+            this.records.Clear();
+            while( true )
+            {
+                try
+                {
+                    this.ReadShapeFileRecord( stream );
+                }
+                catch( IOException )
+                {
+
+                    break;
+                }
+            }
+        }
+
+
+
+
+
+        public void ReadShapeFileHeader( Stream stream )
+        {
+
+            this.fileHeader.FileCode = ShapeFile.ReadInt32_BE( stream );
+            if( this.fileHeader.FileCode != ShapeFile.expectedFileCode )
+            {
+                string msg = String.Format( System.Globalization.CultureInfo.InvariantCulture, "Invalid FileCode encountered. Expecting {0}.", ShapeFile.expectedFileCode );
+                throw new NotSupportedException( msg );
+            }
+
+
+            ShapeFile.ReadInt32_BE( stream );
+            ShapeFile.ReadInt32_BE( stream );
+            ShapeFile.ReadInt32_BE( stream );
+            ShapeFile.ReadInt32_BE( stream );
+            ShapeFile.ReadInt32_BE( stream );
+
+
+            this.fileHeader.FileLength = ShapeFile.ReadInt32_BE( stream );
+
+
+            this.fileHeader.Version = ShapeFile.ReadInt32_LE( stream );
+
+
+            this.fileHeader.ShapeType = ShapeFile.ReadInt32_LE( stream );
+
+
+            this.fileHeader.XMin = ShapeFile.ReadDouble64_LE( stream );
+            this.fileHeader.YMin = ShapeFile.ReadDouble64_LE( stream );
+            this.fileHeader.XMax = ShapeFile.ReadDouble64_LE( stream );
+            this.fileHeader.YMax = ShapeFile.ReadDouble64_LE( stream );
+
+
+            if( Math.Abs( this.fileHeader.XMax - this.fileHeader.XMin ) < 1 )
+            {
+                this.fileHeader.XMin -= 5;
+                this.fileHeader.XMax += 5;
+            }
+            if( Math.Abs( this.fileHeader.YMax - this.fileHeader.YMin ) < 1 )
+            {
+                this.fileHeader.YMin -= 5;
+                this.fileHeader.YMax += 5;
+            }
+
+
+            stream.Seek( 100, SeekOrigin.Begin );
+        }
+
+
+
+
+
+        public ShapeFileRecord ReadShapeFileRecord( Stream stream )
+        {
+            ShapeFileRecord record = new ShapeFileRecord();
+
+
+            record.RecordNumber = ShapeFile.ReadInt32_BE( stream );
+            record.ContentLength = ShapeFile.ReadInt32_BE( stream );
+
+
+            record.ShapeType = ShapeFile.ReadInt32_LE( stream );
+
+
+            switch( record.ShapeType )
+            {
+                case ( int ) ShapeType.NullShape:
+
+                    break;
+                case ( int ) ShapeType.Point:
+                    ShapeFile.ReadPoint( stream, record );
+                    break;
+                case ( int ) ShapeType.PolyLine:
+
+                    ShapeFile.ReadPolygon( stream, record );
+                    break;
+                case ( int ) ShapeType.Polygon:
+                    ShapeFile.ReadPolygon( stream, record );
+                    break;
+                case ( int ) ShapeType.Multipoint:
+                    ShapeFile.ReadMultipoint( stream, record );
+                    break;
+                default:
+                    {
+                        string msg = String.Format( System.Globalization.CultureInfo.InvariantCulture, "ShapeType {0} is not supported.", ( int ) record.ShapeType );
+                        throw new NotSupportedException( msg );
+                    }
+            }
+
+
+            this.records.Add( record );
+
+            return record;
+        }
+
+        public void ReadAttributes( Stream stream )
+        {
+            BinaryReader read = new BinaryReader( stream );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            byte fileType = read.ReadByte();
+            if(  CxNull
+.Contains( fileType ) )
+            {
+
+                read.BaseStream.Seek( 3, SeekOrigin.Current );
+
+
+                uint RecordCount = read.ReadUInt32();
+                ushort FirstRecord = read.ReadUInt16();
+                ushort RecordLength = read.ReadUInt16();
+                ushort reserved = read.ReadUInt16();
+                byte incompleteTransaction = read.ReadByte();
+                byte encryptionFlag = read.ReadByte();
+                uint freeRecordThread = read.ReadUInt32();
+                byte[] reservedForMultiUserDB = read.ReadBytes( 8 );
+                byte tableFlags = read.ReadByte();
+                byte languageDriver = read.ReadByte();
+                ushort reserved2 = read.ReadUInt16();
+
+                if( RecordCount != records.Count )
+                    throw new InvalidOperationException( "The number of records in the DBF files does not match the number of records in the SHP file." );
+
+
+                List DBFFields = new List();
+                while( read.PeekChar() != 0x0D )
+                {
+
+                    DBFField field = new DBFField();
+                    field.FieldName = Encoding.UTF8.GetString( read.ReadBytes( 11 ), 0, 11 ).Replace( "\0", "" ).ToLower();
+                    field.FieldType = read.ReadByte();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    field.FieldDataAddress = read.ReadUInt32();
+                    field.FieldLengthInBytes = read.ReadByte();
+                    field.NumberOfDecimalPlaces = read.ReadByte();
+                    field.FieldFlags = read.ReadByte();
+
+
+
+
+
+
+                    field.NextAutoIncrementValue = read.ReadUInt32();
+                    field.AutoIncrementStepValue = read.ReadByte();
+                    field.ReservedBytes = read.ReadBytes( 8 );
+
+                    DBFFields.Add( field );
+                }
+                byte headerTerminator = read.ReadByte();
+
+
+                read.BaseStream.Seek( FirstRecord, SeekOrigin.Begin );
+                int recordIndex = 0;
+                while(read.PeekChar() != 0x1A)
+                {
+                    byte[] recordContent = read.ReadBytes( RecordLength );
+                    Dictionary row = new Dictionary();
+                    int currentIndex = 1;
+                    foreach( DBFField field in DBFFields )
+                    {
+                        string temp = Encoding.UTF8.GetString( recordContent, currentIndex, field.FieldLengthInBytes );
+                        currentIndex = currentIndex + field.FieldLengthInBytes;
+                        row.Add( field.FieldName, temp );
+                    }
+
+                    this.records[ recordIndex ].Attributes = row;
+                    recordIndex++;
+                }
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        public List ReadDBFFile( Stream stream )
+        {
+            BinaryReader read = new BinaryReader( stream );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            byte fileType = read.ReadByte();
+            if(  CxNull
+.Contains( fileType ) )
+            {
+
+                read.BaseStream.Seek( 3, SeekOrigin.Current );
+
+
+                uint RecordCount = read.ReadUInt32();
+                ushort FirstRecord = read.ReadUInt16();
+                ushort RecordLength = read.ReadUInt16();
+                ushort reserved = read.ReadUInt16();
+                byte incompleteTransaction = read.ReadByte();
+                byte encryptionFlag = read.ReadByte();
+                uint freeRecordThread = read.ReadUInt32();
+                byte[] reservedForMultiUserDB = read.ReadBytes( 8 );
+                byte tableFlags = read.ReadByte();
+                byte languageDriver = read.ReadByte();
+                ushort reserved2 = read.ReadUInt16();
+
+
+                List DBFFields = new List();
+                while( read.PeekChar() != 0x0D )
+                {
+
+                    DBFField field = new DBFField();
+                    field.FieldName = Encoding.UTF8.GetString( read.ReadBytes( 11 ), 0, 11 ).Replace( "\0", "" ).ToLower();
+                    field.FieldType = read.ReadByte();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    field.FieldDataAddress = read.ReadUInt32();
+                    field.FieldLengthInBytes = read.ReadByte();
+                    field.NumberOfDecimalPlaces = read.ReadByte();
+                    field.FieldFlags = read.ReadByte();
+
+
+
+
+
+
+                    field.NextAutoIncrementValue = read.ReadUInt32();
+                    field.AutoIncrementStepValue = read.ReadByte();
+                    field.ReservedBytes = read.ReadBytes( 8 );
+
+                    DBFFields.Add( field );
+                }
+                byte headerTerminator = read.ReadByte();
+
+
+                read.BaseStream.Seek( FirstRecord, SeekOrigin.Begin );
+                List table = new List();
+                while( read.PeekChar() != 0x1A )
+                {
+                    byte[] recordContent = read.ReadBytes( RecordLength );
+                    Dictionary row = new Dictionary();
+                    int currentIndex = 1;
+                    foreach( DBFField field in DBFFields )
+                    {
+                        string temp = Encoding.UTF8.GetString( recordContent, currentIndex, field.FieldLengthInBytes );
+                        temp = temp.Trim();
+                        currentIndex = currentIndex + field.FieldLengthInBytes;
+                        row.Add( field.FieldName, temp );
+                    }
+
+                    table.Add( row );
+                }
+
+                return table;
+            }
+            else
+            {
+                throw new NotSupportedException( "The DBF file type is not supported." );
+            }
+        }
+
+
+
+
+
+        public override string ToString()
+        {
+            return "ShapeFile: " + this.fileHeader.ToString();
+        }
+        //Public methods
+
+        //Private methods
+
+
+
+
+
+
+        private static int ReadInt32_LE( Stream stream )
+        {
+            for( int i = 0; i < 4; i++ )
+            {
+                int b = stream.ReadByte();
+                if( b == -1 )
+                    throw new EndOfStreamException();
+                intBytes[ i ] = ( byte ) b;
+            }
+
+            return BitConverter.ToInt32( intBytes, 0 );
+        }
+
+
+
+
+
+
+
+        private static int ReadInt32_BE( Stream stream )
+        {
+            for( int i = 3; i >= 0; i-- )
+            {
+                int b = stream.ReadByte();
+                if( b == -1 )
+                    throw new EndOfStreamException();
+                intBytes[ i ] = ( byte ) b;
+            }
+
+            return BitConverter.ToInt32( intBytes, 0 );
+        }
+
+
+
+
+
+
+
+        private static double ReadDouble64_LE( Stream stream )
+        {
+            for( int i = 0; i < 8; i++ )
+            {
+                int b = stream.ReadByte();
+                if( b == -1 )
+                    throw new EndOfStreamException();
+                doubleBytes[ i ] = ( byte ) b;
+            }
+
+            return BitConverter.ToDouble( doubleBytes, 0 );
+        }
+
+
+
+
+
+
+        private static void ReadPoint( Stream stream, ShapeFileRecord record )
+        {
+
+            Point p = new System.Windows.Point();
+            p.X = ShapeFile.ReadDouble64_LE( stream );
+            p.Y = ShapeFile.ReadDouble64_LE( stream );
+            record.Points.Add( p );
+
+
+            record.XMin = p.X;
+            record.YMin = p.Y;
+            record.XMax = record.XMin;
+            record.YMax = record.YMin;
+        }
+
+
+
+
+
+
+        private static void ReadMultipoint( Stream stream, ShapeFileRecord record )
+        {
+
+            record.XMin = ShapeFile.ReadDouble64_LE( stream );
+            record.YMin = ShapeFile.ReadDouble64_LE( stream );
+            record.XMax = ShapeFile.ReadDouble64_LE( stream );
+            record.YMax = ShapeFile.ReadDouble64_LE( stream );
+
+
+            int numPoints = ShapeFile.ReadInt32_LE( stream );
+
+
+            for( int i = 0; i < numPoints; i++ )
+            {
+                Point p = new Point();
+                p.X = ShapeFile.ReadDouble64_LE( stream );
+                p.Y = ShapeFile.ReadDouble64_LE( stream );
+                record.Points.Add( p );
+            }
+        }
+
+
+
+
+
+
+        private static void ReadPolygon( Stream stream, ShapeFileRecord record )
+        {
+
+            record.XMin = ShapeFile.ReadDouble64_LE( stream );
+            record.YMin = ShapeFile.ReadDouble64_LE( stream );
+            record.XMax = ShapeFile.ReadDouble64_LE( stream );
+            record.YMax = ShapeFile.ReadDouble64_LE( stream );
+
+
+            int numParts = ShapeFile.ReadInt32_LE( stream );
+            int numPoints = ShapeFile.ReadInt32_LE( stream );
+
+
+            for( int i = 0; i < numParts; i++ )
+            {
+                record.Parts.Add( ShapeFile.ReadInt32_LE( stream ) );
+            }
+
+
+            for( int i = 0; i < numPoints; i++ )
+            {
+                Point p = new Point();
+                p.X = ShapeFile.ReadDouble64_LE( stream );
+                p.Y = ShapeFile.ReadDouble64_LE( stream );
+                record.Points.Add( p );
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //Private methods
+    }
+}
+
+ 

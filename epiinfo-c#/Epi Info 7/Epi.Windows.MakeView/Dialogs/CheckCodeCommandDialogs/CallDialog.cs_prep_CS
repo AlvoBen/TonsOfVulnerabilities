@@ -1,0 +1,139 @@
+﻿//Namespaces
+
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+using Epi.Windows.Dialogs;
+using Epi.Fields;
+using System.Text.RegularExpressions;
+using System.Collections.Generic;
+// 
+
+namespace Epi.Windows.MakeView.Dialogs.CheckCodeCommandDialogs
+{
+
+
+
+    public         class CallDialog : CheckCodeDesignDialog
+    {
+        private RichTextBox txtTextArea;
+
+        //Constructors
+
+
+
+
+
+
+
+        public CallDialog(Epi.Windows.MakeView.Forms.CheckCode frm):
+            base(frm.mainForm)
+        {
+            InitializeComponent();
+            this.txtTextArea = frm.codeText;
+        }
+
+        // 
+
+        //Private Event Handlers
+
+
+
+
+
+
+  private void btnCancel_Click(object sender, System.EventArgs e)
+  {
+   this.Close();
+  }
+
+
+
+
+
+
+        private void lbxFields_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            btnOk.Enabled = (lbxFields.SelectedItem != null);
+        }
+
+
+
+
+
+
+        private void btnOk_Click(object sender, System.EventArgs e)
+        {
+            Output = "CALL" + StringLiterals.SPACE;
+
+
+            for (int i = 0; i <= lbxFields.SelectedItems.Count - 1; i++)
+            {
+                Output += lbxFields.SelectedItems[i].ToString() + StringLiterals.SPACE;
+            }
+
+            Output = Output.Trim();
+            this.DialogResult = DialogResult.OK;
+            this.Hide();
+        }
+
+
+
+
+
+
+        protected override void btnHelp_Click(object sender, System.EventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://wwwn.cdc.gov/epiinfo/user-guide/form-designer/Introduction.html");
+        }
+
+        // 
+
+        //Public Properties
+
+
+
+
+        public override View View
+        {
+            set
+            {
+                this.AddSubroutinesToListBox();
+            }
+        }
+        // 
+
+            private void AddSubroutinesToListBox()
+            {
+                System.Text.RegularExpressions.Regex re = null;
+
+                re = new Regex("\\ssub\\s+[\\w_\\[\\]\\.]*\\b|^sub\\s+[\\w_\\[\\]\\.]*\\b", RegexOptions.IgnoreCase);
+                Dictionary IdList = new Dictionary();
+
+                MatchCollection MC = re.Matches(this.txtTextArea.Text.ToLower());
+                for(int i = 0; i < MC.Count; i++)
+                {
+                    int index2 = this.txtTextArea.Text.ToLower().IndexOf(' ', MC[i].Index);
+
+                    if (index2 > -1)
+                    {
+                        int index3 = this.txtTextArea.Text.ToLower().IndexOf('\n', index2);
+                        if (index3 > -1)
+                        {
+                            string id = this.txtTextArea.Text.Substring(index2, index3 - index2).Trim();
+                            if (!IdList.ContainsKey(id.ToUpper()))
+                            {
+                                lbxFields.Items.Add(id);
+                            }
+                        }
+                    }
+                }
+
+        }
+    }
+}
+
+
+ 

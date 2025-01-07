@@ -1,0 +1,347 @@
+﻿//Namespaces
+
+using System;
+using System.Data;
+using System.Windows.Forms;
+
+using Epi;
+
+using Epi.Core.AnalysisInterpreter;
+using Epi.Collections;
+using Epi.Windows.Dialogs;
+
+// Namespaces
+
+using VariableCollection = Epi.Collections.NamedObjectCollection;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using Epi.Data.Services;
+
+namespace Epi.Windows.Analysis.Dialogs
+{
+
+
+
+    public         class CommandDesignDialog : DialogBase
+ {
+  //private Class members
+
+
+
+
+        public enum CommandProcessingMode
+        {
+            Save_And_Execute,
+            Save_Only
+        }
+
+  private CommandProcessingMode  processingMode = CommandProcessingMode.Save_And_Execute;
+        public CommandProcessingMode ProcessingMode
+        {
+            get { return this.processingMode; }
+        }
+
+  private string commandText = string.Empty;
+
+        //private Class members
+
+        //Protected Data Members
+
+
+
+
+        protected EpiInterpreterParser EpiInterpreter;
+
+
+
+
+
+        protected ICommandProcessor dialogCommandProcessor;
+
+        //
+
+        //Constructors
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+        public CommandDesignDialog()
+        {
+            InitializeComponent();
+        }
+
+
+
+
+
+  public CommandDesignDialog(Epi.Windows.Analysis.Forms.AnalysisMainForm frm)
+            : base(frm)
+        {
+            InitializeComponent();
+            if (frm != null)
+                this.EpiInterpreter = frm.EpiInterpreter;
+
+
+
+
+
+
+        }
+  //Constructors
+
+  //Public Properties
+
+
+
+
+        public new IWindowsModule Module
+        {
+            get
+            {
+                return base.Module as IWindowsModule;
+            }
+        }
+
+
+
+
+  public string CommandText
+  {
+   get
+   {
+    return commandText;
+   }
+   set
+   {
+    commandText = value;
+   }
+  }
+
+        //Public Properties
+
+  //Event Handlers
+
+
+
+
+
+  protected virtual void btnOK_Click(object sender, System.EventArgs e)
+  {
+   processingMode = CommandProcessingMode.Save_And_Execute;
+   OnOK();
+  }
+
+
+
+
+
+  protected void btnSaveOnly_Click(object sender, System.EventArgs e)
+  {
+   processingMode = CommandProcessingMode.Save_Only;
+   OnOK();
+  }
+
+
+
+
+
+  protected void btnCancel_Click(object sender, System.EventArgs e)
+  {
+   this.Close();
+  }
+
+  //Event Handlers
+
+  //Protected Methods
+
+
+
+
+
+        protected IMemoryRegion GetMemoryRegion()
+        {
+            return this.EpiInterpreter.Context.MemoryRegion;
+        }
+
+
+
+
+
+
+
+
+
+
+        protected void FillVariableListBox(ListBox lbx, VariableType scopeWord)
+        {
+            lbx.Items.Clear();
+            VariableCollection vars = this.EpiInterpreter.Context.MemoryRegion.GetVariablesInScope(scopeWord);
+            lbx.BeginUpdate();
+            foreach (IVariable var in vars)
+            {
+                if (!(var is Epi.Fields.PredefinedDataField))
+                {
+                    lbx.Items.Add(var.Name.ToString());
+                }
+            }
+            lbx.EndUpdate();
+            lbx.Sorted = true;
+            lbx.Refresh();
+        }
+
+
+
+
+
+
+
+        protected void FillVariableCombo(ComboBox cmb, VariableType scopeWord)
+        {
+            cmb.Items.Clear();
+            VariableCollection vars = this.EpiInterpreter.Context.MemoryRegion.GetVariablesInScope(scopeWord);
+            cmb.BeginUpdate();
+            foreach (IVariable var in vars)
+            {
+                if (!(var is Epi.Fields.PredefinedDataField))
+                {
+                    cmb.Items.Add(var.Name.ToString());
+                }
+            }
+            cmb.EndUpdate();
+            cmb.Sorted = true;
+            cmb.Refresh();
+        }
+        protected void FillVariableCombo(ComboBox cmb )
+        {
+            cmb.Items.Clear();
+
+            cmb.BeginUpdate();
+            foreach (DataColumn Column in this.mainForm.EpiInterpreter.Context.DataSet.Tables["output"].Columns)
+            {
+                if (!(Column.DataType.FullName.ToString() == "System.DateTime"))
+                {
+                    cmb.Items.Add(Column.ColumnName.ToString());
+                }
+
+            }
+
+            cmb.EndUpdate();
+            cmb.Sorted = true;
+            cmb.Refresh();
+        }
+
+
+
+
+
+        protected void FillWeightVariableCombo(ComboBox cmb, VariableType scopeWord)
+        {
+            cmb.Items.Clear();
+            VariableCollection vars = this.EpiInterpreter.Context.MemoryRegion.GetVariablesInScope(scopeWord);
+            cmb.BeginUpdate();
+
+            foreach (IVariable var in vars)
+            {
+                if (this.EpiInterpreter.Context.DataSet.Tables["output"].Columns.Contains(var.Name))
+                {
+                    Type type = this.EpiInterpreter.Context.DataSet.Tables["output"].Columns[var.Name].DataType;
+
+                    switch (Type.GetTypeCode(type))
+                    {
+                        case TypeCode.Boolean:
+                        case TypeCode.Byte:
+                        case TypeCode.SByte:
+                        case TypeCode.UInt16:
+                        case TypeCode.UInt32:
+                        case TypeCode.UInt64:
+                        case TypeCode.Int16:
+                        case TypeCode.Int32:
+                        case TypeCode.Int64:
+                        case TypeCode.Decimal:
+                        case TypeCode.Double:
+                        case TypeCode.Single:
+                            cmb.Items.Add(var.Name.ToString());
+                            break;
+                    }
+                }
+            }
+
+            cmb.EndUpdate();
+            cmb.Sorted = true;
+            cmb.Refresh();
+        }
+
+
+
+
+
+
+
+        protected void FillVariableCombo(ComboBox cmb, VariableType scopeWord, DataType typ)
+        {
+            cmb.Items.Clear();
+            VariableCollection vars = this.EpiInterpreter.Context.MemoryRegion.GetVariablesInScope(scopeWord);
+            cmb.BeginUpdate();
+            foreach (IVariable var in vars)
+            {
+                int VType = (int)var.DataType;
+                int FType = (int)typ;
+                if (!(var is Epi.Fields.PredefinedDataField) && ((VType & FType) == VType))
+                {
+                    cmb.Items.Add(var.Name.ToString());
+                }
+            }
+            cmb.EndUpdate();
+            cmb.Sorted = true;
+            cmb.Refresh();
+        }
+
+  protected virtual void GenerateCommand()
+  {
+
+        }
+
+
+
+
+
+        protected virtual bool FieldNameNeedsBrackets(string strTestName)
+        {
+            Regex regex = new Regex("[\\w\\d]", RegexOptions.IgnoreCase);
+            string strResultOfSymbolTest = regex.Replace(strTestName, string.Empty);
+            return (strResultOfSymbolTest.Length > 0) | AppData.Instance.IsReservedWord(strTestName) | !(strTestName.Equals(Util.Squeeze(strTestName)));
+        }
+
+
+
+
+  protected virtual void PreProcess()
+  {
+  }
+
+  //Protected Methods
+
+        //Private Methods
+
+
+
+  protected virtual void OnOK()
+  {
+   if (ValidateInput() == true)
+   {
+    GenerateCommand();
+    PreProcess();
+    this.DialogResult = DialogResult.OK;
+    this.Hide();
+   }
+   else
+   {
+                this.DialogResult = DialogResult.None;
+    ShowErrorMessages();
+   }
+  }
+  //Private Methods
+ } 
+}
+
+ 

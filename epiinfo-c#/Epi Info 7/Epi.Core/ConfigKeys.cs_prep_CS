@@ -1,0 +1,119 @@
+﻿
+namespace Epi
+{
+
+
+
+    public        class ConfigKeys
+    {
+
+
+
+        public const string ACTIVE_PROFILE = "ActiveProfile";
+
+
+
+        public const string BACKGROUND_IMAGE = "BackgroundImage";
+
+
+
+        public const string CACHE_DATA = "CacheData";
+
+
+
+        public const string MRU_COUNT = "MRUCount"; // Most recently used
+
+
+
+        public const string VERSION = "Version";
+
+
+
+        public const string DB_CONNECTION_STRING = "DBConnectionString";
+
+
+
+        public const string DEFAULT_DB_FORMAT = "DefaultDBFormat";
+
+
+
+        public const string EDITOR_FONT_NAME = "EditorFontName";
+
+
+
+        public const string EDITOR_FONT_SIZE = "EditorFontSize";
+
+
+
+        public const string CONTROL_FONT_NAME = "ControlFontName";
+
+
+
+        public const string CONTROL_FONT_SIZE = "ControlFontSize";
+
+
+
+        public const string INCLUDE_MISSING_RECORDS = "IncludeMissingRecords";
+
+
+
+        public const string LANGUAGE = "Language";
+
+
+
+        public const string RECORD_PROCESSING_SCOPE = "RecordProcessingScope";
+
+
+
+        public const string REPRESENTATION_YES = "RepresentationOfYes";
+
+
+
+        public const string REPRESENTATION_NO = "RepresentationOfNo";
+
+
+
+        public const string REPRESENTATION_MISSING = "RepresentationOfMissing";
+
+
+
+        public const string SHOW_COMPLETE_PROMPT = "ShowCompletePrompt";
+
+
+
+        public const string SHOW_GRAPHICS = "ShowGraphics";
+
+
+
+        public const string SHOW_PERCENTS = "ShowPercents";
+
+
+
+        public const string SHOW_SELECTION = "ShowSelection";
+
+
+
+        public const string SNAP_TO_GRID = "SnapToGrid";
+
+
+
+        public const string STATISTICS_LEVEL = "StatisticsLevel";
+
+
+
+        public const string WORKING_DIRECTORY = "WorkingDirectory";
+
+
+
+        public const string PROJECT_DIRECTORY = "ProjectDirectory";
+
+
+
+        public const string SHOW_HYPERLINKS = "ShowHyperlinks";
+
+
+
+        public const string SHOW_TABLES = "ShowTables";
+    } 
+}
+ 

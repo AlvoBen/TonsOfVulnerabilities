@@ -1,0 +1,62 @@
+﻿//Namespaces
+
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+using Epi.Windows.Dialogs;
+
+//
+
+namespace Epi.Windows.Enter.Dialogs
+{
+
+
+
+    public         class YesNo : DialogBase
+ {
+  //Private Class Members
+  //
+
+  //Constructors
+
+
+
+
+  public YesNo()
+  {
+   InitializeComponent();
+  }
+
+
+
+
+
+        public YesNo(EnterMainForm mainForm)
+            : base(mainForm)
+        {
+            InitializeComponent();
+        }
+
+  // 
+
+  //Event Handlers
+
+
+
+
+
+
+  private void btnCancel_Click(object sender, System.EventArgs e)
+  {
+   this.Close();
+  }
+
+  //
+
+ }
+}
+
+
+ 

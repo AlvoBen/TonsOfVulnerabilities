@@ -1,0 +1,28 @@
+﻿
+
+
+
+
+
+
+
+
+
+namespace Epi.Windows.WebSurveyExporter.Properties {
+
+
+    [        System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    [        System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "10.0.0.0")]
+    internal sealed         class Settings :         System.Configuration.ApplicationSettingsBase {
+
+        private static Settings defaultInstance = ((Settings)(        System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
+
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}
+
+ 

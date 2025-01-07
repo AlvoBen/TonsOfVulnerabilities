@@ -1,0 +1,98 @@
+﻿using System;
+using System.Windows.Forms;
+using System.Drawing;
+using Epi.Windows.Controls;
+using Epi.Windows.MakeView.Forms;
+
+namespace Epi.Windows.MakeView
+{
+
+
+    public delegate void ShowTabOrderEventHandler();
+
+
+    public delegate void StartNewTabOrderEventHandler();
+
+
+    public delegate void ContinueTabOrderEventHandler();
+
+
+
+
+
+    public delegate void ControlMovementEventHandler(object sender, FieldControlEventArgs e);
+
+
+
+
+
+
+
+    public delegate void FieldCreationRequestEventHandler(object sender, MetaFieldType fieldType, Panel panel, Point location);
+
+
+
+
+
+    public delegate void GroupCreationRequestEventHandler(Panel panel, Rectangle outline);
+
+
+
+
+
+
+    public delegate void TreeNodeDragDropEventHandler(TreeValueNode node, Panel panel, Point location);
+
+
+
+
+    public delegate void PageCheckCodeRequestEventHandler(Panel panel);
+
+
+
+
+
+    public delegate void SelectedControlsChangedEventHandler(Rectangle selectedPanelArea);
+
+
+
+    public delegate void CutFieldControlEventHandler();
+
+
+
+    public delegate void DeleteFieldControlEventHandler();
+
+
+
+    public delegate void StackAlignEventHandler();
+
+
+
+    public delegate void TableAlignEventHandler(int numColumns);
+
+
+
+    public delegate void AlignAsRowEventHandler();
+
+
+
+    public delegate void MakeSameEventHandler(Enums.MakeSame makeSame);
+
+
+
+    public delegate void CopyFieldControlEventHandler();
+
+
+
+
+    public delegate void PasteFieldControlEventHandler(System.Drawing.Point point);
+
+
+
+    public delegate void CreateTemplateEventHandler(string templateName);
+
+    public delegate void ApplyDefaultFontsEventHandler();
+
+
+}
+ 

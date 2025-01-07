@@ -1,0 +1,145 @@
+﻿//Namespaces
+
+using System;
+using System.Data;
+using System.Data.OleDb;
+using System.IO;
+using Epi.Data;
+
+using Epi.Data.Services;
+
+//
+
+namespace Epi.Epi2000
+{
+
+
+
+
+    public class CollectedDataProvider 
+    {
+        //Fields
+        private Epi.Data.Services.CollectedDataProvider collectedData = null;
+
+
+
+
+        protected IDbDriver db;
+        //Fields
+
+        //Constructors
+
+
+
+
+
+        public CollectedDataProvider(Project proj)
+        {
+            IDbDriverFactory dbFactory = DbDriverFactoryCreator.GetDbDriverFactory(Configuration.AccessDriver);
+            OleDbConnectionStringBuilder cnnStrBuilder = new OleDbConnectionStringBuilder();
+            cnnStrBuilder.DataSource = proj.FilePath;
+            this.db = dbFactory.CreateDatabaseObject(cnnStrBuilder);
+
+
+
+        }
+
+        //Constructors
+
+
+
+
+
+        public DataRow[] GetDataTableList()
+        {
+            try
+            {
+
+                DataTable tables = collectedData.GetTableSchema();
+                return tables.Select("TABLE_NAME not like 'code%' and TABLE_NAME not like 'view%'");
+            }
+            catch (Exception ex)
+            {
+                throw new System.ApplicationException("Could not retrieve data tables from legacy database", ex);
+            }
+        }
+
+
+
+
+
+        public int GetTableCount()
+        {
+            return db.GetTableCount();
+        }
+
+
+
+
+
+
+        public IDbDriver GetDatabase()
+        {
+            return this.db;
+        }
+
+
+
+
+        public int GetRecordCount(Epi2000.View view)
+        {
+            try
+            {
+                //Input Validation
+                if (view == null)
+                {
+                    throw new System.ArgumentNullException("view");
+                }
+                //Input Validation
+
+                string qryString = " select count(*) from " + db.InsertInEscape(view.TableNames[0]);
+                Query query = db.CreateQuery(qryString);
+                return Int32.Parse((db.ExecuteScalar(query)).ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Could not retrieve record count.", ex); //TODO: move to shared strings
+            }
+            finally
+            {
+            }
+        }
+
+
+
+
+
+
+        public bool TableExists(string tableName)
+        {
+            if (string.IsNullOrEmpty(tableName))
+            {
+                throw new ArgumentException("tableName");
+            }
+
+            return db.TableExists(tableName);
+        }
+
+
+
+
+
+
+        public IDataReader GetTableDataReader(string tableName)
+        {
+            if (string.IsNullOrEmpty(tableName))
+            {
+                throw new ArgumentException("tableName");
+            }
+
+            return db.GetTableDataReader(tableName);
+        }
+    }
+}
+
+ 

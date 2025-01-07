@@ -1,0 +1,199 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+
+namespace Epi.ImportExport
+{
+
+
+
+    public class ImportExportErrorList : IEnumerable
+    {
+        //Members
+
+
+
+        private List errorList;
+        //
+
+        //Constructors
+
+
+
+        public ImportExportErrorList()
+        {
+            errorList = new List();
+        }
+        //
+
+        //Properties
+
+
+
+        public int Errors
+        {
+            get
+            {
+                int errorCount = 0;
+                foreach (ImportExportMessage problem in errorList)
+                {
+                    if (problem.MessageType == ImportExportMessageType.Error) errorCount++;
+                }
+                return errorCount;
+            }
+        }
+
+
+
+
+        public int Warnings
+        {
+            get
+            {
+                int warningCount = 0;
+                foreach (ImportExportMessage problem in errorList)
+                {
+                    if (problem.MessageType == ImportExportMessageType.Warning) warningCount++;
+                }
+                return warningCount;
+            }
+        }
+
+
+
+
+        public int Notifications
+        {
+            get
+            {
+                int notificationCount = 0;
+                foreach (ImportExportMessage problem in errorList)
+                {
+                    if (problem.MessageType == ImportExportMessageType.Notification) notificationCount++;
+                }
+                return notificationCount;
+            }
+        }
+        //
+
+        //Methods
+
+
+
+
+
+
+
+        public void Add(ImportExportMessageType pProblemType, string pCode, string pMessage, string pDescription)
+        {
+            //Input Validation
+            if (string.IsNullOrEmpty(pCode))
+            {
+                throw new ArgumentNullException(pCode);
+            }
+            else if (string.IsNullOrEmpty(pMessage))
+            {
+                throw new ArgumentNullException(pMessage);
+            }
+            //
+
+            ImportExportMessage problem = new ImportExportMessage();
+            problem.ID = GetNextID();
+            problem.MessageType = pProblemType;
+            problem.Code = pCode;
+            problem.Message = pMessage;
+            problem.Description = pDescription;
+            errorList.Add(problem);
+        }
+
+
+
+
+
+
+
+        public void Add(ImportExportMessageType pProblemType, string pCode, string pMessage)
+        {
+            this.Add(pProblemType, pCode, pMessage, string.Empty);
+        }
+
+
+
+
+
+        private int GetNextID()
+        {
+            return this.errorList.Count + 1;
+        }
+        //
+
+        //IEnumerable Members
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return new ImportExportErrorListEnumerator(errorList);
+        }
+
+        public void Dispose() { }
+
+        //
+
+        //Classes
+
+
+
+        protected class ImportExportErrorListEnumerator : IEnumerator
+        {
+            //Private Members
+            private List errorList;
+            private int currentIndex;
+            //Private Members
+
+            public ImportExportErrorListEnumerator(List pErrorList)
+            {
+                errorList = pErrorList;
+                Reset();
+            }
+
+            public void Reset()
+            {
+                currentIndex = -1;
+            }
+
+            public ImportExportMessage Current
+            {
+                get
+                {
+                    return (ImportExportMessage)errorList[currentIndex];
+                }
+            }
+
+            object IEnumerator.Current
+            {
+                get
+                {
+                    return Current;
+                }
+            }
+
+            public bool MoveNext()
+            {
+                currentIndex++;
+                return currentIndex < errorList.Count;
+            }
+
+            public void Dispose() { }
+        }
+        //
+    }
+}
+
+ 

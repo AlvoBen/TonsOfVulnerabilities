@@ -1,0 +1,20 @@
+﻿
+namespace Epi
+{
+
+
+
+    public        class DataSourceObjectCategories
+    {
+
+
+
+  public const string Views = "Views";
+
+
+
+        public const string All = "All";
+    }
+}
+
+ 

@@ -1,0 +1,66 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows.Controls;
+using ComponentArt.Win.DataVisualization;
+using ComponentArt.Win.DataVisualization.Common;
+using ComponentArt.Win.DataVisualization.Charting;
+
+namespace EpiDashboard
+{
+    public class PieChartParametersBase : ChartParametersBase
+    {
+        //Events
+
+        //
+
+        //Constructors
+
+
+
+        public PieChartParametersBase()
+            : base()
+        {
+            ChartStrataTitle = String.Empty;
+            ShowAnnotations = true;
+            ShowAnnotationLabel = true;
+            ShowAnnotationValue = true;
+            ShowAnnotationPercent = true;
+            AnnotationPercent = 20;
+            PieChartKind = ComponentArt.Win.DataVisualization.Charting.PieChartKind.Pie2D;
+        }
+
+
+
+
+        public PieChartParametersBase(PieChartParametersBase parameters)
+            : base(parameters)
+        {
+            ChartStrataTitle = parameters.ChartStrataTitle;
+            ShowAnnotations = parameters.ShowAnnotations;
+            ShowAnnotationLabel = parameters.ShowAnnotationLabel;
+            ShowAnnotationValue = parameters.ShowAnnotationValue;
+            ShowAnnotationPercent = parameters.ShowAnnotationPercent;
+            AnnotationPercent = parameters.AnnotationPercent;
+            PieChartKind = parameters.PieChartKind;
+        }
+
+        //    
+
+        //Properties
+
+
+        public bool ShowAnnotations { get {return _ShowAnnotations; } set{ _ShowAnnotations=value; } } bool _ShowAnnotations;
+        public bool ShowAnnotationLabel { get {return _ShowAnnotationLabel; } set{ _ShowAnnotationLabel=value; } } bool _ShowAnnotationLabel;
+        public bool ShowAnnotationValue { get {return _ShowAnnotationValue; } set{ _ShowAnnotationValue=value; } } bool _ShowAnnotationValue;
+        public bool ShowAnnotationPercent { get {return _ShowAnnotationPercent; } set{ _ShowAnnotationPercent=value; } } bool _ShowAnnotationPercent;
+        public PieChartKind PieChartKind { get {return _PieChartKind; } set{ _PieChartKind=value; } } PieChartKind _PieChartKind;
+        public double AnnotationPercent { get {return _AnnotationPercent; } set{ _AnnotationPercent=value; } } double _AnnotationPercent;
+
+        // 
+
+    }
+}
+
+ 

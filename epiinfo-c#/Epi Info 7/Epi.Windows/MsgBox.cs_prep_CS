@@ -1,0 +1,398 @@
+﻿using System;
+using System.IO;
+using System.Windows.Forms;
+
+using Epi.Windows;
+using Epi.Diagnostics;
+
+namespace Epi.Windows
+{
+
+
+
+
+ public        class MsgBox
+ {
+
+  //Public Methods
+
+
+
+
+
+  public static void ShowException(System.Exception ex)
+  {
+   if (ex == null)
+    return;
+
+   Debugger.LogException(ex);
+
+
+   PrepareToShow();
+
+
+   if (ex is FileNotFoundException)
+   {
+    ShowException((FileNotFoundException)ex);
+    return;
+   }
+
+
+   else if (ex is NullReferenceException)
+   {
+    ShowException((NullReferenceException)ex);
+    return;
+   }
+
+
+   else if (ex is OutOfMemoryException)
+   {
+    ShowException((OutOfMemoryException) ex);
+    return;
+   }
+
+
+   else if (ex is ParseException)
+   {
+    ShowException((ParseException)ex);
+    return;
+   }
+
+            else if (ex is ReservedWordException)
+            {
+                ShowException(ex as ReservedWordException);
+                return;
+            }
+
+
+            else if (ex is GeneralException)
+            {
+                ShowGeneralException((GeneralException)ex);
+            }
+
+            else if (ex is System.ApplicationException)
+            {
+                ShowApplicationException((System.ApplicationException)ex);
+            }
+
+
+            else
+            {
+                ShowError(Util.GetComprehensiveExceptionMessage(ex));
+            }
+  }
+
+
+
+
+
+  private static void ShowException(DirectoryNotFoundException ex)
+  {
+   PrepareToShow();
+            string errorMessage = Util.CombineMessageParts(SharedStrings.DIRECTORY_NOT_FOUND, ex.Message);
+   ShowError(errorMessage, false);
+  }
+
+
+
+
+
+  private static void ShowException(NullReferenceException ex)
+  {
+   PrepareToShow();
+            string msg = Util.GetComprehensiveExceptionMessage(ex);
+   ShowError(msg, false);
+  }
+
+
+
+
+
+        private static void ShowException(FileNotFoundException ex)
+  {
+   PrepareToShow();
+            string msg = Util.CombineMessageParts(SharedStrings.FILE_NOT_FOUND, ex.FileName);
+   ShowError(msg, false);
+  }
+
+
+
+
+
+        private static void ShowException(OutOfMemoryException ex)
+  {
+   PrepareToShow();
+            string errorMessage = Util.CombineMessageParts(SharedStrings.OUT_OF_MEMORY, ex.Source);
+   ShowError(errorMessage, false);
+  }
+
+
+
+
+
+        private static void ShowException(ParseException ex)
+  {
+   PrepareToShow();
+
+   string errorMessage = Util.GetComprehensiveExceptionMessage(ex);
+   ShowError(errorMessage, false);
+  }
+
+
+
+
+
+        private static void ShowException(ReservedWordException ex)
+        {
+            PrepareToShow();
+            string errorMessage = Util.CombineMessageParts(SharedStrings.RESERVED_WORD_ERROR, ex.ReservedWordUsed);
+            ShowError(errorMessage, false);
+        }
+
+
+
+
+
+        private static void ShowGeneralException(GeneralException ex)
+  {
+            string msg = Util.GetComprehensiveExceptionMessage(ex);
+   ShowError(msg, false);
+  }
+
+
+
+
+
+        private static void ShowApplicationException(System.Exception ex)
+  {
+            PrepareToShow();
+            string msg = Util.GetComprehensiveExceptionMessage(ex);
+            ShowError(msg, false);
+  }
+
+
+
+
+
+
+        private static void ShowInformation(string message, bool translate)
+  {
+   PrepareToShow();
+   string msg = string.Empty;
+
+
+
+
+
+
+    msg = message;
+
+   MessageBox.Show(
+    msg,
+                SharedStrings.INFORMATION,
+    MessageBoxButtons.OK,
+    MessageBoxIcon.Information);
+  }
+
+
+
+
+
+  public static void ShowInformation(string message)
+  {
+   ShowInformation(message, true);
+  }
+
+
+
+
+
+
+        private static void ShowWarning(string message, bool translate)
+  {
+   string msg = message;
+
+
+   MessageBox.Show(
+    msg,
+                SharedStrings.WARNING,
+    MessageBoxButtons.OK,
+    MessageBoxIcon.Warning);
+  }
+
+
+
+
+
+  public static void ShowWarning(string message)
+  {
+   ShowWarning(message, true);
+  }
+
+
+
+
+
+
+  private static void ShowError(string message, bool translate)
+  {
+
+   MessageBox.Show(
+    message,
+    SharedStrings.ERROR,
+    MessageBoxButtons.OK,
+    MessageBoxIcon.Error);
+  }
+
+
+
+
+
+  public static void ShowError(string message)
+  {
+   ShowError(message, true);
+  }
+
+
+
+
+
+
+  public static void ShowError(string errorMessage, Exception ex)
+  {
+            string formattedMsg = errorMessage;
+            string additionalInfo = GetInnerMostException(ex).Message;
+            if (!string.IsNullOrEmpty(additionalInfo))
+            {
+                formattedMsg += Environment.NewLine + Environment.NewLine;
+                formattedMsg += SharedStrings.ADDITIONAL_INFORMATION;
+                formattedMsg += Environment.NewLine;
+                formattedMsg += additionalInfo;
+            }
+
+            ShowError(formattedMsg);
+  }
+
+
+
+
+
+
+
+  public static DialogResult ShowQuestion(string question, MessageBoxButtons buttons)
+  {
+   PrepareToShow();
+   return MessageBox.Show(
+    question,
+                SharedStrings.QUESTION,
+    buttons,
+    MessageBoxIcon.Question);
+  }
+
+
+
+
+
+
+  public static DialogResult ShowQuestion(string question)
+  {
+   return ShowQuestion(question, MessageBoxButtons.YesNo);
+  }
+
+
+
+
+
+
+
+
+  public static DialogResult Show(string text,string caption,MessageBoxButtons buttons)
+  {
+            PrepareToShow();
+            Form topForm = TopMostMessageBox.GetTopMostInstance();
+            DialogResult dialogResult = MessageBox.Show(topForm, text, caption, buttons);
+            topForm.Dispose();
+            return dialogResult;
+  }
+
+
+
+
+
+
+
+
+
+  public static DialogResult Show(string text,string caption,MessageBoxButtons buttons, MessageBoxIcon icon)
+  {
+            PrepareToShow();
+            Form topForm = TopMostMessageBox.GetTopMostInstance();
+            DialogResult dialogResult = MessageBox.Show(topForm, text, caption, buttons, icon);
+            topForm.Dispose();
+            return dialogResult;
+  }
+
+
+
+
+
+
+
+  public static DialogResult Show(string text,string caption)
+  {
+   PrepareToShow();
+            Form topForm = TopMostMessageBox.GetTopMostInstance();
+            DialogResult dialogResult = MessageBox.Show(topForm, text, caption);
+            topForm.Dispose();
+            return dialogResult;
+  }
+
+  //Public Methods
+
+  //Private Methods
+
+
+
+
+
+
+  private static Exception GetInnerMostException(Exception ex)
+  {
+   while (ex.InnerException != null)
+   {
+    ex = ex.InnerException;
+   }
+   return ex;
+  }
+
+  private static void PrepareToShow()
+  {
+   Cursor.Current = Cursors.Default;
+  }
+
+  //Private Methods
+
+ }
+
+    static public class TopMostMessageBox
+    {
+        static public Form GetTopMostInstance()
+        {
+            Form topmostForm = new Form();
+
+            topmostForm.Size = new System.Drawing.Size(1, 1);
+            topmostForm.StartPosition = FormStartPosition.Manual;
+            System.Drawing.Rectangle screenRect = SystemInformation.VirtualScreen;
+
+            topmostForm.Location = new System.Drawing.Point(screenRect.Bottom + 10, screenRect.Right + 10);
+            topmostForm.Show();
+            topmostForm.Focus();
+            topmostForm.BringToFront();
+            topmostForm.TopMost = true;
+
+            return topmostForm;
+        }
+    }
+}
+
+ 

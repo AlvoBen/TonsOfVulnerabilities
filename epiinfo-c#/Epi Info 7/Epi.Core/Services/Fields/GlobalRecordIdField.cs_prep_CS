@@ -1,0 +1,165 @@
+﻿using System;
+using System.Data;
+using System.Drawing;
+using System.Xml;
+
+using Epi.Data.Services;
+
+namespace Epi.Fields
+{
+
+
+
+ public class GlobalRecordIdField : PredefinedDataField, IMirrorable
+ {
+  //Constructors
+
+
+
+
+
+        public GlobalRecordIdField(View view)
+            : base(view)
+  {
+   Construct();
+  }
+
+
+
+
+
+
+        public GlobalRecordIdField(View view, XmlElement viewElement)
+            : base(view)
+        {
+            this.viewElement = viewElement;
+        }
+
+
+
+
+
+
+        public GlobalRecordIdField(View view, XmlNode fieldNode)
+            : base(view)
+        {
+            this.fieldNode = fieldNode;
+
+        }
+
+  private void Construct()
+  {
+            this.Name = ColumnNames.GLOBAL_RECORD_ID;
+            this.dbColumnType = DbType.String;
+  }
+
+  //Constructors
+
+        //Private Data Members
+        private XmlElement viewElement;
+        private XmlNode fieldNode;
+        // 
+
+        //Public Properties
+
+
+
+        public override MetaFieldType FieldType
+        {
+            get
+            {
+                return MetaFieldType.GlobalRecordId;
+            }
+        }
+
+
+
+
+        public override string PromptText
+        {
+            get
+            {
+                return SharedStrings.GLOBAL_RECORD_ID;
+            }
+            set
+            {
+                throw new GeneralException("Prompt for Unique Identifier ID is pre-defined");
+            }
+        }
+
+        public string GlobalRecordId
+        {
+            get
+            {
+                return this.CurrentRecordValueObject.ToString();
+            }
+            set
+            {
+                this.CurrentRecordValueString = value;
+            }
+        }
+
+        //Public Properties
+
+        //Public Methods
+
+
+
+
+  protected override void InsertField()
+  {
+   if (this.Id == 0)
+   {
+                this.Id = GetMetadata().CreateField(this);
+   }
+   else
+   {
+    throw new System.ApplicationException("Unique key field already exists");
+   }
+  }
+
+
+
+
+  public override void Delete()
+  {
+   GetMetadata().DeleteField(this);
+  }
+
+
+
+
+
+        public virtual string GetReflectedValue()
+        {
+            return this.CurrentRecordValueString;
+        }
+
+        public void NewValue()
+        {
+            if (CurrentRecordValueString.Equals(string.Empty))
+            {
+                CurrentRecordValueObject = Guid.NewGuid().ToString();
+            }
+        }
+
+        //
+
+
+
+
+        public XmlElement ViewElement
+        {
+            get
+            {
+                return viewElement;
+            }
+            set
+            {
+                viewElement = value;
+            }
+        }
+
+ }
+}
+ 

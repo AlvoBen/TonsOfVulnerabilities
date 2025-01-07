@@ -1,0 +1,256 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Epi.Data;
+using Epi.Data.MySQL;
+using MySql.Data.MySqlClient;
+using MySql.Data;
+
+using Epi.Windows.Dialogs;
+
+
+namespace Epi.Data.MySQL.Forms
+{
+
+
+
+    public         class ConnectionStringDialog : DialogBase, IConnectionStringGui
+    {
+
+        //Public Data Members
+
+        // 
+
+        //Constructors
+
+
+
+
+        public ConnectionStringDialog()
+        {
+
+            InitializeComponent();
+            this.cmbServerName.Items.Add("<Browse for more>");
+            this.cmbServerName.Text = "";
+            dbConnectionStringBuilder = new MySqlConnectionStringBuilder();
+        }
+
+        // 
+
+        //IConnectionStringBuilder Members
+
+        public bool ShouldIgnoreNonExistance
+        {
+            set { }
+        }
+
+        public virtual void SetDatabaseName(string databaseName) { }
+        public virtual void SetServerName(string serverName) { }
+        public virtual void SetUserName(string userName) { }
+        public virtual void SetPassword(string password) { }
+
+
+
+
+        protected MySqlConnectionStringBuilder dbConnectionStringBuilder;
+
+
+
+        public DbConnectionStringBuilder DbConnectionStringBuilder
+        {
+            get
+            {
+                return dbConnectionStringBuilder;
+            }
+
+
+
+
+        }
+
+
+
+
+
+        public virtual string PreferredDatabaseName
+        {
+            set
+            {
+                txtDatabaseName.Text = value;
+            }
+            get
+            {
+                return txtDatabaseName.Text;
+            }
+        }
+
+
+
+
+        public virtual string ConnectionStringDescription
+        {
+            get
+            {
+                return cmbServerName.Text + "::" + txtDatabaseName.Text;
+            }
+        }
+
+
+
+
+        public bool UsesPassword
+        {
+            get
+            {
+                if (this.txtPassword.Text.Length > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        // 
+
+        //Event Handlers
+
+
+
+
+
+
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            OnOkClick();
+        }
+
+
+
+
+
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            OnCancelClick();
+        }
+
+
+
+
+
+
+        private void cmbServerName_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            if (cmbServerName.SelectedIndex == (cmbServerName.Items.Count - 1))
+            {
+                string serverName = BrowseForServers.BrowseNetworkServers();
+                if (!string.IsNullOrEmpty(serverName))
+                {
+                    this.cmbServerName.Items.Insert(0, serverName);
+                    this.cmbServerName.SelectedIndex = 0;
+                    return;
+                }
+
+                this.cmbServerName.SelectedText = string.Empty;
+            }
+        }
+        // Event Handlers
+
+        //Private Methods
+
+        // 
+
+        //Protected Methods
+
+
+
+
+
+        protected override bool ValidateInput()
+        {
+            base.ValidateInput();
+
+
+            if (Util.IsEmpty(this.cmbServerName.Text.Trim()))
+            {
+                ErrorMessages.Add("Server name is required"); // TODO: Hard coded string
+            }
+
+
+            string databaseName = txtDatabaseName.Text.Trim();
+            Epi.Validator.ValidateDatabaseName(databaseName, ErrorMessages);
+
+
+            if (Util.IsEmpty(this.txtUserName.Text.Trim()))
+            {
+                ErrorMessages.Add("User name is required"); // TODO: Hard coded string
+            }
+
+
+            if (Util.IsEmpty(txtPassword.Text.Trim()))
+            {
+                ErrorMessages.Add("Password is required"); // TODO: Hard coded string
+            }
+
+            if (!string.IsNullOrEmpty(txtPort.Text))
+            {
+                uint result;
+                if (!uint.TryParse(txtPort.Text, out result))
+                {
+                    ErrorMessages.Add("Invalid port");
+                }
+            }
+
+            return (ErrorMessages.Count == 0);
+        }
+
+
+
+
+        protected void OnCancelClick()
+        {
+            this.dbConnectionStringBuilder.ConnectionString = string.Empty ;
+            this.PreferredDatabaseName = string.Empty;
+
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
+
+
+
+
+        protected virtual void OnOkClick()
+        {
+            if (ValidateInput())
+            {
+                dbConnectionStringBuilder = new MySqlConnectionStringBuilder();
+                dbConnectionStringBuilder.Database = txtDatabaseName.Text.Trim();
+                dbConnectionStringBuilder.Server = cmbServerName.Text.Trim();
+                dbConnectionStringBuilder.UserID = txtUserName.Text.Trim();
+                dbConnectionStringBuilder.Password = txtPassword.Text.Trim();
+                if (!string.IsNullOrEmpty(txtPort.Text))
+                {
+                    dbConnectionStringBuilder.Port = uint.Parse(txtPort.Text);
+                }
+                this.DialogResult = DialogResult.OK;
+                this.Hide();
+            }
+            else
+            {
+                ShowErrorMessages();
+            }
+        }
+        // Protected Methods
+
+    }
+}
+ 

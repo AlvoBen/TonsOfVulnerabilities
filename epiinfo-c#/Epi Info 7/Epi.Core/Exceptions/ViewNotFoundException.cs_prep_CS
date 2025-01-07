@@ -1,0 +1,90 @@
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
+namespace Epi
+{
+
+
+
+    [Serializable]
+    public class ViewNotFoundException : GeneralException
+    {
+        //Private Members
+        private string viewName = string.Empty;
+        //Private Members
+
+        //Public properties
+
+
+
+        public string ViewName
+        {
+            get
+            {
+                return viewName;
+            }
+        }
+
+
+
+
+        public override string Message
+        {
+            get
+            {
+                return Util.CombineMessageParts(SharedStrings.VIEW_NOT_FOUND, ViewName);
+            }
+        }
+
+        //Public properties
+
+        //Constructors
+
+
+
+        public ViewNotFoundException():this(string.Empty)
+        {
+        }
+
+
+
+
+
+        public ViewNotFoundException(string view)
+        {
+            //Input validation
+            if (string.IsNullOrEmpty(view))
+            {
+                throw new ArgumentNullException("view");
+            }
+            //Input validation
+            this.viewName = view;
+        }
+
+
+
+
+
+
+        public ViewNotFoundException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+        //Constructors
+
+        //Public Methods
+
+
+
+
+
+        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+        }
+        //Public Methods
+    }
+}
+ 

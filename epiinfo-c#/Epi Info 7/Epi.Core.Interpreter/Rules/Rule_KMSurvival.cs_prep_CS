@@ -1,0 +1,319 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using com.calitha.goldparser;
+using EpiInfo.Plugin;
+
+namespace Epi.Core.AnalysisInterpreter.Rules
+{
+    public class Rule_KMSurvival : AnalysisRule
+    {
+        bool HasRun = false;
+
+
+
+
+
+
+        /*
+ ::= Identifier
+ ::= Identifier
+ ::= Identifier
+
+ ::= KMSURVIVAL  '='  '*'  '('   ')'
+                            |KMSURVIVAL  '='  '*'  '(' Boolean  ')'
+                            | KMSURVIVAL  '='  '*'  '('   ')' 
+                            |KMSURVIVAL  '='  '*'  '(' Boolean  ')' 
+
+                            ::=  |  
+
+                             ::= 
+                                | 
+                                | 
+                                | 
+                                | 
+                     ::= TIMEUNIT '=' String
+                        ::= GRAPHTYPE '=' String
+                      ::= OUTTABLE '=' Identifier
+                       ::= WEIGHTVAR '=' Identifier
+                        ::= TITLETEXT '=' String
+        */
+        string commandText = null;
+
+        string time_variable = null;
+        string group_variable = null;
+        string censor_variable = null;
+        string uncensored_value = null;
+        string time_unit = null;
+
+        string out_table = null;
+        string graph_type = null;
+        string weight_variable = null;
+
+        public Rule_KMSurvival(Rule_Context pContext, NonterminalToken pToken)
+            : base(pContext)
+        {
+            /*
+            !***            Kaplan-Meier Survival Statement ***!
+                 ::= KMSURVIVAL Identifier '=' Identifier '*' Identifier '(' Literal ')' 
+                ::= KMSURVIVAL Identifier '=' Identifier '*' Identifier '(' Boolean ')' 
+             */
+
+            this.commandText = this.ExtractTokens(pToken.Tokens);
+            this.time_variable = this.GetCommandElement(pToken.Tokens, 1).TrimStart('[').TrimEnd(']');
+            this.group_variable = this.GetCommandElement(pToken.Tokens, 3).TrimStart('[').TrimEnd(']');
+
+            this.censor_variable = this.GetCommandElement(pToken.Tokens, 5).TrimStart('[').TrimEnd(']');
+            this.uncensored_value = this.GetCommandElement(pToken.Tokens, 7);
+
+            if (pToken.Tokens.Length > 9)
+            {
+                this.SetOptionList((NonterminalToken)pToken.Tokens[9]);
+            }
+        }
+
+        private void SetTermList(NonterminalToken pToken)
+        {
+
+
+            this.SetTerm((NonterminalToken)pToken.Tokens[0]);
+
+            if (pToken.Tokens.Length > 1)
+            {
+                this.SetTermList((NonterminalToken)pToken.Tokens[1]);
+            }
+
+        }
+        private void SetTerm(NonterminalToken pToken)
+        {
+            /*
+             ::= Identifier
+                   | '(' Identifier ')'
+                   | Identifier ':' 
+                   | '(' Identifier ')' ':' 
+                   | Identifier ':'  Identifier ':'
+                   | '(' Identifier ')' ':' Identifier ':'
+            */
+            string value = null;
+            switch (pToken.Rule.Rhs[0].ToString())
+            {
+
+                case "Identifier":
+
+
+
+                    value = this.GetCommandElement(pToken.Tokens, 0);
+                    break;
+
+                case "(":
+
+
+                    value = this.GetCommandElement(pToken.Tokens, 1);
+                    break;
+                default:
+
+                    break;
+            }
+        }
+
+
+
+        private void SetOptionList(NonterminalToken pToken)
+        {
+
+            switch (pToken.Symbol.ToString())
+            {
+                case "":
+                    this.SetOptionList(pToken);
+                    break;
+                case "":
+                    foreach (Token T in pToken.Tokens)
+                    {
+                        if (T is NonterminalToken)
+                        {
+                            NonterminalToken NT = (NonterminalToken)T;
+                            switch (NT.Symbol.ToString())
+                            {
+                                case "":
+                                    this.SetOptionList(NT);
+                                    break;
+                                case "":
+                                    this.SetOptionList(NT);
+                                    break;
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+        private void SetOption(NonterminalToken pToken)
+        {
+            /*
+                                         ::= 
+            | 
+            | 
+            | 
+            | 
+
+                ::= TIMEUNIT '=' String
+               ::= GRAPHTYPE '=' String
+                 ::= OUTTABLE '=' Identifier
+              ::= WEIGHTVAR '=' Identifier
+               ::= TITLETEXT '=' String
+            */
+            switch (pToken.Rule.Rhs[0].ToString())
+            {
+                case "":
+                    this.weight_variable = this.GetCommandElement(pToken.Tokens, 2).Trim('"');
+                    break;
+                case "":
+                    this.time_unit = this.GetCommandElement(pToken.Tokens, 2).Trim('"');
+                    break;
+                case "":
+                    this.graph_type = this.GetCommandElement(pToken.Tokens, 2).Trim('"');
+                    break;
+                case "":
+                    this.out_table = this.GetCommandElement(pToken.Tokens, 2).Trim('"');
+                    break;
+                case "DIALOG":
+                case "SHOWOBSERVED":
+                case "PVALUE":
+                default:
+
+                    break;
+            }
+        }
+
+
+
+
+
+        public override object Execute()
+        {
+            object result = null;
+
+            if (!this.HasRun)
+            {
+
+
+                IAnalysisStatistic KMSurvival = null;
+
+
+
+
+
+
+                Dictionary setProperties = new Dictionary(StringComparer.OrdinalIgnoreCase);
+                if (this.Context.CurrentRead == null)
+                {
+                    setProperties.Add("TableName", "");
+                }
+                else
+                {
+                    setProperties.Add("TableName", this.Context.CurrentRead.Identifier);
+                }
+                setProperties.Add("CommandText", this.commandText);
+                Dictionary inputVariableList = new Dictionary(StringComparer.OrdinalIgnoreCase);
+
+                setProperties.Add("BLabels", "Yes;No;Missing"); // TODO: Replace Yes, No, Missing with global vars
+
+
+
+                inputVariableList.Add("time_variable", time_variable);
+                inputVariableList.Add("group_variable", group_variable);
+
+
+                inputVariableList.Add("censor_variable", censor_variable);
+                inputVariableList.Add("uncensored_value", uncensored_value);
+                inputVariableList.Add("time_unit", time_unit);
+
+                inputVariableList.Add("out_table", out_table);
+                inputVariableList.Add("graph_type", graph_type);
+                inputVariableList.Add("weight_variable", weight_variable);
+
+
+                IDataSource DataSource = this.Context.GetDefaultIDataSource();
+
+                AnalysisStatisticExecuteHost statisticHost = new AnalysisStatisticExecuteHost(this.Context, setProperties, DataSource, inputVariableList, this.Context.CurrentSelect.ToString(), this.Context.AnalysisInterpreterHost);
+
+                KMSurvival = this.Context.GetStatistic("KaplanMeierSurvival", statisticHost);
+                KMSurvival.Execute();
+                this.HasRun = true;
+            }
+
+            return result;
+        }
+
+
+    }
+
+    public class Rule_KMTermList : AnalysisRule
+    {
+        public Rule_KMTermList(Rule_Context pContext, NonterminalToken pToken)
+            : base(pContext)
+        {
+            /*
+              ::=  |  
+
+             ::= Identifier
+                   | '(' Identifier ')'
+                   | Identifier ':' 
+                   | '(' Identifier ')' ':' 
+                   | Identifier ':'  Identifier ':'
+                   | '(' Identifier ')' ':' Identifier ':'
+            */
+
+        }
+
+
+
+
+
+        public override object Execute()
+        {
+            object result = null;
+
+            return result;
+        }
+    }
+
+
+    public class Rule_KMOptList : AnalysisRule
+    {
+        public Rule_KMOptList(Rule_Context pContext, NonterminalToken pToken)
+            : base(pContext)
+        {
+
+            /*
+                         ::=  |  
+
+             ::= WEIGHTVAR '=' Identifier
+                   | TIMEUNIT '=' String
+                   | GRAPHTYPE '=' String
+                   | OUTTABLE '=' Identifier
+                   | STRATAVAR '=' 
+                   | GRAPH '=' 
+                   | DIALOG
+                   | SHOWOBSERVED
+                   | PVALUE '=' Percent
+                   | PVALUE '=' RealLiteral
+             */
+        }
+
+
+
+
+
+
+        public override object Execute()
+        {
+            object result = null;
+
+            return result;
+        }
+    }
+}
+
+
+ 

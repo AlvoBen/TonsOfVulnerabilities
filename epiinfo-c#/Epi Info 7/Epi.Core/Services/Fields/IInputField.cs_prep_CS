@@ -1,0 +1,32 @@
+﻿using System;
+
+namespace Epi.Fields
+{
+
+
+
+
+    public interface IInputField : IDataField
+    {
+
+
+
+        bool IsReadOnly { get; set; }
+
+
+
+
+        bool IsRequired { get; set; }
+
+
+
+
+        bool ShouldRepeatLast { get; set; }
+
+
+
+
+        string GetDbSpecificColumnType();
+    }
+}
+ 

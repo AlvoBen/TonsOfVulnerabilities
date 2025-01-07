@@ -1,0 +1,140 @@
+﻿using System;
+using System.Drawing;
+using System.Collections;
+using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace Epi.Windows
+{
+
+
+
+    public         class FormBase : Form
+ {
+
+  //Constructors
+
+
+
+
+  public FormBase()
+  {
+   InitializeComponent();
+  }
+
+  //
+
+  //Public Methods
+
+
+
+
+
+
+        public bool IsKeyToggled(int keyValue)
+        {
+            bool RetVal = false;
+            int state = GetLowOrder(GetKeyState(keyValue));
+            if (state == 1)
+            {
+                RetVal = true;
+            }
+
+            return RetVal;
+        }
+
+        private int GetLowOrder(int param)
+        {
+            return (param & 0x01);
+        }
+
+        //Public Methods
+
+  //Event Handlers
+
+
+
+
+
+
+  private void Form_Load(object sender, System.EventArgs e)
+  {
+  }
+
+
+
+
+
+
+  protected virtual void btnHelp_Click(object sender, System.EventArgs e)
+  {
+            System.Diagnostics.Process.Start("http://wwwn.cdc.gov/epiinfo/user-guide/index.htm");
+        }
+
+
+
+
+
+
+        private void FormBase_HelpRequested(object sender, HelpEventArgs hlpevent)
+        {
+            btnHelp_Click(sender, hlpevent);
+        }
+
+
+
+
+
+
+  protected virtual void OnFeatureNotImplemented(object sender, System.EventArgs e)
+  {
+   DisplayFeatureNotImplementedMessage();
+  }
+  //
+
+  //Protected Methods
+
+
+
+
+  protected void DisplayFeatureNotImplementedMessage()
+  {
+   MsgBox.ShowInformation(SharedStrings.FEATURE_NOT_YET_IMPLEMENTED);
+  }
+
+
+
+
+
+
+        [Obsolete("Translation has been eliminated.",true)]
+        protected string T(string str)
+        {
+            throw new NotSupportedException();
+
+        }
+
+
+
+
+        [Obsolete("AssertDesignMode method is deprecated", false)]
+        protected void AssertDesignMode()
+        {
+        }
+
+  //Private Methods
+
+        //Private Methods
+
+
+
+
+
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern int GetKeyState(int VirtKey);
+
+        //
+    }
+}
+ 

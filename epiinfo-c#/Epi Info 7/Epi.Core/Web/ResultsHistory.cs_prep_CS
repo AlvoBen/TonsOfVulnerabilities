@@ -1,0 +1,96 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.IO;
+
+namespace Epi.Web
+{
+
+
+
+    public class ResultsHistory
+    {
+        private Configuration config;
+        private string historyFile;
+        private const string HISTORY_FILE_NAME = "IResults.html";
+
+
+
+
+        public ResultsHistory()
+        {
+            config = Configuration.GetNewInstance();
+            if (!File.Exists(this.HistoryFile))
+            {
+                string historyFileContents = Epi.Resources.ResourceLoader.GetAnalysisResultsHistoryTemplate().Replace("{0}", DateTime.Today.ToLongDateString());
+                File.WriteAllText(this.HistoryFile, historyFileContents);
+            }
+        }
+
+        //Public Methods
+
+
+
+
+
+
+        public void Add(string Time, Uri Command, string DocumentTitle)
+        {
+            if (File.Exists(this.HistoryFile))
+            {
+                string fileName = Command.AbsolutePath;
+                if (Command.IsFile)
+                {
+                    FileInfo file = new FileInfo(Command.AbsolutePath);
+                    fileName = file.Name;
+                }
+                File.AppendAllText(historyFile, HTML.TableRow(HTML.TableCell(Time, "nowrap", "nowrap") +
+                    HTML.TableCell(HTML.HyperLink(DocumentTitle, Command.OriginalString)) + HTML.TableCell(fileName)));
+            }
+        }
+
+
+
+
+
+
+
+        public void Add(DateTime Time, Uri Command, string DocumentTitle)
+        {
+            if (File.Exists(HistoryFile))
+            {
+                string fileName = Command.AbsolutePath;
+                if (Command.IsFile)
+                {
+                    FileInfo file = new FileInfo(Command.AbsolutePath);
+                    fileName = file.Name;
+                }
+                File.AppendAllText(historyFile, HTML.TableRow(HTML.TableCell(Time.ToShortTimeString(), "nowrap", "nowrap") +
+                    HTML.TableCell(HTML.HyperLink(DocumentTitle, Command.OriginalString)) + HTML.TableCell(fileName)));
+            }
+        }
+
+
+
+
+        public void ResetOutput()
+        {
+            File.Delete(this.HistoryFile);
+            this.historyFile = String.Empty;
+        }
+        //Public Methods
+
+
+
+
+        public string HistoryFile
+        {
+            get
+            {
+                return Path.Combine(config.Directories.Output, HISTORY_FILE_NAME);
+            }
+        }
+    }
+}
+
+ 

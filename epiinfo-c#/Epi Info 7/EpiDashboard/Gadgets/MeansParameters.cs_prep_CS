@@ -1,0 +1,46 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Epi;
+using Epi.Fields;
+
+namespace EpiDashboard
+{
+    public class MeansParameters : FrequencyParametersBase
+    {
+        public bool ShowANOVA { get {return _ShowANOVA; } set{ _ShowANOVA=value; } } bool _ShowANOVA;
+        public bool ShowMaxCol { get {return _ShowMaxCol; } set{ _ShowMaxCol=value; } } bool _ShowMaxCol;
+        public bool ShowModeCol { get {return _ShowModeCol; } set{ _ShowModeCol=value; } } bool _ShowModeCol;
+        public bool ShowMeanCol { get {return _ShowMeanCol; } set{ _ShowMeanCol=value; } } bool _ShowMeanCol;
+        public bool ShowObservationsCol { get {return _ShowObservationsCol; } set{ _ShowObservationsCol=value; } } bool _ShowObservationsCol;
+        public bool ShowVarianceCol { get {return _ShowVarianceCol; } set{ _ShowVarianceCol=value; } } bool _ShowVarianceCol;
+        public bool ShowStdDevCol { get {return _ShowStdDevCol; } set{ _ShowStdDevCol=value; } } bool _ShowStdDevCol;
+        public bool ShowMinCol { get {return _ShowMinCol; } set{ _ShowMinCol=value; } } bool _ShowMinCol;
+        public bool Show25PercentCol { get {return _Show25PercentCol; } set{ _Show25PercentCol=value; } } bool _Show25PercentCol;
+        public bool ShowMedianCol { get {return _ShowMedianCol; } set{ _ShowMedianCol=value; } } bool _ShowMedianCol;
+        public bool Show75PercentCol { get {return _Show75PercentCol; } set{ _Show75PercentCol=value; } } bool _Show75PercentCol;
+        public bool ShowTotalCol { get {return _ShowTotalCol; } set{ _ShowTotalCol=value; } } bool _ShowTotalCol;
+        public List columnsToHide;
+
+        public MeansParameters()
+            : base()
+        {
+            ShowANOVA = true;
+            ShowMaxCol = true;
+            ShowModeCol = true;
+            ShowMeanCol = true;
+            ShowObservationsCol = true;
+            ShowVarianceCol = true;
+            ShowStdDevCol = true;
+            ShowMinCol = true;
+            Show25PercentCol = true;
+            ShowMedianCol = true;
+            Show75PercentCol = true;
+            ShowTotalCol = true;
+            columnsToHide = new List();
+        }
+    }
+}
+
+ 

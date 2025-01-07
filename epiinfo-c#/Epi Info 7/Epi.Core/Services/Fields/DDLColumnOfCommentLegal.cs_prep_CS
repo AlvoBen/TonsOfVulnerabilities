@@ -1,0 +1,71 @@
+﻿using System;
+using System.Data;
+
+namespace Epi.Fields
+{
+
+
+
+    public class DDLColumnOfCommentLegal : DDLColumnOfLegalValues
+    {
+        //Private Members
+        //
+
+        //Constructors
+
+
+
+
+        public DDLColumnOfCommentLegal(GridField grid)
+            : base(grid)
+        {
+            this.GridColumnType = MetaFieldType.CommentLegal;
+        }
+
+
+
+
+
+
+        public DDLColumnOfCommentLegal(DataRow gridRow, GridField grid)
+            : base(gridRow, grid)
+        {
+            this.GridColumnType = MetaFieldType.CommentLegal;
+        }
+
+        //
+
+        //Public Properties
+        //
+        //protected methods
+
+
+
+
+        protected override void InsertColumn()
+        {
+            Id = GetMetadata().CreateGridColumn(this);
+            base.OnColumnInserted();
+        }
+
+
+
+
+        protected override void DeleteColumn()
+        {
+            GetMetadata().DeleteGridColumn(this);
+        }
+
+
+
+
+        protected override void UpdateColumn()
+        {
+            GetMetadata().UpdateGridColumn(this);
+        }
+
+        //
+    }
+}
+
+ 

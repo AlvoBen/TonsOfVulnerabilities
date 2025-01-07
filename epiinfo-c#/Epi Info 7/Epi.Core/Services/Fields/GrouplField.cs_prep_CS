@@ -1,0 +1,291 @@
+﻿//Namespaces
+using System;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Xml;
+using Epi;
+//
+
+namespace Epi.Fields
+{
+
+
+
+ public class GroupField : FieldWithoutSeparatePrompt
+ {
+  //Private Members
+        private XmlElement viewElement;
+        private XmlNode fieldNode;
+        private System.Drawing.Color backgroundColor;
+        private string childFieldNames;
+        private BackgroundWorker _updater;
+        private BackgroundWorker _inserter;
+  //Private Members
+
+  //Constructors
+
+
+
+
+  public GroupField(Page page) : base(page)
+  {
+  }
+
+
+
+
+
+        public GroupField(DataRow row, Page page)
+            : base(page)
+        {
+            LoadFromRow(row);
+            this.Page = page;
+        }
+
+
+
+
+
+
+        public GroupField(Page page, XmlElement viewElement)
+            : base(page)
+        {
+            this.viewElement = viewElement;
+            this.Page = page;
+        }
+
+
+
+
+
+  public GroupField(View view) : base(view)
+  {
+  }
+
+
+
+
+
+
+        public GroupField(View view, XmlNode fieldNode)
+            : base(view)
+        {
+            this.fieldNode = fieldNode;
+
+        }
+
+  //Constructors
+
+  //Public Events
+  //
+
+        //Public Properties
+
+
+
+        public override MetaFieldType FieldType
+        {
+            get
+            {
+                return MetaFieldType.Group;
+            }
+        }
+
+
+
+
+        public System.Drawing.Color BackgroundColor
+        {
+            get
+            {
+                if (backgroundColor.IsEmpty == true)
+                {
+                    return SystemColors.Window;
+                }
+                else
+                {
+                    return backgroundColor;
+                }
+            }
+            set
+            {
+                backgroundColor = value;
+            }
+        }
+        public string ChildFieldNames
+        {
+            get
+            {
+                childFieldNames = childFieldNames == null ? string.Empty : childFieldNames;
+                return childFieldNames;
+            }
+            set { childFieldNames = value; }
+        }
+
+        public string[] ChildFieldNameArray
+        {
+            get
+            {
+                childFieldNames = childFieldNames == null ? string.Empty : childFieldNames;
+                return childFieldNames.Split( CxNull); ;
+            }
+        }
+
+        //Public Properties
+
+        //Protected Properties
+
+        //Protected Properties
+
+        //Protected Methods
+
+
+
+
+        protected override void InsertField()
+        {
+            this.Id = GetMetadata().CreateField(this);
+            base.OnFieldAdded();
+        }
+
+
+
+
+
+        protected override void UpdateField()
+        {
+            GetMetadata().UpdateField(this);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // 
+
+  //Public Methods
+
+
+
+
+        public override void LoadFromRow(DataRow row)
+        {
+            base.LoadFromRow(row);
+            if (row["BackgroundColor"].ToString().Length > 0)
+            {
+                this.BackgroundColor = Color.FromArgb((int)(row["BackgroundColor"]) + unchecked((int)0xFF000000));
+            }
+            if (row["List"].ToString().Length > 0)
+            {
+                this.childFieldNames = row["List"].ToString();
+            }
+        }
+
+        public GroupField Clone()
+        {
+            GroupField clone = (GroupField)this.MemberwiseClone();
+            base.AssignMembers(clone);
+            return clone;
+        }
+
+        public bool HasChildNamed(String possibleChildName)
+        {
+            foreach (string childName in (String[])ChildFieldNames.Split( CxNull, StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (childName.Equals(possibleChildName)) return true;
+            }
+            return false;
+        }
+
+
+
+
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
+
+
+
+  public override void Delete()
+  {
+            GetMetadata().DeleteField(this);
+            Page.GroupFields.Remove(this);
+            view.MustRefreshFieldCollection = true;
+        }
+  // 
+
+  //Event Handlers
+  //
+
+
+
+
+        public XmlElement ViewElement
+        {
+            get
+            {
+                return viewElement;
+            }
+            set
+            {
+                viewElement = value;
+            }
+        }
+ }
+}
+
+ 

@@ -1,0 +1,184 @@
+﻿//Namespaces
+
+using System;
+using System.ComponentModel;
+using System.Data;
+using System.Xml;
+using Epi;
+
+// 
+
+namespace Epi.Fields
+{
+
+
+
+ public class DDLFieldOfCommentLegal : TableBasedDropDownField
+    {
+        //Private Data Members
+
+        private XmlElement viewElement;
+        private XmlNode fieldNode;
+        private BackgroundWorker _updater;
+        private BackgroundWorker _inserter;
+
+        //
+
+        //Constructors
+
+
+
+
+
+        public DDLFieldOfCommentLegal(Page page) : base(page)
+  {
+  }
+
+
+
+
+
+  public DDLFieldOfCommentLegal(View view) : base(view)
+  {
+  }
+
+
+
+
+
+
+        public DDLFieldOfCommentLegal(Page page, XmlElement viewElement)
+            : base(page)
+        {
+            this.viewElement = viewElement;
+        }
+
+
+
+
+
+
+        public DDLFieldOfCommentLegal(View view, XmlNode fieldNode)
+            : base(view)
+        {
+            this.fieldNode = fieldNode;
+            this.view.Project.Metadata.GetFieldData(this, this.fieldNode);
+        }
+
+  //Constructors
+
+  //Public Events
+  //
+
+        //Public Properties
+
+
+
+        public override MetaFieldType FieldType
+        {
+            get
+            {
+                return MetaFieldType.CommentLegal;
+            }
+        }
+
+
+
+
+        public override object CurrentRecordValueObject
+        {
+            get
+            {
+                if (base.currentRecordValueObject == null)
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    return base.currentRecordValueObject;
+                }
+            }
+            set
+            {
+                base.currentRecordValueObject = value;
+            }
+        }
+
+
+
+
+        public override string CurrentRecordValueString
+        {
+            get
+            {
+                if (base.currentRecordValueObject == null || base.currentRecordValueObject is System.DBNull || string.IsNullOrEmpty((string)base.currentRecordValueObject) == true)
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    return (string)base.currentRecordValueObject;
+                }
+            }
+            set
+            {
+                int firstHyphenIndex = value.Contains("-") ? value.IndexOf('-') : value.Length;
+                string comment = value.Substring(0, (value.Length - (value.Length - firstHyphenIndex)));
+                base.currentRecordValueObject = comment;
+            }
+        }
+
+        //Public Properties
+
+  //Public Methods
+
+  //
+
+  //Private Methods
+
+
+
+
+        protected override void InsertField()
+        {
+            this.Id = GetMetadata().CreateField(this);
+            base.OnFieldAdded();
+        }
+
+
+
+
+
+        protected override void UpdateField()
+        {
+            GetMetadata().UpdateField(this);
+        }
+
+  //
+
+  //Event Handlers
+  //Event Handlers
+
+  //Protected Methods
+
+  //
+
+
+
+
+        public XmlElement ViewElement
+        {
+            get
+            {
+                return viewElement;
+            }
+            set
+            {
+                viewElement = value;
+            }
+        }
+
+
+ }
+}
+ 

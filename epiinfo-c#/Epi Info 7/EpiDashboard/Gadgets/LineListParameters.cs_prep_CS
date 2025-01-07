@@ -1,0 +1,35 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Epi;
+using Epi.Fields;
+
+namespace EpiDashboard
+{
+    public class LineListParameters : GadgetParametersBase
+    {
+        public bool SortColumnsByTabOrder { get {return _SortColumnsByTabOrder; } set{ _SortColumnsByTabOrder=value; } } bool _SortColumnsByTabOrder;
+        public bool UsePromptsForColumnNames { get {return _UsePromptsForColumnNames; } set{ _UsePromptsForColumnNames=value; } } bool _UsePromptsForColumnNames;
+        public bool ShowColumnHeadings { get {return _ShowColumnHeadings; } set{ _ShowColumnHeadings=value; } } bool _ShowColumnHeadings;
+        public bool ShowLineColumn { get {return _ShowLineColumn; } set{ _ShowLineColumn=value; } } bool _ShowLineColumn;
+        public bool ShowNullLabels { get {return _ShowNullLabels; } set{ _ShowNullLabels=value; } } bool _ShowNullLabels;
+        public string PrimaryGroupField { get {return _PrimaryGroupField; } set{ _PrimaryGroupField=value; } } string _PrimaryGroupField;
+        public string SecondaryGroupField { get {return _SecondaryGroupField; } set{ _SecondaryGroupField=value; } } string _SecondaryGroupField;
+
+        public LineListParameters()
+            : base()
+        {
+            SortColumnsByTabOrder = false;
+            UsePromptsForColumnNames = false;
+            ShowColumnHeadings = true;
+            ShowLineColumn = true;
+            ShowNullLabels = true;
+            PrimaryGroupField = String.Empty;
+            SecondaryGroupField = String.Empty;
+            GadgetTitle = "Line List";
+        }
+    }
+}
+
+ 

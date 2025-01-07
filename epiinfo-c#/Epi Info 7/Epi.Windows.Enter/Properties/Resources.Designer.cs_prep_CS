@@ -1,0 +1,135 @@
+﻿
+
+
+
+
+
+
+
+
+
+namespace Epi.Enter.Properties {
+    using System;
+
+
+
+
+
+
+
+
+
+    [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [        System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    internal class Resources {
+
+        private static         System.Resources.ResourceManager resourceMan;
+
+        private static         System.Globalization.CultureInfo resourceCulture;
+
+        [        System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        internal Resources() {
+        }
+
+
+
+
+        [        System.ComponentModel.EditorBrowsableAttribute(        System.ComponentModel.EditorBrowsableState.Advanced)]
+        internal static         System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
+                            System.Resources.ResourceManager temp = new         System.Resources.ResourceManager("Epi.Enter.Properties.Resources", typeof(Resources).Assembly);
+                    resourceMan = temp;
+                }
+                return resourceMan;
+            }
+        }
+
+
+
+
+
+        [        System.ComponentModel.EditorBrowsableAttribute(        System.ComponentModel.EditorBrowsableState.Advanced)]
+        internal static         System.Globalization.CultureInfo Culture {
+            get {
+                return resourceCulture;
+            }
+            set {
+                resourceCulture = value;
+            }
+        }
+
+
+
+
+        internal static System.Drawing.Bitmap android_icon {
+            get {
+                object obj = ResourceManager.GetObject("android_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+
+
+
+        internal static System.Drawing.Bitmap delete_icon {
+            get {
+                object obj = ResourceManager.GetObject("delete_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+
+
+
+        internal static System.Drawing.Bitmap docs_logo {
+            get {
+                object obj = ResourceManager.GetObject("docs_logo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+
+
+
+        internal static System.Drawing.Bitmap imageField_Icons {
+            get {
+                object obj = ResourceManager.GetObject("imageField_Icons", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+
+
+
+        internal static byte[] MarkupCursor {
+            get {
+                object obj = ResourceManager.GetObject("MarkupCursor", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+
+
+
+
+        internal static System.Drawing.Bitmap SP_Logo {
+            get {
+                object obj = ResourceManager.GetObject("SP_Logo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+
+
+
+        internal static System.Drawing.Bitmap warning {
+            get {
+                object obj = ResourceManager.GetObject("warning", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+    }
+}
+
+ 

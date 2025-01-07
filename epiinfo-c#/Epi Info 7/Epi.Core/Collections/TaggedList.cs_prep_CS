@@ -1,0 +1,75 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Epi.Collections
+{
+
+
+
+    public class TaggedList : List
+    {
+        //Protected Attributes
+
+
+
+        protected List tags = null;
+        //Protected Attributes
+
+        //Constructors
+
+
+
+        public TaggedList()
+        {
+            tags = new List();
+        }
+        //Constructors
+
+        //Public Methods
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public void Add(ElementType element, TagType tag)
+        {
+            base.Add(element);
+            tags.Add(tag);
+        }
+
+
+
+
+        public new void Clear()
+        {
+            base.Clear();
+            tags.Clear();
+        }
+
+
+
+
+
+
+        public TagType GetTag(ElementType element)
+        {
+            int index = IndexOf(element);
+            return tags[index];
+        }
+
+        //Public Methods
+
+    }
+}
+ 

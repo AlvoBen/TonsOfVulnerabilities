@@ -1,0 +1,68 @@
+﻿
+namespace Epi
+{
+
+
+
+    public        class FileExtensions
+    {
+
+
+
+        public const string CONFIG = ".config";
+
+
+
+        public const string DATA = ".data";
+
+
+
+        public const string EPI_PROJ = ".prj";
+
+
+
+        public const string MNU = ".mnu";
+
+
+
+        public const string Pgm = ".pgm7";
+
+
+
+        public const string DLL = ".dll";
+
+
+
+        public const string MDB = ".mdb";
+
+
+
+        public const string MDB2007 = ".accdb";
+
+
+
+        public const string XLS = ".xls";
+
+
+
+        public const string XLS2007 = ".xlsx";
+
+
+
+        public const string XML = ".xml";
+
+
+
+
+
+
+
+        public static bool HasExtension(string fileName, string fileExtension)
+        {
+            System.IO.FileInfo fileNameInfo = new System.IO.FileInfo(fileName);
+
+            return (string.Compare(fileNameInfo.Extension, fileExtension, true) == 0);
+        }
+    } 
+}
+ 

@@ -1,0 +1,499 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Text;
+using System.Xml;
+using Epi;
+using Epi.Core;
+
+namespace Epi.WPF.Dashboard
+{
+
+
+
+    public class FilterCondition
+    {
+        //Private Members
+        private string condition;
+        private string friendlyCondition;
+        private string columnName;
+        private string rawColumnName;
+        private string columnType;
+        private string operand;
+        private string friendlyOperand;
+        private string value;
+        private string friendlyValue;
+        private string highValue;
+        private string friendlyHighValue;
+        private string lowValue;
+        private string friendlyLowValue;
+        private bool isBetween;
+        private bool isEnabled;
+        //
+
+        //Constructors
+
+
+
+        public FilterCondition()
+        {
+        }
+
+
+
+
+
+
+
+
+
+
+
+        public FilterCondition(string friendlyCondition, string columnName, string rawColumnName, string columnType, string operand, string friendlyOperand, string value, string friendlyValue)
+        {
+            this.isBetween = false;
+            this.isEnabled = true;
+            this.columnName = columnName;
+            this.columnType = columnType;
+            this.operand = operand;
+            this.friendlyOperand = friendlyOperand;
+            this.value = value;
+            this.friendlyValue = friendlyValue;
+            this.highValue = string.Empty;
+            this.lowValue = string.Empty;
+            this.friendlyCondition = friendlyCondition;
+            this.rawColumnName = rawColumnName;
+
+            SetupFilterCondition();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public FilterCondition(string friendlyCondition, string columnName, string rawColumnName, string columnType, string operand, string friendlyOperand, string lowValue, string highValue, string friendlyLowValue, string friendlyHighValue)
+        {
+            this.isBetween = true;
+            this.isEnabled = true;
+            this.columnName = columnName;
+            this.columnType = columnType;
+            this.operand = operand;
+            this.friendlyOperand = friendlyOperand;
+            this.value = string.Empty;
+            this.friendlyValue = string.Empty;
+            this.highValue = highValue;
+            this.lowValue = lowValue;
+            this.friendlyHighValue = friendlyHighValue;
+            this.friendlyLowValue = friendlyLowValue;
+            this.friendlyCondition = friendlyCondition;
+            this.rawColumnName = rawColumnName;
+
+            SetupFilterCondition();
+        }
+        //
+
+        //Public Properties
+
+
+
+        public string FriendlyCondition
+        {
+            get
+            {
+                return this.friendlyCondition;
+            }
+        }
+
+
+
+
+        public string Condition
+        {
+            get
+            {
+                return this.condition;
+            }
+        }
+
+
+
+
+        public string ColumnName
+        {
+            get
+            {
+                return this.columnName;
+            }
+        }
+
+
+
+
+        public string ColumnType
+        {
+            get
+            {
+                return this.columnType;
+            }
+        }
+
+
+
+
+        public string RawColumnName
+        {
+            get
+            {
+                return this.rawColumnName;
+            }
+        }
+
+
+
+
+        public string Operand
+        {
+            get
+            {
+                return this.operand;
+            }
+        }
+
+
+
+
+        public string FriendlyOperand
+        {
+            get
+            {
+                return this.friendlyOperand;
+            }
+        }
+
+
+
+
+        public string Value
+        {
+            get
+            {
+                return this.value;
+            }
+        }
+
+
+
+
+        public string FriendlyValue
+        {
+            get
+            {
+                return this.friendlyValue;
+            }
+        }
+
+
+
+
+        public string HighValue
+        {
+            get
+            {
+                return this.highValue;
+            }
+        }
+
+
+
+
+        public string FriendlyHighValue
+        {
+            get
+            {
+                return this.friendlyHighValue;
+            }
+        }
+
+
+
+
+        public string FriendlyLowValue
+        {
+            get
+            {
+                return this.friendlyLowValue;
+            }
+        }
+
+
+
+
+        public string LowValue
+        {
+            get
+            {
+                return this.lowValue;
+            }
+        }
+
+
+
+
+        public bool IsBetween
+        {
+            get
+            {
+                return this.isBetween;
+            }
+            set
+            {
+                this.isBetween = value;
+            }
+        }
+
+
+
+
+        public bool IsEnabled
+        {
+            get
+            {
+                return this.isEnabled;
+            }
+            set
+            {
+                this.isEnabled = value;
+            }
+        }
+        //
+
+        //Public Methods
+
+
+
+
+        public override string ToString()
+        {
+            return this.FriendlyCondition;
+        }
+
+
+
+
+
+
+
+        public XmlNode Serialize(XmlDocument doc, string joinType)
+        {
+            string xmlFriendlyOperand = operand;
+            string xmlFriendlyCondition = condition;
+
+            switch (operand)
+            {
+                case ">":
+                    xmlFriendlyOperand = "&gt;";
+                    break;
+                case ">=":
+                    xmlFriendlyOperand = "&gt;=";
+                    break;
+                case "<":
+                    xmlFriendlyOperand = "&lt;";
+                    break;
+                case "<=":
+                    xmlFriendlyOperand = "&lt;=";
+                    break;
+            }
+
+            xmlFriendlyCondition = xmlFriendlyCondition.Replace("<", "&lt;");
+            xmlFriendlyCondition = xmlFriendlyCondition.Replace(">", "&gt;");
+
+            if (ColumnType.Equals("System.DateTime"))
+            {
+                if(IsBetween)
+                {
+                    highValue = "#" + DateTime.Parse(highValue.Trim('#'), System.Globalization.CultureInfo.InvariantCulture).ToString("s") + "#";
+                    lowValue = "#" + DateTime.Parse(lowValue.Trim('#'), System.Globalization.CultureInfo.InvariantCulture).ToString("s") + "#";
+
+                    friendlyHighValue = DateTime.Parse(friendlyHighValue, System.Globalization.CultureInfo.CurrentCulture).ToString("d", System.Globalization.CultureInfo.InvariantCulture);
+                    friendlyLowValue = DateTime.Parse(friendlyLowValue, System.Globalization.CultureInfo.CurrentCulture).ToString("d", System.Globalization.CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    value = "#" + DateTime.Parse(value.Trim('#')).ToString("s") + "#";
+
+                    friendlyValue = DateTime.Parse(friendlyValue, System.Globalization.CultureInfo.CurrentCulture).ToString("d", System.Globalization.CultureInfo.InvariantCulture);
+                }
+            }
+
+            string xmlString =
+            "" + xmlFriendlyCondition + "</condition>" +
+            "" + friendlyCondition + "</friendlyCondition>" +
+            "" + columnName + "</columnName>" +
+            "" + columnType + "</columnType>" +
+            "" + rawColumnName + "</rawColumnName>" +
+            "" + xmlFriendlyOperand + "</operand>" +
+            "" + friendlyOperand + "</friendlyOperand>" +
+            "" + value + "</value>" +
+            "" + friendlyValue + "</friendlyValue>" +
+            "" + highValue + "</highValue>" +
+            "" + friendlyHighValue + "</friendlyHighValue>" +
+            "" + lowValue + "</lowValue>" +
+            "" + friendlyLowValue + "</friendlyLowValue>" +
+            "" + isBetween.ToString().ToLower() + "</isBetween>" +
+            "" + isEnabled.ToString().ToLower() + "</isEnabled>" +
+            "" + joinType.ToString() + "</joinType>";
+
+            System.Xml.XmlElement element = doc.CreateElement("filterCondition");
+            element.InnerXml = xmlString;
+
+            return element;
+        }
+
+
+
+
+        public void CreateFromXml(XmlElement element)
+        {
+            foreach (XmlElement child in element.ChildNodes)
+            {
+                if (child.Name.Equals("condition"))
+                {
+                    this.condition = child.InnerText.Replace("&gt;", ">").Replace("&lt;", "<");
+                }
+                else if (child.Name.Equals("friendlyCondition"))
+                {
+                    this.friendlyCondition = child.InnerText;
+                }
+                else if (child.Name.Equals("columnName"))
+                {
+                    this.columnName = child.InnerText;
+                }
+                else if (child.Name.Equals("columnType"))
+                {
+                    this.columnType = child.InnerText;
+                }
+                else if (child.Name.Equals("rawColumnName"))
+                {
+                    this.rawColumnName = child.InnerText;
+                }
+                else if (child.Name.Equals("operand"))
+                {
+                    this.operand = child.InnerText.Replace("&gt;", ">").Replace("&lt;", "<");
+                }
+                else if (child.Name.Equals("friendlyOperand"))
+                {
+                    this.friendlyOperand = child.InnerText;
+                }
+                else if (child.Name.Equals("value"))
+                {
+                    this.value = child.InnerText;
+                }
+                else if (child.Name.Equals("friendlyValue"))
+                {
+                    this.friendlyValue = child.InnerText;
+                }
+                else if (child.Name.Equals("highValue"))
+                {
+                    this.highValue = child.InnerText;
+                }
+                else if (child.Name.Equals("friendlyHighValue"))
+                {
+                    this.friendlyHighValue = child.InnerText;
+                }
+                else if (child.Name.Equals("lowValue"))
+                {
+                    this.lowValue = child.InnerText;
+                }
+                else if (child.Name.Equals("friendlyLowValue"))
+                {
+                    this.friendlyLowValue = child.InnerText;
+                }
+                else if (child.Name.Equals("isBetween"))
+                {
+                    this.isBetween = bool.Parse(child.InnerText);
+                }
+                else if (child.Name.Equals("isEnabled"))
+                {
+                    this.isEnabled = bool.Parse(child.InnerText);
+                }
+            }
+
+            if (this.ColumnType.Equals("System.DateTime"))
+            {
+                if (IsBetween)
+                {
+                    this.highValue = "#" + DateTime.Parse(this.highValue.Trim('#')).ToString(System.Globalization.CultureInfo.InvariantCulture) + "#";
+                    this.lowValue = "#" + DateTime.Parse(this.lowValue.Trim('#')).ToString(System.Globalization.CultureInfo.InvariantCulture) + "#";
+
+                    this.friendlyLowValue = DateTime.Parse(this.friendlyLowValue, System.Globalization.CultureInfo.InvariantCulture).ToString("d", System.Globalization.CultureInfo.CurrentCulture);
+                    this.friendlyHighValue = DateTime.Parse(this.friendlyHighValue, System.Globalization.CultureInfo.InvariantCulture).ToString("d", System.Globalization.CultureInfo.CurrentCulture);
+
+                    this.friendlyCondition = string.Format(SharedStrings.FRIENDLY_CONDITION_DATA_FILTER_BETWEEN, columnName, friendlyLowValue, friendlyHighValue);
+                }
+                else
+                {
+                    this.value = "#" + DateTime.Parse(this.value.Trim('#')).ToString(System.Globalization.CultureInfo.InvariantCulture) + "#";
+
+                    this.friendlyValue = DateTime.Parse(this.friendlyValue, System.Globalization.CultureInfo.InvariantCulture).ToString("d", System.Globalization.CultureInfo.CurrentCulture);
+
+                    this.friendlyCondition = string.Format(SharedStrings.FRIENDLY_CONDITION_DATA_FILTER, columnName, friendlyOperand, friendlyValue);
+                }
+            }
+
+            SetupFilterCondition();
+        }
+        //
+
+        //Private Methods
+
+
+
+        private void SetupFilterCondition()
+        {
+            Configuration config = Configuration.GetNewInstance();
+            StringBuilder conditionBuilder = new StringBuilder();
+
+            conditionBuilder.Append(StringLiterals.PARANTHESES_OPEN);
+
+            if (IsBetween)
+            {
+                conditionBuilder.Append(this.ColumnName);
+                conditionBuilder.Append(StringLiterals.SPACE);
+                conditionBuilder.Append(StringLiterals.GREATER_THAN_OR_EQUAL);
+                conditionBuilder.Append(StringLiterals.SPACE);
+                conditionBuilder.Append(this.LowValue);
+                conditionBuilder.Append(StringLiterals.SPACE);
+                conditionBuilder.Append("and");
+                conditionBuilder.Append(StringLiterals.SPACE);
+                conditionBuilder.Append(this.ColumnName);
+                conditionBuilder.Append(StringLiterals.SPACE);
+                conditionBuilder.Append(StringLiterals.LESS_THAN_OR_EQUAL);
+                conditionBuilder.Append(StringLiterals.SPACE);
+                conditionBuilder.Append(this.HighValue);
+            }
+            else
+            {
+                conditionBuilder.Append(this.ColumnName);
+                conditionBuilder.Append(StringLiterals.SPACE);
+                conditionBuilder.Append(this.Operand);
+                conditionBuilder.Append(StringLiterals.SPACE);
+                conditionBuilder.Append(this.Value);
+            }
+
+            conditionBuilder.Append(StringLiterals.PARANTHESES_CLOSE);
+
+            this.condition = conditionBuilder.ToString();
+        }
+        //
+    }
+}
+
+ 

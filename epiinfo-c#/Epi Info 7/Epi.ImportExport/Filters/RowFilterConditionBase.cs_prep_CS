@@ -1,0 +1,150 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Xml;
+using Epi.Data;
+
+namespace Epi.ImportExport
+{
+
+
+
+    public abstract class RowFilterConditionBase : IRowFilterCondition
+    {
+        //Constructors
+
+
+
+        public RowFilterConditionBase()
+        {
+        }
+
+
+
+
+        public RowFilterConditionBase(string sql, string columnName, string paramName, object value)
+        {
+            this.Sql = sql;
+            this.ColumnName = columnName;
+            this.ParameterName = paramName;
+            this.Value = value;
+            ValidateCondition();
+            Construct();
+        }
+        //
+
+        //Public Properties
+
+
+
+        public string Description { get {return _Description; } set{ _Description=value; } } string _Description;
+
+
+
+
+        public string ColumnName { get {return _ColumnName; } set{ _ColumnName=value; } } string _ColumnName;
+
+
+
+
+        public string Sql { get {return _Sql; } set{ _Sql=value; } } string _Sql;
+
+
+
+
+        public string ParameterName { get {return _ParameterName; } set{ _ParameterName=value; } } string _ParameterName;
+
+
+
+
+        public object Value { get {return _Value; } set{ _Value=value; } } object _Value;
+
+
+
+
+        public QueryParameter Parameter { get {return _Parameter; } set{ _Parameter=value; } } QueryParameter _Parameter;
+        //
+
+        //Public Methods
+
+
+
+
+
+        public virtual XmlNode Serialize(XmlDocument doc)
+        {
+            string xmlString =
+            "" + this.Description + "</description>" +
+            "" + this.Sql.ToString().Replace("<", "&lt;").Replace(">", "&gt;") + "</sql>" +
+            "" + this.Value + "</value>" +
+            "" + this.ColumnName.Replace("<", "&lt;").Replace(">", "&gt;") + "</columnName>" +
+            "" + this.ParameterName + "</parameterName>";
+
+            xmlString += "";
+
+            xmlString += "" + ((int)this.Parameter.DbType).ToString() + "</dbType>";
+            xmlString += "" + this.Parameter.ParameterName + "</name>";
+            xmlString += "" + this.Parameter.Value + "</value>";
+
+            xmlString += "</queryParameter>";
+
+            System.Xml.XmlElement element = doc.CreateElement("rowFilterCondition");
+            element.InnerXml = xmlString;
+
+            System.Xml.XmlAttribute type = doc.CreateAttribute("filterType");
+            type.Value = this.GetType().ToString(); //"Epi.ImportExport.RowFilterConditionBase";
+            element.Attributes.Append(type);
+
+            return element;
+        }
+
+
+
+
+
+        public virtual void CreateFromXml(XmlElement element)
+        {
+            foreach (XmlElement child in element.ChildNodes)
+            {
+                switch (child.Name.ToLower())
+                {
+                    case "description":
+                        this.Description = child.InnerText;
+                        break;
+                    case "columnname":
+                        this.ColumnName = child.InnerText.Replace("&gt;", ">").Replace("&lt;", "<");
+                        break;
+                    case "sql":
+                        this.Sql = child.InnerText.Replace("&gt;", ">").Replace("&lt;", "<");
+                        break;
+                    case "parametername":
+                        this.ParameterName = child.InnerText;
+                        break;
+                    case "value":
+                        this.Value = child.InnerText;
+                        break;
+                }
+            }
+
+            ValidateCondition();
+            Construct();
+        }
+        //
+
+        //Protected Methods
+
+
+
+
+        protected abstract void Construct();
+
+
+
+
+        protected abstract void ValidateCondition();
+
+        //
+    }
+}
+
+ 

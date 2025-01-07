@@ -1,0 +1,45 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Epi
+{
+
+
+
+    public class StandardVariable : VariableBase, ISetBasedVariable
+    {
+
+
+
+
+
+        public StandardVariable(string name, DataType dataType)
+            : base(name, dataType, VariableType.Standard)
+        {
+        }
+
+        private string sourceColumn = string.Empty;
+
+
+
+        protected object currentRecordValueObject = null;
+
+
+
+
+        public virtual object CurrentRecordValueObject
+        {
+            get
+            {
+                return currentRecordValueObject;
+            }
+            set
+            {
+                currentRecordValueObject = value;
+            }
+        }
+    }
+}
+
+ 

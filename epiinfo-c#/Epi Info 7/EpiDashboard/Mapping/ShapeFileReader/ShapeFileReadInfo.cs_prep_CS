@@ -1,0 +1,134 @@
+﻿using System;
+using System.Net;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Shapes;
+using System.Text;
+using System.IO;
+
+namespace EpiDashboard.Mapping.ShapeFileReader
+{
+
+
+
+
+    public class ShapeFileReadInfo
+    {
+        //Private fields
+        private string fileName;
+        private ShapeFile shapeFile;
+        private Stream stream;
+        private int numBytesRead;
+        private int recordIndex;
+        //Private fields
+
+        //Constructor
+
+
+
+        public ShapeFileReadInfo()
+        {
+        }
+        //Constructor
+
+        //Properties
+
+
+
+        public string FileName
+        {
+            get
+            {
+                return this.fileName;
+            }
+            set
+            {
+                this.fileName = value;
+            }
+        }
+
+
+
+
+        public ShapeFile ShapeFile
+        {
+            get
+            {
+                return this.shapeFile;
+            }
+            set
+            {
+                this.shapeFile = value;
+            }
+        }
+
+
+
+
+        public Stream Stream
+        {
+            get
+            {
+                return this.stream;
+            }
+            set
+            {
+                this.stream = value;
+            }
+        }
+
+
+
+
+
+        public int NumberOfBytesRead
+        {
+            get
+            {
+                return this.numBytesRead;
+            }
+            set
+            {
+                this.numBytesRead = value;
+            }
+        }
+
+
+
+
+        public int RecordIndex
+        {
+            get
+            {
+                return this.recordIndex;
+            }
+            set
+            {
+                this.recordIndex = value;
+            }
+        }
+        //Properties
+
+        //Public methods
+
+
+
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat( "ShapeFileReadInfo: FileName={0}, ", this.fileName );
+            sb.AppendFormat( "NumberOfBytesRead={0}, RecordIndex={1}", this.numBytesRead, this.recordIndex );
+
+            return sb.ToString();
+        }
+        //Public methods
+    }
+}
+
+ 

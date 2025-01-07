@@ -1,0 +1,206 @@
+﻿//Namespaces
+
+using System;
+using System.ComponentModel;
+using System.Data;
+using System.Xml;
+using Epi;
+
+// 
+
+namespace Epi.Fields
+{
+
+
+
+
+ public class LabelField : FieldWithoutSeparatePrompt
+ {
+
+  //Private Members
+
+        private XmlElement viewElement;
+        private XmlNode fieldNode;
+        private BackgroundWorker _updater;
+        private BackgroundWorker _inserter;
+  //Private Members
+
+  //Constructors
+
+
+
+
+  public LabelField(Page page) : base(page)
+  {
+  }
+
+
+
+
+
+
+        public LabelField(Page page, XmlElement viewElement)
+            : base(page)
+        {
+            this.viewElement = viewElement;
+            this.Page = page;
+        }
+
+
+
+
+
+  public LabelField(View view) : base(view)
+  {
+  }
+
+
+
+
+
+
+        public LabelField(View view, XmlNode fieldNode)
+            : base(view)
+        {
+            this.fieldNode = fieldNode;
+            this.view.Project.Metadata.GetFieldData(this, this.fieldNode);
+        }
+
+        public LabelField Clone()
+        {
+            LabelField clone = (LabelField)this.MemberwiseClone();
+            base.AssignMembers(clone);
+            return clone;
+        }
+
+  //Constructors
+
+  //Public Events
+  //
+
+        //Public Properties
+
+
+
+        public override MetaFieldType FieldType
+        {
+            get
+            {
+                return MetaFieldType.LabelTitle;
+            }
+        }
+        //Public Properties
+
+        //Protected Properties
+
+        //Protected Properties
+
+        //Protected Methods
+
+
+
+
+        protected override void InsertField()
+        {
+            this.Id = GetMetadata().CreateField(this);
+            base.OnFieldAdded();
+        }
+
+
+
+
+
+        protected override void UpdateField()
+        {
+            GetMetadata().UpdateField(this);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // 
+
+  //Public Methods
+
+
+
+  public override void Delete()
+  {
+            GetMetadata().DeleteField(this);
+            view.MustRefreshFieldCollection = true;
+  }
+  // 
+
+  //Event Handlers
+  //
+
+
+
+
+        public XmlElement ViewElement
+        {
+            get
+            {
+                return viewElement;
+            }
+            set
+            {
+                viewElement = value;
+            }
+        }
+
+ }
+}
+
+ 

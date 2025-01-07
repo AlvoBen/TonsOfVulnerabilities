@@ -1,0 +1,279 @@
+﻿using System;
+using System.ComponentModel;
+using System.Globalization;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows.Forms;
+
+
+namespace Epi.Windows.Enter.Controls
+{
+
+
+
+
+  [ComVisible(false)]
+  public class DateTimePicker : System.Windows.Forms.DateTimePicker
+  {
+    //Member variables
+
+    private bool mIsNull;
+
+
+    private string mNullValue;
+
+
+
+
+    private DateTimePickerFormat mFormat = DateTimePickerFormat.Long;
+
+
+    private string mCustomFormat;
+
+
+    private string mFormatAsString;
+    //
+
+    //Constructor
+
+
+
+    public DateTimePicker() : base()
+    {
+      base.Format = DateTimePickerFormat.Custom;
+      mNullValue = " ";
+      Format = DateTimePickerFormat.Long;
+    }
+    //
+
+    //Public properties
+
+
+
+
+
+
+
+
+
+
+
+
+    [Bindable(true)]
+    [Browsable(false)]
+    public new Object Value
+    {
+      get
+      {
+          if (mIsNull)
+          {
+              return null;
+          }
+          else
+          {
+              return base.Value;
+          }
+      }
+      set
+      {
+        if (value == null || value == DBNull.Value)
+        {
+          SetToNullValue();
+        }
+        else
+        {
+          SetToDateTimeValue();
+          base.Value = (DateTime)value;
+        }
+      }
+    }
+
+
+
+
+
+
+    [Browsable(true)]
+    [DefaultValue(DateTimePickerFormat.Long), TypeConverter(typeof(Enum))]
+    public new DateTimePickerFormat Format
+    {
+      get { return mFormat; }
+      set
+      {
+        mFormat = value;
+        if (!mIsNull)
+        {
+            SetFormat();
+        }
+        OnFormatChanged(EventArgs.Empty);
+      }
+    }
+
+
+
+
+
+
+    public new String CustomFormat
+    {
+      get { return mCustomFormat; }
+      set { mCustomFormat = value; }
+    }
+
+
+
+
+
+
+
+
+
+    [Browsable(true)]
+    [Category("Behavior")]
+    [Description("The string used to display null values in the control")]
+    [DefaultValue(" ")]
+    public String NullValue
+    {
+      get { return mNullValue; }
+      set { mNullValue = value; }
+    }
+    //
+
+    //Private methods/properties
+
+
+
+    private string FormatAsString
+    {
+      get { return mFormatAsString; }
+      set
+      {
+        mFormatAsString = value;
+        base.CustomFormat = value; }
+    }
+
+
+
+
+    private void SetFormat()
+    {
+      CultureInfo ci = Thread.CurrentThread.CurrentCulture;
+      DateTimeFormatInfo dtf = ci.DateTimeFormat;
+      switch (mFormat)
+      {
+        case DateTimePickerFormat.Long:
+          FormatAsString = dtf.LongDatePattern;
+          break;
+        case DateTimePickerFormat.Short:
+          FormatAsString = dtf.ShortDatePattern;
+          break;
+        case DateTimePickerFormat.Time:
+          FormatAsString = dtf.ShortTimePattern;
+          break;
+        case DateTimePickerFormat.Custom:
+          FormatAsString = this.CustomFormat;
+          break;
+      }
+    }
+
+
+
+
+    private void SetToNullValue()
+    {
+      mIsNull = true;
+      base.CustomFormat = (mNullValue == null || mNullValue == String.Empty) ? " " : "'" + mNullValue + "'";
+    }
+
+
+
+
+    private void SetToDateTimeValue()
+    {
+      if (mIsNull)
+      {
+        SetFormat();
+        mIsNull = false;
+        base.OnValueChanged(new EventArgs());
+      }
+    }
+    //
+
+    //Events
+
+
+
+
+    protected override void WndProc(ref Message m)
+    {
+      if (mIsNull)
+      {
+        if (m.Msg == 0x4e)                         
+        {
+          NMHDR nm = (NMHDR)m.GetLParam(typeof(NMHDR));
+          if (nm.Code == -746 || nm.Code == -722)  
+            SetToDateTimeValue();
+        }
+      }
+      base.WndProc(ref m);
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NMHDR
+    {
+      public IntPtr HwndFrom;
+      public int IdFrom;
+      public int Code;
+    }
+
+
+
+
+
+    protected override void OnKeyUp(KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Delete)
+      {
+        this.Value = null;
+        OnValueChanged(EventArgs.Empty);
+      }
+      base.OnKeyUp(e);
+    }
+
+    protected override void OnValueChanged(EventArgs eventargs)
+    {
+      base.OnValueChanged(eventargs);
+    }
+
+    protected override void OnGotFocus(EventArgs e)
+    {
+        base.OnGotFocus(e);
+        base.Focus();
+        if (this.Value == null)
+        {
+            SendKeys.SendWait("%{DOWN}");
+        }
+
+    }
+    protected override void OnLeave(EventArgs e)
+    {
+        SendKeys.Send("{ESC}");
+        base.OnLeave(e);
+    }
+
+
+    protected override void OnKeyPress(KeyPressEventArgs e)
+    {
+        if (e.KeyChar.Equals('\r') || e.KeyChar.Equals('\t'))
+        {
+            e.Handled = true;
+        }
+
+        base.OnKeyPress(e);
+    }
+
+    //
+  }
+}
+
+ 

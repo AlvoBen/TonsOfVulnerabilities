@@ -1,0 +1,265 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using Epi;
+using Epi.Core;
+using Epi.Fields;
+
+namespace Epi.WPF.Dashboard.Rules
+{
+
+
+
+
+    public class Rule_ExpressionAssign : DataAssignmentRule
+    {
+        //Private Members
+        private string expression;
+        //
+
+        //Constructors
+
+
+
+        public Rule_ExpressionAssign()
+        {
+        }
+
+
+
+
+        public Rule_ExpressionAssign(DashboardHelper dashboardHelper)
+        {
+            this.dashboardHelper = dashboardHelper;
+        }
+
+
+
+
+        public Rule_ExpressionAssign(DashboardHelper dashboardHelper, string friendlyRule, string destinationColumnName, string expression)
+        {
+            this.friendlyRule = friendlyRule;
+            this.destinationColumnName = destinationColumnName;
+            this.destinationColumnType = "System.Decimal";
+            this.DashboardHelper = dashboardHelper;
+            this.variableType = DashboardVariableType.Numeric;
+            this.expression = expression;
+        }
+
+
+
+
+        public Rule_ExpressionAssign(DashboardHelper dashboardHelper, string friendlyRule, string destinationColumnName, string destinationColumnType, string expression)
+        {
+            this.friendlyRule = friendlyRule;
+            this.destinationColumnName = destinationColumnName;
+            this.destinationColumnType = destinationColumnType;
+            this.DashboardHelper = dashboardHelper;
+
+            if (DestinationColumnType.Equals("System.String"))
+            {
+                this.variableType = DashboardVariableType.Text;
+            }
+            else
+            {
+                this.variableType = DashboardVariableType.Numeric;
+            }
+            this.expression = expression;
+        }
+        //
+
+        //Public Methods
+
+
+
+
+        public override List GetDependencies()
+        {
+            List dependencies = new List();
+
+            dependencies.Add(DestinationColumnName);
+
+            foreach (KeyValuePair kvp in dashboardHelper.TableColumnNames)
+            {
+                if (this.Expression.Contains(kvp.Key))
+                {
+                    dependencies.Add(kvp.Key);
+                }
+            }
+
+            return dependencies;
+        }
+
+        public override void SetupRule(DataTable table)
+        {
+            string destinationColumnType = this.DestinationColumnType;
+
+            DataColumn dc = new DataColumn(destinationColumnName);
+
+            if (!table.Columns.Contains(dc.ColumnName))
+            {
+                switch (destinationColumnType)
+                {
+                    case "System.Byte":
+                        dc = new DataColumn(this.DestinationColumnName, typeof(byte));
+                        break;
+                    case "System.Single":
+                    case "System.Double":
+                        dc = new DataColumn(this.DestinationColumnName, typeof(double));
+                        break;
+                    case "System.Decimal":
+                        dc = new DataColumn(this.DestinationColumnName, typeof(decimal));
+                        break;
+                    case "System.String":
+                    default:
+                        dc = new DataColumn(this.DestinationColumnName, typeof(string));
+                        break;
+                }
+
+                dc.Expression = this.expression;
+
+                try
+                {
+                    table.Columns.Add(dc);
+                }
+                catch (ArgumentException)
+                {
+                    dc = new DataColumn(DestinationColumnName);
+                    table.Columns.Add(dc);
+                }
+            }
+            else
+            {
+                dc = table.Columns[dc.ColumnName];
+                dc.Expression = this.expression;
+            }
+        }
+        //
+
+        //Public Properties
+
+
+
+        public string Expression
+        {
+            get
+            {
+                return this.expression;
+            }
+        }
+        //
+
+        //Public Methods
+
+
+
+
+        public override string ToString()
+        {
+            return this.FriendlyRule;
+        }
+        //
+
+        //Protected Methods
+
+
+
+
+
+        protected string GetDestinationColumnType(DashboardVariableType dashboardVariableType)
+        {
+            switch (dashboardVariableType)
+            {
+                case DashboardVariableType.Numeric:
+                    return "System.Single";
+                case DashboardVariableType.Text:
+                    return "System.String";
+                case DashboardVariableType.YesNo:
+                    return "System.Byte";
+                case DashboardVariableType.Date:
+                    return "System.DateTime";
+                case DashboardVariableType.None:
+                    throw new ApplicationException(SharedStrings.DASHBOARD_ERROR_INVALID_COLUMN_TYPE);
+                default:
+                    return "System.String";
+            }
+        }
+        //
+
+        //IDashboardRule Members
+
+
+
+
+
+        public override System.Xml.XmlNode Serialize(System.Xml.XmlDocument doc)
+        {
+            string xmlString =
+            "" + friendlyRule + "</friendlyRule>" +
+            "" + expression + "</expression>" +
+            "" + destinationColumnName + "</destinationColumnName>" +
+            "" + destinationColumnType + "</destinationColumnType>";
+
+            System.Xml.XmlElement element = doc.CreateElement("rule");
+            element.InnerXml = xmlString;
+
+            System.Xml.XmlAttribute order = doc.CreateAttribute("order");
+            System.Xml.XmlAttribute type = doc.CreateAttribute("ruleType");
+
+            type.Value = "Epi.WPF.Dashboard.Rules.Rule_ExpressionAssign";
+
+            element.Attributes.Append(type);
+
+            return element;
+        }
+
+
+
+
+
+        public override void CreateFromXml(System.Xml.XmlElement element)
+        {
+            foreach (XmlElement child in element.ChildNodes)
+            {
+                if (child.Name.Equals("friendlyRule"))
+                {
+                    this.friendlyRule = child.InnerText;
+                }
+                else if (child.Name.Equals("expression"))
+                {
+                    this.expression = child.InnerText;
+                }
+                else if (child.Name.Equals("destinationColumnName"))
+                {
+                    this.destinationColumnName = child.InnerText;
+                }
+                else if (child.Name.Equals("destinationColumnType"))
+                {
+                    this.destinationColumnType = child.InnerText;
+                }
+            }
+
+            if (DestinationColumnType.Equals("System.String"))
+            {
+                this.variableType = DashboardVariableType.Text;
+            }
+            else
+            {
+                this.variableType = DashboardVariableType.Numeric;
+            }
+        }
+
+
+
+
+        public override void ApplyRule(DataRow row)
+        {
+        }
+        //
+    }
+}
+
+ 

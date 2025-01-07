@@ -1,0 +1,311 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using ComponentArt.Win.DataVisualization.Charting;
+using Epi.Fields;
+using EpiDashboard;
+using EpiDashboard.Gadgets.Charting;
+
+namespace EpiDashboard.Controls.Charting
+{
+
+
+
+    public         class ParetoChart : ParetoChartBase
+    {
+
+
+        public ParetoChart(DashboardHelper dashboardHelper, ParetoChartParameters parameters, List dataList)
+        {
+            InitializeComponent();
+
+
+            ParetoChartParameters = parameters;
+            this.DashboardHelper = dashboardHelper;
+            SetChartProperties();
+            SetChartData(dataList);
+            xyChart.Legend.BorderBrush = Brushes.Gray;
+        }
+
+        protected override void SetChartProperties()
+        {
+            xyChart.AnimationOnLoad = false;
+
+            xyChart.Width = ParetoChartParameters.ChartWidth;
+            xyChart.Height = ParetoChartParameters.ChartHeight;
+
+
+            switch (ParetoChartParameters.Palette)
+            {
+                case 0:
+                    xyChart.Palette = ComponentArt.Win.DataVisualization.Palette.GetPalette("Atlantic");
+                    break;
+                case 1:
+                    xyChart.Palette = ComponentArt.Win.DataVisualization.Palette.GetPalette("Breeze");
+                    break;
+                case 2:
+                    xyChart.Palette = ComponentArt.Win.DataVisualization.Palette.GetPalette("ComponentArt");
+                    break;
+                case 3:
+                    xyChart.Palette = ComponentArt.Win.DataVisualization.Palette.GetPalette("Deep");
+                    break;
+                case 4:
+                    xyChart.Palette = ComponentArt.Win.DataVisualization.Palette.GetPalette("Earth");
+                    break;
+                case 5:
+                    xyChart.Palette = ComponentArt.Win.DataVisualization.Palette.GetPalette("Evergreen");
+                    break;
+                case 6:
+                    xyChart.Palette = ComponentArt.Win.DataVisualization.Palette.GetPalette("Heatwave");
+                    break;
+                case 7:
+                    xyChart.Palette = ComponentArt.Win.DataVisualization.Palette.GetPalette("Montreal");
+                    break;
+                case 8:
+                    xyChart.Palette = ComponentArt.Win.DataVisualization.Palette.GetPalette("Pastel");
+                    break;
+                case 9:
+                    xyChart.Palette = ComponentArt.Win.DataVisualization.Palette.GetPalette("Renaissance");
+                    break;
+                case 10:
+                    xyChart.Palette = ComponentArt.Win.DataVisualization.Palette.GetPalette("SharePoint");
+                    break;
+                case 11:
+                    xyChart.Palette = ComponentArt.Win.DataVisualization.Palette.GetPalette("Study");
+                    break;
+                default:
+                case 12:
+                    xyChart.Palette = ComponentArt.Win.DataVisualization.Palette.GetPalette("VibrantA");
+                    break;
+                case 13:
+                    xyChart.Palette = ComponentArt.Win.DataVisualization.Palette.GetPalette("VibrantB");
+                    break;
+                case 14:
+                    xyChart.Palette = ComponentArt.Win.DataVisualization.Palette.GetPalette("VibrantC");
+                    break;
+            }
+
+            xyChart.DefaultGridLinesVisible = ParetoChartParameters.ShowGridLines;
+            xyChart.LegendDock = ParetoChartParameters.LegendDock;
+
+            series0.BarRelativeBegin = double.NaN;
+            series0.BarRelativeEnd = double.NaN;
+
+            switch ((BarSpacing)ParetoChartParameters.BarSpace)
+            {
+                case BarSpacing.None:
+                    series0.RelativePointSpace = 0;
+                    series0.BarRelativeBegin = 0;
+                    series0.BarRelativeEnd = 0;
+                    break;
+                case BarSpacing.Small:
+                    series0.RelativePointSpace = 0.1;
+                    break;
+                case BarSpacing.Medium:
+                    series0.RelativePointSpace = 0.4;
+                    break;
+                case BarSpacing.Large:
+                    series0.RelativePointSpace = 0.8;
+                    break;
+                case BarSpacing.Default:
+                default:
+                    series0.RelativePointSpace = 0.15;
+                    break;
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            xyChart.CompositionKind = ParetoChartParameters.Composition;
+            xyChart.Orientation = ParetoChartParameters.Orientation;
+            xAxisCoordinates.Angle = ParetoChartParameters.XAxisAngle;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            switch (ParetoChartParameters.XAxisLabelType)
+            {
+                default:
+                case 0:  
+                    if (!String.IsNullOrEmpty(ParetoChartParameters.XAxisLabel))
+                    {
+                        tblockXAxisLabel.Text = ParetoChartParameters.XAxisLabel;
+                    }
+                    else
+                    {
+                        tblockXAxisLabel.Text = ParetoChartParameters.ColumnNames[0];
+                    }
+                    break;
+                case 1:  
+                    {
+                        Field field = DashboardHelper.GetAssociatedField(ParetoChartParameters.ColumnNames[0]);
+                        if (field != null)
+                        {
+                            RenderableField rField = field as RenderableField;
+                            tblockXAxisLabel.Text = rField.PromptText;
+                        }
+                        else
+                        {
+                            tblockXAxisLabel.Text = ParetoChartParameters.ColumnNames[0];
+                        }
+                    }
+                    break;
+                case 2:  
+                    tblockXAxisLabel.Text = string.Empty;
+                    break;
+                case 3:  
+                    tblockXAxisLabel.Text = ParetoChartParameters.XAxisLabel;
+                    break;
+            }
+
+
+            double angle = 0;
+
+            if (double.TryParse(ParetoChartParameters.XAxisAngle.ToString(), out angle))
+            {
+                xAxisCoordinates.Angle = angle;
+            }
+
+            if (!string.IsNullOrEmpty(tblockXAxisLabel.Text.Trim()))
+            {
+                tblockXAxisLabel.Visibility = System.Windows.Visibility.Visible;
+            }
+            else
+            {
+                tblockXAxisLabel.Visibility = System.Windows.Visibility.Collapsed;
+            }
+
+
+
+
+
+
+
+
+
+            YAxisLabel = ParetoChartParameters.YAxisLabel;
+            tblockYAxisLabel.Text = ParetoChartParameters.YAxisLabel;
+
+            tblockYAxisLabel.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
+            Size textSize = new Size(tblockYAxisLabel.DesiredSize.Width, tblockYAxisLabel.DesiredSize.Height);
+
+            xyChart.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
+            Size chartSize = new Size(xyChart.DesiredSize.Width, xyChart.DesiredSize.Height);
+
+            tblockYAxisLabel.Padding = new Thickness(((chartSize.Height - 144) / 2) - (textSize.Width / 2), 2, 0, 2);
+
+
+            Y2AxisLabel = ParetoChartParameters.Y2AxisLabel;
+            Y2AxisLegendTitle = ParetoChartParameters.Y2AxisLegendTitle;
+
+            xyChart.UseDifferentBarColors = ParetoChartParameters.UseDiffColors;
+
+
+
+
+
+
+
+
+            tblockChartTitle.Text = ParetoChartParameters.ChartTitle;
+            tblockSubTitle.Text = ParetoChartParameters.ChartSubTitle;
+            tblockStrataTitle.Text = ParetoChartParameters.ChartStrataTitle;
+
+            if (string.IsNullOrEmpty(tblockChartTitle.Text)) tblockChartTitle.Visibility = System.Windows.Visibility.Collapsed;
+            else tblockChartTitle.Visibility = System.Windows.Visibility.Visible;
+
+            if (string.IsNullOrEmpty(tblockSubTitle.Text)) tblockSubTitle.Visibility = System.Windows.Visibility.Collapsed;
+            else tblockSubTitle.Visibility = System.Windows.Visibility.Visible;
+
+            if (string.IsNullOrEmpty(tblockStrataTitle.Text)) tblockStrataTitle.Visibility = System.Windows.Visibility.Collapsed;
+            else tblockStrataTitle.Visibility = System.Windows.Visibility.Visible;
+
+
+
+
+
+
+
+
+
+
+
+            yAxis.UseReferenceValue = ParetoChartParameters.UseRefValues;
+
+            series0.ShowPointAnnotations = ParetoChartParameters.ShowAnnotations;
+            series0.BarKind = ParetoChartParameters.BarKind;
+
+            series1.ShowPointAnnotations = ParetoChartParameters.Y2ShowAnnotations;
+            series1.DashStyle = ParetoChartParameters.Y2LineDashStyle;
+            series1.LineKind = ParetoChartParameters.Y2LineKind;
+            series1.Thickness = ParetoChartParameters.Y2LineThickness;
+
+            y2AxisCoordinates.FormattingString = "P0";
+
+            xyChart.LegendVisible = ParetoChartParameters.ShowLegend;
+            xyChart.Legend.FontSize = ParetoChartParameters.LegendFontSize;
+            xyChart.Legend.BorderBrush = Brushes.Gray;
+
+            if (ParetoChartParameters.ShowLegendBorder == true)
+            {
+                xyChart.Legend.BorderThickness = new Thickness(1);
+            }
+            else
+            {
+                xyChart.Legend.BorderThickness = new Thickness(0);
+            }
+        }
+
+        private void xyChart_DataStructureCreated(object sender, EventArgs e)
+        {
+            string sName = "";
+                NumericCoordinates nc = new NumericCoordinates();
+                y2AxisCoordinates.Coordinates = nc;
+
+            SetLegendItems();
+        }
+    }
+}
+
+ 

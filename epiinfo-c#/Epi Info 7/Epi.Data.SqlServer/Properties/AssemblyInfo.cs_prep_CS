@@ -1,0 +1,16 @@
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+
+
+
+[assembly: AssemblyTitle("Epi.Data.SqlServer")]
+[assembly: AssemblyDescription("Epi Info Sql Server Data Provider")]
+[assembly: AssemblyConfiguration("")]
+
+
+[assembly: Dependency("Epi.Core", LoadHint.Always)]
+
+
+ 

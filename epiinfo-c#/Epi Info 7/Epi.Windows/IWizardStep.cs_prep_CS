@@ -1,0 +1,18 @@
+﻿//Namespaces
+using System;
+//
+
+namespace Epi.Windows
+{
+
+
+
+    public interface IWizardStep
+    {
+
+
+
+        event EventHandler BackRequested;
+    }
+}
+ 

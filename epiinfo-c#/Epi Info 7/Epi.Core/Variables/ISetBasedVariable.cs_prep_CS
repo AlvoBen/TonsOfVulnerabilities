@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Epi
+{
+
+
+
+    public interface ISetBasedVariable : IVariable
+    {
+
+
+
+
+        object CurrentRecordValueObject { get; set; }
+    }
+}
+
+ 

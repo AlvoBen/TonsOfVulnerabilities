@@ -1,0 +1,71 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using com.calitha.goldparser;
+
+namespace EpiMenu.CommandPlugin
+{
+    public class Rule_If_Then_Else_End : Rule
+    {
+
+        Rule IfClause;
+        Rule ThenClause;
+        Rule ElseClause;
+
+        public Rule_If_Then_Else_End(Rule_Context pContext, NonterminalToken pToken) : base(pContext)
+        {
+
+            /*
+              ::=      IF  THEN NewLine  NewLine END
+              ::= IF  THEN NewLine  NewLine ELSE NewLine  NewLine END
+            */
+
+
+
+            ThenClause = new Rule_Statements(pContext, (NonterminalToken)pToken.Tokens[4]);
+            if (pToken.Tokens.Length > 7)
+            {
+                ElseClause = new Rule_Statements(pContext, (NonterminalToken)pToken.Tokens[8]);
+            }
+        }
+
+
+
+
+
+
+        public override object Execute()
+        {
+            object result = null;
+
+            if (IfClause.Execute().ToString().ToLower() == "true")
+            {
+                result = ThenClause.Execute();
+            }
+            else
+            {
+                if (ElseClause != null)
+                {
+                    result = ElseClause.Execute();
+                }
+            }
+
+            return result;
+        }
+
+
+        private void ExecuteThenClause()
+        {
+            this.ThenClause.Execute();
+        }
+        private void ExecuteElseClause()
+        {
+            if (this.ElseClause != null)
+            {
+                this.ElseClause.Execute();
+            }
+        }
+    }
+}
+
+ 

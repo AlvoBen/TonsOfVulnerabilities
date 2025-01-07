@@ -1,0 +1,249 @@
+﻿using System;
+using System.Net;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Shapes;
+using System.Text;
+using System.Collections.ObjectModel;
+using System.Collections.Generic;
+
+namespace EpiDashboard.Mapping.ShapeFileReader
+{
+
+
+
+
+    public class ShapeFileRecord
+    {
+        //Private fields
+
+        private int recordNumber;
+        private int contentLength;
+
+
+        private int shapeType;
+
+
+        private double xMin;
+        private double yMin;
+        private double xMax;
+        private double yMax;
+
+
+        private Collection parts = new Collection();
+        private Collection points = new Collection();
+
+
+        private IDictionary attributes;
+        //Private fields
+
+        //Constructor
+
+
+
+        public ShapeFileRecord()
+        {
+        }
+        //Constructor
+
+        //Properties
+
+
+
+        public int RecordNumber
+        {
+            get
+            {
+                return this.recordNumber;
+            }
+            set
+            {
+                this.recordNumber = value;
+            }
+        }
+
+
+
+
+        public int ContentLength
+        {
+            get
+            {
+                return this.contentLength;
+            }
+            set
+            {
+                this.contentLength = value;
+            }
+        }
+
+
+
+
+        public int ShapeType
+        {
+            get
+            {
+                return this.shapeType;
+            }
+            set
+            {
+                this.shapeType = value;
+            }
+        }
+
+
+
+
+
+        public double XMin
+        {
+            get
+            {
+                return this.xMin;
+            }
+            set
+            {
+                this.xMin = value;
+            }
+        }
+
+
+
+
+
+        public double YMin
+        {
+            get
+            {
+                return this.yMin;
+            }
+            set
+            {
+                this.yMin = value;
+            }
+        }
+
+
+
+
+
+        public double XMax
+        {
+            get
+            {
+                return this.xMax;
+            }
+            set
+            {
+                this.xMax = value;
+            }
+        }
+
+
+
+
+
+        public double YMax
+        {
+            get
+            {
+                return this.yMax;
+            }
+            set
+            {
+                this.yMax = value;
+            }
+        }
+
+
+
+
+
+
+        public int NumberOfParts
+        {
+            get
+            {
+                return this.parts.Count;
+            }
+        }
+
+
+
+
+
+        public int NumberOfPoints
+        {
+            get
+            {
+                return this.points.Count;
+            }
+        }
+
+
+
+
+
+
+
+        public Collection Parts
+        {
+            get
+            {
+                return this.parts;
+            }
+        }
+
+
+
+
+
+        public Collection Points
+        {
+            get
+            {
+                return this.points;
+            }
+        }
+
+
+
+
+
+        public IDictionary Attributes
+        {
+            get
+            {
+                return this.attributes;
+            }
+            set
+            {
+                this.attributes = value;
+            }
+        }
+        //Properties
+
+        //Public methods
+
+
+
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat( "ShapeFileRecord: RecordNumber={0}, ContentLength={1}, ShapeType={2}",
+                this.recordNumber, this.contentLength, this.shapeType );
+
+            return sb.ToString();
+        }
+        //Public methods
+    }
+}
+
+ 

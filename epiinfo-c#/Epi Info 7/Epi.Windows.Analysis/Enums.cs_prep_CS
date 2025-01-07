@@ -1,0 +1,300 @@
+﻿using System;
+
+namespace Epi.Analysis
+{
+
+
+
+ public enum CommandGroups
+ {
+
+
+
+  Data = 1,
+
+
+
+  Variables = 2,
+
+
+
+  SelectIf = 3,
+
+
+
+  Statistics = 4,
+
+
+
+  AdvancedStatistics = 5,
+
+
+
+  Output = 6,
+
+
+
+  UserDefined = 7,
+
+
+
+  UserInteraction = 8,
+
+
+
+  Options =9
+ }
+
+
+
+ public enum DataCommands
+ {
+
+
+
+  Read = 1,
+
+
+
+  Relate = 2,
+
+
+
+  Write = 3,
+
+
+
+  Merge = 4,
+
+
+
+  DeleteFile = 5,
+
+
+
+  DeleteRecord = 6,
+
+
+
+  UndeleteRecord = 7
+ }
+
+
+
+ public enum VariableCommands
+ {
+
+
+
+  Define = 1,
+
+
+
+        DefineGroup = 2,
+
+
+
+  Undefine = 3,
+
+
+
+  Assign = 4,
+
+
+
+  Recode = 5,
+
+
+
+  Display = 6
+ }
+
+
+
+ public enum SelectIfCommands
+ {
+
+
+
+  Select = 1,
+
+
+
+  CancelSelect = 2,
+
+
+
+  If = 3,
+
+
+
+  Sort = 4,
+
+
+
+  CancelSort =5
+ }
+
+
+
+ public enum StatisticsCommands
+ {
+
+
+
+  List = 1,
+
+
+
+  Frequencies = 2,
+
+
+
+  Tables = 3,
+
+
+
+  Match = 4,
+
+
+
+  Means = 5,
+
+
+
+  Summarize = 6,
+
+
+
+  Graph = 7,
+
+
+
+  Map = 8
+ }
+
+
+
+ public enum AdvancedStatisticsCommands
+ {
+
+
+
+  LinearRegression = 1,
+
+
+
+  LogisticRegression = 2,
+
+
+
+  KaplanMeierSurvival = 3,
+
+
+
+  CoxProportionalHazards = 4,
+
+
+
+  ComplexSampleFrequencies = 5,
+
+
+
+  ComplexSampleTables = 6,
+
+
+
+  ComplexSampleMeans = 7
+ }
+
+
+
+ public enum OutputCommands
+ {
+
+
+
+  Header = 1,
+
+
+
+  Type = 2,
+
+
+
+  Routeout = 3,
+
+
+
+  Closeout = 4,
+
+
+
+  Printout = 5,
+
+
+
+  Reports = 6,
+
+
+
+  StoreOutput = 7
+ }
+
+
+
+ public enum UserDefinedCommands
+ {
+
+
+
+  DefineCommand = 1,
+
+
+
+  UserCommand = 2,
+
+
+
+  RunSavedProgram = 3,
+
+
+
+  ExecuteFile = 4
+ }
+
+
+
+ public enum UserInteractionCommands
+ {
+
+
+
+  Dialog = 1,
+
+
+
+  Beep = 2,
+
+
+
+  Help = 3,
+
+
+
+  Quit = 4
+ }
+
+
+
+ public enum OptionCommands
+ {
+
+
+
+  Set = 1
+ }
+
+}
+
+ 

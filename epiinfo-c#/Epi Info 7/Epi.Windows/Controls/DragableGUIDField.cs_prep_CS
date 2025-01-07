@@ -1,0 +1,253 @@
+﻿//Namespaces
+
+using System;
+using System.Windows.Forms;
+
+//
+
+namespace Epi.Windows.Controls
+{
+
+
+
+
+    public class DragableGUIDField : System.Windows.Forms.TextBox, IDragable, IFieldControl
+    {
+
+        //Private Members
+
+        private int fieldId;
+        private Epi.Fields.Field field;
+        private ControlTracker controlTracker;
+        private Enums.TrackerStatus trackerStatus;
+        private bool hasMoved = false;
+        private bool isMouseDown = false;
+        private int x;
+        private int y;
+
+        //
+
+        //Constructors
+
+
+
+
+        public DragableGUIDField()
+        {
+            InitializeComponent();
+        }
+
+        //
+
+        //Override Methods
+
+
+
+
+
+        protected override void OnPaint(System.Windows.Forms.PaintEventArgs e)
+        {
+            base.OnPaint(e);
+        }
+
+        //
+
+        //Private Methods
+
+
+
+
+        private void InitializeComponent()
+        {
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DragableGUIDField_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DragableGUIDField_MouseMove);
+            this.MouseLeave += new System.EventHandler(this.DragableGUIDField_MouseLeave);
+            this.DragOver += new DragEventHandler(DragableGUIDField_DragOver);
+        }
+
+        //
+
+        //Event Handlers
+
+
+
+
+
+
+        private void DragableGUIDField_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (isMouseDown)
+            {
+                DataObject data = new DataObject("DragControl", this);
+                this.DoDragDrop(data, DragDropEffects.Move);
+                isMouseDown = false;
+                this.hasMoved = true;
+            }
+        }
+
+
+
+
+
+
+        private void DragableGUIDField_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            isMouseDown = true;
+            x = e.X;
+            y = e.Y;
+        }
+
+
+
+
+
+
+        private void DragableGUIDField_MouseLeave(object sender, System.EventArgs e)
+        {
+            isMouseDown = false;
+        }
+
+
+
+
+
+
+        private void DragableGUIDField_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Move;
+        }
+
+        //
+
+        //Public Properties
+
+
+
+
+        public int XOffset
+        {
+            get
+            {
+                return this.x;
+            }
+            set
+            {
+                this.x = value;
+            }
+        }
+
+
+
+
+        public int YOffset
+        {
+            get
+            {
+                return this.y;
+            }
+            set
+            {
+                this.y = value;
+            }
+        }
+
+
+
+
+        public bool HasMoved
+        {
+            get
+            {
+                return hasMoved;
+            }
+            set
+            {
+                hasMoved = value;
+            }
+        }
+
+
+
+
+        public int FieldId
+        {
+            get
+            {
+                return fieldId;
+            }
+            set
+            {
+                fieldId = value;
+            }
+        }
+
+
+
+
+        public Epi.Fields.Field Field
+        {
+            get
+            {
+                return field;
+            }
+            set
+            {
+                field = value;
+            }
+        }
+
+        //
+
+        //IFieldControl Members
+
+
+
+
+        public bool IsFieldGroup
+        {
+            get
+            {
+                return false;
+            }
+            set
+            {
+
+            }
+        }
+
+
+
+
+        public Epi.Fields.GroupField GroupField
+        {
+            get
+            {
+                return null;
+            }
+            set
+            {
+
+            }
+        }
+
+        public ControlTracker Tracker
+        {
+            get { return controlTracker; }
+            set { controlTracker = value; }
+        }
+
+        public Enums.TrackerStatus TrackerStatus
+        {
+            get { return trackerStatus; }
+            set
+            {
+                controlTracker.TrackerStatus = value;
+                this.trackerStatus = value;
+            }
+        }
+
+        //
+    }
+}
+
+ 

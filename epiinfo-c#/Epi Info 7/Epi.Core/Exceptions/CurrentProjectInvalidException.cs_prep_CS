@@ -1,0 +1,93 @@
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using Epi;
+using System.Security.Permissions;
+
+namespace Epi
+{
+
+
+
+    [Serializable]
+    public class CurrentProjectInvalidException : GeneralException
+    {
+        //Private Members
+        private string fileName;
+        //
+
+        //Constructors
+
+
+
+        public CurrentProjectInvalidException()
+            : base(string.Empty)
+        {
+        }
+
+
+
+
+        public CurrentProjectInvalidException(string fileName)
+        {
+            //Parameter Validation
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException("fileName");
+            }
+            //Parameter Validation
+
+            this.fileName = fileName;
+        }
+
+
+
+
+
+
+        public CurrentProjectInvalidException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+        //Constructors
+
+        //Public Methods
+
+
+
+
+
+        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+        }
+        //Public Methods
+
+        //Public Properties
+
+
+
+        public string FileName
+        {
+            get
+            {
+                return fileName;
+            }
+        }
+
+
+
+
+        public override string Message
+        {
+            get
+            {
+                return SharedStrings.INVALID_CURRENT_PROJECT + ": \n" + fileName;
+            }
+        }
+        //"Public Properties"
+    }
+}
+
+ 

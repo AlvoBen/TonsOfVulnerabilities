@@ -1,0 +1,162 @@
+﻿using System;
+using System.Windows.Forms;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using Epi;
+using Epi.Windows;
+using Epi.Diagnostics;
+using Epi.Windows.Globalization.Forms;
+
+namespace Epi.Windows.Globalization
+{
+
+
+
+    public class LocalizationWindowsModule : ModuleBase
+    {
+        //Private Attributes
+        private LocalizationManager form = null;
+        private Container container = null;
+        //Pricate Attributes
+
+        //Constructors
+
+
+
+
+        public LocalizationWindowsModule()
+        {
+
+        }
+        //Constructors
+
+        //Protected Properties
+
+
+
+
+        protected override string ModuleName
+        {
+            get
+            {
+                return "Localization";
+            }
+        }
+
+        //Protected Properties
+
+        //Public Methods
+
+
+
+
+  public override void Dispose()
+        {
+
+            this.container.Dispose();
+
+            form = null;
+
+
+            base.Dispose();
+        }
+
+        //Public Methods
+
+        //Protected Methods
+
+
+
+
+        protected override void Load(IModuleManager moduleManager, ICommandLine commandLine)
+        {
+            base.Load(moduleManager, commandLine);
+
+            try
+            {
+                if (form == null)
+                {
+                    form = new LocalizationManager();
+                    container.Add(form);
+                    form.Closed += new EventHandler(MainForm_Closed);
+                    form.Disposed += new EventHandler(MainForm_Disposed);
+                    form.Show();
+                    form.Activate();
+
+
+                    System.IntPtr handle = form.Handle;
+
+
+                    if (commandLine != null)
+                    {
+                        string titleArgument = commandLine.GetArgument("title");
+                        if (titleArgument != null)
+                        {
+                            form.Text = titleArgument;
+                        }
+                    }
+                    base.OnLoaded();
+                }
+                else
+                {
+                    if (!form.IsDisposed)
+                    {
+                        form.Show();
+                        if (form.WindowState == FormWindowState.Minimized)
+                        {
+                            form.WindowState = FormWindowState.Normal;
+                        }
+                        form.Activate();
+                    }
+
+                }
+            }
+            finally
+            {
+            }
+        }
+
+
+
+
+  protected override void Unload()
+        {
+            if (form != null && !form.IsDisposed)
+            {
+
+
+                form.Close();
+            }
+            else
+            {
+                this.Dispose();
+            }
+        }
+
+        //Protected Methods
+
+        //Event Handlers
+
+
+
+
+
+
+        public void MainForm_Disposed(object sender, EventArgs e)
+        {
+            this.Dispose();
+        }
+
+
+
+
+
+
+        public void MainForm_Closed(object sender, EventArgs e)
+        {
+            this.Dispose();
+        }
+        //Event Handlers
+    } 
+} 
+ 

@@ -1,0 +1,145 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Epi;
+using Epi.Data;
+using Epi.Data.PostgreSQL;
+using Npgsql;
+
+namespace Epi.Data.PostgreSQL.Forms
+{
+
+
+
+    public         class NonExistingConnectionStringDialog : Epi.Data.PostgreSQL.Forms.ConnectionStringDialog
+    {
+        //Constructors
+
+
+
+
+        public NonExistingConnectionStringDialog()
+        {
+            InitializeComponent();
+        }
+
+        // 
+
+        //Event Handlers
+
+
+
+
+
+
+        private void NonExistingConnectionStringDialog_Load(object sender, EventArgs e)
+        {
+            this.Text = "Create a PostgreSQL database";
+            lblInstructions.Text = "Enter information to create the PostgreSQL database.";
+
+
+            this.txtDatabaseName.Visible = true;
+        }
+
+
+        private void txtDatabaseName_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar.ToString().IndexOfAny( CxNull)>=0)
+            {
+                e.KeyChar = '\0';
+                e.Handled = false;
+                Console.Beep();
+            }
+        }
+
+        // 
+
+        //Public Properties
+
+
+
+
+
+        public override string PreferredDatabaseName
+        {
+            set
+            {
+                txtDatabaseName.Text = value;
+            }
+            get
+            {
+                return txtDatabaseName.Text;
+            }
+        }
+
+
+
+
+        public override string ConnectionStringDescription
+        {
+            get
+            {
+                return cmbServerName.Text + "::" + txtDatabaseName.Text;
+            }
+        }
+
+        // Public Properties
+
+        //Protected Methods
+
+
+
+
+        protected override void OnOkClick()
+        {
+            if (ValidateInput())
+            {
+                dbConnectionStringBuilder = new NpgsqlConnectionStringBuilder();
+
+                dbConnectionStringBuilder.Host = cmbServerName.Text.Trim();
+                dbConnectionStringBuilder.Database = txtDatabaseName.Text.Trim();
+                dbConnectionStringBuilder.UserName = txtUserName.Text;
+                dbConnectionStringBuilder.Password = txtPassword.Text;
+                this.DialogResult = DialogResult.OK;
+                this.Hide();
+            }
+            else
+            {
+                ShowErrorMessages();
+            }
+        }
+
+        //Protected Methods
+
+        //Private Methods
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // 
+
+    }
+}
+
+
+ 

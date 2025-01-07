@@ -1,0 +1,52 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace EpiInfo.Plugin
+{
+
+
+
+
+    [System.Flags]
+    public enum VariableScope
+    {
+
+
+
+
+        Undefined = 0,
+
+
+
+
+        Permanent = 1,
+
+
+
+
+        Global = 2,
+
+
+
+
+        Standard = 4,
+
+
+
+
+        System = 8,
+
+
+
+
+        DataSource = 16,
+
+
+
+
+        DataSourceRedefined = 32
+    }
+}
+
+ 

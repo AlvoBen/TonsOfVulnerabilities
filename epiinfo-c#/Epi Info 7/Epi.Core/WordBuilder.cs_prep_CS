@@ -1,0 +1,116 @@
+﻿using System;
+using System.Collections;
+using System.Text;
+using System.Collections.Generic;
+
+namespace Epi
+{
+
+
+
+    public class WordBuilder : List, IDisposable
+ {
+  //Fields
+  private string delimiter = StringLiterals.SPACE;
+  //Fields
+
+        //Constructors
+
+
+
+  public WordBuilder()
+        {
+        }
+
+
+
+
+
+  public WordBuilder(string delim)
+        {
+            this.delimiter = delim;
+        }
+        //Constructors
+
+        //Public Properties
+
+
+
+  public string Delimitter
+  {
+   set
+   {
+    delimiter = value;
+   }
+  }
+
+  //Public Properties
+
+  //Public Methods
+
+
+
+
+  public void Append(string str)
+  {
+   base.Add(str);
+  }
+
+
+
+
+
+  public void Append(string[] strings)
+  {
+   foreach (string str in strings)
+   {
+    Append(str);
+   }
+  }
+
+
+
+
+
+  public void Append(object obj)
+  {
+   if (obj != null)
+    Append(obj.ToString());
+  }
+
+
+
+
+
+  public override string ToString()
+  {
+
+            if (Count > 0)
+            {
+                StringBuilder sb = new StringBuilder(Count * 2);
+                for (int index = 0; index < Count - 1; index++)
+                {
+                    sb.Append(this[index].ToString());
+                    sb.Append(delimiter);
+                }
+                sb.Append(this[Count - 1]);
+                return sb.ToString();
+            }
+            else
+            {
+                return string.Empty;
+            }
+  }
+
+
+
+
+  public void Dispose()
+        {
+        }
+
+  //Public Properties
+
+ }
+}
+ 

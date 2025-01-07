@@ -1,0 +1,122 @@
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
+
+namespace Epi
+{
+
+
+
+    [Serializable]
+    public class GeneralException : System.Exception
+    {
+        //Private Members
+        private string localizablePart;
+        private string nonLocalizablePart;
+        //
+
+        //Constructors
+
+
+
+        public GeneralException()
+            : this(string.Empty, string.Empty, null)
+        {
+        }
+
+
+
+
+
+        public GeneralException(string localizableMessage)
+            : this(localizableMessage, string.Empty, null)
+        {
+        }
+
+
+
+
+
+
+        public GeneralException(string localizableMessage, string nonLocalizablePart)
+            : this(localizableMessage, nonLocalizablePart, null)
+        {
+        }
+
+
+
+
+
+
+        public GeneralException(string localizableMessage, Exception innerException)
+            : this(localizableMessage, string.Empty, innerException)
+        {
+        }
+
+
+
+
+
+
+        public GeneralException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+
+
+
+
+
+
+
+
+
+        public GeneralException(string localizableMessage, string nonLocalizablePart, Exception innerException)
+            : base(string.Empty, innerException)
+        {
+            this.localizablePart = localizableMessage;
+            this.nonLocalizablePart = nonLocalizablePart;
+        }
+        //Constructors
+
+        //Public Methods
+
+
+
+
+
+        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+        }
+        //Public Methods
+
+        //Public properties
+
+
+
+
+        public override string Message
+        {
+            get
+            {
+                const string separator = ": \n";
+                if (string.IsNullOrEmpty(nonLocalizablePart))
+                {
+                    return localizablePart;
+                }
+                else
+                {
+                    return localizablePart + separator + nonLocalizablePart;
+                }
+            }
+        }
+        //Public properties
+    }
+}
+
+
+
+ 

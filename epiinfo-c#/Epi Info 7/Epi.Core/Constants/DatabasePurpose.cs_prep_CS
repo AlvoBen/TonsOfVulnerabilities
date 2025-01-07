@@ -1,0 +1,24 @@
+﻿
+namespace Epi
+{
+
+
+
+    public enum DatabasePurpose
+    {
+
+
+
+        MetadataAndCollectedData = 0,
+
+
+
+        Metadata = 1,
+
+
+
+        CollectedData = 2
+    }
+}
+
+ 

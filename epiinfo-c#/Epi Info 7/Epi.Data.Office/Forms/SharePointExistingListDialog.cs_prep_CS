@@ -1,0 +1,169 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.Common;
+using System.Data.OleDb;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using System.IO;
+
+namespace Epi.Data.Office.Forms
+{
+
+
+
+    public         class SharePointExistingListDialog : Form, IConnectionStringGui
+    {
+
+        public string ServerPart { get {return _ServerPart; } set{ _ServerPart=value; } } string _ServerPart;
+        public string ListPart { get {return _ListPart; } set{ _ListPart=value; } } string _ListPart;
+
+
+
+
+        public SharePointExistingListDialog()
+        {
+            InitializeComponent();
+        }
+
+        //IConnectionStringBuilder
+        public virtual void SetDatabaseName(string databaseName) { }
+        public virtual void SetServerName(string serverName) { }
+        public virtual void SetUserName(string userName) { }
+        public virtual void SetPassword(string password) { }
+
+
+
+
+        public string ConnectionStringDescription
+        {
+            get
+            {
+                return "SharePoint List: " + txtUrl.Text;
+            }
+        }
+
+        private OleDbConnectionStringBuilder dbConnectionStringBuilder = new OleDbConnectionStringBuilder();
+
+
+
+
+        public DbConnectionStringBuilder DbConnectionStringBuilder
+        {
+            get
+            {
+                return dbConnectionStringBuilder;
+            }
+            set
+            {
+                dbConnectionStringBuilder = (OleDbConnectionStringBuilder)value;
+            }
+        }
+
+
+
+
+        public string PreferredDatabaseName
+        {
+            get
+            {
+                return "";//txtFileName.Text = Path.Combine(Configuration.Directories.Project, value + ".mdb");
+            }
+        }
+
+
+
+
+        public bool UsesPassword
+        {
+            get
+            {
+                return false;
+            }
+        }
+        //
+
+        //Protected Methods
+
+
+
+
+        protected void OnOkClick()
+        {
+            string parsedUri = Uri.UnescapeDataString(txtUrl.Text);
+            string serverPart = parsedUri.Substring(0,parsedUri.IndexOf("_layouts"));
+            string listPart = parsedUri.Substring(parsedUri.IndexOf("List="), 43);
+
+            string connString = "Provider=Microsoft.ACE.OLEDB.12.0;WSS;IMEX=1;RetrieveIds=Yes;DATABASE=" + serverPart + ";" + listPart + ";";
+
+            this.dbConnectionStringBuilder = new OleDbConnectionStringBuilder(connString);
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+        }
+
+
+
+
+        protected virtual void OnFileNameChanged()
+        {
+            btnOK.Enabled = !string.IsNullOrEmpty(txtUrl.Text);
+        }
+
+
+
+
+        protected virtual void OnCancelClick()
+        {
+
+            this.dbConnectionStringBuilder.ConnectionString = null;
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
+
+
+
+
+        protected virtual void OnBrowseClick()
+        {
+
+        }
+
+        //
+
+        //Event Handlers
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            this.OnOkClick();
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.OnCancelClick();
+        }
+
+        private void txtFileName_TextChanged(object sender, EventArgs e)
+        {
+            this.OnFileNameChanged();
+        }
+
+        private void btnBrowse_Click(object sender, EventArgs e)
+        {
+            this.OnBrowseClick();
+        }
+        //
+
+
+
+        //IConnectionStringGui Members
+
+        public bool ShouldIgnoreNonExistance
+        {
+            set {  }
+        }
+
+        //
+    }
+}
+ 

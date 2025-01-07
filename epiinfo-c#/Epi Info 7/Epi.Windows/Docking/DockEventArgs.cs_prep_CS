@@ -1,0 +1,111 @@
+﻿using System;
+using System.Drawing;
+
+namespace Epi.Windows.Docking
+{
+
+
+
+ public class DockEventArgs : EventArgs
+ {
+  //Variables
+  private DockContainer target = null;
+  private DockContainerType dockType;
+
+  private Point point;
+
+  private bool release;
+  private bool handled = false;
+  private bool showDockGuide = false;
+  private bool ignoreHierarchy = false;
+  //
+
+  //Properties
+
+
+
+  public Point Point
+  {
+   get { return point; }
+   set { point = value; }
+  }
+
+
+
+
+  public DockContainerType DockType
+  {
+   get { return dockType; }
+  }
+
+
+
+
+  public bool Release
+  {
+   get { return release; }
+  }
+
+
+
+
+  public bool Handled
+  {
+   get { return handled; }
+   set { handled = value; }
+  }
+
+
+
+
+  public bool ShowDockGuide
+  {
+   get { return showDockGuide; }
+   set { showDockGuide = value; }
+  }
+
+
+
+
+  public bool IgnoreHierarchy
+  {
+   get { return ignoreHierarchy; }
+   set { ignoreHierarchy = value; }
+  }
+
+
+
+
+  public DockContainer Target
+  {
+   get { return target; }
+   set { target = value; }
+  }
+  //
+
+  //Construct
+
+
+
+
+
+
+  public DockEventArgs(Point point, DockContainerType dockType, bool release)
+  {
+   this.point = point;
+   this.dockType = dockType;
+   this.release = release;
+   this.target = null;
+   this.handled = false;
+   this.showDockGuide = false;
+  }
+  //
+ }
+
+
+
+
+ public delegate bool DockEventHandler(object sender, DockEventArgs e);
+}
+
+ 

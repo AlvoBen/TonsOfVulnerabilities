@@ -1,0 +1,1555 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Text.RegularExpressions;
+using System.Xml;
+using Epi.Collections;
+using Epi.Data;
+using Epi.Fields;
+using Epi;
+using Epi.Data.Services;
+
+namespace Epi
+{
+
+
+
+
+    public class View : ITable, INamedObject
+    {
+
+        //Fields
+        private string name = string.Empty;
+        private bool isRelatedView = false;
+        private string checkCode = string.Empty;
+        private string checkCodeVariableDefinitions = string.Empty;
+        private string checkCodeBefore = string.Empty;
+        private string checkCodeAfter = string.Empty;
+        private string recordCheckCodeBefore = string.Empty;
+        private string recordCheckCodeAfter = string.Empty;
+        private string pageOrientation = string.Empty;
+        private string pageLabelAlign = string.Empty;
+        private int pageWidth = 256;
+        private int pageHeight = 512;
+        private bool mustRefreshFieldCollection = false;
+        private int id = 0;
+        private bool returnToParent = false;
+        private View parentView;
+        private FieldCollectionMaster fields = null;
+        private Project project;
+        private XmlElement viewElement;
+        private ArrayList fieldLockToken;
+        private bool isDirty = false;
+
+
+
+
+
+
+
+        protected string dataTableName = string.Empty;
+
+
+
+        protected List pages = null;
+        //Fields
+
+        //Constructors
+
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+        protected View()
+        {
+        }
+
+
+
+
+
+
+        public View(Project proj, XmlElement viewElement)
+        {
+            this.project = proj;
+            this.viewElement = viewElement;
+            this.Id = Int32.Parse(this.viewElement.Attributes["ViewId"].Value);
+            this.Name = (this.viewElement.Attributes["Name"].Value);
+            this.fieldLockToken = new ArrayList();
+        }
+
+
+
+
+
+        public View(Project proj)
+        {
+            this.project = proj;
+            Configuration configuration = Configuration.GetNewInstance();
+            PageWidth = configuration.Settings.DefaultPageWidth;
+            PageHeight = configuration.Settings.DefaultPageHeight;
+            PageOrientation = configuration.Settings.DefaultPageOrientation;
+            PageLabelAlign = configuration.Settings.DefaultLabelAlign;
+            this.fieldLockToken = new ArrayList();
+        }
+
+
+
+
+
+
+        public View(DataRow row, Project proj)
+            : this(proj)
+        {
+            Name = row[ColumnNames.NAME].ToString();
+            Id = (int)row[ColumnNames.VIEW_ID];
+            CheckCodeVariableDefinitions = row[ColumnNames.CHECK_CODE_VARIABLE_DEFINITIONS].ToString();
+            CheckCode = row[ColumnNames.CHECK_CODE].ToString();
+            CheckCodeBefore = row[ColumnNames.CHECK_CODE_BEFORE].ToString();
+            CheckCodeBefore = row[ColumnNames.CHECK_CODE_BEFORE].ToString();
+            WebSurveyId = row[ColumnNames.CHECK_CODE_AFTER].ToString();
+            RecordCheckCodeBefore = row[ColumnNames.RECORD_CHECK_CODE_BEFORE].ToString();
+            RecordCheckCodeAfter = row[ColumnNames.RECORD_CHECK_CODE_AFTER].ToString();
+            IsRelatedView = (bool)row[ColumnNames.IS_RELATED_VIEW];
+
+            if( row.Table.Columns.Contains(ColumnNames.PAGE_WIDTH))
+            {
+                PageWidth = (int)row[ColumnNames.PAGE_WIDTH];
+            }
+            if (row.Table.Columns.Contains(ColumnNames.PAGE_HEIGHT))
+            {
+                PageHeight = (int)row[ColumnNames.PAGE_HEIGHT];
+            }
+            if (row.Table.Columns.Contains(ColumnNames.PAGE_ORIENTATION))
+            {
+                PageOrientation = row[ColumnNames.PAGE_ORIENTATION].ToString();
+            }
+            if (row.Table.Columns.Contains(ColumnNames.PAGE_LABEL_ALIGN))
+            {
+                PageLabelAlign = row[ColumnNames.PAGE_LABEL_ALIGN].ToString();
+            }
+
+            if (IsRelatedView)
+            {
+                this.GetParent(Id);
+            }
+            this.fieldLockToken = new ArrayList();
+        }
+
+        //Constructors
+
+        //Public Properties
+
+        public object FieldLockToken
+        {
+            get
+            {
+                return fieldLockToken;
+            }
+        }
+
+        public string FromViewSQL
+        {
+            get
+            {
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+                sb.Append(SqlKeyWords.FROM);
+                sb.Append(StringLiterals.SPACE);
+                sb.Append("");
+
+
+                System.Text.StringBuilder sb2 = new System.Text.StringBuilder();
+                sb2.Append(Util.InsertInSquareBrackets(this.TableName));
+                sb2.Append(" t inner join ");
+
+                foreach (Page page in this.Pages)
+                {
+
+                    sb.Append("(");
+
+
+                    sb2.Append(Util.InsertInSquareBrackets(page.TableName));
+                    sb2.Append(" on t.GlobalRecordId = ");
+                    sb2.Append(Util.InsertInSquareBrackets(page.TableName));
+                    sb2.Append(".GlobalRecordId) inner join ");
+                }
+                sb2.Length = sb2.Length - 12;
+
+                sb.Append(sb2);
+
+                return sb.ToString();
+            }
+        }
+
+
+
+
+        public Project Project
+        {
+            get
+            {
+                return this.project;
+            }
+        }
+
+
+
+
+
+        public virtual string Name
+        {
+            get
+            {
+                return (name);
+            }
+            set
+            {
+                name = value;
+            }
+        }
+
+
+
+
+
+        public virtual string DisplayName
+        {
+            get
+            {
+                return project.DisplayName + "\\" + Name;
+            }
+        }
+
+
+
+
+
+        public virtual bool IsRelatedView
+        {
+            get
+            {
+                return (isRelatedView);
+            }
+            set
+            {
+                isRelatedView = value;
+            }
+        }
+
+
+
+
+
+        public virtual bool ReturnToParent
+        {
+            get
+            {
+                return (returnToParent);
+            }
+            set
+            {
+                returnToParent = value;
+            }
+        }
+
+
+
+
+        public virtual bool IsDirty
+        {
+            get
+            {
+                return (isDirty);
+            }
+            set
+            {
+                isDirty = value;
+            }
+        }
+
+
+
+
+
+        public virtual string CheckCodeVariableDefinitions
+        {
+            get
+            {
+                return (checkCodeVariableDefinitions);
+            }
+            set
+            {
+                checkCodeVariableDefinitions = value;
+            }
+        }
+
+
+
+
+        public virtual string CheckCode
+        {
+            get
+            {
+                return this.checkCode;
+            }
+            set
+            {
+                this.checkCode = value;
+            }
+        }
+
+
+
+
+
+        public virtual string WebSurveyId
+        {
+            get
+            {
+                return (checkCodeAfter);
+            }
+            set
+            {
+                checkCodeAfter = value;
+            }
+        }
+
+
+
+
+
+        public virtual string CheckCodeBefore
+        {
+            get
+            {
+                return (checkCodeBefore);
+            }
+            set
+            {
+                checkCodeBefore = value;
+            }
+        }
+
+
+
+
+
+        public virtual string RecordCheckCodeAfter
+        {
+            get
+            {
+                return (recordCheckCodeAfter);
+            }
+            set
+            {
+                recordCheckCodeAfter = value;
+            }
+        }
+
+
+
+
+
+        public virtual string RecordCheckCodeBefore
+        {
+            get
+            {
+                return (recordCheckCodeBefore);
+            }
+            set
+            {
+                recordCheckCodeBefore = value;
+            }
+        }
+
+        public string PageOrientation
+        {
+            get
+            {
+                return pageOrientation;
+            }
+            set
+            {
+                pageOrientation = value;
+            }
+        }
+
+        public string PageLabelAlign
+        {
+            get
+            {
+                return pageLabelAlign;
+            }
+            set
+            {
+                pageLabelAlign = value;
+            }
+        }
+
+        public int PageWidth
+        {
+            get
+            {
+                return pageWidth;
+            }
+            set
+            {
+                pageWidth = value;
+            }
+        }
+
+        public int PageHeight
+        {
+            get
+            {
+                return pageHeight;
+            }
+            set
+            {
+                pageHeight = value;
+            }
+        }
+
+
+
+
+        public bool MustRefreshFieldCollection
+        {
+            get
+            {
+                return (mustRefreshFieldCollection);
+            }
+            set
+            {
+                mustRefreshFieldCollection = value;
+            }
+        }
+
+
+
+
+        public string FullName
+        {
+            get
+            {
+                return (project.FullName + StringLiterals.COLON + this.Name);
+            }
+        }
+
+
+
+
+        public virtual List TableColumnNames 
+        {
+            get
+            {
+                return Fields.TableColumnFields.Names;
+            }
+        }
+
+
+
+
+        public FieldCollectionMaster Fields
+        {
+            get
+            {
+                if ((fields == null) || MustRefreshFieldCollection)
+                {
+                    if (this.Project.MetadataSource.Equals(MetadataSource.Xml) == false)
+                    {
+                        fields = GetMetadata().GetFields(this);
+                    }
+                    else
+                    {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    }
+                    MustRefreshFieldCollection = false;
+                }
+                return fields;
+            }
+        }
+
+
+
+
+        public virtual int Id
+        {
+            get
+            {
+                return id;
+            }
+            set
+            {
+                id = value;
+            }
+        }
+
+
+
+
+        public string TableName 
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(dataTableName))
+                {
+                    if (!this.Project.MetadataSource.Equals(MetadataSource.Xml))
+                    {
+                        dataTableName = GetMetadata().GetDataTableName(Id);
+                    }
+                    else
+                    {
+                        dataTableName = viewElement.Attributes["Name"].Value;
+                    }
+
+                    if (string.IsNullOrEmpty(dataTableName))
+                    {
+                        return Name;
+                    }
+                    else
+                    {
+                        return dataTableName;
+                    }
+                }
+                else
+                {
+                    return dataTableName;
+                }
+            }
+            set
+            {
+                dataTableName = value;
+
+                if (!this.Project.MetadataSource.Equals(MetadataSource.Xml))
+                {
+                    GetMetadata().UpdateDataTableName(this.Id, dataTableName);
+                }
+                else
+                {
+                }
+            }
+        }
+
+
+
+
+        public virtual List Pages
+        {
+            get
+            {
+                if (pages == null)
+                {
+                    pages = GetMetadata().GetViewPages(this);
+                }
+                return (pages);
+            }
+        }
+
+
+
+
+        public UniqueKeyField UniqueKeyField
+        {
+            get
+            {
+                return Fields.UniqueKeyField;
+            }
+        }
+
+
+
+
+        public UniqueIdentifierField UniqueIdentifierField
+        {
+            get
+            {
+                return Fields.UniqueIdentifierField;
+            }
+        }
+
+
+
+        public RecStatusField RecStatusField
+        {
+            get
+            {
+                return Fields.RecStatusField;
+            }
+        }
+
+
+
+
+        public ForeignKeyField ForeignKeyField
+        {
+            get
+            {
+                return Fields.ForeignKeyField;
+            }
+        }
+
+        public bool ForeignKeyFieldExists
+        {
+            get
+            {
+                return Fields.ForeignKeyFieldExists;
+            }
+        }
+
+
+
+
+        public GlobalRecordIdField GlobalRecordIdField
+        {
+            get
+            {
+                return Fields.GlobalRecordIdField;
+            }
+        }
+
+
+
+
+        public View ParentView
+        {
+            get { return parentView; }
+            set
+            {
+                parentView = value;
+                if (parentView != null)
+                {
+                    ForeignKeyField.CurrentRecordValueString = value.CurrentGlobalRecordId;
+                }
+            }
+        }
+
+
+
+
+        public XmlElement ViewElement
+        {
+            get
+            {
+                return viewElement;
+            }
+            set
+            {
+                viewElement = value;
+            }
+        }
+
+
+
+
+        public int CurrentRecordId
+        {
+            get
+            {
+                return this.UniqueKeyField.CurrentRecordValue;
+            }
+        }
+
+
+
+        public int CurrentRecordStatus
+        {
+            get
+            {
+                return this.RecStatusField.CurrentRecordValue;
+            }
+            set
+            {
+                this.RecStatusField.CurrentRecordValue = value;
+            }
+        }
+
+
+
+
+        public string CurrentGlobalRecordId
+        {
+            get
+            {
+                return this.GlobalRecordIdField.CurrentRecordValueString;
+            }
+            set
+            {
+                this.GlobalRecordIdField.CurrentRecordValueObject = value;
+            }
+        }
+
+        //Public Properties
+
+        //Private Properties
+        IDbDriver ITable.Database
+        {
+            get
+            {
+                return this.project.CollectedData.GetDatabase();
+            }
+        }
+        //Private Properties
+
+        //Static Methods
+
+
+
+
+
+
+
+        public static bool IsValidViewName(string viewName, ref string validationStatus)
+        {
+
+            bool valid = true;
+
+            if (string.IsNullOrEmpty(viewName.Trim()))
+            {
+
+                validationStatus = SharedStrings.MISSING_VIEW_NAME;
+                valid = false;
+            }
+            else if (AppData.Instance.IsReservedWord(viewName))
+            {
+
+                validationStatus = SharedStrings.INVALID_VIEW_NAME_RESERVED_WORD;
+                valid = false;
+            }
+            else if (viewName.Length > 64)
+            {
+                validationStatus = SharedStrings.INVALID_VIEW_NAME_TOO_LONG;
+                valid = false;
+            }
+            else
+            {
+
+                Match numMatch = Regex.Match(viewName.Substring(0, 1), "[0-9]");
+
+                if (numMatch.Success)
+                {
+
+                    validationStatus = SharedStrings.VIEW_NAME_BEGIN_NUMERIC;
+                    valid = false;
+                }
+
+                else
+                {
+
+                    for (int i = 0; i < viewName.Length; i++)
+                    {
+                        string viewChar = viewName.Substring(i, 1);
+                        Match m = Regex.Match(viewChar, "[A-Za-z0-9]");
+
+                        if (!m.Success)
+                        {
+
+                            validationStatus = SharedStrings.INVALID_VIEW_NAME;
+                            valid = false;
+                            break; 
+                        }
+                    }
+                }
+            }
+
+            return valid;
+        }
+
+        //
+
+        //Public Methods
+
+
+
+
+
+        public void SetTableName(string tableName)
+        {
+            this.TableName = tableName;
+
+        }
+
+
+
+
+
+        public Project GetProject()
+        {
+            return project;
+        }
+
+
+
+
+
+        public List GetDescendantViews()
+        {
+            List relatedViews = new List();
+
+            if (this.Project.Views.Count == 1)
+            {
+                return relatedViews;
+            }
+
+            foreach (View view in this.Project.Views)
+            {
+                if (view != this && view.Name != this.Name)
+                {
+                    if (Util.IsFormDescendant(view, this))
+                    {
+                        relatedViews.Add(view);
+                    }
+                }
+            }
+
+            return relatedViews;
+        }
+
+
+
+
+
+
+        public void CopyFrom(View other)
+        {
+            this.Name = other.Name;
+            this.CheckCodeVariableDefinitions = other.CheckCodeVariableDefinitions;
+            this.CheckCode = other.CheckCode;
+            this.CheckCodeBefore = other.CheckCodeBefore;
+            this.checkCodeAfter = other.WebSurveyId;
+            this.RecordCheckCodeBefore = other.RecordCheckCodeBefore;
+            this.RecordCheckCodeAfter = other.RecordCheckCodeAfter;
+            this.IsRelatedView = other.IsRelatedView;
+        }
+
+
+
+
+        public void Dispose()
+        {
+            if (pages != null)
+            {
+                Pages.Clear();
+
+            }
+        }
+
+
+
+
+
+        public IMetadataProvider GetMetadata()
+        {
+            return project.Metadata;
+        }
+
+
+
+
+        public void SaveToDb()
+        {
+            if (Id == 0)
+            {
+                GetMetadata().InsertView(this);
+            }
+            else
+            {
+                GetMetadata().UpdateView(this);
+            }
+        }
+
+
+
+
+
+
+        public void RunCheckCode(IModule module, string checkCode)
+        {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+        public Page CreatePage(string name, int position)
+        {
+            //Input Validation
+            if (name == null)
+            {
+                throw new ArgumentNullException("name");
+            }
+            if (position < 0)
+            {
+                throw new ArgumentOutOfRangeException("Position");
+            }
+            //Input Validation
+
+            Page page = null;
+            this.pages = null;
+            this.project.Save();
+
+            page = new Page(this, 0);
+            page.Name = name;
+            page.Position = position;
+            page.Id = 0;
+            page.SaveToDb();
+
+            return page;
+        }
+
+
+
+
+        public void DeletePage(Page page)
+        {
+            page.DeleteFields();
+            GetMetadata().DeletePage(page);
+
+            GetMetadata().SynchronizePageNumbersOnDelete(this, page.Position);
+            page = null; 
+            pages = null;
+            fields = GetMetadata().GetFields(this);
+        }
+
+
+
+
+        public void DeleteDataTables()
+        {
+            CollectedDataProvider collectedDataPro = this.Project.CollectedData;
+
+            foreach (Field field in this.Fields)
+            {
+                if (field is GridField)
+                {
+                    GridField gridField = field as GridField;
+                    collectedDataPro.DeleteDataTableForGrid(this, gridField);
+                }
+            }
+
+
+            if (collectedDataPro.TableExists(this.TableName))
+            {
+                collectedDataPro.DeleteTable(this.TableName);
+            }
+
+
+            foreach (Page page in this.Pages)
+            {
+                if (collectedDataPro.TableExists(page.TableName))
+                {
+                    collectedDataPro.DeleteTable(page.TableName);
+                }
+            }
+        }
+
+
+
+
+
+
+        public string ComposeFieldNameFromPromptText(string promptText)
+        {
+            //Input Validation
+            if (promptText == null)
+            {
+                throw new ArgumentNullException("Prompt Text");
+            }
+            //Input Validation
+
+            promptText = Util.Squeeze(promptText);
+
+            if (promptText == "")
+            {
+                promptText = "field";
+            }
+
+
+            string fieldName = Util.RemoveNonAlphaNumericCharacters(promptText);
+
+
+            if (!string.IsNullOrEmpty(fieldName))
+            {
+                if (!Util.IsFirstCharacterALetter(fieldName))
+                {
+                    fieldName = "N" + fieldName;
+                }
+            }
+
+
+            string newFieldName = fieldName;
+            int count = 0;
+            while (Fields.Exists(newFieldName))
+            {
+                count++;
+                newFieldName = fieldName + count;
+            }
+
+            return newFieldName;
+        }
+
+
+
+
+
+        public void LoadRecord(int recordID)
+        {
+            //Input Validation
+            if (recordID < 1)
+            {
+                throw new ArgumentOutOfRangeException("Record ID");
+            }
+            //
+
+            if (!string.IsNullOrEmpty(this.RecordCheckCodeBefore))
+            {
+
+            }
+            project.CollectedData.LoadRecordIntoView(this, recordID);
+        }
+
+
+
+
+
+        public void LoadFirstRecord()
+        {
+            int recId = GetFirstRecordId();
+            if (recId > 0)
+            {
+                LoadRecord(recId);
+            }
+        }
+
+
+
+
+        public void LoadLastRecord()
+        {
+            int recId = GetLastRecordId();
+            if (recId > 0)
+            {
+                LoadRecord(recId);
+            }
+        }
+
+
+
+
+
+        public void LoadPreviousRecord(int currentRecordId)
+        {
+            //Input Validation
+            if (currentRecordId < 0)
+            {
+                throw new ArgumentOutOfRangeException("currentRecordId");
+            }
+            //Input Validation
+
+            int recId = 1;
+
+            if (currentRecordId == 0)
+            {
+                recId = GetLastRecordId();
+            }
+            else
+            {
+                recId = GetPreviousRecordId(currentRecordId);
+            }
+
+            if (recId > 0)
+            {
+                LoadRecord(recId);
+            }
+        }
+
+
+
+
+
+        public void LoadNextRecord(int currentRecordId)
+        {
+            //Input Validation
+            if (currentRecordId < 1)
+            {
+                throw new ArgumentOutOfRangeException("currentRecordId");
+            }
+            //Input Validation
+
+            int recId = GetNextRecordId(currentRecordId);
+            if (recId > 0)
+            {
+                LoadRecord(recId);
+            }
+        }
+
+
+
+
+
+        public int GetFirstRecordId()
+        {
+            return project.CollectedData.GetFirstRecordId(this);
+        }
+
+
+
+
+
+        public int GetLastRecordId()
+        {
+            return (project.CollectedData.GetLastRecordId(this));
+        }
+
+
+
+
+
+
+        public int GetPreviousRecordId(int currentRecordId)
+        {
+            return project.CollectedData.GetPreviousRecordId(this, currentRecordId);
+        }
+
+
+
+
+
+
+        public int GetNextRecordId(int currentRecordId)
+        {
+            return project.CollectedData.GetNextRecordId(this, currentRecordId);
+        }
+
+
+
+
+
+        public int GetRecordCount()
+        {
+            return (project.CollectedData.GetRecordCount(this));
+        }
+
+
+
+
+
+
+        public int SaveRecord(int recordId)
+        {
+            //Input Validation
+            if (recordId < 1)
+            {
+                throw new ArgumentOutOfRangeException("Record ID");
+            }
+            //Input Validation
+
+            return (project.CollectedData.SaveRecord(this, recordId));
+        }
+
+
+
+
+
+        public int SaveRecord()
+        {
+            return (project.CollectedData.SaveRecord(this));
+        }
+
+        public bool IsEmptyNewRecord()
+        {
+            bool fieldsAreEmpty = IsViewRecordEmpty();
+            bool newRecord = CurrentRecordId == 0;
+
+            if (fieldsAreEmpty && newRecord)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool IsParent()
+        {
+            foreach (Field field in Fields)
+            {
+                if (field is RelatedViewField)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
+
+
+
+        public bool IsViewRecordEmpty()
+        {
+            foreach (IDataField field in Fields.DataFields)
+            {
+                if (field is IInputField)
+                {
+                    if (field is CheckBoxField)
+                    {
+                        if (field.CurrentRecordValueObject != null)
+                        {
+                            if ((bool)field.CurrentRecordValueObject)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!Util.IsEmpty(field.CurrentRecordValueObject))
+                        {
+                            switch (field.FieldType)
+                            {
+                                case MetaFieldType.Text:
+                                    foreach (Epi.Fields.TextField F in this.fields.TextFields)
+                                    {
+                                        if (F.Name == ((Epi.INamedObject)field).Name)
+                                        {
+                                            if (F.IsReadOnly)
+                                            {
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                return false;
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case MetaFieldType.ForeignKey:
+                                case MetaFieldType.Mirror:
+                                case MetaFieldType.GUID:
+                                    break;
+
+                                default:
+                                    return (false);
+                            }
+                        }
+                        else continue;
+                    }
+                }
+            }
+
+            foreach (Field field in Fields)
+            {
+                if (field is GridField)
+                {
+                    if (!Util.IsEmpty(((GridField)field).DataSource))
+                    {
+                        if (((GridField)field).DataSource.Rows.Count > 0)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return (true);
+        }
+
+
+
+
+
+
+
+        public Field GetFieldById(int fieldId)
+        {
+            foreach (Field field in Fields)
+            {
+                if (field.Id == fieldId)
+                {
+                    return field;
+                }
+            }
+            return null;
+        }
+
+
+
+
+
+
+
+        public NamedObjectCollection GetFieldsOnPage(Page page)
+        {
+            NamedObjectCollection pageFields = new NamedObjectCollection();
+            foreach (Field field in page.Fields)
+            {
+                if (field is RenderableField)
+                {
+                    RenderableField renderableField = field as RenderableField;
+                    if (renderableField.Page.Id == page.Id)
+                    {
+                        pageFields.Add(renderableField);
+                    }
+                }
+            }
+            return pageFields;
+        }
+
+
+
+
+
+
+        public Page GetPageById(int pageId)
+        {
+            foreach (Page page in this.Pages)
+            {
+                if (page.Id == pageId)
+                {
+                    return page;
+                }
+            }
+            throw new System.ApplicationException(SharedStrings.ERROR_PAGE_NOT_FOUND);
+        }
+
+
+
+
+
+
+
+        public Page GetPageByPosition(int position)
+        {
+            foreach (Page page in this.Pages)
+            {
+                if (page.Position == position)
+                {
+                    return page;
+                }
+            }
+            throw new System.ApplicationException(SharedStrings.ERROR_PAGE_NOT_FOUND);
+        }
+
+
+
+
+
+        [Obsolete("Use of DataTable in      context is no different than the use of a multidimensional System.Object array (not recommended).", false)]
+        public DataTable GetMirrorableFieldsAsDataTable()
+        {
+            DataTable table = new DataTable();
+            table.Columns.Add(ColumnNames.NAME);
+            table.Columns.Add(ColumnNames.ID);
+            DataRow dataRow;
+
+            foreach (Field field in Fields)
+            {
+                if (field is IMirrorable)
+                {
+                    dataRow = table.NewRow();
+                    dataRow[Epi.ColumnNames.NAME] = field.Name;
+                    dataRow[Epi.ColumnNames.ID] = (field).Id;
+                    table.Rows.Add(dataRow);
+                }
+            }
+            return table;
+        }
+
+
+
+
+
+
+        private int GetPageId(XmlNode pagesNode)
+        {
+            int pageId;
+            int maxId = 0;
+            foreach (XmlNode pageNode in pagesNode.ChildNodes)
+            {
+                if (!string.IsNullOrEmpty(pageNode.Attributes["PageId"].Value.ToString()))
+                {
+                    pageId = Int32.Parse(pageNode.Attributes["PageId"].Value.ToString());
+                    maxId = Math.Max(pageId, 0);
+                }
+            }
+            return maxId += 1;
+        }
+
+
+
+
+
+
+        public int GetFieldId(XmlElement viewElement)
+        {
+            int maxFieldId = this.Project.Metadata.GetMaxFieldId(this.Id);
+            return maxFieldId += 1;
+        }
+
+        public void SaveToCollection(Field field)
+        {
+            if (field.Id == 0)
+            {
+                fields.Add(field);
+            }
+            else
+            {
+                if(fields.Contains(field))
+                {
+                    fields.Remove(field);
+                }
+                fields.Add(field);
+            }
+        }
+
+        public void RemoveFromCollection(Field field)
+        {
+            fields.Remove(field);
+        }
+
+        //Public Methods
+
+        //Private Methods
+
+        private void GetParent(int relatedViewId)
+        {
+            parentView = this.GetMetadata().GetParentView(relatedViewId);
+        }
+
+        //
+
+        public const string InitialCheckCode =
+"/*\n"
++ " 1. Choose a block from the upper right list to create a block for the action to occur.\n"
++ " 2. Select a command to add to the block from the lower right list.\n"
++ " All Check Code commands must be within a block.\n*/";
+
+    }
+}
+
+ 

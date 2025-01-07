@@ -1,0 +1,433 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Epi;
+
+namespace Epi.WPF.Dashboard
+{
+
+
+
+    public class GadgetParameters
+    {
+        //Private Members
+
+
+
+        private Dictionary inputVariableList;
+
+
+
+
+        private List mainVariableNames;
+
+
+
+
+        private string mainVariableName;
+
+
+
+
+        private List columnNames;
+
+
+
+
+        private string crosstabVariableName;
+
+
+
+
+        private List strataVariableNames;
+
+
+
+
+        private string weightVariableName;
+
+
+
+
+        private string psuVariableName;
+
+
+
+
+        private bool shouldIncludeMissing;
+
+
+
+
+        private bool shouldSortHighToLow;
+
+
+
+
+        private bool shouldUseAllPossibleValues;
+
+
+
+
+        private bool shouldShowCommentLegalLabels;
+
+
+
+
+        private bool shouldIncludeFullSummaryStatistics;
+
+
+
+
+        private bool shouldIgnoreRowLimits;
+
+
+
+
+        private string customFilter;
+
+
+
+
+        private string customSortColumnName;
+        //
+
+        //Events
+        public event GadgetStatusUpdateHandler GadgetStatusUpdate;
+        public event GadgetCheckForCancellationHandler GadgetCheckForCancellation;
+        public event SetGadgetStatusHandler GadgetCheckForProgress;
+        //
+
+        //Constructors
+
+
+
+        public GadgetParameters()
+        {
+            columnNames = new List();
+            GadgetStatusUpdate = null;
+            inputVariableList = new Dictionary();
+            CustomFilter = string.Empty;
+            CustomSortColumnName = string.Empty;
+            ShouldIncludeFullSummaryStatistics = false;
+            ShouldUseAllPossibleValues = false;
+            ShouldShowCommentLegalLabels = false;
+            ShouldSortHighToLow = false;
+            ShouldIncludeMissing = false;
+            CrosstabVariableName = string.Empty;
+            WeightVariableName = string.Empty;
+            StrataVariableNames = new List();
+            ShouldIgnoreRowLimits = false;
+        }
+
+
+
+
+        public GadgetParameters(GadgetParameters parameters)
+        {
+            MainVariableNames = parameters.MainVariableNames;
+            MainVariableName = parameters.MainVariableName;
+            columnNames = parameters.columnNames;
+            GadgetStatusUpdate = parameters.GadgetStatusUpdate;
+            inputVariableList = parameters.inputVariableList;
+            CustomFilter = parameters.CustomFilter;
+            CustomSortColumnName = parameters.CustomSortColumnName;
+            ShouldIncludeFullSummaryStatistics = parameters.ShouldIncludeFullSummaryStatistics;
+            ShouldUseAllPossibleValues = parameters.ShouldUseAllPossibleValues;
+            ShouldShowCommentLegalLabels = parameters.ShouldShowCommentLegalLabels;
+            ShouldSortHighToLow = parameters.ShouldSortHighToLow;
+            ShouldIncludeMissing = parameters.ShouldIncludeMissing;
+            CrosstabVariableName = parameters.CrosstabVariableName;
+            WeightVariableName = parameters.WeightVariableName;
+            StrataVariableNames = parameters.StrataVariableNames;
+            ShouldIgnoreRowLimits = parameters.ShouldIgnoreRowLimits;
+        }
+        //
+
+        //Public Properties
+
+
+
+        public Dictionary InputVariableList
+        {
+            get
+            {
+                return this.inputVariableList;
+            }
+            set
+            {
+                this.inputVariableList = value;
+            }
+        }
+
+
+
+
+        public List MainVariableNames
+        {
+            get
+            {
+                return this.mainVariableNames;
+            }
+            set
+            {
+                this.mainVariableNames = value;
+            }
+        }
+
+
+
+
+        public string MainVariableName
+        {
+            get
+            {
+                return this.mainVariableName;
+            }
+            set
+            {
+                this.mainVariableName = value;
+            }
+        }
+
+
+
+
+        public List ColumnNames
+        {
+            get
+            {
+                return this.columnNames;
+            }
+            set
+            {
+                this.columnNames = value;
+            }
+        }
+
+
+
+
+        public string CrosstabVariableName
+        {
+            get
+            {
+                return this.crosstabVariableName;
+            }
+            set
+            {
+                this.crosstabVariableName = value;
+            }
+        }
+
+
+
+
+        public string WeightVariableName
+        {
+            get
+            {
+                return this.weightVariableName;
+            }
+            set
+            {
+                this.weightVariableName = value;
+            }
+        }
+
+
+
+
+        public string PSUVariableName
+        {
+            get
+            {
+                return this.psuVariableName;
+            }
+            set
+            {
+                this.psuVariableName = value;
+            }
+        }
+
+
+
+
+        public List StrataVariableNames
+        {
+            get
+            {
+                return this.strataVariableNames;
+            }
+            set
+            {
+                this.strataVariableNames = value;
+            }
+        }
+
+
+
+
+        public bool ShouldIncludeMissing
+        {
+            get
+            {
+                return this.shouldIncludeMissing;
+            }
+            set
+            {
+                this.shouldIncludeMissing = value;
+            }
+        }
+
+
+
+
+        public bool ShouldSortHighToLow
+        {
+            get
+            {
+                return this.shouldSortHighToLow;
+            }
+            set
+            {
+                this.shouldSortHighToLow = value;
+            }
+        }
+
+
+
+
+        public bool ShouldUseAllPossibleValues
+        {
+            get
+            {
+                return this.shouldUseAllPossibleValues;
+            }
+            set
+            {
+                this.shouldUseAllPossibleValues = value;
+            }
+        }
+
+
+
+
+        public bool ShouldShowCommentLegalLabels
+        {
+            get
+            {
+                return this.shouldShowCommentLegalLabels;
+            }
+            set
+            {
+                this.shouldShowCommentLegalLabels = value;
+            }
+        }
+
+
+
+
+        public bool ShouldIncludeFullSummaryStatistics
+        {
+            get
+            {
+                return this.shouldIncludeFullSummaryStatistics;
+            }
+            set
+            {
+                this.shouldIncludeFullSummaryStatistics = value;
+            }
+        }
+
+
+
+
+        public bool ShouldIgnoreRowLimits
+        {
+            get
+            {
+                return this.shouldIgnoreRowLimits;
+            }
+            set
+            {
+                this.shouldIgnoreRowLimits = value;
+            }
+        }
+
+
+
+
+
+        public string CustomFilter
+        {
+            get
+            {
+                return customFilter;
+            }
+            set
+            {
+                customFilter = value;
+            }
+        }
+
+
+
+
+
+        public string CustomSortColumnName
+        {
+            get
+            {
+                return customSortColumnName;
+            }
+            set
+            {
+                customSortColumnName = value;
+            }
+        }
+        //
+
+        //Internal Methods
+
+
+
+
+        internal void UpdateGadgetStatus(string statusMessage)
+        {
+            if (GadgetStatusUpdate != null)
+            {
+                GadgetStatusUpdate(statusMessage);
+            }
+        }
+
+
+
+
+
+        internal void UpdateGadgetProgress(double progress)
+        {
+            if (GadgetCheckForProgress != null)
+            {
+                GadgetCheckForProgress("", progress);
+            }
+        }
+
+
+
+
+
+        internal bool IsRequestCancelled()
+        {
+            if (GadgetCheckForCancellation != null)
+            {
+                return GadgetCheckForCancellation();
+            }
+            return false;
+        }
+        //
+    }
+}
+
+ 

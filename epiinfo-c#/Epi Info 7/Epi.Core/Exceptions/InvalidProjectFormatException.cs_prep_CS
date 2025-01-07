@@ -1,0 +1,20 @@
+﻿using System;
+
+namespace Epi
+{
+
+
+
+
+ public class InvalidProjectFormatException
+ {
+
+
+
+  public InvalidProjectFormatException()
+  {
+  }
+ }
+}
+
+ 

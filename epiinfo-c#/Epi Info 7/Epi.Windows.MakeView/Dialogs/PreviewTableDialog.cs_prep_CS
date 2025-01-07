@@ -1,0 +1,212 @@
+﻿using System;
+using System.Drawing;
+using System.Collections;
+using System.ComponentModel;
+using System.Windows.Forms;
+using System.Data;
+using System.Data.Common;
+using System.Collections.Generic;
+using Epi;
+using Epi.Fields;
+using Epi.Collections;
+using Epi.Windows.Dialogs;
+
+
+namespace Epi.Windows.MakeView.Dialogs
+{
+
+
+
+    public         class PreviewTableDialog : DialogBase
+    {
+
+        //Private Class Members
+        private DataTable codeTable = null;
+        private string fieldName = string.Empty;
+
+        private ComboBox.ObjectCollection fields;
+        private Project currentProject;
+        private string currentTableName;
+        private string columnNames = string.Empty;
+        private List columnCollection;
+        private DataTable previewTable;
+
+
+
+        public DataAdapter tableAdapter;
+
+        //Private Class Members
+
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+        public PreviewTableDialog()
+        {
+            InitializeComponent();
+        }
+
+
+
+
+
+
+
+
+        public PreviewTableDialog(MainForm frm, Project project, ComboBox.ObjectCollection tableFields, string tableName)
+            : base(frm)
+        {
+            InitializeComponent();
+            currentProject = project;
+            currentTableName = tableName;
+            fields = tableFields;
+            columnCollection = new List();
+            btnOK.Visible = false;
+            lblInstruction.Text = "The grid below displays the fields from the selected table.  Click Back to go to the Match Fields screen.";
+        }
+
+
+
+
+
+
+        private void PreviewTableDialog_Load(object sender, System.EventArgs e)
+        {
+            CreateTableForPreview();
+        }
+
+
+
+
+
+        private void SetTableStyles(string[] colNames)
+        {
+            this.dataGridTableStyle.MappingName = "code" + fieldName;
+            foreach (string column in colNames)
+            {
+                DataGridTextBoxColumn textColumn = new DataGridTextBoxColumn();
+                textColumn.MappingName = column;
+                textColumn.HeaderText = column;
+                textColumn.NullText = string.Empty;
+                this.dataGridTableStyle.GridColumnStyles.Add(textColumn);
+            }
+        }
+
+
+
+
+
+
+        private void btnOK_Click(object sender, System.EventArgs e)
+        {
+            string[] columnNames = new string[codeTable.Columns.Count];
+            for (int x = 0; x < codeTable.Columns.Count; x++)
+            {
+                columnNames[x] = codeTable.Columns[x].ColumnName;
+            }
+            if (codeTable.TableName != string.Empty)
+            {
+
+            }
+        }
+
+
+
+
+
+
+        private void btnCancel_Click(object sender, System.EventArgs e)
+        {
+            this.Close();
+        }
+
+
+
+
+        private void CreateTableForPreview()
+        {
+            if (codeTable == null)
+            {
+                EstablishColumns();
+                GetSelectedFieldsData();
+                DisplayData();
+            }
+        }
+
+
+
+
+        private void EstablishColumns()
+        {
+            string[] colNames = new string[fields.Count + 1];
+
+            int index = 0;
+            if (fields.Count > 0)
+            {
+                foreach (string field in fields)
+                {
+                    columnNames += "[" + field + "]";
+                    colNames[index] = field;
+                    if (fields.Count > 0 && index < fields.Count)
+                    {
+                        if (!(String.IsNullOrEmpty(columnNames)))
+                        {
+                            columnNames += StringLiterals.COMMA;
+                            columnCollection.Add(field);
+                        }
+                    }
+                    index++;
+                }
+
+                columnNames = columnNames.Substring(0, (columnNames.Length - 1));
+            }
+
+            SetTableStyles(colNames);
+        }
+
+
+
+
+        private void GetSelectedFieldsData()
+        {
+            DataTable previewDataTable = new DataTable("previewDataTable");
+
+            foreach (string column in columnCollection)
+            {
+                DataColumn tableColumn = new DataColumn(column, Type.GetType("System.String"));
+                previewDataTable.Columns.Add(tableColumn);
+            }
+
+            if (currentProject.CollectedData.TableExists(currentTableName))
+            {
+                previewTable = currentProject.GetTableData(currentTableName, columnNames.ToString(), string.Empty);
+            }
+            else
+            {
+
+
+            }
+
+            DataView readOnlyView = new DataView(previewTable);
+            readOnlyView.AllowNew = false;
+            readOnlyView.AllowEdit = false;
+            readOnlyView.AllowDelete = false;
+
+            dgCodes.DataSource = readOnlyView;
+        }
+
+
+
+
+        private void DisplayData()
+        {
+            if (codeTable != null)
+            {
+                dgCodes.DataSource = codeTable.DefaultView;
+                btnOK.Visible = true;
+            }
+        }
+    }
+}
+
+ 

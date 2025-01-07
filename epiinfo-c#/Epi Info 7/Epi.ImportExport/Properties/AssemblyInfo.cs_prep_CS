@@ -1,0 +1,16 @@
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+
+
+
+[assembly: AssemblyTitle("Epi.ImportExport")]
+[assembly: AssemblyDescription("Epi Info Import-Export Module")]
+[assembly: AssemblyConfiguration("")]
+
+
+[assembly: Dependency("Epi.Core", LoadHint.Always)]
+
+
+ 

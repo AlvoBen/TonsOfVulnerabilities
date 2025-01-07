@@ -1,0 +1,48 @@
+﻿using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+using Epi.Windows.Dialogs;
+
+namespace Epi.Windows.MakeView.Dialogs
+{
+
+
+
+    public         class ImportCheckCodeDialog : DialogBase
+ {
+
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+  public ImportCheckCodeDialog()
+  {
+   InitializeComponent();
+  }
+
+
+
+
+
+  public ImportCheckCodeDialog(MainForm frm): base(frm)
+        {
+
+            InitializeComponent();
+        }
+
+
+
+
+
+
+  private void btnCancel_Click(object sender, System.EventArgs e)
+  {
+   this.Close();
+  }
+ }
+}
+
+
+ 

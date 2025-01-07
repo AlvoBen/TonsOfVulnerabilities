@@ -1,0 +1,350 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using Epi;
+
+namespace EpiDashboard.Controls
+{
+
+
+
+    public         class ChoroplethProperties : UserControl
+    {
+
+                EpiDashboard.Mapping.StandaloneMapControl mapControl;
+                ESRI.ArcGIS.Client.Map myMap;
+                DashboardHelper dashboardHelper;
+                EpiDashboard.Mapping.ChoroplethLayerProvider provider;
+
+        public ChoroplethProperties(EpiDashboard.Mapping.StandaloneMapControl mapControl, ESRI.ArcGIS.Client.Map myMap)
+        {
+            InitializeComponent();
+            this.mapControl = mapControl;
+            this.myMap = myMap;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            Epi.ApplicationIdentity appId = new Epi.ApplicationIdentity(typeof(Configuration).Assembly);
+            tblockCurrentEpiVersion.Text = "Epi Info " + appId.Version;
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+        public event EventHandler Cancelled;
+        public event EventHandler ChangesAccepted;
+
+        public DashboardHelper DashboardHelper { get {return _DashboardHelper; } set{ _DashboardHelper=value; } } DashboardHelper _DashboardHelper;
+
+        public FileInfo ProjectFileInfo
+        {
+            get
+            {
+                FileInfo fi = new FileInfo(txtProjectPath.Text);
+                return fi;
+            }
+            set
+            {
+                txtProjectPath.Text = value.FullName;
+                panelDataSourceProject.Visibility = Visibility.Visible;
+                panelDataSourceOther.Visibility = Visibility.Collapsed;
+                panelDataSourceAdvanced.Visibility = Visibility.Collapsed;
+            }
+        }
+
+
+        public string ConnectionString
+        {
+            get
+            {
+                return txtDataSource.Text;
+            }
+            set
+            {
+                txtDataSource.Text = value;
+                panelDataSourceProject.Visibility = Visibility.Collapsed;
+                panelDataSourceOther.Visibility = Visibility.Visible;
+                panelDataSourceAdvanced.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        public string SqlQuery
+        {
+            get
+            {
+                return txtSQLQuery.Text;
+            }
+            set
+            {
+                txtSQLQuery.Text = value;
+                panelDataSourceProject.Visibility = Visibility.Collapsed;
+                panelDataSourceOther.Visibility = Visibility.Collapsed;
+                panelDataSourceAdvanced.Visibility = Visibility.Visible;
+            }
+        }
+
+                void tbtnInfo_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckButtonStates(sender as ToggleButton);
+            panelDataSource.Visibility = System.Windows.Visibility.Collapsed;
+            panelHTML.Visibility = System.Windows.Visibility.Collapsed;
+            panelCharts.Visibility = System.Windows.Visibility.Collapsed;
+            panelInfo.Visibility = System.Windows.Visibility.Visible;
+        }
+
+                void tbtnCharts_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckButtonStates(sender as ToggleButton);
+            panelDataSource.Visibility = System.Windows.Visibility.Collapsed;
+            panelHTML.Visibility = System.Windows.Visibility.Collapsed;
+            panelCharts.Visibility = System.Windows.Visibility.Visible;
+            panelInfo.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+                void tbtnHTML_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckButtonStates(sender as ToggleButton);
+            panelDataSource.Visibility = System.Windows.Visibility.Collapsed;
+            panelHTML.Visibility = System.Windows.Visibility.Visible;
+            panelCharts.Visibility = System.Windows.Visibility.Collapsed;
+            panelInfo.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+                void tbtnDataSource_Checked(object sender, RoutedEventArgs e)
+        {
+            if (panelDataSource == null) return;
+            CheckButtonStates(sender as ToggleButton);
+            panelDataSource.Visibility = System.Windows.Visibility.Visible;
+            panelHTML.Visibility = System.Windows.Visibility.Collapsed;
+            panelCharts.Visibility = System.Windows.Visibility.Collapsed;
+            panelInfo.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+                void CheckButtonStates(ToggleButton sender)
+        {
+            foreach (UIElement element in panelSidebar.Children)
+            {
+                if (element is ToggleButton)
+                {
+                    ToggleButton tbtn = element as ToggleButton;
+                    if (tbtn != sender)
+                    {
+                        tbtn.IsChecked = false;
+                    }
+                }
+            }
+        }
+
+                void btnOK_Click(object sender, RoutedEventArgs e)
+        {
+            RenderMap();
+            if (ChangesAccepted != null)
+            {
+                ChangesAccepted(this, new EventArgs());
+            }
+        }
+
+                void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            if (Cancelled != null)
+            {
+                Cancelled(this, new EventArgs());
+            }
+        }
+
+                void btnBrowse_Click(object sender, RoutedEventArgs e)
+        {
+            dashboardHelper = mapControl.GetNewDashboardHelper();
+            if (dashboardHelper != null)
+            {
+                txtProjectPath.Text = dashboardHelper.Database.DbName;
+                FillComboBoxes();
+            }
+        }
+
+                void FillComboBoxes()
+        {
+            cmbDataKey.Items.Clear();
+            cmbValue.Items.Clear();
+            List fields = dashboardHelper.GetFieldsAsList(); 
+            ColumnDataType columnDataType = ColumnDataType.Numeric;
+            List numericFields = dashboardHelper.GetFieldsAsList(columnDataType); 
+            foreach (string field in fields)
+            {
+                cmbDataKey.Items.Add(field);
+            }
+            foreach (string field in numericFields)
+            {
+                cmbValue.Items.Add(field);
+            }
+            cmbValue.Items.Insert(0, "{Record Count}");
+        }
+
+                void cmbFormName_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+
+
+
+        }
+
+                void txtProjectPath_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+
+
+
+
+
+
+
+
+        }
+
+                void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (Cancelled != null)
+            {
+                Cancelled(this, new EventArgs());
+            }
+        }
+
+                void btnBrowseShapeFile_Click(object sender, RoutedEventArgs e)
+        {
+            provider = new Mapping.ChoroplethLayerProvider(myMap);
+            object[] shapeFileProperties = provider.LoadShapeFile();
+            if (shapeFileProperties != null)
+            {
+                if (shapeFileProperties.Length == 2)
+                {
+                    txtShapePath.Text = shapeFileProperties[0].ToString();
+                    IDictionary shapeAttributes = (IDictionary)shapeFileProperties[1];
+                    if (shapeAttributes != null)
+                    {
+                        cmbShapeKey.Items.Clear();
+                        foreach (string key in shapeAttributes.Keys)
+                        {
+                            cmbShapeKey.Items.Add(key);
+                        }
+                    }
+                }
+            }
+        }
+
+                void RenderMap()
+        {
+            if (cmbDataKey.SelectedIndex != -1 && cmbShapeKey.SelectedIndex != -1 && cmbValue.SelectedIndex != -1)
+            {
+                provider.SetShapeRangeValues(dashboardHelper, cmbShapeKey.SelectedItem.ToString(), cmbDataKey.SelectedItem.ToString(), cmbValue.SelectedItem.ToString(), new List(), Int32.Parse(cmbClasses.Text.ToString()));
+
+
+
+
+            }
+        }
+
+                void rctColor1_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            System.Windows.Forms.ColorDialog dialog = new System.Windows.Forms.ColorDialog();
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                rctColor1.Fill = new SolidColorBrush(Color.FromArgb(240, dialog.Color.R, dialog.Color.G, dialog.Color.B));
+            }
+        }
+
+                void rctColor2_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            System.Windows.Forms.ColorDialog dialog = new System.Windows.Forms.ColorDialog();
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                rctColor2.Fill = new SolidColorBrush(Color.FromArgb(240, dialog.Color.R, dialog.Color.G, dialog.Color.B));
+            }
+        }
+
+                void rctColor3_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            System.Windows.Forms.ColorDialog dialog = new System.Windows.Forms.ColorDialog();
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                rctColor3.Fill = new SolidColorBrush(Color.FromArgb(240, dialog.Color.R, dialog.Color.G, dialog.Color.B));
+            }
+        }
+
+                void rctColor4_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            System.Windows.Forms.ColorDialog dialog = new System.Windows.Forms.ColorDialog();
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                rctColor4.Fill = new SolidColorBrush(Color.FromArgb(240, dialog.Color.R, dialog.Color.G, dialog.Color.B));
+            }
+        }
+
+                void rctColor5_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            System.Windows.Forms.ColorDialog dialog = new System.Windows.Forms.ColorDialog();
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                rctColor5.Fill = new SolidColorBrush(Color.FromArgb(240, dialog.Color.R, dialog.Color.G, dialog.Color.B));
+            }
+        }
+
+                void rctColor6_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            System.Windows.Forms.ColorDialog dialog = new System.Windows.Forms.ColorDialog();
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                rctColor6.Fill = new SolidColorBrush(Color.FromArgb(240, dialog.Color.R, dialog.Color.G, dialog.Color.B));
+            }
+        }
+    }
+}
+
+ 

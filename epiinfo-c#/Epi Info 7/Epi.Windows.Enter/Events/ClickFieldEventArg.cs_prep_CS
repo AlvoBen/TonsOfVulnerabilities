@@ -1,0 +1,36 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Epi.Fields;
+
+namespace Epi.Windows.Enter.PresentationLogic
+{
+    public class ClickFieldEventArg : EventArgs
+    {
+        //Private Members
+        private Field field;
+        //
+
+
+
+
+
+        public ClickFieldEventArg(Field pField)
+        {
+            this.field = pField;
+        }
+
+
+
+
+        public Field Field
+        {
+            get
+            {
+                return this.field;
+            }
+        }
+    }
+}
+
+ 

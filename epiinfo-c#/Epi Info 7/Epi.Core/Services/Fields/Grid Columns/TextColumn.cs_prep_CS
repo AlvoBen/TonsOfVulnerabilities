@@ -1,0 +1,96 @@
+﻿using System;
+using System.Data;
+using Epi.Data;
+
+namespace Epi.Fields
+{
+
+
+
+    public class TextColumn : GridColumnBase
+    {
+        //Private Members
+        private int size;
+        //
+
+        //Constructors
+
+
+
+        public TextColumn(GridField grid)
+            : base(grid)
+        {
+            construct();
+        }
+
+
+
+
+
+
+        public TextColumn(DataRow gridRow, GridField grid)
+            : base(gridRow, grid)
+        {
+            construct();
+            this.size = (short)gridRow["Size"];
+        }
+
+        private void construct()
+        {
+            this.GridColumnType = MetaFieldType.Text;
+            genericDbColumnType = GenericDbColumnType.String;
+        }
+
+        //
+
+        //Public Properties
+
+
+
+
+        public int Size
+        {
+            get
+            {
+                return size;
+            }
+            set
+            {
+                size = value;
+            }
+        }
+
+        //Public Properties
+
+        //protected methods
+
+
+
+
+        protected override void InsertColumn()
+        {
+            Id = GetMetadata().CreateGridColumn(this);
+            base.OnColumnInserted();
+        }
+
+
+
+
+        protected override void DeleteColumn()
+        {
+            GetMetadata().DeleteGridColumn(this);
+        }
+
+
+
+
+        protected override void UpdateColumn()
+        {
+            GetMetadata().UpdateGridColumn(this);
+        }
+
+        //
+    }
+}
+
+ 

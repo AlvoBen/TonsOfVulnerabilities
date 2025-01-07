@@ -1,0 +1,37 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Epi
+{
+
+
+
+    public enum ExecutionEnvironment
+    {
+
+
+
+        Unknown = 0,
+
+
+
+        WindowsApplication,
+
+
+
+
+        InternetInformationServices,
+
+
+
+        Console,
+
+
+
+        WindowsService
+    }
+
+}
+
+ 

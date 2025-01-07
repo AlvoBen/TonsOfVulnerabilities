@@ -1,0 +1,22 @@
+﻿using System;
+
+namespace Epi.Fields
+{
+
+
+
+ public interface IPatternable
+ {
+  //Properties
+
+
+
+  string Pattern
+  {
+   get;
+   set;
+  }
+  //Properties
+ }
+}
+ 

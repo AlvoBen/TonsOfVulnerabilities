@@ -1,0 +1,116 @@
+﻿using System;
+using System.Text;
+
+namespace Epi.Web
+{
+
+
+
+
+    public class HtmlDocument
+    {
+
+        //Private Attributes
+        private StringBuilder docString = null;
+
+
+
+        //Private Attributes
+
+
+
+
+
+  public HtmlDocument()
+  {
+            docString = new StringBuilder();
+  }
+
+
+
+
+        public HtmlDocument(string aString)
+        {
+            docString = new StringBuilder(aString);
+        }
+
+  //Public Methods
+
+
+
+
+
+  public override string ToString()
+  {
+   return docString.ToString();
+  }
+
+
+
+
+
+
+
+  public void InsertKeyValues(string key, string val)
+  {
+            docString.Append(InsertInEm(key)).Append(":");
+            InsertSpace();
+   docString.Append(InsertInStrong(val));
+  }
+
+
+
+
+
+
+        public void InsertKeyValues(string key, int val)
+        {
+            docString.Append(InsertInEm(key)).Append(":");
+            InsertSpace();
+            docString.Append(InsertInStrong(val.ToString()));
+        }
+
+
+
+
+
+  public void InsertSpaces(int count)
+  {
+   for (int index = 0; index < count; index++)
+   {
+    InsertSpace();
+   }
+  }
+
+
+
+
+        public void InsertSpace()
+  {
+   docString.Append("&nbsp");
+  }
+
+
+
+
+  public void InsertLineBreak()
+  {
+   docString.Append("<br />");
+  }
+  //Public Methods
+
+  //Private Methods
+  private static string InsertInEm(string str)
+  {
+   return "" + str + "</em>";
+  }
+  private static string InsertInStrong(string str)
+  {
+   return "" + str + "</strong>";
+  }
+
+  //Private Methods
+ }
+}
+
+ 

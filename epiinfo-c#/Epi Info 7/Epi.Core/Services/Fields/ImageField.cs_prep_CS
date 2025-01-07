@@ -1,0 +1,267 @@
+﻿using System;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Xml;
+using Epi;
+using Epi.Data;
+
+namespace Epi.Fields
+{
+
+
+
+ public class ImageField : InputFieldWithSeparatePrompt
+ {
+  //Private Members
+
+
+
+        private bool shouldRetainImageSize;
+
+
+
+        private string fileName = string.Empty;
+
+
+
+        private XmlElement viewElement;
+
+
+
+        private XmlNode fieldNode;
+        private BackgroundWorker _updater;
+        private BackgroundWorker _inserter;
+  //Private Members
+
+  //Public Events
+  //Public Events
+
+  //Constructors
+
+
+
+
+  public ImageField(Page page) : base(page)
+  {
+            construct();
+  }
+
+
+
+
+
+
+        public ImageField(Page page, XmlElement viewElement) : base(page)
+        {
+            construct();
+            this.viewElement = viewElement;
+            this.Page = page;
+        }
+
+
+
+
+
+  public ImageField(View view) : base(view)
+  {
+            construct();
+  }
+
+
+
+
+
+
+        public ImageField(View view, XmlNode fieldNode) : base(view)
+        {
+            construct();
+            this.fieldNode = fieldNode;
+            this.view.Project.Metadata.GetFieldData(this, this.fieldNode);
+        }
+
+        private void construct()
+        {
+            genericDbColumnType = GenericDbColumnType.Object;
+            this.dbColumnType = DbType.Object;
+        }
+
+
+
+
+
+        public override void LoadFromRow(DataRow row)
+        {
+            base.LoadFromRow(row);
+            shouldRetainImageSize = (bool)row["ShouldRetainImageSize"];
+        }
+
+        public ImageField Clone()
+        {
+            ImageField clone = (ImageField)this.MemberwiseClone();
+            base.AssignMembers(clone);
+            return clone;
+        }
+
+  //Constructors
+
+        //Public Properties
+
+
+
+        public override MetaFieldType FieldType
+        {
+            get
+            {
+                return MetaFieldType.Image;
+            }
+        }
+
+
+
+
+  public bool ShouldRetainImageSize
+  {
+   get
+   {
+    return shouldRetainImageSize;
+   }
+   set
+   {
+    shouldRetainImageSize = value;
+   }
+  }
+
+
+
+
+        public XmlElement ViewElement
+        {
+            get
+            {
+                return viewElement;
+            }
+            set
+            {
+                viewElement = value;
+            }
+        }
+
+
+
+
+        public byte[] CurrentRecordValue
+        {
+            get
+            {
+                if (base.CurrentRecordValueObject == null) return null;
+                else return (byte[])CurrentRecordValueObject;
+            }
+            set
+            {
+                base.CurrentRecordValueObject = value;
+            }
+        }
+
+        public override string GetDbSpecificColumnType()
+        {
+            return GetProject().CollectedData.GetDatabase().GetDbSpecificColumnType(GenericDbColumnType.Image);
+        }
+  //Public Properties
+
+  //Protected Properties
+  //Protected Properties
+
+  //Public Methods
+
+
+
+  public override void Delete()
+  {
+            GetMetadata().DeleteField(this);
+            view.MustRefreshFieldCollection = true;
+  }
+  //
+
+  //Private Methods
+
+
+
+
+        protected override void InsertField()
+        {
+            this.Id = GetMetadata().CreateField(this);
+            base.OnFieldAdded();
+        }
+
+
+
+
+
+        protected override void UpdateField()
+        {
+            GetMetadata().UpdateField(this);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //
+
+        //Event Handlers
+  //Event Handlers
+
+ }
+}
+ 

@@ -1,0 +1,38 @@
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+
+
+
+[assembly: AssemblyTitle("Epi.Data.PostgreSQL")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("ITSO")]
+[assembly: AssemblyProduct("Epi.Data.PostgreSQL")]
+[assembly: AssemblyCopyright("Copyright © ITSO 2013")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+
+
+
+
+[assembly: ComVisible(false)]
+
+
+[assembly: Guid("822c1a2f-67d7-4df1-be87-cf785139fda7")]
+
+
+
+
+
+
+
+
+
+
+
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
+
+ 

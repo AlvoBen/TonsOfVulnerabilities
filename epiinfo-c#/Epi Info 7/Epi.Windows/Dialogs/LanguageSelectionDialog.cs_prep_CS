@@ -1,0 +1,119 @@
+﻿using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Globalization;
+
+namespace Epi.Windows.Dialogs
+{
+
+
+
+    public         class LanguageSelectionDialog : DialogBase
+ {
+  //Constructors
+
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+        public LanguageSelectionDialog()
+        {
+            InitializeComponent();
+        }
+
+
+
+
+  public LanguageSelectionDialog(MainForm frm) : base(frm)
+  {
+   InitializeComponent();
+  }
+
+  //
+
+  //Public Properties
+
+
+
+
+  public CultureInfo SelectedCulture
+  {
+   get
+   {
+                return new CultureInfo(cbxLanguages.SelectedValue.ToString());
+   }
+  }
+
+  //
+
+  //Private Class
+
+
+
+
+  private class CultureComparer : IComparer
+  {
+
+
+
+
+
+
+
+   public int Compare(object x, object y)
+   {
+    CultureInfo cultureX = (CultureInfo)x;
+    CultureInfo cultureY = (CultureInfo)y;
+    return string.Compare(cultureX.DisplayName, cultureY.DisplayName);
+   }
+  }
+
+  //
+
+  //Event Handlers
+
+
+
+
+
+
+  private void btnOk_Click(object sender, System.EventArgs e)
+  {
+   this.DialogResult = DialogResult.OK;
+   this.Hide();
+  }
+
+
+
+
+
+
+  private void btnCancel_Click(object sender, System.EventArgs e)
+  {
+   this.DialogResult = DialogResult.Cancel;
+   this.Close();
+  }
+
+
+
+
+
+
+  private void LanguageSelection_Load(object sender, System.EventArgs e)
+  {
+   CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
+   Array.Sort(cultures, new CultureComparer());
+   cbxLanguages.DataSource = cultures;
+   cbxLanguages.DisplayMember = ColumnNames.DISPLAY_NAME;
+   cbxLanguages.ValueMember = ColumnNames.NAME;
+  }
+
+  //
+
+ }
+}
+
+
+ 

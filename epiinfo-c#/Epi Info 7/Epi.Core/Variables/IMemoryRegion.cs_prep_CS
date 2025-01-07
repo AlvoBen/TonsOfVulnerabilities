@@ -1,0 +1,83 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Data;
+
+using Epi.Collections;
+using VariableCollection = Epi.Collections.NamedObjectCollection;
+
+namespace Epi
+{
+
+
+
+    public interface IMemoryRegion
+    {
+
+
+
+
+        void DefineVariable(IVariable variable);
+
+
+
+
+        void UndefineVariable(string varName);
+
+
+
+
+
+        IVariable GetVariable(string varName);
+
+
+
+
+
+        bool IsVariableInScope(string varName);
+
+
+
+
+        VariableCollection GetVariablesInScope();
+
+
+
+
+
+        VariableCollection GetVariablesInScope(VariableType scopeCombination);
+
+
+
+
+        void RemoveVariablesInScope(VariableType varTypes);
+
+
+
+        void PushLocalRegion();
+
+
+
+        void PushLocalBlockRegion();
+
+
+
+        void PopRegion();
+
+
+
+
+
+        DataTable GetVariablesAsDataTable(VariableType varTypes);
+
+
+
+
+
+
+
+        bool TryGetVariable(string p, out IVariable var);
+    }
+}
+
+ 

@@ -1,0 +1,14 @@
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+
+
+
+[assembly: AssemblyTitle("Epi.Windows.ImportExport")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+
+
+[assembly: Guid("9648df32-755a-4610-8908-c799213d0410")]
+ 

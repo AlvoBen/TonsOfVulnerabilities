@@ -1,0 +1,18 @@
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+
+
+
+[assembly: AssemblyTitle("Epi.Windows.WebSurveyExporter")]
+[assembly: AssemblyDescription("Epi Info Web Survey Export Utility")]
+[assembly: AssemblyConfiguration("")]
+
+
+[assembly: Dependency("Epi.Core", LoadHint.Always)]
+[assembly: Dependency("Epi.ImportExport", LoadHint.Always)]
+[assembly: Dependency("Epi.Windows", LoadHint.Always)]
+[assembly: Dependency("Epi.Windows.ImportExport", LoadHint.Always)]
+
+ 

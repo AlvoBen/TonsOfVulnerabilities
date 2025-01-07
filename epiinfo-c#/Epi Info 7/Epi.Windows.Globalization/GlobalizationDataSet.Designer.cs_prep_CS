@@ -1,0 +1,792 @@
+﻿
+
+
+
+
+
+
+
+
+
+#pragma warning disable 1591
+
+namespace Epi.Windows.Globalization {
+
+
+
+
+
+    [        System.Serializable()]
+    [        System.ComponentModel.DesignerCategoryAttribute("code")]
+    [        System.ComponentModel.ToolboxItem(true)]
+    [        System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedDataSetSchema")]
+    [        System.Xml.Serialization.XmlRootAttribute("GlobalizationDataSet")]
+    [        System.ComponentModel.Design.HelpKeywordAttribute("vs.data.DataSet")]
+    public         class GlobalizationDataSet :         System.Data.DataSet {
+
+        private CulturalResourcesDataTable tableCulturalResources;
+
+        private         System.Data.SchemaSerializationMode _schemaSerializationMode =         System.Data.SchemaSerializationMode.IncludeSchema;
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public GlobalizationDataSet() {
+            this.BeginInit();
+            this.InitClass();
+                    System.ComponentModel.CollectionChangeEventHandler schemaChangedHandler = new         System.ComponentModel.CollectionChangeEventHandler(this.SchemaChanged);
+            base.Tables.CollectionChanged += schemaChangedHandler;
+            base.Relations.CollectionChanged += schemaChangedHandler;
+            this.EndInit();
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected GlobalizationDataSet(        System.Runtime.Serialization.SerializationInfo info,         System.Runtime.Serialization.StreamingContext context) :
+                base(info, context, false) {
+            if ((this.IsBinarySerialized(info, context) == true)) {
+                this.InitVars(false);
+                        System.ComponentModel.CollectionChangeEventHandler schemaChangedHandler1 = new         System.ComponentModel.CollectionChangeEventHandler(this.SchemaChanged);
+                this.Tables.CollectionChanged += schemaChangedHandler1;
+                this.Relations.CollectionChanged += schemaChangedHandler1;
+                return;
+            }
+            string strSchema = ((string)(info.GetValue("XmlSchema", typeof(string))));
+            if ((this.DetermineSchemaSerializationMode(info, context) ==         System.Data.SchemaSerializationMode.IncludeSchema)) {
+                        System.Data.DataSet ds = new         System.Data.DataSet();
+                ds.ReadXmlSchema(new         System.Xml.XmlTextReader(new         System.IO.StringReader(strSchema)));
+                if ((ds.Tables["CulturalResources"] != null)) {
+                    base.Tables.Add(new CulturalResourcesDataTable(ds.Tables["CulturalResources"]));
+                }
+                this.DataSetName = ds.DataSetName;
+                this.Prefix = ds.Prefix;
+                this.Namespace = ds.Namespace;
+                this.Locale = ds.Locale;
+                this.CaseSensitive = ds.CaseSensitive;
+                this.EnforceConstraints = ds.EnforceConstraints;
+                this.Merge(ds, false,         System.Data.MissingSchemaAction.Add);
+                this.InitVars();
+            }
+            else {
+                this.ReadXmlSchema(new         System.Xml.XmlTextReader(new         System.IO.StringReader(strSchema)));
+            }
+            this.GetSerializationData(info, context);
+                    System.ComponentModel.CollectionChangeEventHandler schemaChangedHandler = new         System.ComponentModel.CollectionChangeEventHandler(this.SchemaChanged);
+            base.Tables.CollectionChanged += schemaChangedHandler;
+            this.Relations.CollectionChanged += schemaChangedHandler;
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [        System.ComponentModel.Browsable(false)]
+        [        System.ComponentModel.DesignerSerializationVisibility(        System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public CulturalResourcesDataTable CulturalResources {
+            get {
+                return this.tableCulturalResources;
+            }
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [        System.ComponentModel.BrowsableAttribute(true)]
+        [        System.ComponentModel.DesignerSerializationVisibilityAttribute(        System.ComponentModel.DesignerSerializationVisibility.Visible)]
+        public override         System.Data.SchemaSerializationMode SchemaSerializationMode {
+            get {
+                return this._schemaSerializationMode;
+            }
+            set {
+                this._schemaSerializationMode = value;
+            }
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [        System.ComponentModel.DesignerSerializationVisibilityAttribute(        System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+        public new         System.Data.DataTableCollection Tables {
+            get {
+                return base.Tables;
+            }
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [        System.ComponentModel.DesignerSerializationVisibilityAttribute(        System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+        public new         System.Data.DataRelationCollection Relations {
+            get {
+                return base.Relations;
+            }
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected override void InitializeDerivedDataSet() {
+            this.BeginInit();
+            this.InitClass();
+            this.EndInit();
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public override         System.Data.DataSet Clone() {
+            GlobalizationDataSet cln = ((GlobalizationDataSet)(base.Clone()));
+            cln.InitVars();
+            cln.SchemaSerializationMode = this.SchemaSerializationMode;
+            return cln;
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected override bool ShouldSerializeTables() {
+            return false;
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected override bool ShouldSerializeRelations() {
+            return false;
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected override void ReadXmlSerializable(        System.Xml.XmlReader reader) {
+            if ((this.DetermineSchemaSerializationMode(reader) ==         System.Data.SchemaSerializationMode.IncludeSchema)) {
+                this.Reset();
+                        System.Data.DataSet ds = new         System.Data.DataSet();
+                ds.ReadXml(reader);
+                if ((ds.Tables["CulturalResources"] != null)) {
+                    base.Tables.Add(new CulturalResourcesDataTable(ds.Tables["CulturalResources"]));
+                }
+                this.DataSetName = ds.DataSetName;
+                this.Prefix = ds.Prefix;
+                this.Namespace = ds.Namespace;
+                this.Locale = ds.Locale;
+                this.CaseSensitive = ds.CaseSensitive;
+                this.EnforceConstraints = ds.EnforceConstraints;
+                this.Merge(ds, false,         System.Data.MissingSchemaAction.Add);
+                this.InitVars();
+            }
+            else {
+                this.ReadXml(reader);
+                this.InitVars();
+            }
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected override         System.Xml.Schema.XmlSchema GetSchemaSerializable() {
+                    System.IO.MemoryStream stream = new         System.IO.MemoryStream();
+            this.WriteXmlSchema(new         System.Xml.XmlTextWriter(stream, null));
+            stream.Position = 0;
+            return         System.Xml.Schema.XmlSchema.Read(new         System.Xml.XmlTextReader(stream), null);
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        internal void InitVars() {
+            this.InitVars(true);
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        internal void InitVars(bool initTable) {
+            this.tableCulturalResources = ((CulturalResourcesDataTable)(base.Tables["CulturalResources"]));
+            if ((initTable == true)) {
+                if ((this.tableCulturalResources != null)) {
+                    this.tableCulturalResources.InitVars();
+                }
+            }
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private void InitClass() {
+            this.DataSetName = "GlobalizationDataSet";
+            this.Prefix = "";
+            this.Namespace = "http://tempuri.org/DataSet1.xsd";
+            this.EnforceConstraints = true;
+            this.SchemaSerializationMode =         System.Data.SchemaSerializationMode.IncludeSchema;
+            this.tableCulturalResources = new CulturalResourcesDataTable();
+            base.Tables.Add(this.tableCulturalResources);
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private bool ShouldSerializeCulturalResources() {
+            return false;
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private void SchemaChanged(object sender,         System.ComponentModel.CollectionChangeEventArgs e) {
+            if ((e.Action ==         System.ComponentModel.CollectionChangeAction.Remove)) {
+                this.InitVars();
+            }
+        }
+
+        [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public static         System.Xml.Schema.XmlSchemaComplexType GetTypedDataSetSchema(        System.Xml.Schema.XmlSchemaSet xs) {
+            GlobalizationDataSet ds = new GlobalizationDataSet();
+                    System.Xml.Schema.XmlSchemaComplexType type = new         System.Xml.Schema.XmlSchemaComplexType();
+                    System.Xml.Schema.XmlSchemaSequence sequence = new         System.Xml.Schema.XmlSchemaSequence();
+                    System.Xml.Schema.XmlSchemaAny any = new         System.Xml.Schema.XmlSchemaAny();
+            any.Namespace = ds.Namespace;
+            sequence.Items.Add(any);
+            type.Particle = sequence;
+                    System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+            if (xs.Contains(dsSchema.TargetNamespace)) {
+                        System.IO.MemoryStream s1 = new         System.IO.MemoryStream();
+                        System.IO.MemoryStream s2 = new         System.IO.MemoryStream();
+                try {
+                            System.Xml.Schema.XmlSchema schema = null;
+                    dsSchema.Write(s1);
+                    for (        System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                        schema = ((        System.Xml.Schema.XmlSchema)(schemas.Current));
+                        s2.SetLength(0);
+                        schema.Write(s2);
+                        if ((s1.Length == s2.Length)) {
+                            s1.Position = 0;
+                            s2.Position = 0;
+                            for (; ((s1.Position != s1.Length)
+                                        && (s1.ReadByte() == s2.ReadByte())); ) {
+                                ;
+                            }
+                            if ((s1.Position == s1.Length)) {
+                                return type;
+                            }
+                        }
+                    }
+                }
+                finally {
+                    if ((s1 != null)) {
+                        s1.Close();
+                    }
+                    if ((s2 != null)) {
+                        s2.Close();
+                    }
+                }
+            }
+            xs.Add(dsSchema);
+            return type;
+        }
+
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public delegate void CulturalResourcesRowChangeEventHandler(object sender, CulturalResourcesRowChangeEvent e);
+
+
+
+
+        [        System.Serializable()]
+        [        System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public         class CulturalResourcesDataTable :         System.Data.TypedTableBase {
+
+            private         System.Data.DataColumn columnAssemblyName;
+
+            private         System.Data.DataColumn columnManifestResourceName;
+
+            private         System.Data.DataColumn columnResourceName;
+
+            private         System.Data.DataColumn columnResourceValue;
+
+            private         System.Data.DataColumn columnResourceType;
+
+            private         System.Data.DataColumn columnResourceVersion;
+
+            private         System.Data.DataColumn columnSourceCultureName;
+
+            private         System.Data.DataColumn columnSourceValue;
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CulturalResourcesDataTable() {
+                this.TableName = "CulturalResources";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal CulturalResourcesDataTable(        System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected CulturalResourcesDataTable(        System.Runtime.Serialization.SerializationInfo info,         System.Runtime.Serialization.StreamingContext context) :
+                    base(info, context) {
+                this.InitVars();
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataColumn AssemblyNameColumn {
+                get {
+                    return this.columnAssemblyName;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataColumn ManifestResourceNameColumn {
+                get {
+                    return this.columnManifestResourceName;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataColumn ResourceNameColumn {
+                get {
+                    return this.columnResourceName;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataColumn ResourceValueColumn {
+                get {
+                    return this.columnResourceValue;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataColumn ResourceTypeColumn {
+                get {
+                    return this.columnResourceType;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataColumn ResourceVersionColumn {
+                get {
+                    return this.columnResourceVersion;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataColumn SourceCultureNameColumn {
+                get {
+                    return this.columnSourceCultureName;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataColumn SourceValueColumn {
+                get {
+                    return this.columnSourceValue;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            [        System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CulturalResourcesRow this[int index] {
+                get {
+                    return ((CulturalResourcesRow)(this.Rows[index]));
+                }
+            }
+
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event CulturalResourcesRowChangeEventHandler CulturalResourcesRowChanging;
+
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event CulturalResourcesRowChangeEventHandler CulturalResourcesRowChanged;
+
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event CulturalResourcesRowChangeEventHandler CulturalResourcesRowDeleting;
+
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event CulturalResourcesRowChangeEventHandler CulturalResourcesRowDeleted;
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void AddCulturalResourcesRow(CulturalResourcesRow row) {
+                this.Rows.Add(row);
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CulturalResourcesRow AddCulturalResourcesRow(string AssemblyName, string ManifestResourceName, string ResourceName, string ResourceValue, string ResourceType, string ResourceVersion, string SourceCultureName, string SourceValue) {
+                CulturalResourcesRow rowCulturalResourcesRow = ((CulturalResourcesRow)(this.NewRow()));
+                object[] columnValuesArray =  CxNull
+
+
+
+
+
+
+
+;
+                rowCulturalResourcesRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowCulturalResourcesRow);
+                return rowCulturalResourcesRow;
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public override         System.Data.DataTable Clone() {
+                CulturalResourcesDataTable cln = ((CulturalResourcesDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override         System.Data.DataTable CreateInstance() {
+                return new CulturalResourcesDataTable();
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal void InitVars() {
+                this.columnAssemblyName = base.Columns["AssemblyName"];
+                this.columnManifestResourceName = base.Columns["ManifestResourceName"];
+                this.columnResourceName = base.Columns["ResourceName"];
+                this.columnResourceValue = base.Columns["ResourceValue"];
+                this.columnResourceType = base.Columns["ResourceType"];
+                this.columnResourceVersion = base.Columns["ResourceVersion"];
+                this.columnSourceCultureName = base.Columns["SourceCultureName"];
+                this.columnSourceValue = base.Columns["SourceValue"];
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            private void InitClass() {
+                this.columnAssemblyName = new         System.Data.DataColumn("AssemblyName", typeof(string), null,         System.Data.MappingType.Element);
+                base.Columns.Add(this.columnAssemblyName);
+                this.columnManifestResourceName = new         System.Data.DataColumn("ManifestResourceName", typeof(string), null,         System.Data.MappingType.Element);
+                base.Columns.Add(this.columnManifestResourceName);
+                this.columnResourceName = new         System.Data.DataColumn("ResourceName", typeof(string), null,         System.Data.MappingType.Element);
+                base.Columns.Add(this.columnResourceName);
+                this.columnResourceValue = new         System.Data.DataColumn("ResourceValue", typeof(string), null,         System.Data.MappingType.Element);
+                base.Columns.Add(this.columnResourceValue);
+                this.columnResourceType = new         System.Data.DataColumn("ResourceType", typeof(string), null,         System.Data.MappingType.Element);
+                base.Columns.Add(this.columnResourceType);
+                this.columnResourceVersion = new         System.Data.DataColumn("ResourceVersion", typeof(string), null,         System.Data.MappingType.Element);
+                base.Columns.Add(this.columnResourceVersion);
+                this.columnSourceCultureName = new         System.Data.DataColumn("SourceCultureName", typeof(string), null,         System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSourceCultureName);
+                this.columnSourceValue = new         System.Data.DataColumn("SourceValue", typeof(string), null,         System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSourceValue);
+                this.columnAssemblyName.AllowDBNull = false;
+                this.columnAssemblyName.MaxLength = 255;
+                this.columnManifestResourceName.AllowDBNull = false;
+                this.columnManifestResourceName.MaxLength = 500;
+                this.columnResourceName.AllowDBNull = false;
+                this.columnResourceName.MaxLength = 255;
+                this.columnResourceValue.AllowDBNull = false;
+                this.columnResourceValue.MaxLength = 2048;
+                this.columnResourceType.AllowDBNull = false;
+                this.columnResourceType.MaxLength = 255;
+                this.columnResourceVersion.AllowDBNull = false;
+                this.columnResourceVersion.Caption = "AssemblyVersion";
+                this.columnResourceVersion.MaxLength = 20;
+                this.columnSourceValue.AllowDBNull = false;
+                this.columnSourceValue.MaxLength = 2048;
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CulturalResourcesRow NewCulturalResourcesRow() {
+                return ((CulturalResourcesRow)(this.NewRow()));
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override         System.Data.DataRow NewRowFromBuilder(        System.Data.DataRowBuilder builder) {
+                return new CulturalResourcesRow(builder);
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override         System.Type GetRowType() {
+                return typeof(CulturalResourcesRow);
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanged(        System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.CulturalResourcesRowChanged != null)) {
+                    this.CulturalResourcesRowChanged(this, new CulturalResourcesRowChangeEvent(((CulturalResourcesRow)(e.Row)), e.Action));
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanging(        System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.CulturalResourcesRowChanging != null)) {
+                    this.CulturalResourcesRowChanging(this, new CulturalResourcesRowChangeEvent(((CulturalResourcesRow)(e.Row)), e.Action));
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleted(        System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.CulturalResourcesRowDeleted != null)) {
+                    this.CulturalResourcesRowDeleted(this, new CulturalResourcesRowChangeEvent(((CulturalResourcesRow)(e.Row)), e.Action));
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleting(        System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.CulturalResourcesRowDeleting != null)) {
+                    this.CulturalResourcesRowDeleting(this, new CulturalResourcesRowChangeEvent(((CulturalResourcesRow)(e.Row)), e.Action));
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void RemoveCulturalResourcesRow(CulturalResourcesRow row) {
+                this.Rows.Remove(row);
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public static         System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(        System.Xml.Schema.XmlSchemaSet xs) {
+                        System.Xml.Schema.XmlSchemaComplexType type = new         System.Xml.Schema.XmlSchemaComplexType();
+                        System.Xml.Schema.XmlSchemaSequence sequence = new         System.Xml.Schema.XmlSchemaSequence();
+                GlobalizationDataSet ds = new GlobalizationDataSet();
+                        System.Xml.Schema.XmlSchemaAny any1 = new         System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents =         System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                        System.Xml.Schema.XmlSchemaAny any2 = new         System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents =         System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                        System.Xml.Schema.XmlSchemaAttribute attribute1 = new         System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                        System.Xml.Schema.XmlSchemaAttribute attribute2 = new         System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "CulturalResourcesDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                        System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                            System.IO.MemoryStream s1 = new         System.IO.MemoryStream();
+                            System.IO.MemoryStream s2 = new         System.IO.MemoryStream();
+                    try {
+                                System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (        System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((        System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length)
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+
+
+
+
+        public         class CulturalResourcesRow :         System.Data.DataRow {
+
+            private CulturalResourcesDataTable tableCulturalResources;
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal CulturalResourcesRow(        System.Data.DataRowBuilder rb) :
+                    base(rb) {
+                this.tableCulturalResources = ((CulturalResourcesDataTable)(this.Table));
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string AssemblyName {
+                get {
+                    return ((string)(this[this.tableCulturalResources.AssemblyNameColumn]));
+                }
+                set {
+                    this[this.tableCulturalResources.AssemblyNameColumn] = value;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string ManifestResourceName {
+                get {
+                    return ((string)(this[this.tableCulturalResources.ManifestResourceNameColumn]));
+                }
+                set {
+                    this[this.tableCulturalResources.ManifestResourceNameColumn] = value;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string ResourceName {
+                get {
+                    return ((string)(this[this.tableCulturalResources.ResourceNameColumn]));
+                }
+                set {
+                    this[this.tableCulturalResources.ResourceNameColumn] = value;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string ResourceValue {
+                get {
+                    return ((string)(this[this.tableCulturalResources.ResourceValueColumn]));
+                }
+                set {
+                    this[this.tableCulturalResources.ResourceValueColumn] = value;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string ResourceType {
+                get {
+                    return ((string)(this[this.tableCulturalResources.ResourceTypeColumn]));
+                }
+                set {
+                    this[this.tableCulturalResources.ResourceTypeColumn] = value;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string ResourceVersion {
+                get {
+                    return ((string)(this[this.tableCulturalResources.ResourceVersionColumn]));
+                }
+                set {
+                    this[this.tableCulturalResources.ResourceVersionColumn] = value;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string SourceCultureName {
+                get {
+                    try {
+                        return ((string)(this[this.tableCulturalResources.SourceCultureNameColumn]));
+                    }
+                    catch (        System.InvalidCastException e) {
+                        throw new         System.Data.StrongTypingException("The value for column \'SourceCultureName\' in table \'CulturalResources\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCulturalResources.SourceCultureNameColumn] = value;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string SourceValue {
+                get {
+                    return ((string)(this[this.tableCulturalResources.SourceValueColumn]));
+                }
+                set {
+                    this[this.tableCulturalResources.SourceValueColumn] = value;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsSourceCultureNameNull() {
+                return this.IsNull(this.tableCulturalResources.SourceCultureNameColumn);
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetSourceCultureNameNull() {
+                this[this.tableCulturalResources.SourceCultureNameColumn] =         System.Convert.DBNull;
+            }
+        }
+
+
+
+
+        [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public class CulturalResourcesRowChangeEvent :         System.EventArgs {
+
+            private CulturalResourcesRow eventRow;
+
+            private         System.Data.DataRowAction eventAction;
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CulturalResourcesRowChangeEvent(CulturalResourcesRow row,         System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CulturalResourcesRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+
+            [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public         System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+    }
+}
+
+#pragma warning restore 1591
+ 

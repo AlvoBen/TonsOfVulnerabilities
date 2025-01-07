@@ -1,0 +1,195 @@
+﻿namespace Epi
+{
+
+
+
+    public enum Action
+    {
+
+
+
+        Beep,
+
+
+
+
+
+        Quit,
+
+
+
+
+        Cancel,
+
+
+
+
+        Back,
+
+
+
+
+        Next,
+
+
+
+
+
+        UserDialog,
+
+
+
+
+
+        SimpleDialog,
+
+
+
+
+
+        FileOpenDialog,
+
+
+
+
+
+        FileSaveDialog,
+
+
+
+
+
+
+        DatabasesDialog,
+
+
+
+
+
+
+        Always,
+
+
+
+
+        Assign,
+
+
+
+
+        AutoSearch,
+
+
+
+
+        Clear,
+
+
+
+
+        DefineGlobalVar,
+
+
+
+
+        DefinePermanentVar,
+
+
+
+
+        DefineStandardVar,
+
+
+
+
+        Dialog,
+
+
+
+
+        ExecuteString,
+
+
+
+
+        ExecuteFile,
+
+
+
+
+        ExecuteUrl,
+
+
+
+
+        GoTo,
+
+
+
+
+        Help,
+
+
+
+
+        Hide,
+
+
+
+
+        HideExcept,
+
+
+
+
+        IfStatement,
+
+
+
+
+        IfElseStatement,
+
+
+
+
+        NewRecord,
+
+
+
+
+        Print,
+
+
+
+
+        Unhide,
+
+
+
+
+        UnhideExcept,
+
+
+
+
+
+        GridTable,
+
+
+
+
+
+        Update,
+
+
+
+
+        OutTable,
+
+
+
+
+        OutputFileName
+    }
+}
+ 

@@ -1,0 +1,281 @@
+﻿
+
+
+
+
+
+
+
+
+
+namespace Epi.WPF.Dashboard {
+    using System;
+
+
+
+
+
+
+
+
+
+    [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [        System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    internal class LineListSharedStrings {
+
+        private static         System.Resources.ResourceManager resourceMan;
+
+        private static         System.Globalization.CultureInfo resourceCulture;
+
+        [        System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        internal LineListSharedStrings() {
+        }
+
+
+
+
+        [        System.ComponentModel.EditorBrowsableAttribute(        System.ComponentModel.EditorBrowsableState.Advanced)]
+        internal static         System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
+                            System.Resources.ResourceManager temp = new         System.Resources.ResourceManager("Epi.WPF.Dashboard.LineListSharedStrings", typeof(LineListSharedStrings).Assembly);
+                    resourceMan = temp;
+                }
+                return resourceMan;
+            }
+        }
+
+
+
+
+
+        [        System.ComponentModel.EditorBrowsableAttribute(        System.ComponentModel.EditorBrowsableState.Advanced)]
+        internal static         System.Globalization.CultureInfo Culture {
+            get {
+                return resourceCulture;
+            }
+            set {
+                resourceCulture = value;
+            }
+        }
+
+
+
+
+        internal static string ALLOW_UPDATES {
+            get {
+                return ResourceManager.GetString("ALLOW_UPDATES", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string CMENU_CLOSE {
+            get {
+                return ResourceManager.GetString("CMENU_CLOSE", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string CMENU_COPY {
+            get {
+                return ResourceManager.GetString("CMENU_COPY", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string CMENU_EXCEL {
+            get {
+                return ResourceManager.GetString("CMENU_EXCEL", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string CMENU_HTML {
+            get {
+                return ResourceManager.GetString("CMENU_HTML", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string CMENU_REMOVE_FIELD {
+            get {
+                return ResourceManager.GetString("CMENU_REMOVE_FIELD", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string CMENU_REMOVE_SORTING {
+            get {
+                return ResourceManager.GetString("CMENU_REMOVE_SORTING", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string CMENU_SEND_TO_BACK {
+            get {
+                return ResourceManager.GetString("CMENU_SEND_TO_BACK", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string CMENU_SWAP_SORT {
+            get {
+                return ResourceManager.GetString("CMENU_SWAP_SORT", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string GENERATE_LINE_LIST {
+            get {
+                return ResourceManager.GetString("GENERATE_LINE_LIST", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string GROUP_RESULTS_BY {
+            get {
+                return ResourceManager.GetString("GROUP_RESULTS_BY", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string INSTRUCTIONS_1 {
+            get {
+                return ResourceManager.GetString("INSTRUCTIONS_1", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string INSTRUCTIONS_2 {
+            get {
+                return ResourceManager.GetString("INSTRUCTIONS_2", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string LIST_CONFIG_TITLE {
+            get {
+                return ResourceManager.GetString("LIST_CONFIG_TITLE", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string LIST_VARIABLES_TO_DISPLAY {
+            get {
+                return ResourceManager.GetString("LIST_VARIABLES_TO_DISPLAY", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string MAX_ROWS_TO_DISPLAY {
+            get {
+                return ResourceManager.GetString("MAX_ROWS_TO_DISPLAY", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string MAX_VAR_NAME_LENGTH {
+            get {
+                return ResourceManager.GetString("MAX_VAR_NAME_LENGTH", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string SHOW_COLUMN_HEADINGS {
+            get {
+                return ResourceManager.GetString("SHOW_COLUMN_HEADINGS", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string SHOW_LINE_COLUMN {
+            get {
+                return ResourceManager.GetString("SHOW_LINE_COLUMN", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string SHOW_MISSING_REPRESENTATION {
+            get {
+                return ResourceManager.GetString("SHOW_MISSING_REPRESENTATION", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string SORT_ORDER {
+            get {
+                return ResourceManager.GetString("SORT_ORDER", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string SORT_VARIABLES {
+            get {
+                return ResourceManager.GetString("SORT_VARIABLES", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string SORT_VARS_TAB_ORDER {
+            get {
+                return ResourceManager.GetString("SORT_VARS_TAB_ORDER", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string USE_FIELD_PROMPTS {
+            get {
+                return ResourceManager.GetString("USE_FIELD_PROMPTS", resourceCulture);
+            }
+        }
+    }
+}
+
+ 

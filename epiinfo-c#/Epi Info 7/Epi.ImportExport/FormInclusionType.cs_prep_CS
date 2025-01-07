@@ -1,0 +1,32 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Epi.ImportExport
+{
+
+
+
+
+
+    public enum FormInclusionType
+    {
+
+
+
+        AllDescendants = 0,
+
+
+
+
+        DirectDescendants = 1,
+
+
+
+
+        CurrentFormOnly = 2
+    }
+}
+
+ 

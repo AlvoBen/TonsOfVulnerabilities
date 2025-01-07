@@ -1,0 +1,50 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using com.calitha.goldparser;
+using System.Data;
+using System.IO;
+using Epi;
+using Epi.Core;
+using Epi.Data;
+using Epi.Data.Services;
+using Epi.DataSets;
+
+namespace Epi.Core.AnalysisInterpreter.Rules
+{
+    class Rule_Printout:AnalysisRule
+    {
+
+
+
+        bool HasRun = false;
+
+        string file = string.Empty;
+
+        public Rule_Printout(Rule_Context pContext, NonterminalToken pToken) : base(pContext)
+        {
+            if (pToken.Tokens.Length > 1)
+            {
+                file = this.GetCommandElement(pToken.Tokens, 1);
+            }
+        }
+
+
+
+
+
+
+        public override object Execute()
+        {
+            object result = null;
+            if (!this.HasRun)
+            {
+                this.Context.AnalysisCheckCodeInterface.Printout(file);
+                this.HasRun = true;
+            }
+            return result;
+        }
+    }
+}
+
+ 

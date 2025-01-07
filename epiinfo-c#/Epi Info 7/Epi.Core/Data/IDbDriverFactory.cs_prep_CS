@@ -1,0 +1,71 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Data.Common;
+
+namespace Epi.Data
+{
+
+
+
+    public interface IDbDriverFactory
+    {
+
+
+
+
+        void CreatePhysicalDatabase(DbDriverInfo dbInfo);
+
+
+
+
+
+
+        IDbDriver CreateDatabaseObject(DbConnectionStringBuilder connectionStringBuilder);
+
+
+
+
+
+        IDbDriver CreateDatabaseObjectByConfiguredName(string configDatabaseKey);
+
+
+
+
+        IConnectionStringGui GetConnectionStringGuiForExistingDb();
+
+
+
+
+
+        IConnectionStringGui GetConnectionStringGuiForNewDb();
+
+
+
+
+
+
+        DbConnectionStringBuilder RequestNewConnection(string fileName);
+
+
+
+
+
+
+
+        DbConnectionStringBuilder RequestDefaultConnection(string databaseName, string projectName = "");
+
+        bool ArePrerequisitesMet();
+        string PrerequisiteMessage { get; }
+
+        bool CanClaimConnectionString(string connectionString);
+
+        string ConvertFileStringToConnectionString(string fileString);
+
+        string GetCreateFromDataTableSQL(string tableName, System.Data.DataTable table);
+
+        string SQLGetType(object type, int columnSize, int numericPrecision, int numericScale);
+    }
+}
+
+ 

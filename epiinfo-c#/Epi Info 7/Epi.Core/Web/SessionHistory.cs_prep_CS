@@ -1,0 +1,177 @@
+﻿//Using directives
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.IO;
+//
+
+namespace Epi.Web
+{
+
+
+
+    public class SessionHistory
+    {
+        //Public Interface
+        //Constructors
+
+
+
+        public SessionHistory()
+        {
+            ResetOutput();
+        }
+        //Constructors
+
+        //Public Enums and Constants
+
+        //Public Enums and Constants
+
+        //Public Properties
+
+
+
+        public List CommandHistory
+        {
+            get
+            {
+                return commandHistory;
+            }
+        }
+        //Public Properties
+
+        //Public Methods
+
+
+
+
+
+
+        public void Add(string Time, Uri Command, string DocumentTitle)
+        {
+            if (File.Exists(HistoryFile))
+            {
+                string fileName = Command.AbsolutePath;
+                if (Command.IsFile)
+                {
+                    FileInfo file = new FileInfo(Command.AbsolutePath);
+                    fileName = file.Name;
+                }
+                File.AppendAllText(historyFile, HTML.TableRow(HTML.TableCell(Time, "nowrap", "nowrap") +
+                    HTML.TableCell(HTML.HyperLink(DocumentTitle, Command.OriginalString)) + HTML.TableCell(fileName)));
+                commandHistory.Add(Command.AbsoluteUri);
+            }
+        }
+
+
+
+
+
+
+
+        public void Add(DateTime Time, Uri Command, string DocumentTitle)
+        {
+            if (File.Exists(HistoryFile))
+            {
+                string fileName = Command.AbsolutePath;
+                if (Command.IsFile)
+                {
+                    FileInfo file = new FileInfo(Command.AbsolutePath);
+                    fileName = file.Name;
+                }
+                File.AppendAllText(historyFile, HTML.TableRow(HTML.TableCell(Time.ToShortTimeString(), "nowrap", "nowrap") +
+                    HTML.TableCell(HTML.HyperLink(DocumentTitle, Command.OriginalString)) + HTML.TableCell(fileName)));
+                commandHistory.Add(Command.AbsoluteUri);
+            }
+        }
+
+
+
+
+        public void ResetOutput()
+        {
+            File.Delete(HistoryFile);
+            this.historyFile = string.Empty;
+        }
+        //Public Methods
+        //Public Interface
+
+        //Protected Interface
+
+        //Protected Properties
+
+        //Protected Properties
+
+        //Protected Methods
+
+        //Protected Methods
+
+        //Protected Events
+
+        //Protected Events
+        //Protected Interface
+
+        //Private Members
+
+        //Private Enums and Constants
+        private const string historyFileName = "IHistory.html";
+        //Private Enums and Constants
+
+        //Private Attributes
+        private string historyFile;
+        private List commandHistory = new List();
+        //Private Attributes
+
+        //Private Properties
+
+
+
+        public string HistoryFile
+        {
+            get
+            {
+                Configuration config = Configuration.GetNewInstance();
+                string OutputPath = config.Directories.Output;
+                if (string.IsNullOrEmpty(this.historyFile))
+                {
+                    if (!Directory.Exists(OutputPath))
+                    {
+                        Directory.CreateDirectory(OutputPath);
+                    }
+                    if (!File.Exists(Path.Combine(OutputPath, historyFileName)))
+                    {
+
+                        historyFile = Path.Combine(OutputPath, historyFileName);
+                        string historyFileContents = Epi.Resources.ResourceLoader.GetAnalysisSessionHistoryTemplate().Replace("{0}", DateTime.Today.ToLongDateString());
+
+                        File.WriteAllText(historyFile, historyFileContents);
+
+                        File.SetAttributes(historyFile, FileAttributes.Normal);
+                    }
+                    else
+                    {
+
+                        if (historyFile == null)
+                        {
+
+                            historyFile = Path.Combine(OutputPath, historyFileName);
+                        }
+                    }
+                }
+                return historyFile;
+            }
+        }
+        //Private Properties
+
+        //Private Methods
+
+        //Private Methods
+
+        //Private Events
+
+        //Private Events
+        //Private Members
+    }
+}
+
+ 

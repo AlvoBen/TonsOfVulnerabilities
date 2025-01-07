@@ -1,0 +1,49 @@
+﻿using System;
+
+
+namespace Epi.Windows.MakeView.Dialogs.FieldDefinitionDialogs
+{
+
+
+
+    public         class ContiguousFieldDefinition : PatternableTextFieldDefinition
+ {
+  //Constructors
+
+
+
+        public ContiguousFieldDefinition()
+        {
+            InitializeComponent();
+        }
+
+
+
+
+
+  public ContiguousFieldDefinition(MainForm frm) : base(frm)
+  {
+   InitializeComponent();
+  }
+  //Constructors
+
+  //Event Handlers
+
+
+
+
+
+  protected virtual void cbxRange_CheckedChanged(object sender, System.EventArgs e)
+  {
+   lblLower.Enabled = cbxRange.Checked;
+   lblUpper.Enabled = cbxRange.Checked;
+   txtLower.Enabled = cbxRange.Checked;
+   txtUpper.Enabled = cbxRange.Checked;
+
+  }
+  //
+
+ }
+}
+
+ 

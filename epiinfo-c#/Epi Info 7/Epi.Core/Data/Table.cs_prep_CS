@@ -1,0 +1,89 @@
+﻿using System;
+using Epi;
+using System.Collections;
+using System.Collections.Generic;
+using Epi.Collections;
+using Epi.Data;
+
+namespace Epi.Data
+{
+
+
+
+ public class Table : ITable
+ {
+  //Private data
+
+        IDbDriver database;
+  private string tableName = string.Empty;
+
+  //Private data
+
+  //Constructors
+
+
+
+
+
+
+  public Table(IDbDriver db, ITable table)
+  {
+            this.TableName = table.TableName;
+            this.Database = db;
+  }
+
+
+
+
+
+
+        public Table(IDbDriver dataSource, string tableName)
+        {
+            this.Database = dataSource;
+            this.TableName = tableName;
+        }
+
+  //Constructors
+
+  //Public Properties
+
+
+
+  public string TableName
+  {
+   get
+   {
+    return tableName;
+   }
+   set
+   {
+    tableName = value;
+   }
+  }
+
+
+
+
+        public IDbDriver Database
+        {
+            get { return database; }
+            set { database = value; }
+        }
+
+
+
+
+        public List TableColumnNames
+  {
+   get
+   {
+    return this.Database.GetTableColumnNames(this.TableName);
+   }
+  }
+
+  //Public Properties
+
+ }
+}
+
+ 

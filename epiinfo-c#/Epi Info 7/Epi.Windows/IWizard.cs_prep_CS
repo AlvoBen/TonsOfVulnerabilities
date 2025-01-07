@@ -1,0 +1,13 @@
+﻿using System;
+
+namespace Epi.Windows
+{
+
+
+
+    public interface IWizard
+    {
+    }
+}
+
+ 

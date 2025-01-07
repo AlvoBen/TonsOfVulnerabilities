@@ -1,0 +1,182 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using System.Windows.Controls;
+using System.Windows.Input;
+
+namespace EpiDashboard.Gadgets.StatCalc
+{
+    public class StatCalcGadgetBase : GadgetBase
+    {
+        //Private Members
+        private bool hostedInOwnWindow = false;
+        //
+
+        //Public Properties
+        public bool IsHostedInOwnWindow
+        {
+            get
+            {
+                return this.hostedInOwnWindow;
+            }
+            set
+            {
+                this.hostedInOwnWindow = value;
+                if (IsHostedInOwnWindow)
+                {
+                    object el = this.FindName("closeButton");
+                    if (el != null)
+                    {
+                        Controls.CloseButton closeButton = el as Controls.CloseButton;
+                        closeButton.Visibility = System.Windows.Visibility.Collapsed;
+                    }
+
+                    el = this.FindName("borderAll");
+                    if (el != null)
+                    {
+                        Border borderAll = el as Border;
+                        borderAll.BorderBrush = System.Windows.Media.Brushes.Transparent;
+                    }
+                }
+                else
+                {
+                    object el = this.FindName("closeButton");
+                    if (el != null)
+                    {
+                        Controls.CloseButton closeButton = el as Controls.CloseButton;
+                        closeButton.Visibility = System.Windows.Visibility.Visible;
+                    }
+                }
+            }
+        }
+        //
+
+        //Event Handlers
+        protected override void worker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            lock (syncLock)
+            {
+            }
+        }
+
+        protected virtual void txtInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+        }
+
+        protected void CloseButton_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            this.CloseGadget();
+        }
+        //
+
+        //IGadget Members
+
+
+
+
+        public override void SetGadgetToProcessingState()
+        {
+            this.IsProcessing = true;
+        }
+
+
+
+
+        public override void SetGadgetToFinishedState()
+        {
+            this.IsProcessing = false;
+            base.SetGadgetToFinishedState();
+        }
+
+        public override void RefreshResults()
+        {
+        }
+
+
+
+
+        public override void UpdateVariableNames()
+        {
+        }
+
+
+
+
+
+
+        public override XmlNode Serialize(XmlDocument doc)
+        {
+            return null;
+        }
+
+
+
+
+
+        public override void CreateFromXml(XmlElement element)
+        {
+            return;
+        }
+
+
+
+
+
+        public override string ToHTML(string htmlFileName = "", int count = 0)
+        {
+            return string.Empty;
+        }
+
+        private string customOutputHeading;
+        private string customOutputDescription;
+        private string customOutputCaption;
+
+
+
+
+        public override string CustomOutputHeading
+        {
+            get
+            {
+                return this.customOutputHeading;
+            }
+            set
+            {
+                this.customOutputHeading = value;
+            }
+        }
+
+
+
+
+        public override string CustomOutputDescription
+        {
+            get
+            {
+                return this.customOutputDescription;
+            }
+            set
+            {
+                this.customOutputDescription = value;
+            }
+        }
+
+        public override string CustomOutputCaption
+        {
+            get
+            {
+                return this.customOutputCaption;
+            }
+            set
+            {
+                this.customOutputCaption = value;
+            }
+        }
+
+        //
+    }
+}
+
+ 

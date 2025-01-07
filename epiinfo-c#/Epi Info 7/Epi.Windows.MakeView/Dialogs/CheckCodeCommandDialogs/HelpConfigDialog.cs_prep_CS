@@ -1,0 +1,67 @@
+﻿//Namespaces
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+using Epi.Windows.Dialogs;
+// 
+
+namespace Epi.Windows.MakeView.Dialogs.CheckCodeCommandDialogs
+{
+
+
+
+    public         class HelpConfigDialog : CheckCodeDesignDialog
+    {
+        //Constructors
+
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+        public HelpConfigDialog()
+        {
+            InitializeComponent();
+        }
+
+
+
+        public HelpConfigDialog(MainForm frm) : base(frm)
+  {
+
+   InitializeComponent();
+        }
+
+        // 
+
+        //Private Event Handlers
+
+
+
+
+
+
+  private void btnCancel_Click(object sender, System.EventArgs e)
+  {
+   this.Close();
+  }
+
+
+
+
+
+
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            Output = CommandNames.HELP + StringLiterals.SPACE + TextBox1.Text + StringLiterals.SPACE + ComboBox1.Text;
+            this.DialogResult = DialogResult.OK;
+            this.Hide();
+        }
+
+        // 
+    }
+}
+
+
+ 

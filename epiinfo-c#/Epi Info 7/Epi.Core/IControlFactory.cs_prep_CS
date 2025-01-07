@@ -1,0 +1,51 @@
+﻿using System;
+namespace Epi.Core
+{
+
+
+
+    public interface IControlFactory
+    {
+
+
+
+
+
+        System.Collections.Generic.List GetAssociatedControls(Epi.Fields.Field field);
+
+
+
+
+
+
+        Epi.Fields.Field GetAssociatedField(System.Windows.Forms.Control control);
+
+
+
+
+
+
+
+        System.Collections.Generic.List GetFieldControls(Epi.Fields.Field field, System.Drawing.Size canvasSize);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        System.Collections.Generic.List GetPageControls(Epi.Page page, System.Drawing.Size canvasSize);
+
+
+    }
+}
+
+ 

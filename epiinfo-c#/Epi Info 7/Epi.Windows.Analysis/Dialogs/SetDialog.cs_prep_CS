@@ -1,0 +1,370 @@
+﻿using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Data;
+using System.IO;
+using System.Text;
+using Epi;
+using Epi.Collections;
+using Epi.Windows;
+using Epi.Analysis;
+using Epi.Windows.Dialogs;
+using Epi.Windows.Analysis;
+using Epi.Data.Services;
+
+namespace Epi.Windows.Analysis.Dialogs
+{
+
+
+
+    public         class SetDialog : CommandDesignDialog
+    {
+
+
+
+        public bool isDialogMode = false;
+
+        //Public Interface
+  //Constructor
+
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+  public SetDialog()
+  {
+   InitializeComponent();
+  }
+
+
+
+
+
+        public SetDialog(Epi.Windows.Analysis.Forms.AnalysisMainForm frm)
+            : base(frm)
+  {
+   InitializeComponent();
+            Construct();
+  }
+  //Constructors
+        //Public Interface
+
+        //Protected Interface
+
+
+
+        protected override void GenerateCommand()
+        {
+            Configuration config = Configuration.GetNewInstance();
+            KeyValuePairCollection kvPairs = new KeyValuePairCollection();
+            kvPairs.Delimiter = CharLiterals.SPACE;
+
+            if ((settingsPanel.RepresentationOfYes != config.Settings.RepresentationOfYes) || (hasYesAsChanged))
+            {
+                kvPairs.Add(new KeyValuePair(ShortHands.YES, Util.InsertInDoubleQuotes(settingsPanel.RepresentationOfYes)));
+            }
+            if ((settingsPanel.RepresentationOfNo != config.Settings.RepresentationOfNo) || (hasNoAsChanged))
+            {
+                kvPairs.Add(new KeyValuePair(ShortHands.NO, Util.InsertInDoubleQuotes(settingsPanel.RepresentationOfNo)));
+            }
+            if ((settingsPanel.RepresentationOfMissing != config.Settings.RepresentationOfMissing) || (hasMissingAsChanged))
+            {
+                kvPairs.Add(new KeyValuePair(ShortHands.MISSING, Util.InsertInDoubleQuotes(settingsPanel.RepresentationOfMissing)));
+            }
+            if ((settingsPanel.ShowGraphics != config.Settings.ShowGraphics) || (hasShowGraphicChanged))
+            {
+                kvPairs.Add(new KeyValuePair(CommandNames.FREQGRAPH,
+                    Epi.Util.GetShortHand(settingsPanel.ShowGraphics)));
+            }
+            if ((settingsPanel.ShowHyperlinks != config.Settings.ShowHyperlinks) || (hasShowHyperlinkChanged))
+            {
+                kvPairs.Add(new KeyValuePair(CommandNames.HYPERLINKS,
+                    Epi.Util.GetShortHand(settingsPanel.ShowHyperlinks)));
+            }
+            if ((settingsPanel.ShowPercents != config.Settings.ShowPercents) || (hasShowPercentsChanged))
+            {
+                kvPairs.Add(new KeyValuePair(CommandNames.PERCENTS,
+                    Epi.Util.GetShortHand(settingsPanel.ShowPercents)));
+            }
+            if ((settingsPanel.ShowSelectCriteria != config.Settings.ShowSelection) || (hasShowSelectChanged))
+            {
+                kvPairs.Add(new KeyValuePair(CommandNames.SELECT,
+                    Epi.Util.GetShortHand(settingsPanel.ShowSelectCriteria)));
+            }
+            if ((settingsPanel.ShowPrompt != config.Settings.ShowCompletePrompt) || (hasShowPromptChanged))
+            {
+                kvPairs.Add(new KeyValuePair(CommandNames.SHOWPROMPTS,
+                    Epi.Util.GetShortHand(settingsPanel.ShowPrompt)));
+            }
+            if ((settingsPanel.ShowTablesOutput != config.Settings.ShowTables) || (hasShowTablesChanged))
+            {
+                kvPairs.Add(new KeyValuePair(CommandNames.TABLES,
+                    Epi.Util.GetShortHand(settingsPanel.ShowTablesOutput)));
+            }
+            if ((settingsPanel.ShowIncludeMissing != config.Settings.IncludeMissingValues) || (hasIncludeMissingChanged))
+            {
+                kvPairs.Add(new KeyValuePair(CommandNames.MISSING,
+                    Epi.Util.GetShortHand(settingsPanel.ShowIncludeMissing)));
+            }
+            if (hasStatisticsLevelChanged)
+            {
+                RadioButton rbSelected = settingsPanel.StatisticLevel;
+                StatisticsLevel levelIdSelected = (StatisticsLevel)short.Parse(rbSelected.Tag.ToString());
+                string levelTagSelected = AppData.Instance.GetStatisticsLevelById(levelIdSelected).Tag;
+                kvPairs.Add(new KeyValuePair(CommandNames.STATISTICS, levelTagSelected));
+            }
+            if (hasProcessRecordsChanged)
+            {
+                RadioButton rbSelected = settingsPanel.ProcessRecords;
+                RecordProcessingScope scopeIdSelected = (RecordProcessingScope)short.Parse(rbSelected.Tag.ToString());
+                string scopeTagSelected = AppData.Instance.GetRecordProcessessingScopeById(scopeIdSelected).Tag;
+                kvPairs.Add(new KeyValuePair(CommandNames.PROCESS, scopeTagSelected));
+            }
+
+            WordBuilder command = new WordBuilder();
+
+            if (kvPairs.Count > 0)
+            {
+                if (!this.isDialogMode)
+                {
+                    command.Append(CommandNames.SET);
+                }
+                command.Append(kvPairs.ToString());
+                if (!this.isDialogMode)
+                {
+                    command.Append(" END-SET\n");
+                }
+                this.CommandText = command.ToString();
+            }
+            else
+            {
+                this.CommandText = string.Empty;
+            }
+        }
+
+
+
+
+
+
+        protected override bool ValidateInput()
+        {
+            return base.ValidateInput();
+        }
+        //Protected Interface
+
+        //Private Attributes
+        private bool hasYesAsChanged;
+        private bool hasNoAsChanged;
+        private bool hasMissingAsChanged;
+        private bool hasShowPromptChanged;
+        private bool hasShowGraphicChanged;
+        private bool hasShowHyperlinkChanged;
+        private bool hasShowSelectChanged;
+        private bool hasShowPercentsChanged;
+        private bool hasShowTablesChanged;
+        private bool hasStatisticsLevelChanged;
+        private bool hasIncludeMissingChanged;
+        private bool hasProcessRecordsChanged;
+        //Private Attributes
+
+        //Private Methods
+
+        private void Construct()
+        {
+            if (!this.DesignMode)           
+            {
+                this.btnSaveOnly.Click += new System.EventHandler(this.btnSaveOnly_Click);
+                this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+            }
+        }
+
+
+
+
+  private void ResetHasChangedValues(bool changed)
+  {
+   hasIncludeMissingChanged = changed;
+   hasMissingAsChanged = changed;
+   hasNoAsChanged = changed;
+   hasYesAsChanged = changed;
+   hasShowGraphicChanged = changed;
+   hasShowHyperlinkChanged = changed;
+   hasShowPercentsChanged = changed;
+   hasShowPromptChanged = changed;
+   hasShowSelectChanged = changed;
+   hasShowTablesChanged = changed;
+   hasStatisticsLevelChanged = changed;
+   hasProcessRecordsChanged = changed;
+
+  }
+
+  //
+
+        //Event Handlers
+
+
+
+
+
+        private void Set_Load(object sender, System.EventArgs e)
+        {
+            Configuration config = Configuration.GetNewInstance();
+
+            this.EpiInterpreter.Context.ApplyOverridenConfigSettings(config);
+            this.settingsPanel.LoadLists();
+            this.settingsPanel.ShowSettings(config);
+            ResetHasChangedValues(false);
+        }
+
+
+
+
+
+
+        private void settingsPanel_RepresentationOfYesChanged(object sender, System.EventArgs e)
+        {
+            hasYesAsChanged = true;
+        }
+
+
+
+
+
+
+        private void settingsPanel_RepresentationOfNoChanged(object sender, System.EventArgs e)
+        {
+            hasNoAsChanged = true;
+        }
+
+
+
+
+
+        private void settingsPanel_RepresentationOfMissingChanged(object sender, System.EventArgs e)
+        {
+            hasMissingAsChanged = true;
+        }
+
+
+
+
+
+        private void settingsPanel_ShowPromptChanged(object sender, System.EventArgs e)
+        {
+            hasShowPromptChanged = true;
+        }
+
+
+
+
+
+        private void settingsPanel_ShowSelectCriteriaChanged(object sender, System.EventArgs e)
+        {
+            hasShowSelectChanged = true;
+        }
+
+
+
+
+
+        private void settingsPanel_ShowGraphicsChanged(object sender, System.EventArgs e)
+        {
+            hasShowGraphicChanged = true;
+        }
+
+
+
+
+
+        private void settingsPanel_ShowPercentsChanged(object sender, System.EventArgs e)
+        {
+            hasShowPercentsChanged = true;
+        }
+
+
+
+
+
+        private void settingsPanel_ShowHyperlinksChanged(object sender, System.EventArgs e)
+        {
+            hasShowHyperlinkChanged = true;
+        }
+
+
+
+
+
+        private void settingsPanel_ShowTablesOutputChanged(object sender, System.EventArgs e)
+        {
+            hasShowTablesChanged = true;
+        }
+
+
+
+
+
+        private void settingsPanel_StatisticsLevelChanged(object sender, System.EventArgs e)
+        {
+            hasStatisticsLevelChanged = true;
+
+        }
+
+
+
+
+
+        private void settingsPanel_ProcessRecordsChanged(object sender, System.EventArgs e)
+        {
+            hasProcessRecordsChanged = true;
+
+        }
+
+
+
+
+
+        private void settingsPanel_ShowIncludeMissingChanged(object sender, System.EventArgs e)
+        {
+            hasIncludeMissingChanged = true;
+
+        }
+
+
+
+
+
+
+        protected override void btnHelp_Click(object sender, System.EventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://wwwn.cdc.gov/epiinfo/user-guide/command-reference/analysis-commands-set.html");
+        }
+
+        //
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            settingsPanel.ShowSettings();
+        }
+
+
+
+
+
+
+        protected override void btnOK_Click(object sender, EventArgs e)
+        {
+            if (!this.isDialogMode)
+            {
+                base.btnOK_Click(sender, e);
+            }
+            else
+            {
+                base.btnSaveOnly_Click(sender, e);
+            }
+        }
+ }
+}
+ 

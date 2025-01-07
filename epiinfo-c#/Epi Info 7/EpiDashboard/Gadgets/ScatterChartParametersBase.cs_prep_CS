@@ -1,0 +1,47 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows.Controls;
+using ComponentArt.Win.DataVisualization;
+using ComponentArt.Win.DataVisualization.Common;
+using ComponentArt.Win.DataVisualization.Charting;
+
+namespace EpiDashboard
+{
+    public class ScatterChartParametersBase : ChartParametersBase
+    {
+        //Events
+
+        //
+
+        //Constructors
+
+
+
+        public ScatterChartParametersBase()
+            : base()
+        {
+
+        }
+
+
+
+
+        public ScatterChartParametersBase(ScatterChartParametersBase parameters)
+            : base(parameters)
+        {
+
+        }
+
+        //    
+
+        //Properties
+
+
+        // 
+
+    }
+}
+
+ 

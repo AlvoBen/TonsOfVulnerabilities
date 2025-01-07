@@ -1,0 +1,48 @@
+﻿
+namespace Epi
+{
+
+
+
+
+    [System.Flags]
+    public enum VariableType
+    {
+
+
+
+
+        Undefined = 0,
+
+
+
+
+        Permanent = 1,
+
+
+
+
+        Global = 2,
+
+
+
+
+        Standard = 4,
+
+
+
+
+        System = 8,
+
+
+
+
+        DataSource = 16,
+
+
+
+
+        DataSourceRedefined = 32
+    }
+}
+ 

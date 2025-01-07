@@ -1,0 +1,394 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using Microsoft.Windows.Controls;
+using Epi;
+using Epi.Core;
+using Epi.Data;
+using Epi.Fields;
+using EpiDashboard.Rules;
+
+namespace EpiDashboard
+{
+
+
+
+    public         class DataRecodingControl : UserControl
+    {
+        //Private Members
+        private DashboardHelper dashboardHelper;
+        //
+
+        //Public Events
+        public event EventHandler UserVariableAdded;
+        public event EventHandler UserVariableRemoved;
+        public event EventHandler UserVariableChanged;
+        public event GadgetClosingHandler GadgetClosing;
+        //
+
+        //Constructors
+
+
+
+
+
+
+        public DataRecodingControl(DashboardHelper dashboardHelper)
+        {
+            InitializeComponent();
+            this.dashboardHelper = dashboardHelper;
+            txtTitle.RenderTransform = new RotateTransform(90);
+            UpdateRules();
+        }
+        //
+
+        public void MinimizeGadget()
+        {
+            ConfigGrid.Height = 50;
+
+        }
+
+        //Event Handlers
+        void imgClose_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (GadgetClosing != null)
+                GadgetClosing(this);
+        }
+
+        private void btnRemoveRule_Click(object sender, RoutedEventArgs e)
+        {
+            if (lbxRules.SelectedItem != null)
+            {
+                dashboardHelper.RemoveRule(lbxRules.SelectedItem.ToString());
+            }
+            UpdateRules();
+            if (UserVariableRemoved != null)
+            {
+                UserVariableRemoved(this, new EventArgs());
+            }
+        }
+
+        private void btnClearConditions_Click(object sender, RoutedEventArgs e)
+        {
+            dashboardHelper.ClearRules();
+            UpdateRules();
+        }
+        //
+
+        //Private Methods
+        private void UpdateRules()
+        {
+            lbxRules.Items.Clear();
+            foreach (IDashboardRule rule in dashboardHelper.Rules)
+            {
+                lbxRules.Items.Add(rule.ToString());
+            }
+
+
+            this.txtTitle.Text = string.Format(DashboardSharedStrings.VARIABLE_CONTROL_TITLE, lbxRules.Items.Count.ToString());
+        }
+        //
+
+        //Private Properties
+        private View View
+        {
+            get
+            {
+                return this.dashboardHelper.View;
+            }
+        }
+
+        private IDbDriver Database
+        {
+            get
+            {
+                return this.dashboardHelper.Database;
+            }
+        }
+        //
+
+        private void btnNewRule_Click(object sender, RoutedEventArgs e)
+        {
+            if (btnNewRule.ContextMenu != null)
+            {
+                btnNewRule.ContextMenu.PlacementTarget = btnNewRule;
+                btnNewRule.ContextMenu.IsOpen = true;
+            }
+
+            e.Handled = true;
+            return;
+
+
+
+        }
+
+        private void mnuNewRecodeRule_Click(object sender, RoutedEventArgs e)
+        {
+            EpiDashboard.Dialogs.RecodeDialog recodeDialog = new EpiDashboard.Dialogs.RecodeDialog(this.dashboardHelper);
+            System.Windows.Forms.DialogResult result = recodeDialog.ShowDialog();
+
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+
+                dashboardHelper.AddRule(recodeDialog.RecodeRule);
+
+
+                UpdateRules();
+                if (UserVariableAdded != null)
+                {
+                    UserVariableAdded(this, new EventArgs());
+                }
+            }
+        }
+
+        private void mnuNewFormatRule_Click(object sender, RoutedEventArgs e)
+        {
+            EpiDashboard.Dialogs.FormatDialog formatDialog = new EpiDashboard.Dialogs.FormatDialog(this.dashboardHelper);
+            System.Windows.Forms.DialogResult result = formatDialog.ShowDialog();
+
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+
+                dashboardHelper.AddRule(formatDialog.FormatRule);
+
+
+                UpdateRules();
+                if (UserVariableAdded != null)
+                {
+                    UserVariableAdded(this, new EventArgs());
+                }
+            }
+        }
+
+        private void mnuNewExpressionAssignRule_Click(object sender, RoutedEventArgs e)
+        {
+            EpiDashboard.Dialogs.ExpressionAssignDialog assignDialog = new EpiDashboard.Dialogs.ExpressionAssignDialog(this.dashboardHelper);
+            System.Windows.Forms.DialogResult result = assignDialog.ShowDialog();
+
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+
+                dashboardHelper.AddRule(assignDialog.AssignRule);
+
+
+                UpdateRules();
+                if (UserVariableAdded != null)
+                {
+                    UserVariableAdded(this, new EventArgs());
+                }
+            }
+        }
+
+        private void mnuNewSimpleAssignRule_Click(object sender, RoutedEventArgs e)
+        {
+            EpiDashboard.Dialogs.SimpleAssignDialog assignDialog = new EpiDashboard.Dialogs.SimpleAssignDialog(this.dashboardHelper);
+            System.Windows.Forms.DialogResult result = assignDialog.ShowDialog();
+
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+
+                dashboardHelper.AddRule(assignDialog.AssignRule);
+
+
+                UpdateRules();
+                if (UserVariableAdded != null)
+                {
+                    UserVariableAdded(this, new EventArgs());
+                }
+            }
+        }
+
+        private void mnuNewConditionalAssignRule_Click(object sender, RoutedEventArgs e)
+        {
+            EpiDashboard.Dialogs.ConditionalAssignDialog assignDialog = new EpiDashboard.Dialogs.ConditionalAssignDialog(this.dashboardHelper);
+            System.Windows.Forms.DialogResult result = assignDialog.ShowDialog();
+
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+
+                dashboardHelper.AddRule(assignDialog.AssignRule);
+
+
+                UpdateRules();
+                if (UserVariableChanged != null)
+                {
+                    UserVariableChanged(this, new EventArgs());
+                }
+            }
+        }
+
+        private void mnuNewVariableGroupRule_Click(object sender, RoutedEventArgs e)
+        {
+            EpiDashboard.Dialogs.CreateGroupDialog groupDialog = new EpiDashboard.Dialogs.CreateGroupDialog(this.dashboardHelper);
+            System.Windows.Forms.DialogResult result = groupDialog.ShowDialog();
+
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+
+                dashboardHelper.AddRule(groupDialog.Group);
+
+
+                UpdateRules();
+                if (UserVariableChanged != null)
+                {
+                    UserVariableChanged(this, new EventArgs());
+                }
+            }
+        }
+
+        private void btnEditRule_Click(object sender, RoutedEventArgs e)
+        {
+            if (lbxRules.SelectedItems != null && lbxRules.SelectedItems.Count == 1)
+            {
+                Rule_Recode recodeRule = null;
+                Rule_Format formatRule = null;
+                Rule_ExpressionAssign expressionAssignRule = null;
+                Rule_SimpleAssign simpleAssignRule = null;
+                Rule_ConditionalAssign conditionalAssignRule = null;
+                Rule_VariableGroup variableGroupRule = null;
+
+                foreach (IDashboardRule rule in dashboardHelper.Rules)
+                {
+                    if (rule.FriendlyRule.Equals(lbxRules.SelectedItem.ToString()))
+                    {
+                        if (rule is Rule_Recode)
+                        {
+                            recodeRule = rule as Rule_Recode;
+                            break;
+                        }
+                        else if (rule is Rule_Format)
+                        {
+                            formatRule = rule as Rule_Format;
+                            break;
+                        }
+                        else if (rule is Rule_ExpressionAssign)
+                        {
+                            expressionAssignRule = rule as Rule_ExpressionAssign;
+                            break;
+                        }
+                        else if (rule is Rule_SimpleAssign)
+                        {
+                            simpleAssignRule = rule as Rule_SimpleAssign;
+                            break;
+                        }
+                        else if (rule is Rule_ConditionalAssign)
+                        {
+                            conditionalAssignRule = rule as Rule_ConditionalAssign;
+                            break;
+                        }
+                        else if (rule is Rule_VariableGroup)
+                        {
+                            variableGroupRule = rule as Rule_VariableGroup;
+                            break;
+                        }
+                    }
+                }
+
+                System.Windows.Forms.DialogResult result = System.Windows.Forms.DialogResult.None;
+
+                if (recodeRule != null)
+                {
+                    EpiDashboard.Dialogs.RecodeDialog recodeDialog = new EpiDashboard.Dialogs.RecodeDialog(this.dashboardHelper, recodeRule);
+                    result = recodeDialog.ShowDialog();
+
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+                        dashboardHelper.UpdateRule(recodeRule, recodeDialog.RecodeRule);
+                        UpdateRules();
+                        if (UserVariableChanged != null)
+                        {
+                            UserVariableChanged(this, new EventArgs());
+                        }
+                    }
+                }
+                else if(formatRule != null)
+                {
+                    EpiDashboard.Dialogs.FormatDialog formatDialog = new EpiDashboard.Dialogs.FormatDialog(this.dashboardHelper, formatRule);
+                    result = formatDialog.ShowDialog();
+
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+                        dashboardHelper.UpdateRule(formatRule, formatDialog.FormatRule);
+                        UpdateRules();
+                        if (UserVariableChanged != null)
+                        {
+                            UserVariableChanged(this, new EventArgs());
+                        }
+                    }
+                }
+                else if (expressionAssignRule != null)
+                {
+                    EpiDashboard.Dialogs.ExpressionAssignDialog assignDialog = new EpiDashboard.Dialogs.ExpressionAssignDialog(this.dashboardHelper, expressionAssignRule);
+                    result = assignDialog.ShowDialog();
+
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+                        dashboardHelper.UpdateRule(expressionAssignRule, assignDialog.AssignRule);
+                        UpdateRules();
+                        if (UserVariableChanged != null)
+                        {
+                            UserVariableChanged(this, new EventArgs());
+                        }
+                    }
+                }
+                else if (simpleAssignRule != null)
+                {
+                    EpiDashboard.Dialogs.SimpleAssignDialog assignDialog = new EpiDashboard.Dialogs.SimpleAssignDialog(this.dashboardHelper, simpleAssignRule);
+                    result = assignDialog.ShowDialog();
+
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+                        dashboardHelper.UpdateRule(simpleAssignRule, assignDialog.AssignRule);
+                        UpdateRules();
+                        if (UserVariableChanged != null)
+                        {
+                            UserVariableChanged(this, new EventArgs());
+                        }
+                    }
+                }
+                else if (conditionalAssignRule != null)
+                {
+                    EpiDashboard.Dialogs.ConditionalAssignDialog assignDialog = new EpiDashboard.Dialogs.ConditionalAssignDialog(this.dashboardHelper, conditionalAssignRule);
+                    result = assignDialog.ShowDialog();
+
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+                        dashboardHelper.UpdateRule(conditionalAssignRule, assignDialog.AssignRule);
+                        UpdateRules();
+                        if (UserVariableChanged != null)
+                        {
+                            UserVariableChanged(this, new EventArgs());
+                        }
+                    }
+                }
+                else if (variableGroupRule != null)
+                {
+                    EpiDashboard.Dialogs.CreateGroupDialog groupDialog = new EpiDashboard.Dialogs.CreateGroupDialog(this.dashboardHelper, variableGroupRule);
+                    result = groupDialog.ShowDialog();
+
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+                        dashboardHelper.UpdateRule(variableGroupRule, groupDialog.Group);
+                        UpdateRules();
+                        if (UserVariableChanged != null)
+                        {
+                            UserVariableChanged(this, new EventArgs());
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+ 

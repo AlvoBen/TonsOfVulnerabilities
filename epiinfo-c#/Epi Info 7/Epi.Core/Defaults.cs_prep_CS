@@ -1,0 +1,105 @@
+﻿using System.Drawing;
+using Epi.Resources;
+
+namespace Epi
+{
+
+
+
+ public        class Defaults
+ {
+
+  //Public Properties
+
+
+
+
+  public static Image BackgroundImageFile
+  {
+   get
+   {
+                return ResourceLoader.GetImage("BG.jpg");
+   }
+  }
+
+
+
+
+  public const string LANGUAGE = "en-US";
+
+
+
+        public const bool SHOW_TRACE = false;
+
+
+
+
+  public static VariableType VariableScope
+  {
+   get
+   {
+    return VariableType.Standard;
+
+   }
+  }
+
+
+
+
+  public static string FontFamilyName
+  {
+   get
+   {
+    return FontFamily.GenericSansSerif.Name;
+   }
+  }
+
+
+
+
+  public static float FontSize
+  {
+   get
+   {
+    return 8.5f;
+   }
+  }
+
+
+
+
+  public static FontStyle FontStyle
+  {
+   get
+   {
+    return FontStyle.Regular;
+   }
+  }
+
+
+
+
+  public static Font Font
+  {
+   get
+   {
+    return new Font(FontFamilyName, FontSize, FontStyle);
+   }
+  }
+
+
+
+
+
+        public static bool UseBackgroundOnAllPages
+        {
+            get
+            {
+                return (bool) false;
+            }
+        }
+        //Public Properties
+
+ }
+}
+ 

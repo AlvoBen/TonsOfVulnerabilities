@@ -1,0 +1,62 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using com.calitha.goldparser;
+using System.Data;
+using System.IO;
+
+namespace Epi.Core.AnalysisInterpreter.Rules
+{
+    public class Rule_RouteOut : AnalysisRule
+    {
+        bool HasRun = false;
+
+
+
+        string fileName = string.Empty;
+
+
+
+        bool isReplace = false;
+
+
+
+
+
+
+        public Rule_RouteOut(Rule_Context pContext, NonterminalToken pToken) : base(pContext)
+        {
+
+
+
+
+            fileName = GetCommandElement(pToken.Tokens, 1).Trim('\"');
+
+            if( pToken.Tokens.Length >= 3)
+            {
+                if( GetCommandElement(pToken.Tokens, 2).ToUpper().Equals("REPLACE"))
+                {
+                    isReplace = true;
+                }
+            }
+        }
+
+
+
+
+
+
+        public override object Execute()
+        {
+            object result = null;
+            if (!this.HasRun)
+            {
+                this.Context.AnalysisCheckCodeInterface.ChangeOutput(fileName, isReplace, true);
+                this.HasRun = true;
+            }
+            return result;
+        }
+    }
+}
+
+ 

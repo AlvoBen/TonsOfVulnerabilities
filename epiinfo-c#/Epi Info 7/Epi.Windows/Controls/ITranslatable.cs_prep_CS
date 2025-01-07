@@ -1,0 +1,20 @@
+﻿namespace Epi.Windows.Controls
+{
+
+
+
+ public interface ITranslatable
+ {
+
+
+
+
+  bool SkipTranslation
+  {
+   get;
+   set;
+  }
+ }
+}
+
+ 

@@ -1,0 +1,172 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+using com.calitha.goldparser;
+
+namespace Epi.Core.AnalysisInterpreter.Rules
+{
+    /*
+   ::= EXECUTE String
+                        | EXECUTE File
+                        | EXECUTE Url
+                        | EXECUTE WAITFOREXIT File
+                        | EXECUTE WAITFOREXIT String
+                        | EXECUTE WAITFOREXIT Url
+                        | EXECUTE NOWAITFOREXIT File
+                        | EXECUTE NOWAITFOREXIT String
+                        | EXECUTE NOWAITFOREXIT Url
+    */
+    public class Rule_Execute : AnalysisRule
+    {
+        bool HasRun = false;
+
+        string commandName = String.Empty;
+        string commandlineString = String.Empty;
+        string executeOption = String.Empty;
+        string firstParam = String.Empty;
+
+        public Rule_Execute(Rule_Context pContext, NonterminalToken pToken) : base(pContext)
+        {
+
+
+
+
+            firstParam = this.GetCommandElement(pToken.Tokens, 1);
+            if (firstParam.ToUpper() == CommandNames.NOWAITFOREXIT.ToUpper() || firstParam.ToUpper() == CommandNames.WAITFOREXIT.ToUpper())
+            {
+                executeOption = firstParam;
+                commandlineString = this.GetCommandElement(pToken.Tokens, 2);
+            }
+            else
+            {
+                commandlineString = firstParam;
+            }
+
+            commandlineString = commandlineString.Trim( CxNull
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

@@ -1,0 +1,129 @@
+﻿using System;
+using System.Data;
+using Epi;
+using Epi.Data;
+
+namespace Epi.Fields
+{
+
+
+
+ public abstract class InputTextBoxField : InputFieldWithSeparatePrompt, IFieldWithCheckCodeAfter, IFieldWithCheckCodeBefore
+ {
+
+  //Private Members
+
+  private string checkCodeAfter = string.Empty;
+  private string checkCodeBefore = string.Empty;
+
+
+  //
+
+  //Constructors
+
+
+
+
+  public InputTextBoxField(Page page) : base(page)
+  {
+  }
+
+
+
+
+
+  public InputTextBoxField(View view): base(view)
+  {
+   Construct();
+  }
+
+
+
+
+
+        public override void LoadFromRow(DataRow row)
+        {
+            base.LoadFromRow(row);
+
+
+        }
+
+        public InputTextBoxField Clone()
+        {
+            InputTextBoxField clone = (InputTextBoxField)this.MemberwiseClone();
+            base.AssignMembers(clone);
+            return clone;
+        }
+
+        public override void AssignMembers(Object field)
+        {
+            base.AssignMembers(field);
+
+
+        }
+
+  private void Construct()
+  {
+
+  }
+  //Constructors
+
+  //Public Properties
+
+
+
+
+  public string CheckCodeAfter
+  {
+   get
+   {
+    return (checkCodeAfter);
+   }
+   set
+   {
+    checkCodeAfter = value;
+   }
+  }
+
+
+
+
+  public string CheckCodeBefore
+  {
+   get
+   {
+    return (checkCodeBefore);
+   }
+   set
+   {
+    checkCodeBefore = value;
+   }
+  }
+
+  //Public Properties
+
+  //Protected Properties
+
+  //Protected Properties
+
+  //Public Methods
+
+
+
+
+  public override void Delete()
+  {
+   GetMetadata().DeleteField(this);
+            view.MustRefreshFieldCollection = true;
+  }
+
+  //Public Methods
+
+  //Private Methods
+
+  //
+
+ }
+}
+
+ 

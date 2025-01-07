@@ -1,0 +1,73 @@
+﻿//Namespaces
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Epi.Windows.Dialogs;
+
+// 
+
+namespace Epi.Windows.MakeView.Dialogs.CheckCodeCommandDialogs
+{
+
+
+
+    public         class CheckCodeDesignDialog : DialogBase
+    {
+        //Private Attributes
+        private string output;
+        public EpiInfo.Plugin.IEnterInterpreter EpiInterpreter;
+        //Private Attributes
+
+        //Constructors
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+        public CheckCodeDesignDialog()
+        {
+        }
+
+
+
+
+
+        public CheckCodeDesignDialog(MainForm frm)
+            : base(frm)
+        {
+        }
+
+        //Constructors
+
+        //Properties
+
+
+
+
+  public virtual View View
+        {
+            set {                }
+        }
+
+
+
+
+
+
+
+        public string Output
+        {
+            get
+            {
+                return this.output;
+            }
+            set
+            {
+                this.output = value;
+            }
+        }
+        //Properties
+    }
+}
+
+ 

@@ -1,0 +1,238 @@
+﻿
+namespace Epi
+{
+
+
+
+
+ public        class StringLiterals
+    {
+
+
+
+        public const string ASCENDING = "(++)";
+
+
+
+
+        public const string AMPERSAND = "&";
+
+
+
+
+        public const string BACK_TICK = @"`";
+
+
+
+
+        public const string BACKWARD_SLASH = "\\";
+
+
+
+
+        public const string CARET = "^";
+
+
+
+
+        public const string COLON = ":";
+
+
+
+
+        public const string COMMA = ",";
+
+
+
+
+        public const string COMMERCIAL_AT = "@";
+
+
+
+
+        public const string CURLY_BRACE_LEFT = "{";
+
+
+
+
+        public const string CURLY_BRACE_RIGHT = "}";
+
+
+
+
+        public const string DESCENDING = "(--)";
+
+
+
+
+        public const string DOUBLEQUOTES = "\"";
+
+
+
+
+        public const string ELLIPSIS = "...";
+
+
+
+
+        public const string EPI_REPRESENTATION_OF_FALSE = "(-)";
+
+
+
+
+        public const string EPI_REPRESENTATION_OF_MISSING = "(.)";
+
+
+
+
+        public const string EPI_REPRESENTATION_OF_TRUE = "(+)";
+
+
+
+
+        public const string EPI_TABLE = "epitable";
+
+
+
+
+        public const string EQUAL = "=";
+
+
+
+
+        public const string FORWARD_SLASH = "/";
+
+
+
+
+        public const string GREATER_THAN = ">";
+
+
+
+
+        public const string GREATER_THAN_OR_EQUAL = ">=";
+
+
+
+
+        public const string HASH = "#";
+
+
+
+
+        public const string HYPHEN = "-";
+
+
+
+
+        public const string LEFT_SQUARE_BRACKET = "[";
+
+
+
+
+        public const string LESS_THAN = "<";
+
+
+
+
+
+        public const string LESS_THAN_OR_EQUAL = "<=";
+
+
+
+
+        public const string LESS_THAN_OR_GREATER_THAN = "  ";
+
+
+
+
+        public const string NEW_LINE = "\r\n";
+
+
+
+
+        public const string NEW_VALUE = "NewValue";
+
+
+
+
+        public const string NUMBER_255 = "255";
+
+
+
+
+        public const string OLD_GUID_CODE = "ALWAYS\r\nIF CDCUNIQUEID=(.) OR CDCUNIQUEID=\"\"  THEN\r\nASSIGN CDCUNIQUEID = GLOBAL_ID!GetGlobalUniqueID()\r\nASSIGN CDC_UNIQUE_ID=CDCUNIQUEID\r\nEND\r\nEND";
+
+
+
+
+        public const string OLD_VALUE = "OldValue";
+
+
+
+
+  public const string PARANTHESES_OPEN = "(";
+
+
+
+
+        public const string PARANTHESES_CLOSE = ")";
+
+
+
+
+        public const string PERCENT = "%";
+
+
+
+
+        public const string PERIOD = ".";
+
+
+
+
+        public const string PLUS = "+";
+
+
+
+
+        public const string RIGHT_SQUARE_BRACKET = "]";
+
+
+
+
+        public const string SEMI_COLON = @";";
+
+
+
+
+  public const string SINGLEQUOTES = "'";
+
+
+
+
+        public const string SPACE = " ";
+
+
+
+
+        public const string STAR = "*";
+
+
+
+
+        public const string TAB = "\t";
+
+
+
+
+        public const string TABLE_IMPORT_STATUS = "{0} ({1} {2}{3})";
+
+
+
+
+        public const string UNDER_SCORE = "_";
+    } 
+}
+
+ 

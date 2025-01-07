@@ -1,0 +1,240 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Epi.Data;
+
+namespace Epi.ImportExport.Filters
+{
+
+
+
+
+    public class RowFilters : IEnumerable
+    {
+        //Private Members
+        private List rowFilterConditions;
+        //
+
+        //Constructors
+
+
+
+
+        public RowFilters(IDbDriver dataDriver)
+        {
+            DataDriver = dataDriver;
+            rowFilterConditions = new List();
+        }
+        //
+
+        //Public Properties
+
+
+
+        private IDbDriver DataDriver { get {return _DataDriver; } set{ _DataDriver=value; } } IDbDriver _DataDriver;
+
+        public string WhereClause
+        {
+            get
+            {
+                WordBuilder wb = new WordBuilder(" AND ");
+                foreach (IRowFilterCondition rfc in this)
+                {
+                    wb.Add(rfc.Sql);
+                }
+                return wb.ToString();
+            }
+        }
+        //
+
+        //Public Methods
+
+
+
+
+
+
+        public Query GetGuidSelectQuery(View form)
+        {
+            if (DataDriver == null)
+            {
+                throw new NullReferenceException();
+            }
+            if (form == null)
+            {
+                throw new ArgumentNullException("form");
+            }
+
+            string baseTableName = "t";
+
+            string fromClause = form.FromViewSQL;
+            WordBuilder filterSql = new WordBuilder(" AND ");
+            WordBuilder columns = new WordBuilder(", ");
+
+            columns.Append("[" + baseTableName + "].[GlobalRecordId]");
+            columns.Append("[" + baseTableName + "].[FKEY]");
+            columns.Append("[" + baseTableName + "].[RECSTATUS]");
+
+            if (DataDriver.ColumnExists(baseTableName, "FirstSaveLogonName"))
+            {
+                columns.Append("[" + baseTableName + "].[FirstSaveLogonName]");
+                columns.Append("[" + baseTableName + "].[FirstSaveTime]");
+                columns.Append("[" + baseTableName + "].[LastSaveLogonName]");
+                columns.Append("[" + baseTableName + "].[LastSaveTime]");
+            }
+
+            string fullSql = "SELECT " + columns.ToString() + " " + fromClause + " WHERE [" + baseTableName + "].[RECSTATUS] = 1 ";
+            filterSql.Append(fullSql);
+
+            foreach (IRowFilterCondition rowFc in rowFilterConditions)
+            {
+                filterSql.Append(rowFc.Sql);
+            }
+
+            Query selectQuery = DataDriver.CreateQuery(filterSql.ToString());
+
+            foreach (IRowFilterCondition rowFc in rowFilterConditions)
+            {
+                selectQuery.Parameters.Add(rowFc.Parameter);
+            }
+
+            return selectQuery;
+        }
+
+
+
+
+
+        public void Add(IRowFilterCondition newCondition)
+        {
+            if (this.Contains(newCondition.Description))
+            {
+                throw new InvalidOperationException("This item has already been added.");
+            }
+            else
+            {
+                rowFilterConditions.Add(newCondition);
+            }
+        }
+
+
+
+
+
+        public void Remove(IRowFilterCondition condition)
+        {
+            if (this.Contains(condition.Description))
+            {
+                rowFilterConditions.Remove(condition);
+            }
+            else
+            {
+                throw new KeyNotFoundException("The condition '" + condition.Description + "' could not be found.");
+            }
+        }
+
+
+
+
+        public void Clear()
+        {
+            this.rowFilterConditions.Clear();
+        }
+
+
+
+
+
+
+        public bool Contains(string description)
+        {
+            foreach (IRowFilterCondition rowFc in this.rowFilterConditions)
+            {
+                if (rowFc.Description.Equals(description))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        //
+
+        //Private Methods
+        //
+
+        //IEnumerable Members
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return new RowFiltersEnumerator(rowFilterConditions);
+        }
+
+        public void Dispose() { }
+
+        //
+
+        //Classes
+
+
+
+        protected class RowFiltersEnumerator : IEnumerator
+        {
+            //Private Members
+            private List rowFilterConditions;
+            private int currentIndex;
+            //Private Members
+
+            public RowFiltersEnumerator(List rowFilterConditions)
+            {
+                this.rowFilterConditions = rowFilterConditions;
+                Reset();
+            }
+
+
+            public void Reset()
+            {
+                currentIndex = -1;
+            }
+
+            public IRowFilterCondition Current
+            {
+                get
+                {
+                    return rowFilterConditions[currentIndex];
+                }
+            }
+
+            object IEnumerator.Current
+            {
+                get
+                {
+                    return Current;
+                }
+            }
+
+            public bool MoveNext()
+            {
+                currentIndex++;
+                return currentIndex < rowFilterConditions.Count;
+            }
+
+            public void Dispose() { }
+        }
+
+        //
+    }
+}
+
+ 

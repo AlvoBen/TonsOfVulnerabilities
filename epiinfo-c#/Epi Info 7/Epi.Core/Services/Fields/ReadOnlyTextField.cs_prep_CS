@@ -1,0 +1,57 @@
+﻿using System;
+
+namespace Epi.Fields
+{
+
+
+
+ public abstract class ReadOnlyTextField : FieldWithSeparatePrompt
+ {
+  //Private Members
+
+  //Private Members
+
+  //Constructors
+
+
+
+
+  public ReadOnlyTextField(Page page) : base(page)
+  {
+  }
+
+
+
+
+
+
+  public ReadOnlyTextField(System.Data.DataRow fieldRow, View view) : base(view)
+  {
+  }
+
+  //Constructors
+
+  //Protected Properties
+
+  //Protected Properties
+
+  //Public Methods
+
+
+
+
+  public override void Delete()
+  {
+            this.GetMetadata().DeleteField(this);
+            view.MustRefreshFieldCollection = true;
+  }
+  //
+
+  //Private Methods
+
+  //Protected Methods
+
+ }
+}
+
+ 

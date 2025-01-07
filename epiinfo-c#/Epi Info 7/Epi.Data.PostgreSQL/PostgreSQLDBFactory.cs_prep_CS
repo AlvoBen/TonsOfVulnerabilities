@@ -1,0 +1,233 @@
+﻿using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Collections.Generic;
+using System.Text;
+using System.Data.Common;
+using Epi.Data.PostgreSQL.Forms;
+using System.IO;
+using Npgsql;
+using Epi;
+using System.Windows.Forms;
+
+namespace Epi.Data.PostgreSQL
+{
+
+
+
+    public class PostgreSQLDBFactory : IDbDriverFactory
+    {
+
+        //Connection string on different OS
+
+
+
+
+        //
+
+        private NpgsqlConnectionStringBuilder mySQLConnBuild = new NpgsqlConnectionStringBuilder();
+
+        public bool ArePrerequisitesMet()
+        {
+            return true;
+        }
+
+        public string PrerequisiteMessage
+        {
+            get { return string.Empty; }
+        }
+
+        //IDbDriverFactory Members
+
+
+
+
+
+        public void CreatePhysicalDatabase(DbDriverInfo dbInfo)
+        {
+            NpgsqlConnectionStringBuilder masterBuilder = new NpgsqlConnectionStringBuilder(dbInfo.DBCnnStringBuilder.ToString());
+            NpgsqlConnectionStringBuilder tempBuilder = new NpgsqlConnectionStringBuilder(dbInfo.DBCnnStringBuilder.ToString());
+
+
+
+            tempBuilder.Database = "information_schema";
+
+            NpgsqlConnection masterConnection = new NpgsqlConnection(tempBuilder.ToString());
+
+            try
+            {
+                NpgsqlCommand command = masterConnection.CreateCommand();
+                if(dbInfo.DBName != null)
+                {
+                    command.CommandText = "create database " + dbInfo.DBName + ";";
+                }
+
+                masterConnection.Open();
+
+                command.ExecuteNonQuery();
+
+
+                tempBuilder.Database = dbInfo.DBName;
+            }
+            catch (Exception ex)
+            {
+                throw new System.ApplicationException("Could not create new MySQL Database", ex);//(Epi.SharedStrings.CAN_NOT_CREATE_NEW_MYSQL, ex);
+            }
+            finally
+            {
+                masterConnection.Close();
+            }
+        }
+
+
+
+
+
+
+        public IDbDriver CreateDatabaseObject(System.Data.Common.DbConnectionStringBuilder connectionStringBuilder)
+        {
+            IDbDriver instance = new PostgreSQLDatabase();
+            instance.ConnectionString = connectionStringBuilder.ConnectionString;
+
+            return instance;
+        }
+
+
+
+
+
+
+        public IDbDriver CreateDatabaseObjectByConfiguredName(string configDatabaseKey)
+        {
+
+            IDbDriver instance = null;
+            Configuration config = Configuration.GetNewInstance();
+            DataRow[] result = config.DatabaseConnections.Select("Name='" + configDatabaseKey + "'");
+            if (result.Length == 1)
+            {
+                Epi.DataSets.Config.DatabaseRow dbConnection = (Epi.DataSets.Config.DatabaseRow)result[0];
+                NpgsqlConnectionStringBuilder mySqlConnectionBuilder = new NpgsqlConnectionStringBuilder(dbConnection.ConnectionString);
+                instance = CreateDatabaseObject(mySqlConnectionBuilder);
+            }
+            else
+            {
+                throw new GeneralException("Database name is not configured.");
+            }
+
+            return instance;
+        }
+
+
+
+
+
+
+        public IConnectionStringGui GetConnectionStringGuiForExistingDb()
+        {
+            if (Configuration.Environment == ExecutionEnvironment.WindowsApplication)
+            {
+                return new ExistingConnectionStringDialog();
+            }
+            else
+            {
+                throw new NotSupportedException("No GUI associated with current environment.");
+            }
+        }
+
+
+
+
+
+
+        public IConnectionStringGui GetConnectionStringGuiForNewDb()
+        {
+
+            if (Configuration.Environment == ExecutionEnvironment.WindowsApplication)
+            {
+                return new NonExistingConnectionStringDialog();
+
+            }
+            else
+            {
+                throw new NotSupportedException("No GUI associated with current environment.");
+            }
+        }
+
+
+
+
+
+
+        public System.Data.Common.DbConnectionStringBuilder RequestNewConnection(string fileName)
+        {
+            DbConnectionStringBuilder dbStringBuilder = new DbConnectionStringBuilder(false);
+            dbStringBuilder.ConnectionString = fileName;
+
+            return dbStringBuilder;
+        }
+
+
+
+
+
+
+        public System.Data.Common.DbConnectionStringBuilder RequestDefaultConnection(string databaseName, string projectName = "")
+        {
+            DbConnectionStringBuilder dbStringBuilder = new DbConnectionStringBuilder(false);
+            dbStringBuilder.ConnectionString = PostgreSQLDatabase.BuildDefaultConnectionString(databaseName);
+            return dbStringBuilder;
+        }
+
+
+
+
+
+
+
+
+
+        public System.Data.Common.DbConnectionStringBuilder RequestDefaultConnection(string database, string server, int port, string user, string password)
+        {
+
+            mySQLConnBuild.Database = database;
+            mySQLConnBuild.Host = server;
+            mySQLConnBuild.Port = port;
+            mySQLConnBuild.UserName = user;
+            mySQLConnBuild.Password = password;
+
+            return (mySQLConnBuild as DbConnectionStringBuilder);
+        }
+
+        public bool CanClaimConnectionString(string connectionString)
+        {
+            string conn = connectionString.ToLower();
+            if (conn.Contains("host") && conn.Contains("syncnotification"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        //
+
+        public string ConvertFileStringToConnectionString(string fileString)
+        {
+            return fileString;
+        }
+
+        public string GetCreateFromDataTableSQL(string tableName, DataTable table)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string SQLGetType(object type, int columnSize, int numericPrecision, int numericScale)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
+
+ 

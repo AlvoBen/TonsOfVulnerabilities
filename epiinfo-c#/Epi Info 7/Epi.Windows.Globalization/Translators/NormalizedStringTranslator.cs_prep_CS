@@ -1,0 +1,62 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Epi.Windows.Globalization.Translators
+{
+
+
+
+    public class NormalizedStringTranslator : ITranslator
+    {
+        char[] noisyCharacters =  CxNull;
+        char[] controlCharacters =  CxNull;
+
+
+
+
+
+
+
+
+        public virtual string Translate(string sourceCultureName, string targetCultureName, string sourceText)
+        {
+            return NormalizeString(sourceText);
+        }
+
+        string NormalizeString(string str)
+        {
+            bool skip = false;
+            string normalString = "";
+
+
+            foreach (char c in str)
+            {
+                skip = false;
+                foreach (char x in controlCharacters)
+                {
+                    if (c == x)
+                    {
+                        skip = true;
+                        normalString += '_';
+                        break;
+                    }
+                }
+                foreach (char x in noisyCharacters)
+                {
+                    if (c == x)
+                    {
+                        skip = true;
+                        break;
+                    }
+                }
+
+                if (!skip) normalString += c;
+            }
+
+            return normalString.Trim('_').Trim();
+        }
+    }
+}
+
+ 

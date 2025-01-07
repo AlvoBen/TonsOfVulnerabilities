@@ -1,0 +1,208 @@
+﻿using System;
+using System.Data;
+
+using Epi;
+using Epi.Data;
+
+namespace Epi.Fields
+{
+
+
+
+    public abstract class TableBasedDropDownColumn : GridColumnBase
+    {
+        //Private Class Members
+        private bool isExclusiveTable;
+        private string sourceTableName = string.Empty;
+        private bool shouldSort = false;
+        private string tableName = string.Empty;
+        //Private Class Members
+
+        //Protected Members
+
+
+
+        protected string codeColumnName = string.Empty;
+
+
+
+        protected string textColumnName = string.Empty;
+        //
+
+        //Constructors
+
+
+
+
+        public TableBasedDropDownColumn(GridField gridField)
+            : base(gridField)
+        {
+        }
+
+
+
+
+
+
+        public TableBasedDropDownColumn(DataRow gridDataRow, GridField gridField)
+            : base(gridDataRow, gridField)
+        {
+            tableName = gridDataRow[ColumnNames.DATA_TABLE_NAME].ToString();
+            if (gridDataRow[ColumnNames.IS_EXCLUSIVE_TABLE] != null &&
+                gridDataRow[ColumnNames.IS_EXCLUSIVE_TABLE] != DBNull.Value)
+            {
+                isExclusiveTable = (bool)gridDataRow[ColumnNames.IS_EXCLUSIVE_TABLE];
+            }
+            sourceTableName = gridDataRow[ColumnNames.SOURCE_TABLE_NAME].ToString();
+            textColumnName = gridDataRow[ColumnNames.TEXT_COLUMN_NAME].ToString();
+            if (gridDataRow[ColumnNames.CODE_COLUMN_NAME] != null)
+            {
+                codeColumnName = gridDataRow[ColumnNames.CODE_COLUMN_NAME].ToString();
+            }
+
+            if (gridDataRow[ColumnNames.SORT] != null &&
+                gridDataRow[ColumnNames.SORT] != DBNull.Value)
+            {
+                shouldSort = (bool)gridDataRow[ColumnNames.SORT];
+            }
+
+        }
+        //Constructors
+
+        //Public Properties
+
+
+
+        public bool IsExclusiveTable
+        {
+            get
+            {
+                return (isExclusiveTable);
+            }
+            set
+            {
+                isExclusiveTable = value;
+            }
+        }
+
+
+
+
+        public string SourceTableName
+        {
+            get
+            {
+                return sourceTableName;
+            }
+            set
+            {
+                sourceTableName = value;
+            }
+        }
+
+
+
+
+        public virtual string CodeColumnName
+        {
+            get
+            {
+                return codeColumnName;
+            }
+            set
+            {
+                codeColumnName = value;
+            }
+        }
+
+
+
+
+        public virtual string TextColumnName
+        {
+            get
+            {
+                return textColumnName;
+            }
+            set
+            {
+                textColumnName = value;
+            }
+        }
+
+
+
+
+        public bool ShouldSort
+        {
+            get
+            {
+                return (shouldSort);
+            }
+            set
+            {
+                shouldSort = value;
+            }
+        }
+
+
+
+
+
+
+
+
+        //Public Properties
+
+        //Public Methods
+
+        //
+
+        //Private Methods
+
+
+
+
+
+        public DataTable GetSourceData()
+        {
+            if (string.IsNullOrEmpty(SourceTableName))
+            {
+                throw new System.ApplicationException(SharedStrings.SOURCE_TABLE_NOT_SET);
+            }
+            return GetMetadata().GetCodeTableData(SourceTableName);
+        }
+
+
+
+
+
+
+        public DataTable GetSourceData(string columnNames)
+        {
+            if (string.IsNullOrEmpty(SourceTableName))
+            {
+                throw new System.ApplicationException(SharedStrings.SOURCE_TABLE_NOT_SET);
+            }
+            return GetMetadata().GetCodeTableData(SourceTableName, columnNames);
+        }
+
+
+
+
+
+
+
+        public DataTable GetSourceData(string columnNames, string sortCriteria)
+        {
+            if (string.IsNullOrEmpty(SourceTableName))
+            {
+                throw new System.ApplicationException(SharedStrings.SOURCE_TABLE_NOT_SET);
+            }
+            return GetMetadata().GetCodeTableData(SourceTableName, columnNames, sortCriteria);
+        }
+        //
+    }
+}
+
+ 

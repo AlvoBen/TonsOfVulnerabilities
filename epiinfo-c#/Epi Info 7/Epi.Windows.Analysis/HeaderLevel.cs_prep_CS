@@ -1,0 +1,226 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Web;
+
+namespace Epi.Analysis
+{
+
+
+
+    public class HeaderLevel
+    {
+        private int levelNumber;
+        private string text;
+        private string color;
+        private string size;
+        private bool shouldAppend;
+        private bool shouldBold;
+        private bool shouldItalicize;
+        private bool shouldUnderline;
+        private string cssClass = String.Empty;
+        private string cssStyle = String.Empty;
+
+
+
+
+
+        public HeaderLevel(int levelNumber)
+        {
+            this.LevelNumber = levelNumber;
+            this.Reset();
+        }
+
+
+
+
+        public int LevelNumber
+        {
+            get { return levelNumber; }
+            set { levelNumber = value; }
+        }
+
+
+
+
+        public string Text
+        {
+            get { return text; }
+            set { text = value; }
+        }
+
+
+
+
+        public string Color
+        {
+            get { return color; }
+            set { color = value; }
+        }
+
+
+
+
+        public string Size
+        {
+            get { return size; }
+            set { size = value; }
+        }
+
+
+
+
+        public bool ShouldAppend
+        {
+            get { return shouldAppend; }
+            set { shouldAppend = value; }
+        }
+
+
+
+
+        public bool ShouldBold
+        {
+            get { return shouldBold; }
+            set { shouldBold = value; }
+        }
+
+
+
+
+        public bool ShouldItalicize
+        {
+            get { return shouldItalicize; }
+            set { shouldItalicize = value; }
+        }
+
+
+
+
+        public bool ShouldUnderline
+        {
+            get { return shouldUnderline; }
+            set { shouldUnderline = value; }
+        }
+
+
+
+
+        public string CssClass
+        {
+            get
+            {
+                switch (levelNumber)
+                {
+                    case 0:
+                        cssClass = "BODY";
+                        break;
+                    default:
+                        cssClass = String.Empty;
+                        break;
+                }
+                return cssClass;
+            }
+        }
+
+
+
+
+        public string CssStyle
+        {
+            get
+            {
+                if (!String.IsNullOrEmpty(size))
+                {
+                    size = size.Trim();
+                    int sizeValue = 3;
+                    int.TryParse(size.Substring(size.Length-1), out sizeValue);
+
+                    int sizeInPixels = (4 * sizeValue) + 4;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    cssStyle += "font-size:" + sizeInPixels.ToString() + "px; ";
+                }
+
+                if (!String.IsNullOrEmpty(color))
+                {
+                    cssStyle += "color:" + color + "; ";
+                }
+
+                if (shouldBold)
+                {
+                    cssStyle += "font-weight:bold; ";
+                }
+                else
+                {
+                    cssStyle += "font-weight:normal; ";
+                }
+
+                if (shouldItalicize)
+                {
+                    cssStyle += "font-style:italic; ";
+                }
+                else
+                {
+                    cssStyle += "font-style:normal; ";
+                }
+
+                if (shouldUnderline)
+                {
+                    cssStyle += "text-decoration:underline; ";
+                }
+                else
+                {
+                    cssStyle += "text-decoration:none; ";
+                }
+
+                return cssStyle;
+            }
+        }
+
+
+
+
+        public string CssText
+        {
+            get
+            {
+                string cssText=String.Empty;
+                if(!String.IsNullOrEmpty(this.CssClass))
+                {
+                    cssText = this.CssClass + "{" + this.CssStyle + "}";
+                }
+                return cssText;
+            }
+        }
+
+
+
+
+        public void Reset()
+        {
+
+            text = String.Empty;
+            color = "BLACK";
+            size = "3";
+            shouldAppend = false;
+            shouldBold = false;
+            shouldItalicize = false;
+            shouldUnderline = false;
+        }
+    }
+}
+
+ 

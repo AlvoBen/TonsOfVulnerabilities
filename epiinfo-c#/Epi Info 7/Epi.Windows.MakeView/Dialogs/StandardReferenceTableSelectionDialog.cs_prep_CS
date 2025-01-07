@@ -1,0 +1,70 @@
+﻿using System;
+using System.Drawing;
+using System.Collections;
+using System.ComponentModel;
+using System.Windows.Forms;
+using Epi;
+using Epi.Fields;
+using Epi.Windows.Dialogs;
+
+
+namespace Epi.Windows.MakeView.Dialogs
+{
+
+
+
+    public         class StandardReferenceTableSelectionDialog : DialogBase
+ {
+
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+  public StandardReferenceTableSelectionDialog()
+  {
+   InitializeComponent();
+  }
+
+
+
+
+
+  public StandardReferenceTableSelectionDialog(MainForm frm): base(frm)
+        {
+            InitializeComponent();
+        }
+
+
+  private void rdbOther_CheckedChanged(object sender, System.EventArgs e)
+  {
+   lblDataSource.Enabled = rdbOther.Checked;
+   txtFileName.Enabled = rdbOther.Checked;
+   btnBrowse.Enabled = rdbOther.Checked;
+  }
+
+  private void listBox1_SelectedIndexChanged(object sender, System.EventArgs e)
+  {
+   btnOk.Enabled = true;
+  }
+
+  private void btnOk_Click(object sender, System.EventArgs e)
+  {
+   this.DialogResult = DialogResult.OK;
+   this.Hide();
+  }
+
+
+
+
+  public string FieldName
+  {
+   get
+   {
+    return Util.Squeeze(lbxFields.SelectedItem.ToString().Split('-')[0]);
+   }
+  }
+
+ }
+}
+
+ 

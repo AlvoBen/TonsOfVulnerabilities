@@ -1,0 +1,43 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using com.calitha.goldparser;
+
+namespace Epi.Core.EnterInterpreter.Rules
+{
+
+
+
+    public         class Rule_FileDate : EnterRule
+    {
+        private List ParameterList = new List();
+
+        public Rule_FileDate(Rule_Context pContext, NonterminalToken pToken)
+            : base(pContext)
+        {
+            this.ParameterList = EnterRule.GetFunctionParameters(pContext, pToken);
+        }
+
+
+
+
+
+        public override object Execute()
+        {
+            object result = null;
+
+            string fileName = this.ParameterList[0].Execute().ToString();
+
+            if (System.IO.File.Exists(fileName))
+            {
+                result = System.IO.File.GetLastWriteTime(fileName);
+            }
+
+            return result;
+        }
+
+    }
+}
+
+ 

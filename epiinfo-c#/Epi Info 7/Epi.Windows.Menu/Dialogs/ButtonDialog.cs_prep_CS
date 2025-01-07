@@ -1,0 +1,41 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Epi.Windows.Dialogs;
+
+namespace Epi.Windows.Menu.Dialogs
+{
+
+
+
+  public         class ButtonDialog : DialogBase
+    {
+
+
+
+
+        public ButtonDialog(string CommandLine)
+        {
+            InitializeComponent();
+        }
+
+
+
+
+
+        private void ButtonDialog_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+    }
+}
+ 

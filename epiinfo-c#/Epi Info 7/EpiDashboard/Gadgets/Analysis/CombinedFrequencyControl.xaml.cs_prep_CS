@@ -1,0 +1,1009 @@
+﻿using System;
+using System.Data;
+using System.Diagnostics;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using Epi;
+using Epi.Data;
+using Epi.Fields;
+using EpiDashboard.Rules;
+
+namespace EpiDashboard
+{
+
+
+
+    public         class CombinedFrequencyControl : GadgetBase
+    {
+        //Private Variables
+
+
+
+        private double currentWidth;
+
+        //
+
+        //Delegates
+
+        private new delegate void AddGridFooterDelegate(string strataValue, int denominator, int fields = -1, bool isBoolean = false);
+
+        //
+
+        //Constructors
+
+
+
+        public CombinedFrequencyControl()
+        {
+            InitializeComponent();
+            Construct();
+        }
+
+
+
+
+
+        public CombinedFrequencyControl(DashboardHelper dashboardHelper)
+        {
+            InitializeComponent();
+            this.DashboardHelper = dashboardHelper;
+            Construct();
+        }
+
+
+
+
+        protected override void Construct()
+        {
+            if (!string.IsNullOrEmpty(CustomOutputHeading) && !CustomOutputHeading.Equals("(none)"))
+            {
+                headerPanel.Text = CustomOutputHeading;
+            }
+
+
+
+
+            mnuCopyData.Click += new RoutedEventHandler(mnuCopyData_Click);
+            mnuSendDataToHTML.Click += new RoutedEventHandler(mnuSendDataToHTML_Click);
+                 
+            mnuSendDataToExcel.Visibility = Visibility.Collapsed;
+     
+                                                               
+                                                                                                                                                                                                                                                                  
+                                                           
+                                                             
+
+                                
+             
+                                                                     
+             
+                
+             
+                                                                                             
+             
+      
+
+            mnuSendToBack.Click += new RoutedEventHandler(mnuSendToBack_Click);
+            mnuClose.Click += new RoutedEventHandler(mnuClose_Click);
+
+            this.IsProcessing = false;
+
+            base.Construct();
+            this.Parameters = new CombinedFrequencyParameters();
+
+            //Translation
+
+
+
+
+
+
+            //
+        }
+        //
+
+        //Public Methods
+
+
+
+        public void ClearResults()
+        {
+            messagePanel.Visibility = System.Windows.Visibility.Collapsed;
+            messagePanel.Text = string.Empty;
+            descriptionPanel.PanelMode = Controls.GadgetDescriptionPanel.DescriptionPanelMode.Collapsed;
+            panelMain.Children.Clear();
+        }
+
+        //
+
+        //Event Handlers
+
+
+
+
+
+        void mnuCopyData_Click(object sender, RoutedEventArgs e)
+        {
+            CopyToClipboard();
+        }
+
+
+
+
+
+
+        private void btnRun_Click(object sender, RoutedEventArgs e)
+        {
+            if (LoadingCombos)
+            {
+                return;
+            }
+            RefreshResults();
+        }
+
+
+
+        protected override void worker_WorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+
+            System.Threading.Thread.Sleep(100);
+            this.Dispatcher.BeginInvoke(new SimpleCallback(SetGadgetToFinishedState));
+        }
+
+        protected override void worker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            lock (syncLock)
+            {
+                this.Dispatcher.BeginInvoke(new SimpleCallback(SetGadgetToProcessingState));
+                this.Dispatcher.BeginInvoke(new SimpleCallback(ClearResults));
+                DrawFrequencyBordersDelegate drawBorders = new DrawFrequencyBordersDelegate(DrawOutputGridBorders);
+                AddDataGridDelegate addDataGrid = new AddDataGridDelegate(AddDataGrid);
+
+                System.Collections.Generic.Dictionary Freq_ListSet = new Dictionary();
+
+                try
+                {
+                    DataTable dt = new DataTable();
+                    bool booleanResults = false;
+                    int fields = -1;
+
+                    if (Parameters.ColumnNames.Count > 0)
+                    {
+
+
+                        dt = DashboardHelper.GenerateCombinedFrequencyTable(Parameters as CombinedFrequencyParameters, ref booleanResults, ref fields);
+
+
+                    }
+                    else
+                    {
+                        this.Dispatcher.BeginInvoke(new RenderFinishWithErrorDelegate(RenderFinishWithError), "Something that should never fail has failed.");
+                        this.Dispatcher.BeginInvoke(new SimpleCallback(SetGadgetToFinishedState));
+                        return;
+                    }
+
+                    if (dt == null || dt.Rows.Count == 0)
+                    {
+                        this.Dispatcher.BeginInvoke(new RenderFinishWithErrorDelegate(RenderFinishWithError), SharedStrings.NO_RECORDS_SELECTED);
+                        this.Dispatcher.BeginInvoke(new SimpleCallback(SetGadgetToFinishedState));
+                        return;
+                    }
+                    else if (worker.CancellationPending)
+                    {
+                        this.Dispatcher.BeginInvoke(new RenderFinishWithErrorDelegate(RenderFinishWithError), SharedStrings.DASHBOARD_GADGET_STATUS_OPERATION_CANCELLED);
+                        this.Dispatcher.BeginInvoke(new SimpleCallback(SetGadgetToFinishedState));
+                        Debug.Print("Combined frequency thread cancelled");
+                        return;
+                    }
+                    else
+                    {
+                        string formatString = string.Empty;
+                        double count = Convert.ToDouble(dt.Compute("sum([count])", string.Empty));
+                        string strataValue = dt.TableName;
+                        int denominator = DashboardHelper.RecordCount;
+
+                        if (!string.IsNullOrEmpty(Parameters.CustomFilter.Trim()))
+                        {
+                            denominator = DashboardHelper.DataSet.Tables[0].Select(Parameters.CustomFilter.Trim()).Count();
+                        }
+
+                        if (!booleanResults)
+                        {
+                            denominator = denominator * fields;
+                        }
+
+                        dt.Columns[0].ColumnName = DashboardSharedStrings.COL_HEADER_VALUE;
+                        dt.Columns[1].ColumnName = DashboardSharedStrings.COL_HEADER_FREQUENCY;
+                        dt.Columns.Add(new DataColumn(DashboardSharedStrings.COL_HEADER_PERCENT, typeof(double)));
+
+                        foreach (System.Data.DataRow row in dt.Rows)
+                        {
+                            if (!row[DashboardSharedStrings.COL_HEADER_VALUE].Equals(DBNull.Value))
+                            {
+                                double pct = 0;
+                                if (count > 0)
+                                {
+                                    pct = Convert.ToDouble(row[DashboardSharedStrings.COL_HEADER_FREQUENCY]) / (double)denominator;
+                                    row[DashboardSharedStrings.COL_HEADER_PERCENT] = pct;
+                                }
+                            }
+                        }
+
+                        this.Dispatcher.BeginInvoke(addDataGrid, dt.AsDataView(), dt.TableName);
+                        this.Dispatcher.BeginInvoke(new AddGridFooterDelegate(RenderFrequencyFooter), strataValue, denominator, fields, booleanResults);
+
+
+                        this.Dispatcher.BeginInvoke(new SimpleCallback(RenderFinish));
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.Dispatcher.BeginInvoke(new RenderFinishWithErrorDelegate(RenderFinishWithError), ex.Message);
+
+                }
+                finally
+                {
+
+
+
+                }
+            }
+        }
+
+        //
+
+        //Private Methods
+
+
+
+        private void FillComboboxes(bool update = false)
+        {
+        }
+
+        private void AddDataGrid(DataView dv, string strataValue)
+        {
+            DataGrid dg = new DataGrid();
+            dg.Style = this.Resources["LineListDataGridStyle"] as Style;
+
+            CombinedFrequencyParameters CombinedFrequencyParameters = (this.Parameters) as CombinedFrequencyParameters;
+
+            FrameworkElementFactory datagridRowsPresenter = new FrameworkElementFactory(typeof(DataGridRowsPresenter));
+            ItemsPanelTemplate itemsPanelTemplate = new ItemsPanelTemplate();
+            itemsPanelTemplate.VisualTree = datagridRowsPresenter;
+            GroupStyle groupStyle = new GroupStyle();
+            groupStyle.ContainerStyle = this.Resources["DefaultGroupItemStyle"] as Style;
+            groupStyle.Panel = itemsPanelTemplate;
+            dg.GroupStyle.Add(groupStyle);
+
+            GroupStyle groupStyle2 = new GroupStyle();
+            groupStyle2.HeaderTemplate = this.Resources["GroupDataTemplate"] as DataTemplate;
+
+            dg.GroupStyle.Add(groupStyle2);
+
+            string groupVar = String.Empty;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                dg.ItemsSource = dv;
+
+
+
+            if (Parameters.Height.HasValue)
+            {
+                dg.MaxHeight = Parameters.Height.Value;
+            }
+            else
+            {
+                dg.MaxHeight = 700;
+            }
+
+            if (Parameters.Width.HasValue)
+            {
+                dg.MaxWidth = Parameters.Width.Value;
+            }
+            else
+            {
+                dg.MaxWidth = 900;
+            }
+
+            dg.AutoGeneratedColumns += new EventHandler(dg_AutoGeneratedColumns);
+            dg.AutoGeneratingColumn += new EventHandler(dg_AutoGeneratingColumn);
+
+            panelMain.Children.Add(dg);
+        }
+
+        void dg_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            e.Column.IsReadOnly = true;
+
+            DataGridTextColumn dataGridTextColumn = e.Column as DataGridTextColumn;
+            if (dataGridTextColumn != null)
+            {
+                if (e.PropertyType == typeof(DateTime))
+                {
+                    dataGridTextColumn.CellStyle = this.Resources["RightAlignDataGridCellStyle"] as Style;
+                    Field field = DashboardHelper.GetAssociatedField(e.Column.Header.ToString());
+                    if (field != null && field is DateField)
+                    {
+                        dataGridTextColumn.Binding.StringFormat = "{0:d}";
+                    }
+                    else if (field != null && field is TimeField)
+                    {
+                        dataGridTextColumn.Binding.StringFormat = "{0:t}";
+                    }
+                }
+                else if (e.PropertyType == typeof(int) ||
+                    e.PropertyType == typeof(byte) ||
+                    e.PropertyType == typeof(decimal) ||
+                    e.PropertyType == typeof(double) ||
+                    e.PropertyType == typeof(float))
+                {
+                    dataGridTextColumn.CellStyle = this.Resources["RightAlignDataGridCellStyle"] as Style;
+                }
+            }
+
+            if (e.PropertyName == DashboardSharedStrings.COL_HEADER_PERCENT)
+            {
+                (e.Column as DataGridTextColumn).Binding.StringFormat = "P2";
+            }
+        }
+
+        void dg_AutoGeneratedColumns(object sender, EventArgs e)
+        {
+        }
+
+        private DataGrid GetDataGrid()
+        {
+            DataGrid dg = null;
+            foreach (UIElement element in panelMain.Children)
+            {
+                if (element is DataGrid)
+                {
+                    dg = element as DataGrid;
+                }
+            }
+
+            return dg;
+        }
+
+
+
+
+        protected override void CopyToClipboard()
+        {
+            DataGrid dg = GetDataGrid();
+
+            if (dg != null)
+            {
+                Common.CopyDataViewToClipboard(dg.ItemsSource as DataView);
+            }
+        }
+
+
+
+
+
+        public override string ToString()
+        {
+            return "Combined Frequency Gadget";
+        }
+
+        public override void CollapseOutput()
+        {
+            panelMain.Visibility = System.Windows.Visibility.Collapsed;
+            this.messagePanel.Visibility = System.Windows.Visibility.Collapsed;
+            this.infoPanel.Visibility = System.Windows.Visibility.Collapsed;
+            descriptionPanel.PanelMode = Controls.GadgetDescriptionPanel.DescriptionPanelMode.Collapsed;
+            IsCollapsed = true;
+        }
+
+        public override void ExpandOutput()
+        {
+            panelMain.Visibility = System.Windows.Visibility.Visible;
+
+            if (this.messagePanel.MessagePanelType != Controls.MessagePanelType.StatusPanel)
+            {
+                this.messagePanel.Visibility = System.Windows.Visibility.Visible;
+            }
+
+            if (!string.IsNullOrEmpty(this.infoPanel.Text))
+            {
+                this.infoPanel.Visibility = System.Windows.Visibility.Visible;
+            }
+
+            if (!string.IsNullOrEmpty(this.descriptionPanel.Text))
+            {
+                descriptionPanel.PanelMode = Controls.GadgetDescriptionPanel.DescriptionPanelMode.DisplayMode;
+            }
+            IsCollapsed = false;
+        }
+
+        private void RenderFrequencyFooter(string strataValue, int denominator, int fields = -1, bool isBoolean = false)
+        {
+            if (!((Parameters as CombinedFrequencyParameters).ShowDenominator))
+            {
+                return;
+            }
+
+            TextBlock txtDenom = new TextBlock();
+            txtDenom.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
+            txtDenom.FontWeight = FontWeights.Bold;
+            txtDenom.Margin = (Thickness)this.Resources["genericTextMargin"];
+
+            if (isBoolean == true)
+            {
+                txtDenom.Text = string.Format(DashboardSharedStrings.DENOMINATOR_DESCRIPTION_BOOLEAN, denominator);
+            }
+            else
+            {
+                txtDenom.Text = string.Format(DashboardSharedStrings.DENOMINATOR_DESCRIPTION_NON_BOOLEAN, denominator);
+            }
+
+            panelMain.Children.Add(txtDenom);
+        }
+
+
+
+
+        protected override void CloseGadget()
+        {
+            if (worker != null && worker.WorkerSupportsCancellation)
+            {
+                worker.CancelAsync();
+            }
+
+            if (worker != null)
+            {
+                worker.DoWork -= new System.ComponentModel.DoWorkEventHandler(worker_DoWork);
+            }
+            if (baseWorker != null)
+            {
+                baseWorker.DoWork -= new System.ComponentModel.DoWorkEventHandler(Execute);
+            }
+
+            this.GadgetStatusUpdate -= new GadgetStatusUpdateHandler(RequestUpdateStatusMessage);
+            this.GadgetCheckForCancellation -= new GadgetCheckForCancellationHandler(IsCancelled);
+
+            base.CloseGadget();
+        }
+
+
+
+
+        protected override void RenderFinish()
+        {
+            waitPanel.Visibility = System.Windows.Visibility.Collapsed;
+
+            messagePanel.MessagePanelType = Controls.MessagePanelType.StatusPanel;
+            messagePanel.Text = string.Empty;
+            messagePanel.Visibility = System.Windows.Visibility.Collapsed;
+
+            HideConfigPanel();
+            CheckAndSetPosition();
+        }
+
+
+
+
+
+        protected override void RenderFinishWithWarning(string errorMessage)
+        {
+            waitPanel.Visibility = System.Windows.Visibility.Collapsed;
+
+            messagePanel.MessagePanelType = Controls.MessagePanelType.WarningPanel;
+            messagePanel.Text = errorMessage;
+            messagePanel.Visibility = System.Windows.Visibility.Visible;
+
+            HideConfigPanel();
+            CheckAndSetPosition();
+        }
+
+
+
+
+
+        protected override void RenderFinishWithError(string errorMessage)
+        {
+            waitPanel.Visibility = System.Windows.Visibility.Collapsed;
+
+            messagePanel.MessagePanelType = Controls.MessagePanelType.ErrorPanel;
+            messagePanel.Text = errorMessage;
+            messagePanel.Visibility = System.Windows.Visibility.Visible;
+
+            HideConfigPanel();
+            CheckAndSetPosition();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //
+
+        //Private Properties
+        private View View
+        {
+            get
+            {
+                return this.DashboardHelper.View;
+            }
+        }
+
+        private IDbDriver Database
+        {
+            get
+            {
+                return this.DashboardHelper.Database;
+            }
+        }
+        //
+
+        //IGadget Members
+
+
+
+
+        public override void SetGadgetToProcessingState()
+        {
+            this.IsProcessing = true;
+            base.SetGadgetToProcessingState();
+        }
+
+
+
+
+        public override void SetGadgetToFinishedState()
+        {
+            this.IsProcessing = false;
+            currentWidth = borderAll.ActualWidth;
+            base.SetGadgetToFinishedState();
+        }
+
+
+
+
+        public override void UpdateVariableNames()
+        {
+
+        }
+
+
+
+
+        public override void RefreshResults()
+        {
+            if (!LoadingCombos && Parameters != null && Parameters.ColumnNames.Count > 0)
+            {
+                infoPanel.Visibility = System.Windows.Visibility.Collapsed;
+                waitPanel.Visibility = System.Windows.Visibility.Visible;
+                messagePanel.MessagePanelType = Controls.MessagePanelType.StatusPanel;
+                descriptionPanel.PanelMode = Controls.GadgetDescriptionPanel.DescriptionPanelMode.Collapsed;
+
+                baseWorker = new BackgroundWorker();
+                baseWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(Execute);
+                baseWorker.RunWorkerAsync();
+
+                base.RefreshResults();
+            }
+        }
+
+        public override void ShowHideConfigPanel()
+        {
+            Popup = new DashboardPopup();
+            Popup.Parent = ((this.Parent as DragCanvas).Parent as ScrollViewer).Parent as Grid;
+            Controls.GadgetProperties.CombinedFrequencyProperties properties = new Controls.GadgetProperties.CombinedFrequencyProperties(this.DashboardHelper, this, (CombinedFrequencyParameters)Parameters);
+
+            properties.Width = 800;
+            properties.Height = 600;
+
+            if ((System.Windows.SystemParameters.PrimaryScreenWidth / 1.2) > properties.Width)
+            {
+                properties.Width = (System.Windows.SystemParameters.PrimaryScreenWidth / 1.2);
+            }
+
+            if ((System.Windows.SystemParameters.PrimaryScreenHeight / 1.2) > properties.Height)
+            {
+                properties.Height = (System.Windows.SystemParameters.PrimaryScreenHeight / 1.2);
+            }
+
+            properties.Cancelled += new EventHandler(properties_Cancelled);
+            properties.ChangesAccepted += new EventHandler(properties_ChangesAccepted);
+            Popup.Content = properties;
+            Popup.Show();
+        }
+
+        private void properties_ChangesAccepted(object sender, EventArgs e)
+        {
+            Controls.GadgetProperties.CombinedFrequencyProperties properties = Popup.Content as Controls.GadgetProperties.CombinedFrequencyProperties;
+            this.Parameters = properties.Parameters;
+            this.DataFilters = properties.DataFilters;
+            this.CustomOutputHeading = Parameters.GadgetTitle;
+            this.CustomOutputDescription = Parameters.GadgetDescription;
+            Popup.Close();
+            if (properties.HasSelectedFields)
+            {
+                RefreshResults();
+            }
+        }
+
+        private void properties_Cancelled(object sender, EventArgs e)
+        {
+            Popup.Close();
+        }
+
+
+
+
+
+
+        public override XmlNode Serialize(XmlDocument doc)
+        {
+            CombinedFrequencyParameters combFreqParameters = (CombinedFrequencyParameters)Parameters;
+
+            System.Xml.XmlElement element = doc.CreateElement("combinedFrequencyGadget");
+
+            element.AppendChild(SerializeFilters(doc));
+
+            System.Xml.XmlAttribute id = doc.CreateAttribute("id");
+            System.Xml.XmlAttribute locationY = doc.CreateAttribute("top");
+            System.Xml.XmlAttribute locationX = doc.CreateAttribute("left");
+            System.Xml.XmlAttribute collapsed = doc.CreateAttribute("collapsed");
+            System.Xml.XmlAttribute type = doc.CreateAttribute("gadgetType");
+
+            id.Value = this.UniqueIdentifier.ToString();
+            locationY.Value = Canvas.GetTop(this).ToString("F0");
+            locationX.Value = Canvas.GetLeft(this).ToString("F0");
+            collapsed.Value = IsCollapsed.ToString();
+            type.Value = "EpiDashboard.CombinedFrequencyControl";
+
+            element.Attributes.Append(locationY);
+            element.Attributes.Append(locationX);
+            element.Attributes.Append(collapsed);
+            element.Attributes.Append(type);
+            element.Attributes.Append(id);
+
+            XmlElement combineModeElement = doc.CreateElement("combineMode");
+            combineModeElement.InnerText = combFreqParameters.CombineMode.ToString();
+            element.AppendChild(combineModeElement);
+
+            XmlElement trueValueElement = doc.CreateElement("trueValue");
+            trueValueElement.InnerText = combFreqParameters.TrueValue.ToString();
+            element.AppendChild(trueValueElement);
+
+            XmlElement sortElement = doc.CreateElement("sort");
+            if (combFreqParameters.SortHighToLow) sortElement.InnerText = "hightolow";
+            element.AppendChild(sortElement);
+
+            XmlElement showDenominatorElement = doc.CreateElement("showDenominator");
+            showDenominatorElement.InnerText = combFreqParameters.ShowDenominator.ToString();
+            element.AppendChild(showDenominatorElement);
+
+            XmlElement customHeadingElement = doc.CreateElement("customHeading");
+            customHeadingElement.InnerText = combFreqParameters.GadgetTitle.Replace("<", "&lt;");
+            element.AppendChild(customHeadingElement);
+
+            XmlElement customDescElement = doc.CreateElement("customDescription");
+            customDescElement.InnerText = combFreqParameters.GadgetDescription.Replace("<", "&lt;");
+            element.AppendChild(customDescElement);
+
+            SerializeAnchors(element);
+
+            XmlElement groupItemElement = doc.CreateElement("groupFields");
+
+            string xmlGroupItemString = string.Empty;
+
+            foreach (string columnName in combFreqParameters.ColumnNames)
+            {
+                xmlGroupItemString = xmlGroupItemString + "" + columnName.Replace("<", "&lt;") + "</groupField>";
+            }
+
+            groupItemElement.InnerXml = xmlGroupItemString;
+
+            if (!String.IsNullOrEmpty(xmlGroupItemString))
+            {
+                element.AppendChild(groupItemElement);
+            }
+
+            return element;
+        }
+
+
+
+
+
+        public override void CreateFromXml(XmlElement element)
+        {
+            this.LoadingCombos = true;
+            this.Parameters = new CombinedFrequencyParameters();
+
+            HideConfigPanel();
+
+            infoPanel.Visibility = System.Windows.Visibility.Collapsed;
+            messagePanel.Visibility = System.Windows.Visibility.Collapsed;
+
+            foreach (XmlElement child in element.ChildNodes)
+            {
+                switch (child.Name.ToLower())
+                {
+                    case "mainvariable":
+                        ((CombinedFrequencyParameters)Parameters).ColumnNames.Add(child.InnerText.Replace("&lt;", "<"));
+                        break;
+                    case "groupfields":
+                        foreach (XmlElement field in child.ChildNodes)
+                        {
+                            List fields = new List();
+                            if (field.Name.ToLower().Equals("groupfield"))
+                            {
+                                ((CombinedFrequencyParameters)Parameters).ColumnNames.Add(field.InnerText.Replace("&lt;", "<"));
+                            }
+                        }
+                        break;
+                    case "combinemode":
+                        if (!String.IsNullOrEmpty(child.InnerText.Trim()))
+                        {
+                            switch (child.InnerText.ToString().ToLower())
+                            {
+                                case "boolean":
+                                    ((CombinedFrequencyParameters)Parameters).CombineMode = CombineModeTypes.Boolean;
+                                    break;
+                                case "catagorical":
+                                    ((CombinedFrequencyParameters)Parameters).CombineMode = CombineModeTypes.Categorical;
+                                    break;
+                                case "automatic":
+                                default:
+                                    ((CombinedFrequencyParameters)Parameters).CombineMode = CombineModeTypes.Automatic;
+                                    break;
+                            }
+                        }
+                        break;
+                    case "truevalue":
+
+                        if (!String.IsNullOrEmpty(child.InnerText.Trim()))
+                        {
+                            ((CombinedFrequencyParameters)Parameters).TrueValue = child.InnerText.Replace("&lt;", "<").ToString();
+                        }
+                        break;
+                    case "sort":
+                        if (child.InnerText.ToLower().Equals("hightolow") || child.InnerText.ToLower().Equals("highlow"))
+                        {
+                            ((CombinedFrequencyParameters)Parameters).SortHighToLow = true;
+                        }
+                        else
+                        {
+                            ((CombinedFrequencyParameters)Parameters).SortHighToLow = false;
+                        }
+                        break;
+                    case "customheading":
+                        if (!string.IsNullOrEmpty(child.InnerText) && !child.InnerText.Equals("(none)"))
+                        {
+                            this.CustomOutputHeading = child.InnerText.Replace("&lt;", "<");
+                            Parameters.GadgetTitle = CustomOutputHeading;
+                        }
+                        break;
+                    case "customdescription":
+                        if (!string.IsNullOrEmpty(child.InnerText) && !child.InnerText.Equals("(none)"))
+                        {
+                            this.CustomOutputDescription = child.InnerText.Replace("&lt;", "<");
+                            Parameters.GadgetDescription = CustomOutputDescription;
+                            if (!string.IsNullOrEmpty(CustomOutputDescription) && !CustomOutputHeading.Equals("(none)"))
+                            {
+                                descriptionPanel.Text = CustomOutputDescription;
+                                descriptionPanel.PanelMode = Controls.GadgetDescriptionPanel.DescriptionPanelMode.DisplayMode;
+                            }
+                            else
+                            {
+                                descriptionPanel.PanelMode = Controls.GadgetDescriptionPanel.DescriptionPanelMode.Collapsed;
+                            }
+                        }
+                        break;
+                    case "showdenominator":
+                        bool showDenom = false;
+                        bool.TryParse(child.InnerText, out showDenom);
+                        ((CombinedFrequencyParameters)Parameters).ShowDenominator = showDenom;
+                        break;
+                    case "datafilters":
+                        this.DataFilters = new DataFilters(this.DashboardHelper);
+                        this.DataFilters.CreateFromXml(child);
+                        break;
+                }
+            }
+
+            base.CreateFromXml(element);
+
+            this.LoadingCombos = false;
+
+            RefreshResults();
+            HideConfigPanel();
+        }
+
+
+
+
+
+        public override string ToHTML(string htmlFileName = "", int count = 0)
+        {
+            if (IsCollapsed) return string.Empty;
+
+            StringBuilder htmlBuilder = new StringBuilder();
+
+            CustomOutputHeading = headerPanel.Text;
+            CustomOutputDescription = descriptionPanel.Text;
+
+            if (CustomOutputHeading == null || (string.IsNullOrEmpty(CustomOutputHeading) && !CustomOutputHeading.Equals("(none)")))
+            {
+                htmlBuilder.AppendLine("<h2 class=\"gadgetHeading\">Combined Frequency</h2>");
+            }
+            else if (CustomOutputHeading != "(none)")
+            {
+                htmlBuilder.AppendLine("<h2 class=\"gadgetHeading\">" + CustomOutputHeading + "</h2>");
+            }
+
+            htmlBuilder.AppendLine("<p class=\"gadgetOptions\">");
+
+
+            htmlBuilder.AppendLine("<br />");
+
+
+
+
+
+
+
+
+            htmlBuilder.AppendLine("<br />");
+            htmlBuilder.AppendLine("</small></p>");
+
+            if (!string.IsNullOrEmpty(CustomOutputDescription))
+            {
+                htmlBuilder.AppendLine("<p class=\"gadgetsummary\">" + CustomOutputDescription + "</p>");
+            }
+
+            if (!string.IsNullOrEmpty(messagePanel.Text) && messagePanel.Visibility == System.Windows.Visibility.Visible)
+            {
+                htmlBuilder.AppendLine("" + messagePanel.Text + "</strong></small></p>");
+            }
+
+            if (!string.IsNullOrEmpty(infoPanel.Text) && infoPanel.Visibility == Visibility.Visible)
+            {
+                htmlBuilder.AppendLine("" + infoPanel.Text + "</strong></small></p>");
+            }
+
+            DataGrid dg = GetDataGrid();
+
+            if (dg != null && dg.ItemsSource != null)
+            {
+                htmlBuilder.AppendLine("<div style=\"height: 7px;\"></div>");
+                htmlBuilder.AppendLine("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
+
+                htmlBuilder.AppendLine(Common.ConvertDataViewToHtmlString(dg.ItemsSource as DataView));
+
+                htmlBuilder.AppendLine("</table>");
+            }
+
+            foreach (UIElement element in panelMain.Children)
+            {
+                if (element is TextBlock)
+                {
+                    TextBlock tblock = element as TextBlock;
+                    htmlBuilder.AppendLine("");
+                    htmlBuilder.AppendLine(tblock.Text);
+                    htmlBuilder.AppendLine("</p>");
+                }
+            }
+
+            return htmlBuilder.ToString();
+        }
+
+        private string customOutputHeading;
+        private string customOutputDescription;
+        private string customOutputCaption;
+
+        public override string CustomOutputHeading
+        {
+            get
+            {
+                return this.customOutputHeading;
+            }
+            set
+            {
+                this.customOutputHeading = value;
+                headerPanel.Text = CustomOutputHeading;
+            }
+        }
+
+        public override string CustomOutputDescription
+        {
+            get
+            {
+                return this.customOutputDescription;
+            }
+            set
+            {
+                this.customOutputDescription = value;
+                descriptionPanel.Text = CustomOutputDescription;
+            }
+        }
+        //
+    }
+}
+
+ 

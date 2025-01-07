@@ -1,0 +1,395 @@
+﻿using System;
+using System.Data;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Text;
+using Epi.Analysis;
+using Epi.Windows.Dialogs;
+using Epi.Windows.Analysis;
+using Epi.Data.Services;
+
+using VariableCollection = Epi.Collections.NamedObjectCollection;
+namespace Epi.Windows.Analysis.Dialogs
+{
+
+
+
+    public         class FrequencyDialog : CommandDesignDialog
+    {
+        //Private Fields
+        private Project currentProject;
+        private string SetClauses = null;
+        private string strWeightVar = "";
+        //
+
+        //Constructor
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+        public FrequencyDialog()
+        {
+            InitializeComponent();
+        }
+
+
+
+
+
+        public FrequencyDialog(Epi.Windows.Analysis.Forms.AnalysisMainForm frm)
+            : base(frm)
+        {
+            InitializeComponent();
+            Construct();
+        }
+
+        private void Construct()
+        {
+            if (!this.DesignMode) 
+            {
+                this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+                this.btnSaveOnly.Click += new System.EventHandler(this.btnSaveOnly_Click);
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+        //Constructors
+
+
+        //Protected Methods
+
+
+
+        protected override void GenerateCommand()
+        {
+            StringBuilder command = new StringBuilder();
+            command.Append(CommandNames.FREQ);
+            command.Append(StringLiterals.SPACE);
+            if (this.cbxAllExcept.Checked)
+            {
+                command.Append(StringLiterals.STAR);
+                command.Append(StringLiterals.SPACE);
+                command.Append(CommandNames.EXCEPT);
+                command.Append(StringLiterals.SPACE);
+            }
+            if (this.lbxVariables.Items.Count > 0)
+            {
+                foreach (string item in lbxVariables.Items)
+                {
+                    command.Append(FieldNameNeedsBrackets(item) ? Util.InsertInSquareBrackets(item) : item);
+                    command.Append(StringLiterals.SPACE);
+                }
+            }
+            else
+            {
+                command.Append(StringLiterals.STAR);
+                command.Append(StringLiterals.SPACE);
+            }
+            if (lbxStratifyBy.Items.Count > 0)
+            {
+                command.Append(CommandNames.STRATAVAR);
+                command.Append(StringLiterals.EQUAL);
+                foreach (string item in lbxStratifyBy.Items)
+                {
+                    command.Append(FieldNameNeedsBrackets(item) ? Util.InsertInSquareBrackets(item) : item);
+                    command.Append(StringLiterals.SPACE);
+                }
+            }
+            if (cmbWeight.Text != string.Empty)
+            {
+                command.Append(CommandNames.WEIGHTVAR);
+                command.Append(StringLiterals.EQUAL);
+                command.Append(FieldNameNeedsBrackets(cmbWeight.Text) ? Util.InsertInSquareBrackets(cmbWeight.Text) : cmbWeight.Text);
+                command.Append(StringLiterals.SPACE);
+            }
+
+            if (txtOutput.Text != string.Empty)
+            {
+                command.Append(CommandNames.OUTTABLE);
+                command.Append(StringLiterals.EQUAL);
+                command.Append(txtOutput.Text.ToString());
+                command.Append(StringLiterals.SPACE);
+            }
+
+            /*
+            if (!string.IsNullOrEmpty(this.SetClauses))
+            {
+                command.Append(this.SetClauses);
+                command.Append(StringLiterals.SPACE);
+            }*/
+
+            CommandText = command.ToString();
+        }
+
+
+
+
+        protected void OutputTable()
+        {
+
+        }
+
+
+
+
+
+
+        protected override bool ValidateInput()
+        {
+            base.ValidateInput();
+
+            if (this.cbxAllExcept.Checked && this.lbxVariables.Items.Count == 0)
+            {
+                ErrorMessages.Add(SharedStrings.SELECT_EXCLUSION_VARIABLES);
+            }
+            if (this.lbxVariables.Items.Count == 0)
+            {
+                if (this.cmbVariables.Text.Equals(""))
+                {
+                    ErrorMessages.Add(SharedStrings.SELECT_VARIABLE);
+                }
+            }
+
+
+
+
+
+
+            return (ErrorMessages.Count == 0);
+        }
+
+        //
+
+        //Private methods
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //
+
+        //Public Methods
+
+
+
+        public override void CheckForInputSufficiency()
+        {
+            bool inputValid = ValidateInput();
+            btnOK.Enabled = inputValid;
+            btnSaveOnly.Enabled = inputValid;
+        }
+        //Public Methods
+
+        //Event Handlers
+        private void btnClear_Click(object sender, System.EventArgs e)
+        {
+            cmbVariables.Items.Clear();
+            cmbStratifyBy.Items.Clear();
+            cmbWeight.Items.Clear();
+            cbxAllExcept.Checked = false;
+            lbxVariables.Items.Clear();
+            lbxStratifyBy.Items.Clear();
+            cmbWeight.Text = string.Empty;
+            txtOutput.Text = string.Empty;
+            cmbStratifyBy.Text = string.Empty;
+            FrequencyDialog_Load(this, null);
+
+            CheckForInputSufficiency();
+        }
+
+
+
+
+
+
+        private void cmbVariables_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbVariables.Text != StringLiterals.STAR)
+            {
+                string s = cmbVariables.Text;
+                lbxVariables.Items.Add(s);
+                cmbStratifyBy.Items.Remove(s);
+                cmbVariables.Items.Remove(s);
+                cmbWeight.Items.Remove(s);
+                this.cbxAllExcept.Enabled = true;
+            }
+            else
+            {
+                this.cbxAllExcept.Checked = false;
+                this.cbxAllExcept.Enabled = false;
+            }
+
+            CheckForInputSufficiency();
+
+        }
+
+
+
+
+
+
+        private void cmbStratifyBy_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbStratifyBy.Text != StringLiterals.SPACE)
+            {
+                string s = cmbStratifyBy.Text;
+                lbxStratifyBy.Items.Add(s);
+                cmbStratifyBy.Items.Remove(s);
+                cmbVariables.Items.Remove(s);
+                cmbWeight.Items.Remove(s);
+            }
+        }
+
+
+
+
+
+
+        private void FrequencyDialog_Load(object sender, EventArgs e)
+        {
+            VariableType scopeWord = VariableType.DataSource | VariableType.DataSourceRedefined |
+                                     VariableType.Standard | VariableType.Global;
+
+            FillVariableCombo(cmbVariables, scopeWord);
+            cmbVariables.Items.Add("*");
+            if (cmbVariables.Items[0].ToString().Equals("*"))
+            {
+                cmbVariables.SelectedIndex = 0;
+            }
+
+            FillVariableCombo(cmbStratifyBy, scopeWord);
+            cmbStratifyBy.SelectedIndex = -1;
+
+            FillWeightVariableCombo(cmbWeight, scopeWord);
+            cmbWeight.SelectedIndex = -1;
+        }
+
+
+
+
+
+
+
+        private void lbxVariables_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lbxVariables.SelectedIndex >= 0)   
+            {
+                string s = lbxVariables.SelectedItem.ToString();
+                cmbVariables.Items.Add(s);
+                cmbStratifyBy.Items.Add(s);
+                cmbWeight.Items.Add(s);
+                lbxVariables.Items.Remove(s);
+            }
+
+            CheckForInputSufficiency();
+        }
+
+
+
+
+
+
+
+        private void lbxStratifyBy_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lbxStratifyBy.SelectedIndex >= 0)   
+            {
+
+                string s = this.lbxStratifyBy.SelectedItem.ToString();
+                cmbVariables.Items.Add(s);
+                cmbStratifyBy.Items.Add(s);
+                cmbWeight.Items.Add(s);
+                lbxStratifyBy.Items.Remove(s);
+            }
+        }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            SetDialog SD = new SetDialog(mainForm);
+            SD.isDialogMode = true;
+            SD.ShowDialog();
+            SetClauses = SD.CommandText;
+            SD.Close();
+        }
+
+        private void cmbWeight_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            string strOld = strWeightVar;
+            string strNew = cmbWeight.Text;
+
+
+            if ((strOld.Length != 0) && (strOld != strNew))
+            {
+
+                cmbVariables.Items.Add(strOld);
+                cmbStratifyBy.Items.Add(strOld);
+            }
+
+
+            strWeightVar = strNew;
+            cmbVariables.Items.Remove(strNew);
+            cmbStratifyBy.Items.Remove(strNew);
+
+        }
+
+        private void cmbWeight_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+
+                cmbWeight.Text = "";
+                cmbWeight.SelectedIndex = -1;
+            }
+
+        }
+
+
+
+
+
+
+        protected override void btnHelp_Click(object sender, System.EventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://wwwn.cdc.gov/epiinfo/user-guide/command-reference/analysis-commands-freq.html");
+        }
+
+        //
+    }
+}
+
+
+ 

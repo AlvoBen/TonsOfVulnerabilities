@@ -1,0 +1,609 @@
+﻿
+
+
+
+
+
+
+
+
+
+namespace EpiDashboard.Rules {
+    using System;
+
+
+
+
+
+
+
+
+
+    [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [        System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    internal class SimpleAssignmentStrings {
+
+        private static         System.Resources.ResourceManager resourceMan;
+
+        private static         System.Globalization.CultureInfo resourceCulture;
+
+        [        System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        internal SimpleAssignmentStrings() {
+        }
+
+
+
+
+        [        System.ComponentModel.EditorBrowsableAttribute(        System.ComponentModel.EditorBrowsableState.Advanced)]
+        internal static         System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
+                            System.Resources.ResourceManager temp = new         System.Resources.ResourceManager("EpiDashboard.Rules.SimpleAssignmentStrings", typeof(SimpleAssignmentStrings).Assembly);
+                    resourceMan = temp;
+                }
+                return resourceMan;
+            }
+        }
+
+
+
+
+
+        [        System.ComponentModel.EditorBrowsableAttribute(        System.ComponentModel.EditorBrowsableState.Advanced)]
+        internal static         System.Globalization.CultureInfo Culture {
+            get {
+                return resourceCulture;
+            }
+            set {
+                resourceCulture = value;
+            }
+        }
+
+
+
+
+
+
+        internal static string ADD_DAYS_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("ADD_DAYS_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string AVERAGE_NUMERIC_FIELDS_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("AVERAGE_NUMERIC_FIELDS_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string COUNT_CHECKED_CHECKBOXES_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("COUNT_CHECKED_CHECKBOXES_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string COUNT_MISSING_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("COUNT_MISSING_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string COUNT_NOT_MISSING_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("COUNT_NOT_MISSING_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string COUNT_NUMERIC_BETWEEN_X_Y_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("COUNT_NUMERIC_BETWEEN_X_Y_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string COUNT_NUMERIC_OUTSIDE_X_Y_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("COUNT_NUMERIC_OUTSIDE_X_Y_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string COUNT_YES_YESNOFIELDS_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("COUNT_YES_YESNOFIELDS_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string DAYS_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("DAYS_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string DDL_CHECK_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("DDL_CHECK_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string DETERMINE_IF_N_CHECKBOXES_CHECKED_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("DETERMINE_IF_N_CHECKBOXES_CHECKED_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string DETERMINE_IF_N_MISSING_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("DETERMINE_IF_N_MISSING_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string DETERMINE_IF_N_YESNOFIELDS_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("DETERMINE_IF_N_YESNOFIELDS_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string ERROR_DESTINATION_FIELD_MISSING {
+            get {
+                return ResourceManager.GetString("ERROR_DESTINATION_FIELD_MISSING", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string ERROR_FIELD_ALREADY_EXISTS {
+            get {
+                return ResourceManager.GetString("ERROR_FIELD_ALREADY_EXISTS", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string ERROR_FIELD_ALREADY_EXISTS_WITH_RECODED_DATA {
+            get {
+                return ResourceManager.GetString("ERROR_FIELD_ALREADY_EXISTS_WITH_RECODED_DATA", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string ERROR_PARAMS_BLANK {
+            get {
+                return ResourceManager.GetString("ERROR_PARAMS_BLANK", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string ERROR_TYPE_MISSING {
+            get {
+                return ResourceManager.GetString("ERROR_TYPE_MISSING", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string FINDTEXT_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("FINDTEXT_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string HOURS_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("HOURS_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string LOWERCASE_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("LOWERCASE_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string MAX_NUMERIC_FIELDS_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("MAX_NUMERIC_FIELDS_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string MIN_NUMERIC_FIELDS_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("MIN_NUMERIC_FIELDS_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string MINUTES_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("MINUTES_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string MONTHS_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("MONTHS_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string NUMBER_TO_TEXT_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("NUMBER_TO_TEXT_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string OVERWRITE_FIELD_DATA {
+            get {
+                return ResourceManager.GetString("OVERWRITE_FIELD_DATA", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_COUNT {
+            get {
+                return ResourceManager.GetString("PARAM_COUNT", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_DATE_FIELD {
+            get {
+                return ResourceManager.GetString("PARAM_DATE_FIELD", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_DAYS_TO_ADD {
+            get {
+                return ResourceManager.GetString("PARAM_DAYS_TO_ADD", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_DDL_FIELD {
+            get {
+                return ResourceManager.GetString("PARAM_DDL_FIELD", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_END_DATE {
+            get {
+                return ResourceManager.GetString("PARAM_END_DATE", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_FIRST_CHARACTER {
+            get {
+                return ResourceManager.GetString("PARAM_FIRST_CHARACTER", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_GROUP_FIELD {
+            get {
+                return ResourceManager.GetString("PARAM_GROUP_FIELD", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_INCLUDE_COMMENTLEGAL {
+            get {
+                return ResourceManager.GetString("PARAM_INCLUDE_COMMENTLEGAL", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_INCLUDE_YESNO {
+            get {
+                return ResourceManager.GetString("PARAM_INCLUDE_YESNO", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_LOWER_BOUND {
+            get {
+                return ResourceManager.GetString("PARAM_LOWER_BOUND", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_NUMBER_FIELD {
+            get {
+                return ResourceManager.GetString("PARAM_NUMBER_FIELD", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_NUMBER_OF_CHARACTERS {
+            get {
+                return ResourceManager.GetString("PARAM_NUMBER_OF_CHARACTERS", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_NUMERIC_FIELD_TO_ROUND {
+            get {
+                return ResourceManager.GetString("PARAM_NUMERIC_FIELD_TO_ROUND", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_ROUND_TO {
+            get {
+                return ResourceManager.GetString("PARAM_ROUND_TO", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_START_DATE {
+            get {
+                return ResourceManager.GetString("PARAM_START_DATE", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_TEXT_FIELD {
+            get {
+                return ResourceManager.GetString("PARAM_TEXT_FIELD", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_TEXT_FIELD_TO_SEARCH {
+            get {
+                return ResourceManager.GetString("PARAM_TEXT_FIELD_TO_SEARCH", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_TEXT_TO_SEARCH_FOR {
+            get {
+                return ResourceManager.GetString("PARAM_TEXT_TO_SEARCH_FOR", resourceCulture);
+            }
+        }
+
+
+
+
+        internal static string PARAM_UPPER_BOUND {
+            get {
+                return ResourceManager.GetString("PARAM_UPPER_BOUND", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string ROUND_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("ROUND_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string STRIP_DATE_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("STRIP_DATE_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string STRLEN_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("STRLEN_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string SUBSTRING_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("SUBSTRING_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string SUM_NUMERIC_FIELDS_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("SUM_NUMERIC_FIELDS_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string TEXT_TO_NUMBER_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("TEXT_TO_NUMBER_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string UPPERCASE_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("UPPERCASE_DESCRIPTION", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        internal static string YEARS_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("YEARS_DESCRIPTION", resourceCulture);
+            }
+        }
+    }
+}
+
+ 

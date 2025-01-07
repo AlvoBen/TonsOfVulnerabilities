@@ -1,0 +1,56 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using com.calitha.goldparser;
+
+namespace Epi.Core.EnterInterpreter.Rules
+{
+
+
+
+    public         class Rule_Step : EnterRule
+    {
+        private List ParameterList = new List();
+
+        public Rule_Step(Rule_Context pContext, NonterminalToken pToken)
+            : base(pContext)
+        {
+            this.ParameterList = EnterRule.GetFunctionParameters(pContext, pToken);
+        }
+
+
+
+
+
+        public override object Execute()
+        {
+            object result = null;
+
+            object p1 = this.ParameterList[0].Execute().ToString();
+            object p2 = this.ParameterList[1].Execute().ToString();
+
+            double param1;
+            double param2;
+
+
+            if (double.TryParse(p1.ToString(), out param1) && double.TryParse(p2.ToString(), out param2))
+            {
+                if (param1 < param2)
+                {
+                    result = 0.0;
+                }
+                else
+                {
+                    result = 1.0;
+                }
+
+            }
+
+            return result;
+        }
+
+    }
+}
+
+ 

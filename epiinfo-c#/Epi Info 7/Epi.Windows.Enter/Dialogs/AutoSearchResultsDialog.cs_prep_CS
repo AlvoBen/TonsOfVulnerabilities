@@ -1,0 +1,214 @@
+﻿//Namespaces
+
+using Epi.Windows.Enter;
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+
+//
+
+namespace Epi.Windows.Enter.Dialogs
+{
+    public         class AutoSearchResults : Epi.Windows.Dialogs.DialogBase
+    {
+        //Private Members
+
+        private int currentRow = -1;
+        private DataTable dataTable = null;
+        private new EnterMainForm mainForm;
+
+        //
+
+        //Constructors
+
+
+
+
+        public AutoSearchResults()
+        {
+            InitializeComponent();
+        }
+
+
+
+
+
+
+
+        public AutoSearchResults(View view, EnterMainForm mainForm, DataTable data)
+            : base(mainForm)
+        {
+            //Input Validation
+
+            if (view == null)
+            {
+                {
+                    throw new ArgumentNullException("view");
+                }
+            }
+
+            //Input Validation
+
+            InitializeComponent();
+
+            this.mainForm = mainForm;
+
+
+            this.dataGrid1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            this.dataGrid1.AllowUserToAddRows = false;
+            this.dataGrid1.AllowUserToDeleteRows = false;
+            this.dataGrid1.AllowUserToOrderColumns = false;
+            this.dataGrid1.AllowUserToResizeRows = false;
+            this.dataGrid1.AllowUserToResizeColumns = true;
+            this.dataGrid1.AllowDrop = false;
+            this.dataGrid1.MultiSelect = false;
+
+
+            this.dataGrid1.KeyDown += new KeyEventHandler(OnKeyDown);
+            this.btnOK.KeyDown += new KeyEventHandler(OnKeyDown);
+            this.btnCancel.KeyDown += new KeyEventHandler(OnKeyDown);
+            this.KeyDown += new KeyEventHandler(OnKeyDown);
+            base.KeyDown += new KeyEventHandler(OnKeyDown);
+            this.dataGrid1.SelectionChanged += new EventHandler(dataGrid1_SelectionChanged);
+
+            DisplayResults(data);
+
+        }
+
+
+        //
+
+        //Private Methods
+
+
+
+
+        public void DisplayResults(DataTable data)
+        {
+            dataTable = new DataTable();
+            dataTable = data;
+
+            dataGrid1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+
+            float TotalFillWeight = 0.0f;
+
+            dataGrid1.DataSource = dataTable;
+
+            for (int i = 0; i < dataTable.Columns.Count && TotalFillWeight< 65436; i++)
+            {
+                TotalFillWeight += 100;
+
+                if (dataGrid1.Columns[i].Name.Equals("UniqueKey", StringComparison.OrdinalIgnoreCase) || dataGrid1.Columns[i].Name.Equals("RecStatus", StringComparison.OrdinalIgnoreCase))
+                {
+                    dataGrid1.Columns[i].Visible = false;
+                }
+            }
+
+            if (this.dataTable.Rows.Count > 0)
+            {
+                GetCurrentRecord();
+            }
+        }
+
+        //
+
+        //Private Event Handlers
+
+
+
+
+
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+        }
+
+
+
+
+
+
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.OK;
+        }
+
+        private void GetCurrentRecord()
+        {
+            if (dataGrid1.Rows.Count > 0)
+            {
+                if (dataGrid1.CurrentRow == null)
+                {
+                    dataGrid1.CurrentCell = dataGrid1.Rows[0].Cells[0];
+                }
+                currentRow = dataGrid1.CurrentRow.Index;
+                string record = dataGrid1.CurrentRow.Cells["UniqueKey"].Value.ToString();
+                mainForm.RecordId = record;
+            }
+            else
+            {
+
+            }
+        }
+
+
+
+
+
+
+
+        private void dataGrid1_DoubleClick(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.OK;
+        }
+
+
+
+
+
+
+        private void dataGrid1_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGrid1.SelectedRows.Count > 0)
+            {
+                GetCurrentRecord();
+                btnOK.Enabled = true;
+            }
+            else
+            {
+                btnOK.Enabled = false;
+            }
+        }
+
+
+
+
+
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Escape:
+                    this.DialogResult = DialogResult.Cancel;
+                    break;
+                case Keys.Enter:
+                    e.SuppressKeyPress = true;
+                    this.DialogResult = DialogResult.OK;
+                    break;
+            }
+        }
+
+        //
+
+    }
+}
+
+
+ 

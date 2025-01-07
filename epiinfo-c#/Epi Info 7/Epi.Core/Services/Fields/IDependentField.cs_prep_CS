@@ -1,0 +1,20 @@
+﻿using System;
+
+namespace Epi.Fields
+{
+
+
+
+ public interface IDependentField
+ {
+
+
+
+
+  IDataField SourceField
+  {
+   get;
+  }
+ }
+}
+ 

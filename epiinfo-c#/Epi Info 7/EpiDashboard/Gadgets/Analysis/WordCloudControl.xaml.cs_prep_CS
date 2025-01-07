@@ -1,0 +1,1964 @@
+﻿using System;
+using System.Data;
+using System.Diagnostics;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using Epi;
+using Epi.Data;
+using Epi.Fields;
+using EpiDashboard;
+using EpiDashboard.Rules;
+
+namespace EpiDashboard
+{
+
+
+
+
+
+
+
+
+    public         class WordCloudControl : GadgetBase
+    {
+        //Private Members
+
+
+
+
+        private string customOutputHeading;
+
+
+
+
+        private string customOutputDescription;
+
+
+
+
+        private string customOutputCaption;
+
+
+
+
+        private bool isDropDownList = false;
+
+
+
+
+        private bool isCommentLegal = false;
+
+
+
+
+        private bool isOptionField = false;
+
+
+
+
+        private bool isRecoded = false;
+
+
+
+
+        private StatisticsRepository.cFreq freq = new StatisticsRepository.cFreq();
+
+
+
+
+        private struct ConfLimit
+        {
+            public string Value;
+            public double Upper;
+            public double Lower;
+        }
+
+        //
+
+        //Delegates
+        private new delegate void SetGridTextDelegate(string strataValue, TextBlockConfig textBlockConfig);
+        private delegate void AddFreqGridDelegate(string strataVar, string value);
+        private delegate void RenderFrequencyHeaderDelegate(string strataValue, string freqVar);
+        private new delegate void AddGridFooterDelegate(string strataValue, int rowNumber, int totalRows);
+        private delegate void AddDictionaryOutputDelegate(Dictionary wordCloudDictionary, double totalWordCounts);
+        //
+
+        //Constructors
+
+
+
+        public WordCloudControl()
+        {
+            InitializeComponent();
+            Construct();
+        }
+
+
+
+
+
+        public WordCloudControl(DashboardHelper dashboardHelper)
+        {
+            InitializeComponent();
+            this.DashboardHelper = dashboardHelper;
+            Construct();
+            FillComboboxes();
+        }
+
+        //
+
+        //Private and Protected Methods
+
+
+
+        private void ShowHideOutputColumns()
+        {
+            if (!LoadingCombos)
+            {
+                if (this.StrataGridList != null && this.StrataGridList.Count > 0)
+                {
+                    List columnsToHide = new List();
+
+                    foreach (Grid grid in this.StrataGridList)
+                    {
+                        for (int i = 0; i < grid.ColumnDefinitions.Count; i++)
+                        {
+                            if (columnsToHide.Contains(i))
+                            {
+                                grid.ColumnDefinitions[i].Width = new GridLength(0);
+                            }
+                            else
+                            {
+                                if (i == 6)
+                                {
+                                    grid.ColumnDefinitions[i].Width = new GridLength(100);
+                                }
+                                else
+                                {
+                                    grid.ColumnDefinitions[i].Width = new GridLength(1, GridUnitType.Auto);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+        protected override void CopyToClipboard()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (Grid grid in this.StrataGridList)
+            {
+                string gridName = grid.Tag.ToString();
+                if (StrataGridList.Count > 1)
+                {
+                    sb.AppendLine(grid.Tag.ToString());
+                }
+
+                foreach (UIElement control in grid.Children)
+                {
+                    if (control is TextBlock)
+                    {
+                        int columnNumber = Grid.GetColumn(control);
+                        string value = ((TextBlock)control).Text;
+                        sb.Append(value + "\t");
+                        if (columnNumber >= grid.ColumnDefinitions.Count - 2)
+                        {
+                            sb.AppendLine();
+                        }
+                    }
+                }
+
+                sb.AppendLine();
+            }
+            Clipboard.Clear();
+            Clipboard.SetText(sb.ToString());
+        }
+
+
+
+
+        private void FillComboboxes(bool update = false)
+        {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        private void SetGridBar(string strataValue, int rowNumber, double pct)
+        {
+            Grid grid = GetStrataGrid(strataValue);
+
+            Rectangle rctBar = new Rectangle();
+            rctBar.Width = 0.1;
+            rctBar.Fill = this.Resources["frequencyPercentBarBrush"] as SolidColorBrush;
+            rctBar.HorizontalAlignment = HorizontalAlignment.Left;
+            rctBar.Margin = new Thickness(2,6,2,6); 
+
+            Grid.SetRow(rctBar, rowNumber);
+            Grid.SetColumn(rctBar,      6);
+            grid.Children.Add(rctBar);
+
+            DoubleAnimation daBar = new DoubleAnimation();
+            daBar.From = 1;
+            daBar.To = pct * 100.0;
+            daBar.Duration = new Duration(TimeSpan.FromSeconds(0.5));
+            rctBar.BeginAnimation(Rectangle.WidthProperty, daBar);
+        }
+
+
+
+
+        private void HideCumulativePercent()
+        {
+            foreach (Grid grid in StrataGridList)
+            {
+                grid.ColumnDefinitions[3].Width = new GridLength(0);
+            }
+        }
+
+
+
+
+        private void HideConfidenceIntervals()
+        {
+            foreach (Grid grid in StrataGridList)
+            {
+                grid.ColumnDefinitions[4].Width = new GridLength(0);
+                grid.ColumnDefinitions[5].Width = new GridLength(0);
+            }
+        }
+
+
+
+
+
+
+
+
+
+        private void RenderFrequencyHeader(string strataValue, string freqVar)
+        {
+            Grid grid = GetStrataGrid(strataValue);
+
+            RowDefinition rowDefHeader = new RowDefinition();
+            rowDefHeader.Height = new GridLength(30);
+            grid.RowDefinitions.Add(rowDefHeader);
+
+            for (int y = 0; y < grid.ColumnDefinitions.Count; y++)
+            {
+                Rectangle rctHeader = new Rectangle();
+                rctHeader.Style = this.Resources["gridHeaderCellRectangle"] as Style;
+                Grid.SetRow(rctHeader, 0);
+                Grid.SetColumn(rctHeader, y);
+                grid.Children.Add(rctHeader);
+            }
+
+            TextBlock txtValHeader = new TextBlock();
+            txtValHeader.Text = freqVar;
+            txtValHeader.Style = this.Resources["columnHeadingText"] as Style;
+            Grid.SetRow(txtValHeader, 0);
+            Grid.SetColumn(txtValHeader, 0);
+            grid.Children.Add(txtValHeader);
+
+            txtValHeader.MouseLeftButtonUp += new MouseButtonEventHandler(txtValHeader_MouseLeftButtonUp);
+            txtValHeader.MouseEnter += new MouseEventHandler(txtValHeader_MouseEnter);
+            txtValHeader.MouseLeave += new MouseEventHandler(txtValHeader_MouseLeave);
+
+            TextBlock txtFreqHeader = new TextBlock();
+            txtFreqHeader.Text = DashboardSharedStrings.COL_HEADER_FREQUENCY;
+            txtFreqHeader.Style = this.Resources["columnHeadingText"] as Style;
+            Grid.SetRow(txtFreqHeader, 0);
+            Grid.SetColumn(txtFreqHeader, 1);
+            grid.Children.Add(txtFreqHeader);
+
+            TextBlock txtPctHeader = new TextBlock();
+            txtPctHeader.Text = DashboardSharedStrings.COL_HEADER_PERCENT;
+            txtPctHeader.Style = this.Resources["columnHeadingText"] as Style;
+            Grid.SetRow(txtPctHeader, 0);
+            Grid.SetColumn(txtPctHeader, 2);
+            grid.Children.Add(txtPctHeader);
+
+            TextBlock txtAccuHeader = new TextBlock();
+            txtAccuHeader.Text = DashboardSharedStrings.COL_HEADER_CUMULATIVE_PERCENT;
+            txtAccuHeader.Style = this.Resources["columnHeadingText"] as Style;
+            Grid.SetRow(txtAccuHeader, 0);
+            Grid.SetColumn(txtAccuHeader, 3);
+            grid.Children.Add(txtAccuHeader);
+
+            TextBlock txtCILowHeader = new TextBlock();
+            txtCILowHeader.Text = DashboardSharedStrings.COL_HEADER_CI_LOWER;
+            txtCILowHeader.Style = this.Resources["columnHeadingText"] as Style;
+            Grid.SetRow(txtCILowHeader, 0);
+            Grid.SetColumn(txtCILowHeader, 4);
+            grid.Children.Add(txtCILowHeader);
+
+            TextBlock txtCIUpperHeader = new TextBlock();
+            txtCIUpperHeader.Text = DashboardSharedStrings.COL_HEADER_CI_UPPER;
+            txtCIUpperHeader.Style = this.Resources["columnHeadingText"] as Style;
+            Grid.SetRow(txtCIUpperHeader, 0);
+            Grid.SetColumn(txtCIUpperHeader, 5);
+            grid.Children.Add(txtCIUpperHeader);
+        }
+
+
+
+
+
+
+
+
+
+
+        private void RenderFrequencyFooter(string strataValue, int footerRowIndex, int totalRows)
+        {
+            Grid grid = GetStrataGrid(strataValue);
+
+            RowDefinition rowDefTotals = new RowDefinition();
+            rowDefTotals.Height = new GridLength(26);
+            grid.RowDefinitions.Add(rowDefTotals);
+
+            TextBlock txtValTotals = new TextBlock();
+            txtValTotals.Text = SharedStrings.TOTAL;
+            txtValTotals.Margin = new Thickness(4, 0, 4, 0);
+            txtValTotals.VerticalAlignment = VerticalAlignment.Center;
+            txtValTotals.FontWeight = FontWeights.Bold;
+            Grid.SetRow(txtValTotals, footerRowIndex);
+            Grid.SetColumn(txtValTotals, 0);
+            grid.Children.Add(txtValTotals);
+
+            TextBlock txtFreqTotals = new TextBlock();
+            txtFreqTotals.Text = totalRows.ToString();
+            txtFreqTotals.Margin = new Thickness(4, 0, 4, 0);
+            txtFreqTotals.VerticalAlignment = VerticalAlignment.Center;
+            txtFreqTotals.HorizontalAlignment = HorizontalAlignment.Right;
+            txtFreqTotals.FontWeight = FontWeights.Bold;
+            Grid.SetRow(txtFreqTotals, footerRowIndex);
+            Grid.SetColumn(txtFreqTotals, 1);
+            grid.Children.Add(txtFreqTotals);
+
+            TextBlock txtPctTotals = new TextBlock();
+            txtPctTotals.Text = (1).ToString("P");//SharedStrings.DASHBOARD_100_PERCENT_LABEL;
+            txtPctTotals.Margin = new Thickness(4, 0, 4, 0);
+            txtPctTotals.VerticalAlignment = VerticalAlignment.Center;
+            txtPctTotals.HorizontalAlignment = HorizontalAlignment.Right;
+            txtPctTotals.FontWeight = FontWeights.Bold;
+            Grid.SetRow(txtPctTotals, footerRowIndex);
+            Grid.SetColumn(txtPctTotals, 2);
+            grid.Children.Add(txtPctTotals);
+
+            TextBlock txtAccuTotals = new TextBlock();
+            txtAccuTotals.Text = (1).ToString("P");
+            txtAccuTotals.Margin = new Thickness(4, 0, 4, 0);
+            txtAccuTotals.VerticalAlignment = VerticalAlignment.Center;
+            txtAccuTotals.HorizontalAlignment = HorizontalAlignment.Right;
+            txtAccuTotals.FontWeight = FontWeights.Bold;
+            Grid.SetRow(txtAccuTotals, footerRowIndex);
+            Grid.SetColumn(txtAccuTotals, 3);
+            grid.Children.Add(txtAccuTotals);
+
+            TextBlock txtCILowerTotals = new TextBlock();
+            txtCILowerTotals.Text = StringLiterals.SPACE + StringLiterals.SPACE + StringLiterals.SPACE;
+            txtCILowerTotals.Margin = new Thickness(4, 0, 4, 0);
+            txtCILowerTotals.VerticalAlignment = VerticalAlignment.Center;
+            txtCILowerTotals.HorizontalAlignment = HorizontalAlignment.Right;
+            txtCILowerTotals.FontWeight = FontWeights.Bold;
+            Grid.SetRow(txtCILowerTotals, footerRowIndex);
+            Grid.SetColumn(txtCILowerTotals, 4);
+            grid.Children.Add(txtCILowerTotals);
+
+            TextBlock txtUpperTotals = new TextBlock();
+            txtUpperTotals.Text = StringLiterals.SPACE + StringLiterals.SPACE + StringLiterals.SPACE;
+            txtUpperTotals.Margin = new Thickness(4, 0, 4, 0);
+            txtUpperTotals.VerticalAlignment = VerticalAlignment.Center;
+            txtUpperTotals.HorizontalAlignment = HorizontalAlignment.Right;
+            txtUpperTotals.FontWeight = FontWeights.Bold;
+            Grid.SetRow(txtUpperTotals, footerRowIndex);
+            Grid.SetColumn(txtUpperTotals, 5);
+            grid.Children.Add(txtUpperTotals);
+
+            Rectangle rctTotalsBar = new Rectangle();
+            rctTotalsBar.Width = 0.1;
+            rctTotalsBar.Fill = this.Resources["frequencyPercentBarBrush"] as SolidColorBrush;
+            rctTotalsBar.Margin = new Thickness(2, 6, 2, 6);
+            rctTotalsBar.HorizontalAlignment = HorizontalAlignment.Left;
+            Grid.SetRow(rctTotalsBar, footerRowIndex);
+            Grid.SetColumn(rctTotalsBar, 6);
+            grid.Children.Add(rctTotalsBar);
+
+            DoubleAnimation daBar = new DoubleAnimation();
+            daBar.From = 1;
+            daBar.To = 100;
+            daBar.Duration = new Duration(TimeSpan.FromSeconds(0.5));
+            rctTotalsBar.BeginAnimation(Rectangle.WidthProperty, daBar);
+        }
+
+
+
+
+        protected override void RenderFinish()
+        {
+            waitPanel.Visibility = System.Windows.Visibility.Collapsed;
+
+            foreach (Grid freqGrid in StrataGridList)
+            {
+                freqGrid.Visibility = Visibility.Visible;
+            }
+
+            messagePanel.MessagePanelType = Controls.MessagePanelType.StatusPanel;
+            messagePanel.Text = string.Empty;
+            messagePanel.Visibility = System.Windows.Visibility.Collapsed;
+
+            HideConfigPanel();
+            ShowHideOutputColumns();
+            CheckAndSetPosition();
+        }
+
+
+
+
+
+
+
+
+
+
+
+        protected override void RenderFinishWithWarning(string errorMessage)
+        {
+            waitPanel.Visibility = System.Windows.Visibility.Collapsed; 
+
+            foreach (Grid freqGrid in StrataGridList)
+            {
+                freqGrid.Visibility = Visibility.Visible;
+            }
+
+            messagePanel.MessagePanelType = Controls.MessagePanelType.WarningPanel;
+            messagePanel.Text = errorMessage;
+            messagePanel.Visibility = System.Windows.Visibility.Visible;
+
+            HideConfigPanel();
+            ShowHideOutputColumns();
+            CheckAndSetPosition();
+        }
+
+
+
+
+
+        protected override void RenderFinishWithError(string errorMessage)
+        {
+            waitPanel.Visibility = System.Windows.Visibility.Collapsed;
+
+            messagePanel.MessagePanelType = Controls.MessagePanelType.ErrorPanel;
+            messagePanel.Text = errorMessage;
+            messagePanel.Visibility = System.Windows.Visibility.Visible;
+
+            panelMain.Children.Clear();
+
+            HideConfigPanel();
+            CheckAndSetPosition();
+        }
+
+
+
+
+
+
+
+
+        private ConfLimit GetConfLimit(string value, double frequency, double count)
+        {
+            double lower = 0;
+            double upper = 0;
+
+            if (frequency == count)
+            {
+                lower = 1;
+                upper = 1;
+            }
+            else
+            {
+                if (count > 300)
+                {
+                    freq.FLEISS(frequency, (double)count, 1.96, ref lower, ref upper);
+                }
+                else
+                {
+                    freq.ExactCI(frequency, (double)count, 95.0, ref lower, ref upper);
+                }
+            }
+
+            ConfLimit cl = new ConfLimit();
+            cl.Lower = lower;
+            cl.Upper = upper;
+            cl.Value = value;
+            return cl;
+        }
+
+
+
+
+        private void CreateInputVariableList()
+        {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+        protected override void Construct()
+        {
+            if (!string.IsNullOrEmpty(CustomOutputHeading) && !CustomOutputHeading.Equals("(none)"))
+            {
+                headerPanel.Text = CustomOutputHeading;
+            }
+
+            StrataGridList = new List();
+            StrataExpanderList = new List();
+
+
+
+
+            mnuCopy.Click += new RoutedEventHandler(mnuCopy_Click);
+            mnuSendDataToHTML.Click += new RoutedEventHandler(mnuSendDataToHTML_Click);
+                 
+            mnuSendDataToExcel.Visibility = Visibility.Collapsed;
+     
+                                                               
+                                                                                                                                                                                                                                                                  
+                                                           
+                                                             
+
+                                
+             
+                                                                     
+             
+                
+             
+                                                                                             
+             
+      
+
+            mnuSendToBack.Click += new RoutedEventHandler(mnuSendToBack_Click);
+            mnuClose.Click += new RoutedEventHandler(mnuClose_Click);
+
+
+
+
+
+
+
+
+
+
+
+
+
+            this.IsProcessing = false;
+
+            this.GadgetStatusUpdate += new GadgetStatusUpdateHandler(RequestUpdateStatusMessage);
+            this.GadgetCheckForCancellation += new GadgetCheckForCancellationHandler(IsCancelled);
+
+            //Translation
+
+
+
+            //
+
+            base.Construct();
+            this.Parameters = new WordCloudParameters();
+        }
+
+
+
+
+        private void ShowFieldName()
+        {
+            foreach (Grid grid in this.StrataGridList)
+            {
+                IEnumerable elements = LINQ.Where(     Grid.GetRow(grid.Children.Cast()) == 0 && Grid.GetColumn(grid.Children.Cast()) == 0).Select(grid.Children.Cast());
+                TextBlock txt = null;
+                foreach (UIElement element in elements)
+                {
+                    if (element is TextBlock)
+                    {
+                        txt = element as TextBlock;
+                        break;
+                    }
+                }
+
+                if (txt != null)
+                {
+                    txt.Text = GadgetOptions.MainVariableName;
+                }
+            }
+        }
+
+
+
+
+        private void ShowFieldPrompt()
+        {
+            foreach (Grid grid in this.StrataGridList)
+            {
+                IEnumerable elements = LINQ.Where(     Grid.GetRow(grid.Children.Cast()) == 0 && Grid.GetColumn(grid.Children.Cast()) == 0).Select(grid.Children.Cast());
+                TextBlock txt = null;
+                foreach (UIElement element in elements)
+                {
+                    if (element is TextBlock)
+                    {
+                        txt = element as TextBlock;
+                        break;
+                    }
+                }
+
+                if (txt != null)
+                {
+                    Field field = DashboardHelper.GetAssociatedField(GadgetOptions.MainVariableName);
+                    if (field != null && field is IDataField)
+                    {
+                        txt.Text = (field as IDataField).PromptText;
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+        private bool ValidNumberChar(string keyChar)
+        {
+            System.Globalization.NumberFormatInfo numberFormatInfo = System.Globalization.CultureInfo.CurrentCulture.NumberFormat;
+
+            for (int i = 0; i < keyChar.Length; i++)
+            {
+                char ch = keyChar[i];
+                if (!Char.IsDigit(ch))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+
+
+
+        public override void CollapseOutput()
+        {
+            foreach (Expander expander in this.StrataExpanderList)
+            {
+                expander.Visibility = System.Windows.Visibility.Collapsed;
+            }
+
+            foreach (Grid grid in this.StrataGridList)
+            {
+                grid.Visibility = System.Windows.Visibility.Collapsed;
+                Border border = new Border();
+                if (grid.Parent is Border)
+                {
+                    border = (grid.Parent) as Border;
+                    border.Visibility = System.Windows.Visibility.Collapsed;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(this.infoPanel.Text))
+            {
+                this.infoPanel.Visibility = System.Windows.Visibility.Collapsed;
+            }
+
+            this.messagePanel.Visibility = System.Windows.Visibility.Collapsed;
+            this.infoPanel.Visibility = System.Windows.Visibility.Collapsed;
+            descriptionPanel.PanelMode = Controls.GadgetDescriptionPanel.DescriptionPanelMode.Collapsed;
+        }
+
+
+
+
+        public override void ExpandOutput()
+        {
+            foreach (Expander expander in this.StrataExpanderList)
+            {
+                expander.Visibility = System.Windows.Visibility.Visible;
+            }
+
+            foreach (Grid grid in this.StrataGridList)
+            {
+                grid.Visibility = System.Windows.Visibility.Visible;
+                Border border = new Border();
+                if (grid.Parent is Border)
+                {
+                    border = (grid.Parent) as Border;
+                    border.Visibility = System.Windows.Visibility.Visible;
+                }
+            }
+
+            if (this.messagePanel.MessagePanelType != Controls.MessagePanelType.StatusPanel)
+            {
+                this.messagePanel.Visibility = System.Windows.Visibility.Visible;
+            }
+
+            if (!string.IsNullOrEmpty(this.infoPanel.Text))
+            {
+                this.infoPanel.Visibility = System.Windows.Visibility.Visible;
+            }
+        }
+
+
+
+
+        protected override void CloseGadget()
+        {
+            if (worker != null && worker.WorkerSupportsCancellation)
+            {
+                worker.CancelAsync();
+            }
+
+            if (worker != null)
+            {
+                worker.DoWork -= new System.ComponentModel.DoWorkEventHandler(worker_DoWork);
+                worker.RunWorkerCompleted -= new System.ComponentModel.RunWorkerCompletedEventHandler(worker_WorkerCompleted);
+            }
+            if (baseWorker != null)
+            {
+                baseWorker.DoWork -= new System.ComponentModel.DoWorkEventHandler(Execute);
+            }
+
+            this.GadgetStatusUpdate -= new GadgetStatusUpdateHandler(RequestUpdateStatusMessage);
+            this.GadgetCheckForCancellation -= new GadgetCheckForCancellationHandler(IsCancelled);
+
+            for (int i = 0; i < StrataGridList.Count; i++)
+            {
+                StrataGridList[i].Children.Clear();
+            }
+            for (int i = 0; i < StrataExpanderList.Count; i++)
+            {
+                StrataExpanderList[i].Content = null;
+            }
+            this.StrataExpanderList.Clear();
+            this.StrataGridList.Clear();
+            this.panelMain.Children.Clear();
+
+            base.CloseGadget();
+
+            GadgetOptions = null;
+        }
+
+
+
+
+        private void ClearResults()
+        {
+            messagePanel.Visibility = System.Windows.Visibility.Collapsed;
+            messagePanel.Text = string.Empty;
+            descriptionPanel.PanelMode = Controls.GadgetDescriptionPanel.DescriptionPanelMode.Collapsed;
+
+            foreach (Grid grid in StrataGridList)
+            {
+                grid.Children.Clear();
+                grid.RowDefinitions.Clear();
+                if (grid.Parent is Border)
+                {
+                    Border border = (grid.Parent) as Border;
+                    panelMain.Children.Remove(border);
+                }
+            }
+
+            foreach (Expander expander in StrataExpanderList)
+            {
+                if (panelMain.Children.Contains(expander))
+                {
+                    panelMain.Children.Remove(expander);
+                }
+            }
+
+            panelMain.Children.Clear();
+
+            StrataGridList.Clear();
+            StrataExpanderList.Clear();
+        }
+
+        public override void ShowHideConfigPanel()
+        {
+            Popup = new DashboardPopup();
+            Popup.Parent = ((this.Parent as DragCanvas).Parent as ScrollViewer).Parent as Grid;
+            Controls.GadgetProperties.WordCloudProperties properties = new Controls.GadgetProperties.WordCloudProperties(this.DashboardHelper, this, (WordCloudParameters)Parameters);
+
+            properties.Width = 800;
+            properties.Height = 600;
+
+            if ((System.Windows.SystemParameters.PrimaryScreenWidth / 1.2) > properties.Width)
+            {
+                properties.Width = (System.Windows.SystemParameters.PrimaryScreenWidth / 1.2);
+            }
+
+            if ((System.Windows.SystemParameters.PrimaryScreenHeight / 1.2) > properties.Height)
+            {
+                properties.Height = (System.Windows.SystemParameters.PrimaryScreenHeight / 1.2);
+            }
+
+            properties.Cancelled += new EventHandler(properties_Cancelled);
+            properties.ChangesAccepted += new EventHandler(properties_ChangesAccepted);
+            Popup.Content = properties;
+            Popup.Show();
+        }
+
+        private void properties_ChangesAccepted(object sender, EventArgs e)
+        {
+            Controls.GadgetProperties.WordCloudProperties properties = Popup.Content as Controls.GadgetProperties.WordCloudProperties;
+            this.Parameters = properties.Parameters;
+            this.DataFilters = properties.DataFilters;
+            this.CustomOutputHeading = this.Parameters.GadgetTitle;
+            this.CustomOutputDescription = this.Parameters.GadgetDescription;
+            Popup.Close();
+            if (properties.HasSelectedFields)
+            {
+                RefreshResults();
+            }
+        }
+
+        private void properties_Cancelled(object sender, EventArgs e)
+        {
+            Popup.Close();
+        }
+
+
+
+
+        //
+
+        //Public Methods
+        //IGadget Members
+
+
+
+        public override void SetGadgetToProcessingState()
+        {
+            this.IsProcessing = true;
+
+
+        }
+
+
+
+
+        public override void SetGadgetToFinishedState()
+        {
+            this.IsProcessing = false;
+
+
+
+            if (IsDropDownList || IsRecoded)
+            {
+            }
+
+            if (IsCommentLegal || IsOptionField)
+            {
+            }
+
+            base.SetGadgetToFinishedState();
+        }
+
+
+
+
+        public override void RefreshResults()
+        {
+
+            if (!LoadingCombos && Parameters != null && Parameters.ColumnNames.Count > 0)
+            {
+
+                infoPanel.Visibility = System.Windows.Visibility.Collapsed;
+                waitPanel.Visibility = System.Windows.Visibility.Visible;
+                messagePanel.MessagePanelType = Controls.MessagePanelType.StatusPanel;
+                descriptionPanel.PanelMode = Controls.GadgetDescriptionPanel.DescriptionPanelMode.Collapsed;
+                baseWorker = new BackgroundWorker();
+                baseWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(Execute);
+                baseWorker.RunWorkerAsync();
+                base.RefreshResults();
+            }
+
+            else
+            {
+                ClearResults();
+                waitPanel.Visibility = System.Windows.Visibility.Collapsed;
+            }
+        }
+
+
+
+
+        public override void UpdateVariableNames()
+        {
+            FillComboboxes(true);
+        }
+
+
+
+
+
+
+        public override XmlNode Serialize(XmlDocument doc)
+        {
+            WordCloudParameters WordCloudParameters = (WordCloudParameters)Parameters;
+
+            System.Xml.XmlElement element = doc.CreateElement("frequencyGadget");
+
+            element.AppendChild(SerializeFilters(doc));
+
+            System.Xml.XmlAttribute id = doc.CreateAttribute("id");
+            System.Xml.XmlAttribute locationY = doc.CreateAttribute("top");
+            System.Xml.XmlAttribute locationX = doc.CreateAttribute("left");
+            System.Xml.XmlAttribute collapsed = doc.CreateAttribute("collapsed");
+            System.Xml.XmlAttribute type = doc.CreateAttribute("gadgetType");
+
+            id.Value = this.UniqueIdentifier.ToString();
+            locationY.Value = Canvas.GetTop(this).ToString("F0");
+            locationX.Value = Canvas.GetLeft(this).ToString("F0");
+            collapsed.Value = IsCollapsed.ToString();
+            type.Value = "EpiDashboard.WordCloudControl";
+
+            element.Attributes.Append(locationY);
+            element.Attributes.Append(locationX);
+            element.Attributes.Append(collapsed);
+            element.Attributes.Append(type);
+            element.Attributes.Append(id);
+
+            string freqVar = string.Empty;
+
+            WordBuilder wb = new WordBuilder(",");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            int precision = 4;
+            CustomOutputHeading = headerPanel.Text;
+            CustomOutputDescription = descriptionPanel.Text;
+
+            XmlElement mainVariableElement = doc.CreateElement("mainVariable");
+            if (WordCloudParameters.ColumnNames.Count > 0)
+            {
+                mainVariableElement.InnerText = WordCloudParameters.ColumnNames[0];
+            }
+            element.AppendChild(mainVariableElement);
+
+
+            XmlElement precisionElement = doc.CreateElement("precision");
+            precisionElement.InnerText = precision.ToString();
+            element.AppendChild(precisionElement);
+
+            XmlElement commonWordsElement = doc.CreateElement("commonWords");
+            commonWordsElement.InnerText = WordCloudParameters.CommonWords;
+            element.AppendChild(commonWordsElement);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            XmlElement customHeadingElement = doc.CreateElement("customHeading");
+            customHeadingElement.InnerText = CustomOutputHeading.Replace("<", "&lt;");
+            element.AppendChild(customHeadingElement);
+
+            XmlElement customDescriptionElement = doc.CreateElement("customDescription");
+            customDescriptionElement.InnerText = CustomOutputDescription.Replace("<", "&lt;");
+            element.AppendChild(customDescriptionElement);
+
+            XmlElement customCaptionElement = doc.CreateElement("customCaption");
+            customCaptionElement.InnerText = CustomOutputCaption;
+            element.AppendChild(customCaptionElement);
+
+            SerializeAnchors(element);
+
+            return element;
+        }
+
+
+
+
+
+        public override void CreateFromXml(XmlElement element)
+        {
+            this.LoadingCombos = true;
+            this.Parameters = new WordCloudParameters();
+            HideConfigPanel();
+            infoPanel.Visibility = System.Windows.Visibility.Collapsed;
+            messagePanel.Visibility = System.Windows.Visibility.Collapsed;
+
+            foreach (XmlElement child in element.ChildNodes)
+            {
+                switch (child.Name.ToLower())
+                {
+                    case "mainvariable":
+
+                        ((WordCloudParameters)Parameters).ColumnNames.Add(child.InnerText.Replace("&lt;", "<"));
+                        break;
+                    case "stratavariable":
+                        break;
+                    case "stratavariables":
+                        foreach (XmlElement field in child.ChildNodes)
+                        {
+                            List fields = new List();
+                            if (field.Name.ToLower().Equals("stratavariable"))
+                            {
+                            }
+                        }
+                        break;
+                    case "weightvariable":
+                        break;
+                    case "precision":
+                        int precision = 4;
+                        int.TryParse(child.InnerText, out precision);
+                        break;
+                    case "commonwords":
+                        ((WordCloudParameters)Parameters).CommonWords = (child.InnerText.Replace("&lt;", "<"));
+                        break;
+                    case "sort":
+                        if (child.InnerText.ToLower().Equals("highlow"))
+                        {
+                        }
+                        break;
+                    case "allvalues":
+                        if (child.InnerText.ToLower().Equals("true")) {  }
+                        else {  }
+                        break;
+                    case "showlistlabels":
+                        break;
+                    case "columnstoshow":
+                        break;
+                    case "includemissing":
+                        break;
+                    case "usefieldprompts":
+                        bool usePrompts = false;
+                        bool.TryParse(child.InnerText, out usePrompts);
+                        break;
+                    case "customheading":
+                        if (!string.IsNullOrEmpty(child.InnerText) && !child.InnerText.Equals("(none)"))
+                        {
+                            this.CustomOutputHeading = child.InnerText.Replace("&lt;", "<");
+                            Parameters.GadgetTitle = CustomOutputHeading;
+                        }
+                        break;
+                    case "customdescription":
+                        if (!string.IsNullOrEmpty(child.InnerText) && !child.InnerText.Equals("(none)"))
+                        {
+                            this.CustomOutputDescription = child.InnerText.Replace("&lt;", "<");
+                            Parameters.GadgetDescription = CustomOutputDescription;
+                            if (!string.IsNullOrEmpty(CustomOutputDescription) && !CustomOutputHeading.Equals("(none)"))
+                            {
+                                descriptionPanel.Text = CustomOutputDescription;
+                                descriptionPanel.PanelMode = Controls.GadgetDescriptionPanel.DescriptionPanelMode.DisplayMode;
+                            }
+                            else
+                            {
+                                descriptionPanel.PanelMode = Controls.GadgetDescriptionPanel.DescriptionPanelMode.Collapsed;
+                            }
+                        }
+                        break;
+                    case "customcaption":
+                        this.CustomOutputCaption = child.InnerText;
+                        break;
+                    case "datafilters":
+                        this.DataFilters = new DataFilters(this.DashboardHelper);
+                        this.DataFilters.CreateFromXml(child);
+                        break;
+                }
+            }
+
+            base.CreateFromXml(element);
+            this.LoadingCombos = false;
+            RefreshResults();
+            HideConfigPanel();
+        }
+
+
+
+
+
+        public override string ToHTML(string htmlFileName = "", int count = 0)
+        {
+            StringBuilder htmlBuilder = new StringBuilder();
+            CustomOutputHeading = headerPanel.Text;
+            CustomOutputDescription = descriptionPanel.Text;
+
+            if (CustomOutputHeading == null || (string.IsNullOrEmpty(CustomOutputHeading) && !CustomOutputHeading.Equals("(none)")))
+            {
+                htmlBuilder.AppendLine("<h2 class=\"gadgetHeading\">Frequency</h2>");
+            }
+            else if (CustomOutputHeading != "(none)")
+            {
+                htmlBuilder.AppendLine("<h2 class=\"gadgetHeading\">" + CustomOutputHeading + "</h2>");
+            }
+
+            htmlBuilder.AppendLine("<p class=\"gadgetOptions\">");
+            htmlBuilder.AppendLine("Frequency variable:</em> " + Parameters.ColumnNames[0] + "</strong>");
+            htmlBuilder.AppendLine("<br />");
+
+
+
+
+
+
+            htmlBuilder.AppendLine("Include missing:</em>  </strong>");
+            htmlBuilder.AppendLine("<br />");
+            htmlBuilder.AppendLine("</small></p>");
+
+            if (!string.IsNullOrEmpty(CustomOutputDescription))
+            {
+                htmlBuilder.AppendLine("<p class=\"gadgetsummary\">" + CustomOutputDescription + "</p>");
+            }
+
+            if (!string.IsNullOrEmpty(messagePanel.Text) && messagePanel.Visibility == Visibility.Visible)
+            {
+                htmlBuilder.AppendLine("" + messagePanel.Text + "</strong></small></p>");
+            }
+
+            if (!string.IsNullOrEmpty(infoPanel.Text) && infoPanel.Visibility == Visibility.Visible)
+            {
+                htmlBuilder.AppendLine("" + infoPanel.Text + "</strong></small></p>");
+            }
+
+            string imageFileName = string.Empty;
+
+            if (htmlFileName.EndsWith(".html"))
+            {
+                imageFileName = htmlFileName.Remove(htmlFileName.Length - 5, 5);
+            }
+            else if (htmlFileName.EndsWith(".htm"))
+            {
+                imageFileName = htmlFileName.Remove(htmlFileName.Length - 4, 4);
+            }
+
+            imageFileName = imageFileName + "_" + count.ToString() + ".png";
+
+            System.IO.FileInfo fi = new System.IO.FileInfo(imageFileName);
+
+            ToImageFile(imageFileName, false);
+
+            htmlBuilder.AppendLine("<img src=\"" + fi.Name + "\" />");
+
+            return htmlBuilder.ToString();
+        }
+
+        public virtual void ToImageFile(string fileName, bool includeGrid = true)
+        {
+            BitmapSource img = ToBitmapSource(false);
+
+            System.IO.FileStream stream = new System.IO.FileStream(fileName, System.IO.FileMode.Create);
+            BitmapEncoder encoder = null; 
+
+            if (fileName.EndsWith(".png"))
+            {
+                encoder = new PngBitmapEncoder();
+            }
+            else
+            {
+                encoder = new JpegBitmapEncoder();
+            }
+
+            encoder.Frames.Add(BitmapFrame.Create(img));
+            encoder.Save(stream);
+            stream.Close();
+        }
+
+        public virtual BitmapSource ToBitmapSource(bool includeGrid = true)
+        {
+            if (panelMain.Children.Count > 0 && panelMain.Children[0] is Canvas)
+            {
+                Canvas canvas = panelMain.Children[0] as Canvas;
+
+                Transform transform = canvas.LayoutTransform;
+
+
+                canvas.LayoutTransform = null;
+
+                Size size = new Size(canvas.Width, canvas.Height);
+
+
+                canvas.Measure(size);
+                canvas.Arrange(new Rect(size));
+
+                RenderTargetBitmap renderBitmap =
+                  new RenderTargetBitmap(
+                    (int)size.Width,
+                    (int)size.Height,
+                    96d,
+                    96d,
+                    PixelFormats.Pbgra32);
+                renderBitmap.Render(canvas);
+
+                canvas.LayoutTransform = transform;
+
+                canvas.Measure(size);
+                canvas.Arrange(new Rect(size));
+
+                return renderBitmap;
+            }
+            else
+            {
+                throw new ApplicationException();
+            }
+
+        }
+
+
+
+
+        public override string CustomOutputHeading
+        {
+            get
+            {
+                return this.customOutputHeading;
+            }
+            set
+            {
+                this.customOutputHeading = value;
+                headerPanel.Text = CustomOutputHeading;
+            }
+        }
+
+
+
+
+        public override string CustomOutputDescription
+        {
+            get
+            {
+                return this.customOutputDescription;
+            }
+            set
+            {
+                this.customOutputDescription = value;
+                descriptionPanel.Text = CustomOutputDescription;
+            }
+        }
+
+
+
+
+        public override string CustomOutputCaption
+        {
+            get
+            {
+                return this.customOutputCaption;
+            }
+            set
+            {
+                this.customOutputCaption = value;
+            }
+        }
+        //
+
+
+
+
+
+        public override string ToString()
+        {
+            return "Frequency Gadget";
+        }
+        //
+
+        //Event Handlers
+
+
+
+
+
+        void checkboxUsePrompts_Checked(object sender, RoutedEventArgs e)
+        {
+            ShowFieldPrompt();
+        }
+
+
+
+
+
+
+        void checkboxUsePrompts_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ShowFieldName();
+        }
+
+
+
+
+
+
+        void txtValHeader_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.Cursor = Cursors.Arrow;
+        }
+
+
+
+
+
+
+        void txtValHeader_MouseEnter(object sender, MouseEventArgs e)
+        {
+            this.Cursor = Cursors.Hand;
+        }
+
+
+
+
+
+
+        void txtValHeader_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+        }
+
+
+
+
+
+
+        private void checkboxCheckChanged(object sender, RoutedEventArgs e)
+        {
+            RefreshResults();
+        }
+
+
+
+
+
+
+        private void cbxField_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+        private void btnRun_Click(object sender, RoutedEventArgs e)
+        {
+            if (LoadingCombos)
+            {
+                return;
+            }
+
+            RefreshResults();
+        }
+
+
+
+
+
+
+        private void lbxColumns_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ShowHideOutputColumns();
+        }
+
+
+
+
+
+
+        protected override void worker_WorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+
+            System.Threading.Thread.Sleep(100);
+            this.Dispatcher.BeginInvoke(new SimpleCallback(SetGadgetToFinishedState));
+
+        }
+
+
+
+
+
+
+        protected override void worker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            lock (syncLock)
+            {
+
+                WordCloudParameters WordCloudParameters = (WordCloudParameters)Parameters;
+
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+
+                this.Dispatcher.BeginInvoke(new SimpleCallback(SetGadgetToProcessingState));
+                this.Dispatcher.BeginInvoke(new SimpleCallback(ClearResults));
+
+
+
+
+
+
+                if (WordCloudParameters.ColumnNames.Count > 0)
+                {
+                    string freqVar = WordCloudParameters.ColumnNames[0];
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+                try
+                {
+                    RequestUpdateStatusDelegate requestUpdateStatus = new RequestUpdateStatusDelegate(RequestUpdateStatusMessage);
+                    CheckForCancellationDelegate checkForCancellation = new CheckForCancellationDelegate(IsCancelled);
+
+
+
+                    WordCloudParameters.GadgetStatusUpdate += new GadgetStatusUpdateHandler(requestUpdateStatus);
+                    WordCloudParameters.GadgetCheckForCancellation += new GadgetCheckForCancellationHandler(checkForCancellation);
+                    if (this.DataFilters != null && this.DataFilters.Count > 0)
+                    {
+                        WordCloudParameters.CustomFilter = this.DataFilters.GenerateDataFilterString(false);
+                    }
+                    else
+                    {
+                        WordCloudParameters.CustomFilter = string.Empty;
+                    }
+
+
+//                    Dictionary stratifiedFrequencyTables = DashboardHelper.GenerateFrequencyTable(GadgetOptions                                                                                                         );
+
+
+                    DataView dv = DashboardHelper.GenerateView(WordCloudParameters);
+
+                    Dictionary wordCloudDictionary1 = new Dictionary();
+                    wordCloudDictionary1.Add('0', new Dictionary());
+                    wordCloudDictionary1.Add('1', new Dictionary());
+                    wordCloudDictionary1.Add('2', new Dictionary());
+                    wordCloudDictionary1.Add('3', new Dictionary());
+                    wordCloudDictionary1.Add('4', new Dictionary());
+                    wordCloudDictionary1.Add('5', new Dictionary());
+                    wordCloudDictionary1.Add('6', new Dictionary());
+                    wordCloudDictionary1.Add('7', new Dictionary());
+                    wordCloudDictionary1.Add('8', new Dictionary());
+                    wordCloudDictionary1.Add('9', new Dictionary());
+                    wordCloudDictionary1.Add('a', new Dictionary());
+                    wordCloudDictionary1.Add('b', new Dictionary());
+                    wordCloudDictionary1.Add('c', new Dictionary());
+                    wordCloudDictionary1.Add('d', new Dictionary());
+                    wordCloudDictionary1.Add('e', new Dictionary());
+                    wordCloudDictionary1.Add('f', new Dictionary());
+                    wordCloudDictionary1.Add('g', new Dictionary());
+                    wordCloudDictionary1.Add('h', new Dictionary());
+                    wordCloudDictionary1.Add('i', new Dictionary());
+                    wordCloudDictionary1.Add('j', new Dictionary());
+                    wordCloudDictionary1.Add('k', new Dictionary());
+                    wordCloudDictionary1.Add('l', new Dictionary());
+                    wordCloudDictionary1.Add('m', new Dictionary());
+                    wordCloudDictionary1.Add('n', new Dictionary());
+                    wordCloudDictionary1.Add('o', new Dictionary());
+                    wordCloudDictionary1.Add('p', new Dictionary());
+                    wordCloudDictionary1.Add('q', new Dictionary());
+                    wordCloudDictionary1.Add('r', new Dictionary());
+                    wordCloudDictionary1.Add('s', new Dictionary());
+                    wordCloudDictionary1.Add('t', new Dictionary());
+                    wordCloudDictionary1.Add('u', new Dictionary());
+                    wordCloudDictionary1.Add('v', new Dictionary());
+                    wordCloudDictionary1.Add('w', new Dictionary());
+                    wordCloudDictionary1.Add('x', new Dictionary());
+                    wordCloudDictionary1.Add('y', new Dictionary());
+                    wordCloudDictionary1.Add('z', new Dictionary());
+                    Dictionary wordCloudDictionary = new Dictionary();
+
+                    if (WordCloudParameters.ColumnNames.Count > 0 && !String.IsNullOrEmpty(WordCloudParameters.ColumnNames[0]))
+                    {
+                        foreach (DataRowView dr in dv)
+                        {
+                            DataRow row = dr.Row;
+                            string[] strings = row[WordCloudParameters.ColumnNames[0]].ToString().Replace(", ", " ").Replace(". ", " ").ToLowerInvariant().Split(' ');
+
+                            foreach (string s in strings)
+                            {
+                                string s0 = s;
+                                if (s.Length > 0 && (s.Substring(s.Length - 1).Equals(",") || s.Substring(s.Length - 1).Equals(".")))
+                                    s0 = s.Remove(s.Length - 1);
+                                char[] firstChars = s0.ToCharArray();
+                                if (firstChars.Length > 0)
+                                {
+                                    char firstChar = firstChars[0];
+                                    if (wordCloudDictionary1.ContainsKey(firstChar))
+                                    {
+                                        if (wordCloudDictionary1[firstChar].ContainsKey(s0))
+                                        {
+                                            wordCloudDictionary1[firstChar][s0]++;
+                                        }
+                                        else
+                                        {
+
+
+
+
+
+
+
+
+
+
+
+                                            if(s0.Length > 0 && !WordCloudParameters.CommonWords.Contains(s0))
+                                            {
+                                                wordCloudDictionary1[firstChar].Add(s0, 1.0);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Dictionary wordCloudDictionary0 = new Dictionary();
+
+                    foreach (KeyValuePair kvp0 in wordCloudDictionary1)
+                    {
+                        foreach (KeyValuePair kvp in kvp0.Value)
+                        {
+                            if (kvp.Value > 1.0)
+                            {
+                                wordCloudDictionary0.Add(kvp.Key, kvp.Value);
+                            }
+                        }
+                    }
+
+                    wordCloudDictionary = LINQ.OrderByDescending(     wordCloudDictionary0.Value).ToDictionary(     wordCloudDictionary0.Key,      wordCloudDictionary0.Value).Select(wordCloudDictionary0);
+
+                    wordCloudDictionary0.Clear();
+
+                    int entryCount = 0;
+                    double totalWordCounts = 0;
+                    foreach (KeyValuePair kvp in wordCloudDictionary)
+                    {
+                        wordCloudDictionary0.Add(kvp.Key, kvp.Value);
+                        totalWordCounts += kvp.Value;
+                        if (++entryCount > 49)
+                            break;
+                    }
+
+
+                    wordCloudDictionary = wordCloudDictionary0;
+/*
+
+                    Dictionary wordCloudDictionary1 = LINQ.OrderBy(     wordCloudDictionary0.Value).ToDictionary(     wordCloudDictionary0.Key,      wordCloudDictionary0.Value).Select(wordCloudDictionary0);
+                    wordCloudDictionary.Clear();
+                    bool isEven = (wordCloudDictionary0.Count() % 2 == 0);
+                    int wcdItem = 0;
+                    foreach (KeyValuePair kvp in wordCloudDictionary1)
+                    {
+                        wcdItem++;
+                        if (wcdItem % 2 == 1)
+                            wordCloudDictionary.Add(kvp.Key, kvp.Value);
+                    }
+                    wcdItem = 0;
+                    if (isEven)
+                    {
+                        foreach (KeyValuePair kvp in wordCloudDictionary0)
+                        {
+                            wcdItem++;
+                            if (wcdItem % 2 == 1)
+                                wordCloudDictionary.Add(kvp.Key, kvp.Value);
+                        }
+                    }
+                    else
+                    {
+                        foreach (KeyValuePair kvp in wordCloudDictionary0)
+                        {
+                            wcdItem++;
+                            if (wcdItem % 2 == 0)
+                                wordCloudDictionary.Add(kvp.Key, kvp.Value);
+                        }
+                    }
+
+*/
+                    if (wordCloudDictionary == null || wordCloudDictionary.Count == 0)
+                    {
+                        this.Dispatcher.BeginInvoke(new RenderFinishWithErrorDelegate(RenderFinishWithError), DashboardSharedStrings.GADGET_MSG_NO_DATA);
+                        this.Dispatcher.BeginInvoke(new SimpleCallback(SetGadgetToFinishedState));
+                        return;
+                    }
+
+                    this.Dispatcher.BeginInvoke(new AddDictionaryOutputDelegate(RenderWordCloudImage), wordCloudDictionary, totalWordCounts);
+                    this.Dispatcher.BeginInvoke(new SimpleCallback(RenderFinish));
+                }
+                catch (Exception ex)
+                {
+                    this.Dispatcher.BeginInvoke(new RenderFinishWithErrorDelegate(RenderFinishWithError), ex.Message);
+                    this.Dispatcher.BeginInvoke(new SimpleCallback(SetGadgetToFinishedState));
+                }
+                finally
+                {
+                    stopwatch.Stop();
+                    Debug.Print("Word cloud gadget took " + stopwatch.Elapsed.ToString() + " seconds to complete with " + DashboardHelper.RecordCount.ToString() + " records and the following filters:");
+                    Debug.Print(DashboardHelper.DataFilters.GenerateDataFilterString());
+                }
+            }
+        }
+
+        private void RenderWordCloudImage(Dictionary wordCloudDictionary, double totalWordCounts)
+        {
+            int words = wordCloudDictionary.Count();
+            DrawingGroup drawingGroup = new DrawingGroup();
+            foreach (KeyValuePair kvp in wordCloudDictionary)
+            {
+                double fontSize = 10.0;
+                if (words <= 5)
+                    fontSize = 10.0 + Math.Min(Math.Max((100 * kvp.Value) / totalWordCounts, 0.0), 100.0);
+                else
+                    fontSize = 10.0 + Math.Min(Math.Max((500 * kvp.Value) / totalWordCounts, 0.0), 100.0);
+
+                string word = kvp.Key;
+
+                FormattedText atoz = new FormattedText(word, System.Globalization.CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Georgia"), fontSize, Brushes.Black);
+                Random rnd = new Random();
+                bool intersects = true;
+                GeometryDrawing geoDrawing = new GeometryDrawing();
+
+                int iterations = 0;
+                bool gaveUp = false;
+                while (intersects)
+                {
+                    if (iterations > 50)
+                    {
+                        gaveUp = true;
+                        break;
+                    }
+                    iterations++;
+                    int maxY = 225;
+                    int maxX = 325;
+                    if (drawingGroup.Children.Count < 1)
+                    {
+                        maxY = 75;
+                        maxX = 175;
+                    }
+                    Geometry geo = atoz.BuildGeometry(new Point(rnd.Next(0, maxX), rnd.Next(0, maxY)));
+
+                    int colorIndex = rnd.Next(0, 6);
+                    Brush color;
+                    if (colorIndex == 0)
+                    {
+                        color = new SolidColorBrush(Color.FromRgb(44, 59, 0));
+                    }
+                    else if (colorIndex == 1)
+                    {
+                        color = new SolidColorBrush(Color.FromRgb(247, 125, 0));
+                    }
+                    else if (colorIndex == 2)
+                    {
+                        color = new SolidColorBrush(Color.FromRgb(107, 0, 21));
+                    }
+                    else if (colorIndex == 3)
+                    {
+                        color = new SolidColorBrush(Color.FromRgb(102, 110, 0));
+                    }
+                    else if (colorIndex == 4)
+                    {
+                        color = new SolidColorBrush(Color.FromRgb(247, 170, 0));
+                    }
+                    else
+                    {
+                        color = new SolidColorBrush(Color.FromRgb(235, 14, 0));
+                    }
+
+                    geoDrawing = new GeometryDrawing(color, new Pen(color, 1.0), geo);
+                    intersects = false;
+                    foreach (GeometryDrawing d in drawingGroup.Children)
+                    {
+                        if (geo.FillContainsWithDetail(d.Geometry) != IntersectionDetail.Empty)
+                        {
+                            intersects = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!gaveUp)
+                {
+                    drawingGroup.Children.Add(geoDrawing);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            DrawingImage drawingImage = new DrawingImage(drawingGroup);
+            Canvas canvas = new Canvas();
+            canvas.Height = 400;
+            canvas.Width = 600;
+            Image img = new Image();
+            img.Height = 400;
+            img.Width = 600;
+            img.Source = drawingImage;
+            canvas.Children.Add(img);
+            panelMain.Children.Add(canvas);
+
+        }
+        //
+
+        //Private Properties
+
+
+
+        private bool IsDropDownList
+        {
+            get
+            {
+                return this.isDropDownList;
+            }
+        }
+
+
+
+
+        private bool IsCommentLegal
+        {
+            get
+            {
+                return this.isCommentLegal;
+            }
+        }
+
+
+
+
+        private bool IsOptionField
+        {
+            get
+            {
+                return this.isOptionField;
+            }
+        }
+
+
+
+
+        private bool IsRecoded
+        {
+            get
+            {
+                return this.isRecoded;
+            }
+        }
+        //
+    }
+}
+
+ 

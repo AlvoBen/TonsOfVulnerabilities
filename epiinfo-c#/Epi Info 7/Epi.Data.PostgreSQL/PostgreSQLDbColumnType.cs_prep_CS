@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Epi.Data.PostgreSQL
+{
+
+
+
+    public        class PostgreSQLDbColumnType
+    {
+
+
+
+        public static string Text = @"text";
+
+
+
+        public static string Longblob = @"longblob";
+    }
+}
+
+ 

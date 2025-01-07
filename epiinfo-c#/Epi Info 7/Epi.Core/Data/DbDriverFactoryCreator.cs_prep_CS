@@ -1,0 +1,116 @@
+﻿using System;
+using System.Data;
+using System.Reflection;
+using Epi;
+using Epi.DataSets;
+using System.IO;
+using Epi.Data;
+
+namespace Epi.Data
+{
+
+
+
+    public        class DbDriverFactoryCreator
+    {
+
+
+
+        public class KnownDatabaseNames
+        {
+
+
+
+            public const string Phin = "PHIN";
+
+
+
+
+            public const string AppData = "APPDATA";
+
+
+
+
+            public const string Translation = "TRANSLATION";
+        }
+
+
+
+
+
+
+        public static IDbDriverFactory GetDbDriverFactory(string dataDriverType)
+        {
+            Type typeFactory = null;
+            IDbDriverFactory dbFactory = null;
+
+
+
+            if (dataDriverType.Equals(SharedStrings.MYSQL_DATABASE_INFO))
+            {
+                try
+                {
+                    typeFactory = Type.GetType(Configuration.MySQLDriver);
+
+
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Csn not load assembly for MySQL.  " + ex.StackTrace);
+                }
+            }
+
+            else
+            {
+                try
+                {
+                    typeFactory = Type.GetType(dataDriverType);
+
+                    if (typeFactory == null)
+                    {
+                        Configuration config = Configuration.GetNewInstance();
+                        foreach (Epi.DataSets.Config.DataDriverRow row in config.DataDrivers)
+                        {
+                            string type = row.Type;
+
+                            if (type == dataDriverType && row.FileName != null && !string.IsNullOrEmpty(row.FileName))
+                            {
+                                string dllFileName = row.FileName;
+                                Assembly assemblyInstance = Assembly.LoadFrom(dllFileName);
+                                Type[] types = assemblyInstance.GetTypes();
+
+                                int indexOf = type.IndexOf(',');
+                                type = type.Substring(0, indexOf).Trim();
+
+                                foreach (Type t in types)
+                                {
+                                    if (t.FullName == type)
+                                    {
+                                        typeFactory = t;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (ApplicationException ex)
+                {
+                    throw new ApplicationException("Can not set typeFactory" + ex.StackTrace);
+                }
+            }
+
+            try
+            {
+                dbFactory = Activator.CreateInstance(typeFactory, (object[])null) as IDbDriverFactory;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Can not create instance of dbFactory" + ex.StackTrace);
+            }
+
+            return dbFactory;
+        }
+    }
+}
+
+ 

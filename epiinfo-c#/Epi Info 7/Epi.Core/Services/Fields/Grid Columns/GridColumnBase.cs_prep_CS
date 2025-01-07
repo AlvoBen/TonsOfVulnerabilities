@@ -1,0 +1,339 @@
+﻿using System;
+using System.Data;
+using Epi.Data.Services;
+using Epi.Data;
+
+namespace Epi.Fields
+{
+
+
+
+    public abstract class GridColumnBase : INamedObject
+    {
+        //Fields Members
+        private int id;
+        private string name = string.Empty;
+        private string text = string.Empty;
+        private bool shouldRepeatLast;
+        private bool isRequired;
+        private bool isReadOnly;
+        private bool isUniqueField;
+        private int position;
+        private int width;
+        private MetaFieldType gridColumnType;
+        private GridField grid;
+        //Fields
+
+        //Protected Data
+
+
+
+        protected GenericDbColumnType genericDbColumnType;
+        //Protected Data
+
+        //Constructors
+
+
+
+
+        private GridColumnBase()
+        {
+        }
+
+
+
+
+        public GridColumnBase(GridField grid)
+        {
+            this.grid = grid;
+        }
+
+
+
+
+
+
+        public GridColumnBase(DataRow gridRow, GridField grid)
+        {
+            this.id = (int)gridRow[ColumnNames.GRID_COLUMN_ID];
+            this.name = gridRow[ColumnNames.NAME].ToString();
+            this.text = gridRow[ColumnNames.TEXT].ToString();
+            this.shouldRepeatLast = (bool)gridRow[ColumnNames.SHOULD_REPEAT_LAST];
+            this.isRequired = (bool)gridRow[ColumnNames.IS_REQUIRED];
+            this.isReadOnly = (bool)gridRow[ColumnNames.IS_READ_ONLY];
+
+            if (gridRow.Table.Columns.Contains(ColumnNames.IS_UNIQUE_FIELD) && gridRow[ColumnNames.IS_UNIQUE_FIELD] is bool)
+            {
+                this.isUniqueField = (bool)gridRow[ColumnNames.IS_UNIQUE_FIELD];
+            }
+            else
+            {
+                this.isUniqueField = false;
+            }
+
+            this.position = (short)gridRow[ColumnNames.POSITION];
+            this.width = Int32.Parse(gridRow["Width"].ToString());
+            this.grid = grid;
+        }
+
+        //
+
+        //Public Properties
+
+
+
+
+
+
+
+
+
+
+        public GridField Grid
+        {
+            get
+            {
+                return this.grid;
+            }
+            set
+            {
+                this.grid = value;
+            }
+        }
+
+
+
+
+        public int Id
+        {
+            get
+            {
+                return id;
+            }
+            set
+            {
+                id = value;
+            }
+        }
+
+
+
+
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                name = value;
+            }
+        }
+
+
+
+
+        public string Text
+        {
+            get
+            {
+                return text;
+            }
+            set
+            {
+                text = value;
+            }
+        }
+
+
+
+
+        public bool ShouldRepeatLast
+        {
+            get
+            {
+                return shouldRepeatLast;
+            }
+            set
+            {
+                shouldRepeatLast = value;
+            }
+        }
+
+
+
+
+        public bool IsRequired
+        {
+            get
+            {
+                return isRequired;
+            }
+            set
+            {
+                isRequired = value;
+            }
+        }
+
+
+
+
+        public bool IsReadOnly
+        {
+            get
+            {
+                return isReadOnly;
+            }
+            set
+            {
+                isReadOnly = value;
+            }
+        }
+
+
+
+
+        public bool IsUniqueField
+        {
+            get
+            {
+                return isUniqueField;
+            }
+            set
+            {
+                isUniqueField = value;
+            }
+        }
+
+
+
+
+        public int Position
+        {
+            get
+            {
+                return position;
+            }
+            set
+            {
+                position = value;
+            }
+        }
+
+
+
+
+        public int Width
+        {
+            get
+            {
+                return width;
+            }
+            set
+            {
+                width = value;
+            }
+        }
+
+
+
+
+        public MetaFieldType GridColumnType
+        {
+            get
+            {
+                return gridColumnType;
+            }
+            set
+            {
+                gridColumnType = value;
+            }
+        }
+
+        //
+
+        //Protected Properties
+
+        //Protected Properties
+
+        //Protected Methods
+
+
+
+        protected void OnColumnInserted()
+        {
+            this.Grid.GetView().MustRefreshFieldCollection = true;
+        }
+
+
+
+
+        protected abstract void InsertColumn();
+
+
+
+        protected abstract void DeleteColumn();
+
+
+
+        protected abstract void UpdateColumn();
+
+        //Protected Methods
+
+        //Public Methods
+
+
+
+
+
+        protected IMetadataProvider GetMetadata()
+        {
+            return Grid.GetMetadata();
+        }
+
+
+
+
+        public void SaveToDb()
+        {
+            if (Id == 0)
+            {
+                InsertColumn();
+            }
+            else
+            {
+                UpdateColumn();
+            }
+        }
+
+
+
+
+        public void DeleteFromDb()
+        {
+            DeleteColumn();
+        }
+
+
+
+
+        public virtual void Dispose()
+        {
+        }
+
+
+
+
+
+
+        public virtual string GetDbSpecificColumnType()
+        {
+            return Grid.GetProject().CollectedData.GetDatabase().GetDbSpecificColumnType(genericDbColumnType);
+        }
+
+        //Public Methods
+    }
+}
+
+ 

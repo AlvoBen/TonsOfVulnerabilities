@@ -1,0 +1,125 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Xml;
+using Epi.Data;
+
+namespace Epi.ImportExport
+{
+
+
+
+    public class DateRowFilterCondition : RowFilterConditionBase
+    {
+        //Constructors
+
+
+
+        public DateRowFilterCondition() :
+            base()
+        {
+        }
+
+
+
+
+        public DateRowFilterCondition(string sql, string columnName, string paramName, object value) :
+            base(sql, columnName, paramName, value)
+        {
+        }
+        //
+
+        //Public Methods
+
+
+
+
+        public override void CreateFromXml(XmlElement element)
+        {
+            foreach (XmlElement child in element.ChildNodes)
+            {
+                switch (child.Name.ToLower())
+                {
+                    case "description":
+                        this.Description = child.InnerText;
+                        break;
+                    case "sql":
+                        this.Sql = child.InnerText;
+                        break;
+                    case "parametername":
+                        this.ParameterName = child.InnerText;
+                        break;
+                    case "value":
+                        this.Value = child.InnerText;
+                        break;
+                }
+            }
+
+
+            this.Value = DateTime.Parse(this.Value.ToString(), System.Globalization.CultureInfo.InvariantCulture);
+
+            ValidateCondition();
+            Construct();
+        }
+
+
+
+
+
+
+        public override XmlNode Serialize(XmlDocument doc)
+        {
+            string xmlString =
+            "" + this.Description + "</description>" +
+            "" + this.Sql + "</sql>" +
+            "" + DateTime.Parse(this.Value.ToString(), System.Globalization.CultureInfo.InvariantCulture).ToString("s") + "</value>" +
+            "" + this.ParameterName + "</parameterName>";
+
+            xmlString += "";
+
+            xmlString += "" + ((int)this.Parameter.DbType).ToString() + "</dbType>";
+            xmlString += "" + this.Parameter.ParameterName + "</name>";
+            xmlString += "" + this.Parameter.Value + "</value>";
+
+            xmlString += "</queryParameter>";
+
+            System.Xml.XmlElement element = doc.CreateElement("rowFilterCondition");
+            element.InnerXml = xmlString;
+
+            System.Xml.XmlAttribute type = doc.CreateAttribute("filterType");
+            type.Value = this.GetType().ToString(); //"Epi.ImportExport.RowFilterConditionBase";
+            element.Attributes.Append(type);
+
+            return element;
+        }
+        //
+
+        //Protected Methods
+
+
+
+        protected override void ValidateCondition()
+        {
+            if (
+                (Value == null) ||
+                !(Value is DateTime) ||
+                (string.IsNullOrEmpty(ParameterName.Trim())) ||
+                !(ParameterName.Contains("@"))
+                )
+            {
+                throw new InvalidInputException();
+            }
+        }
+
+
+
+
+        protected override void Construct()
+        {
+            Parameter = new QueryParameter(ParameterName, System.Data.DbType.Date, Value);
+        }
+        //
+    }
+}
+
+ 

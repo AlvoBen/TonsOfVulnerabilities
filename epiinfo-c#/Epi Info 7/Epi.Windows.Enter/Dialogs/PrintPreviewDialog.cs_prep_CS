@@ -1,0 +1,95 @@
+﻿//Namespaces
+
+using System;
+using System.Reflection;
+using System.Drawing;
+using System.Drawing.Printing;
+using System.Windows.Forms;
+
+// 
+
+namespace Epi.Windows.Enter.Dialogs
+{
+
+
+
+
+
+    public         class EnterPrintPreviewDialog : System.Windows.Forms.PrintPreviewDialog
+    {
+        //Fields
+
+        private ToolStripButton enterPrintButton;
+
+        // 
+
+        //Constructors
+
+
+
+        public EnterPrintPreviewDialog()
+        {
+            Type t = typeof(PrintPreviewDialog);
+            FieldInfo fieldInfo = t.GetField("toolStrip1", BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo fieldInfo2 = t.GetField("printToolStripButton", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            ToolStrip toolStrip1 = (ToolStrip)fieldInfo.GetValue(this);
+            ToolStripButton printButton = (ToolStripButton)fieldInfo2.GetValue(this);
+
+            printButton.Visible = false;
+
+            enterPrintButton = new ToolStripButton();
+            enterPrintButton.ToolTipText = printButton.ToolTipText;
+            enterPrintButton.ImageIndex = 0;
+
+            ToolStripItem[] oldButtons = new ToolStripItem[toolStrip1.Items.Count];
+
+            for (int i = 0; i < oldButtons.Length; i++)
+            {
+                oldButtons[i] = toolStrip1.Items[i];
+            }
+
+            toolStrip1.Items.Clear();
+            toolStrip1.Items.Add(enterPrintButton);
+
+            for (int i = 0; i < oldButtons.Length; i++)
+            {
+                toolStrip1.Items.Add(oldButtons[i]);
+            }
+
+            toolStrip1.ItemClicked += new ToolStripItemClickedEventHandler(toolStrip1_ItemClicked);
+        }
+
+        // 
+
+        //Private Event Handlers
+
+
+
+
+
+        private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs eventargs)
+        {
+            if (eventargs.ClickedItem == enterPrintButton)
+            {
+                PrintDialog printDialog = new PrintDialog();
+                printDialog.AllowPrintToFile = true;
+                printDialog.AllowSelection = false;
+                printDialog.AllowSomePages = false;
+                printDialog.PrinterSettings.PrintRange = PrintRange.AllPages;
+                printDialog.PrinterSettings.Collate = false;
+                printDialog.Document = this.Document;
+                if (printDialog.ShowDialog() == DialogResult.OK)
+                {
+                    this.Document.Print();
+                }
+            }
+        }
+        //
+
+
+
+    }
+}
+
+ 

@@ -1,0 +1,678 @@
+﻿using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Epi;
+using Epi.Windows;
+using Epi.Analysis;
+using Epi.Windows.Dialogs;
+using Epi.Windows.Analysis;
+
+namespace Epi.Windows.Analysis.Dialogs
+{
+
+
+
+    public         class RecodeDialog : CommandDesignDialog
+    {
+        //Private Class Members
+        private bool fillRanges;
+        private int editingRow = -1;
+        int visiblecolumnscount = 0;
+        //
+
+        //Constructor
+
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+        public RecodeDialog()
+        {
+            InitializeComponent();
+        }
+
+
+
+
+
+        public RecodeDialog(Epi.Windows.Analysis.Forms.AnalysisMainForm frm)
+            : base(frm)
+        {
+            InitializeComponent();
+            Construct();
+        }
+        //Constructors
+
+        //Event Handlers
+
+
+
+
+
+        protected override void btnOK_Click(object sender, System.EventArgs e)
+        {
+            if (fillRanges)
+            {
+                FillDataGrid();
+                ToggleControls(false);  
+                CheckForInputSufficiency();
+            }
+            else
+            {
+                base.btnOK_Click(sender, e);
+            }
+        }
+
+        private void btnFillRanges_Click(object sender, System.EventArgs e)
+        {
+            fillRanges = true;
+            LoadDataGrid();
+            ToggleControls(true);
+            txtStart.Text = String.Empty;
+            txtEnd.Text = String.Empty;
+            txtBy.Text = String.Empty;
+            cbxReverse.Checked = false;
+            CheckForInputSufficiency();  
+        }
+
+        private void RecodeDialog_Load(object sender, System.EventArgs e)
+        {
+            LoadDataGrid();
+            LoadVariables();
+            GetVisibleColumnscount();
+        }
+
+        private void btnClear_Click(object sender, System.EventArgs e)
+        {
+            LoadDataGrid();
+            cmbFrom.SelectedIndex = -1;
+            cmbTo.SelectedIndex = -1;
+            ToggleControls(false);
+
+        }
+
+
+
+
+
+
+        protected override void btnHelp_Click(object sender, System.EventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://wwwn.cdc.gov/epiinfo/user-guide/command-reference/analysis-commands-recode.html");
+        }
+
+        //
+
+        //Private Methods
+
+        private void Construct()
+        {
+            if (!this.DesignMode)
+            {
+                this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+                this.btnSaveOnly.Click += new System.EventHandler(this.btnSaveOnly_Click);
+                this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+                this.dataGrid.KeyDown += new KeyEventHandler(dataGrid_KeyDown);
+                this.dataGrid.EditingControlShowing += new DataGridViewEditingControlShowingEventHandler(dataGrid_EditingControlShowing);
+                this.dataGrid.SelectionChanged += new EventHandler(dataGrid_SelectionChanged);
+
+                this.cmbFrom.KeyDown += new KeyEventHandler(this.cmbFrom_KeyDown);
+                this.cmbTo.KeyDown += new KeyEventHandler(this.cmbTo_KeyDown);
+
+                this.txtStart.KeyPress += new KeyPressEventHandler(this.txtStart_KeyPress);
+                this.txtEnd.KeyPress += new KeyPressEventHandler(this.txtEnd_KeyPress);
+                this.txtBy.KeyPress += new KeyPressEventHandler(this.txtBy_KeyPress);
+            }
+        }
+
+
+
+        void txtBy_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
+
+
+
+
+
+
+
+
+
+            string keyInput = e.KeyChar.ToString();
+
+            if (Char.IsDigit(e.KeyChar))
+            {
+
+            }
+            else if (e.KeyChar.Equals ('\b'))
+            {
+
+            }
+            else if (e.KeyChar.Equals(Keys.Delete))
+            {
+
+            }
+            else if (e.KeyChar.Equals(Keys.Enter))
+            {
+
+            }
+            else if (keyInput.Equals(StringLiterals.HYPHEN))
+            {
+                if (txtBy.TextLength == 1)
+                {
+
+
+                }
+                else
+                {
+                    e.Handled = true;
+                }
+            }
+            else if (keyInput.Equals(StringLiterals.PERIOD))
+            {
+
+
+            }
+            else
+            {
+
+
+                e.Handled = true;
+            }
+        }
+
+        void txtEnd_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
+
+
+            string keyInput = e.KeyChar.ToString();
+
+            if (Char.IsDigit(e.KeyChar))
+            {
+
+            }
+            else if (e.KeyChar.Equals('\b'))
+            {
+
+            }
+            else if (e.KeyChar.Equals(Keys.Delete))
+            {
+
+            }
+            else if (e.KeyChar.Equals(Keys.Enter))
+            {
+
+            }
+            else if (keyInput.Equals(StringLiterals.HYPHEN))
+            {
+                if (txtBy.TextLength == 1)
+                {
+
+
+                }
+                else
+                {
+                    e.Handled = true;
+                }
+            }
+            else if (keyInput.Equals(StringLiterals.PERIOD))
+            {
+
+
+            }
+            else
+            {
+
+
+                e.Handled = true;
+            }
+        }
+
+        void txtStart_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
+
+            string keyInput = e.KeyChar.ToString();
+
+            if (Char.IsDigit(e.KeyChar))
+            {
+
+            }
+            else if (e.KeyChar.Equals('\b'))
+            {
+
+            }
+            else if (e.KeyChar.Equals(Keys.Delete))
+            {
+
+            }
+            else if (keyInput.Equals(StringLiterals.HYPHEN))
+            {
+                if (txtBy.TextLength == 0)
+                {
+
+
+                }
+                else
+                {
+                    e.Handled = true;
+                }
+            }
+            else if (keyInput.Equals(StringLiterals.PERIOD))
+            {
+
+
+            }
+            else
+            {
+
+
+                e.Handled = true;
+            }
+        }
+
+
+        private void cmbTo_KeyDown(object sender, KeyEventArgs e)
+        {
+
+
+        }
+
+        private void cmbFrom_KeyDown(object sender, KeyEventArgs e)
+        {
+
+
+        }
+
+        void dataGrid_SelectionChanged(object sender, EventArgs e)
+        {
+            if (editingRow >= 0)
+            {
+                int newrow = editingRow;
+                DataGridViewCell currentCell = dataGrid.CurrentCell;
+                if (currentCell != null)
+                {
+                    if (dataGrid.ColumnCount == currentCell.ColumnIndex + 1) newrow += 1;
+                    editingRow = -1;
+                    currentCell = dataGrid.Rows[newrow].Cells[currentCell.ColumnIndex];
+                }
+            }
+            CheckForInputSufficiency();
+        }
+
+        void dataGrid_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            editingRow = dataGrid.CurrentRow.Index;
+        }
+
+        void dataGrid_KeyDown(object sender, KeyEventArgs e)
+
+        {
+            if (e.KeyCode == Keys.Return)
+            {
+                DataGridViewCell currentCell = dataGrid.CurrentCell;
+                if (currentCell != null)
+                {
+                    int col = currentCell.ColumnIndex;
+                    int row = currentCell.RowIndex;
+                    col = (col + 1) % visiblecolumnscount;
+                    currentCell = dataGrid.CurrentRow.Cells[col];
+                    dataGrid.CurrentCell = currentCell;
+                }
+                e.Handled = true;
+            }
+        }
+
+        private void ToggleControls(bool visible)
+        {
+
+
+            dataGrid.Visible = !(visible);
+            btnFillRanges.Enabled = !(visible);
+
+            txtStart.Visible = visible;
+            lblStart.Visible = visible;
+            txtEnd.Visible = visible;
+            lblEnd.Visible = visible;
+            txtBy.Visible = visible;
+            lblBy.Visible = visible;
+            cbxReverse.Visible = visible;
+            fillRanges = visible;
+        }
+
+        private void LoadDataGrid()
+        {
+            DataTable dataTable = new DataTable("Recode");
+            dataTable.Columns.Add("Value");
+            dataTable.Columns.Add("To Value");
+            dataTable.Columns.Add("Recoded Value");
+            dataTable.Columns.Add("SortID", typeof(Int16));
+
+            dataGrid.DataSource = dataTable.DefaultView;
+            dataGrid.Columns["SortID"].Visible = false;
+            dataGrid.Columns["Value"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGrid.Columns["To Value"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGrid.Columns["Recoded Value"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+        }
+
+        private void FillDataGrid()
+        {
+            const string SpcHyphenSpc = StringLiterals.SPACE + StringLiterals.HYPHEN + StringLiterals.SPACE;
+            DataView dataView = (DataView)dataGrid.DataSource;
+            DataRowView dataRow = dataView.AddNew();
+            int sortIndex = 0;
+            decimal increment, startValue, endValue, byValue;
+            decimal.TryParse(txtStart.Text, out startValue);
+            decimal.TryParse(txtEnd.Text, out endValue);
+            decimal.TryParse(txtBy.Text, out byValue);
+
+
+
+            increment = startValue + byValue;
+            if (increment == 0)
+            {
+                return;
+            }
+            if (cbxReverse.Checked)
+            {
+                dataRow["Value"] = CommandNames.LOVALUE;
+                dataRow["To Value"] = startValue;
+                dataRow["Recoded Value"] = StringLiterals.LESS_THAN + startValue;
+                dataRow["SortID"] = sortIndex;
+                dataRow.EndEdit();
+
+
+                while (increment <= endValue)
+                {
+                    sortIndex++;
+                    dataRow = dataView.AddNew();
+                    dataRow["Value"] = increment - byValue;
+                    dataRow["To Value"] = increment;
+                    dataRow["Recoded Value"] = (increment - byValue) + SpcHyphenSpc + StringLiterals.LESS_THAN + increment;
+                    dataRow["SortID"] = sortIndex;
+
+                    dataRow.EndEdit();
+                    increment += byValue;
+                }
+                DataRow lastrow = (DataRow)dataView.Table.Rows[dataView.Count - 1];
+                if (!lastrow["To Value"].Equals(endValue.ToString()))
+                {
+                    sortIndex++;
+                    dataRow = dataView.AddNew();
+                    dataRow["Value"] = lastrow["To Value"];
+                    dataRow["To Value"] = endValue;
+                    dataRow["Recoded Value"] = lastrow["To Value"] + SpcHyphenSpc + StringLiterals.LESS_THAN + endValue;
+                    dataRow["SortID"] = sortIndex;
+
+                    dataRow.EndEdit();
+                }
+                sortIndex++;
+                dataRow = dataView.AddNew();
+                dataRow["Value"] = endValue;
+                dataRow["To Value"] = CommandNames.HIVALUE;
+                dataRow["Recoded Value"] = StringLiterals.GREATER_THAN + StringLiterals.EQUAL + endValue;
+                dataRow["SortID"] = sortIndex;
+                dataRow.EndEdit();
+
+
+
+                dataView.Sort = "SortID desc";
+                dataGrid.DataSource = dataView;
+
+            }
+            else
+            {
+                dataRow["Value"] = CommandNames.LOVALUE;
+                dataRow["To Value"] = startValue;
+                dataRow["Recoded Value"] = StringLiterals.LESS_THAN + StringLiterals.EQUAL + startValue;
+
+                dataRow.EndEdit();
+
+                while (increment <= endValue)
+                {
+                    dataRow = dataView.AddNew();
+                    dataRow["Value"] = increment - byValue;
+                    dataRow["To Value"] = increment;
+                    dataRow["Recoded Value"] = StringLiterals.GREATER_THAN + (increment - byValue) + SpcHyphenSpc + increment;
+
+                    dataRow.EndEdit();
+                    increment += byValue;
+                }
+                DataRow lastrow = (DataRow)dataView.Table.Rows[dataView.Count - 1];
+                if (!lastrow["To Value"].Equals(endValue.ToString()))
+                {
+                    dataRow = dataView.AddNew();
+                    dataRow["Value"] = lastrow["To Value"];
+                    dataRow["To Value"] = endValue;
+                    dataRow["Recoded Value"] = StringLiterals.GREATER_THAN + lastrow["To Value"] + SpcHyphenSpc + endValue;
+
+                    dataRow.EndEdit();
+                }
+                dataRow = dataView.AddNew();
+                dataRow["Value"] = endValue;
+                dataRow["To Value"] = CommandNames.HIVALUE;
+                dataRow["Recoded Value"] = StringLiterals.GREATER_THAN + endValue;
+
+                dataRow.EndEdit();
+                dataGrid.DataSource = dataView;
+            }
+        }
+        private void LoadVariables()
+        {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            VariableType scopeWord = VariableType.DataSource | VariableType.Standard |
+                                     VariableType.DataSourceRedefined;
+
+
+
+            FillVariableCombo(cmbTo, scopeWord);
+            cmbTo.SelectedIndex = -1;
+            cmbTo.Sorted = true;
+
+            FillVariableCombo(cmbFrom, scopeWord);
+            cmbFrom.SelectedIndex = -1;
+            cmbFrom.Sorted = true;
+        }
+
+
+        void GetVisibleColumnscount()
+        {
+            foreach (DataGridViewColumn column in dataGrid.Columns)
+            {
+                if (column.Visible)
+                    visiblecolumnscount = visiblecolumnscount + 1;
+            }
+        }
+        //
+
+        //Protected Methods
+
+
+
+
+        protected override bool ValidateInput()
+        {
+            base.ValidateInput();
+            if (fillRanges)
+            {
+
+
+                if ((string.IsNullOrEmpty(txtStart.Text.Trim())) || (string.IsNullOrEmpty(txtEnd.Text.Trim())) || (string.IsNullOrEmpty(txtBy.Text.Trim())))
+                {
+                    ErrorMessages.Add(SharedStrings.START_END_BY_EMPTY);
+                }
+            }
+            else
+            {
+                if ((string.IsNullOrEmpty(cmbFrom.Text)) || (string.IsNullOrEmpty(cmbTo.Text)))
+                {
+                    ErrorMessages.Add(SharedStrings.NO_RECODE_VARIABLE);
+                }
+
+                if (((DataView)dataGrid.DataSource).Table.Rows.Count == 0)
+                {
+                    ErrorMessages.Add(SharedStrings.NO_RECODINGS_DESIGNATED);
+                }
+            }
+            return (ErrorMessages.Count == 0);
+        }
+
+
+
+
+        protected override void GenerateCommand()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(CommandNames.RECODE);
+            sb.Append(StringLiterals.SPACE);
+            sb.Append(FieldNameNeedsBrackets(cmbFrom.Text) ? Util.InsertInSquareBrackets(cmbFrom.Text) : cmbFrom.Text);
+            sb.Append(StringLiterals.SPACE);
+            sb.Append(CommandNames.TO);
+            sb.Append(StringLiterals.SPACE);
+            sb.Append(FieldNameNeedsBrackets(cmbTo.Text) ? Util.InsertInSquareBrackets(cmbTo.Text) : cmbTo.Text);
+            sb.Append(StringLiterals.SPACE);
+            sb.Append(Environment.NewLine);
+            foreach (DataRowView row in ((DataView)dataGrid.DataSource))
+            {
+                double double_compare;
+                DateTime dateValue;
+
+                if (string.IsNullOrEmpty(row["Value"].ToString()) && string.IsNullOrEmpty(row["To Value"].ToString()))
+                {
+                    sb.Append(StringLiterals.TAB);
+                    sb.Append("ELSE");
+                    sb.Append(StringLiterals.SPACE);
+                }
+                else
+                if (row["Value"].ToString() == "LOVALUE" || row["Value"].ToString() == "HIVALUE")
+                {
+                    sb.Append(StringLiterals.TAB);
+                    sb.Append(row["Value"]);
+                    sb.Append(StringLiterals.SPACE);
+                }
+                else
+
+                if (double.TryParse(row["Value"].ToString(), out double_compare) || DateTime.TryParse(row["Value"].ToString(), out dateValue))
+                {
+                    sb.Append(StringLiterals.TAB);
+                    sb.Append(row["Value"]);
+                    sb.Append(StringLiterals.SPACE);
+                }
+                else
+                {
+
+                    sb.Append(StringLiterals.TAB);
+                    sb.Append(Util.InsertInDoubleQuotes(row["Value"].ToString()));
+                    sb.Append(StringLiterals.SPACE);
+                }
+
+                if (row["To Value"] != DBNull.Value && !string.IsNullOrEmpty(row["To Value"].ToString()))
+                {
+                    sb.Append(StringLiterals.HYPHEN);
+                    sb.Append(StringLiterals.SPACE);
+
+                    if (row["To Value"] == "LOVALUE" || row["To Value"] == "HIVALUE")
+                    {
+
+                        sb.Append(row["To Value"]);
+                        sb.Append(StringLiterals.SPACE);
+                    }
+                    else
+                        if (double.TryParse(row["To Value"].ToString(), out double_compare) || DateTime.TryParse(row["To Value"].ToString(), out dateValue))
+                    {
+                        sb.Append(row["To Value"]);
+                        sb.Append(StringLiterals.SPACE);
+                    }
+                    else
+                    {
+                        sb.Append(Util.InsertInDoubleQuotes(row["To Value"].ToString()));
+                        sb.Append(StringLiterals.SPACE);
+                    }
+                }
+
+                sb.Append(StringLiterals.EQUAL);
+                sb.Append(StringLiterals.SPACE);
+                sb.Append(Util.InsertInDoubleQuotes(row["Recoded Value"].ToString()));
+                sb.Append(Environment.NewLine);
+            }
+            sb.Append(CommandNames.END);
+            CommandText = sb.ToString();
+        }
+
+        //
+
+        //Public Methods
+
+
+
+        public override void CheckForInputSufficiency()
+        {
+            bool inputValid = ValidateInput();
+            btnOK.Enabled = inputValid;
+            if (fillRanges)
+            {
+                btnSaveOnly.Enabled = false;
+            }
+            else
+            {
+                btnSaveOnly.Enabled = inputValid;
+            }
+        }
+
+        //Public Methods
+
+        private void cmbFrom_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CheckForInputSufficiency();
+        }
+
+        private void cmbTo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CheckForInputSufficiency();
+        }
+
+        private void txtStart_TextChanged(object sender, EventArgs e)
+        {
+            CheckForInputSufficiency();
+        }
+
+        private void txtEnd_TextChanged(object sender, EventArgs e)
+        {
+            CheckForInputSufficiency();
+        }
+
+        private void txtBy_TextChanged(object sender, EventArgs e)
+        {
+            CheckForInputSufficiency();
+        }
+
+
+
+
+
+
+
+    }
+}
+
+
+ 

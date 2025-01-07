@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Epi.ImportExport
+{
+
+
+
+    public enum DataMergeType
+    {
+
+
+
+        UpdateAndAppend = 0,
+
+
+
+
+        UpdateOnly = 1,
+
+
+
+
+        AppendOnly = 2
+    }
+}
+
+ 

@@ -1,0 +1,695 @@
+﻿//Using
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.IO;
+using System.IO.Compression;
+using System.Runtime.InteropServices;
+using System.Security;
+using System.Security.Cryptography;
+using Epi;
+using Epi.Core;
+using Epi.Data;
+//
+
+namespace Epi.ImportExport
+{
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public abstract class ProjectPackagerBase : IProjectPackager
+    {
+        //Private Members
+        private string customSalt;
+        private string customInitVector;
+        private int customIterations;
+        private bool includeCodeTables = false;
+        private bool includeGridData = true;
+        private bool appendTimestamp = false;
+        private string packageName;
+        private FormInclusionType formInclusionType = FormInclusionType.AllDescendants;
+        //
+
+        //Protected Members
+        protected Project sourceProject;
+        protected Project destinationProject;
+        protected string formName;
+        protected string packagePath;
+        protected string password;
+        protected Configuration config;
+        protected Dictionary columnsToNull;
+        protected Dictionary gridColumnsToNull;
+        protected string rowFilter;
+        protected Query selectQuery;
+        //
+
+        //Events
+        public event SetProgressBarDelegate SetProgressBar;
+        public event UpdateStatusEventHandler SetStatus;
+        public event UpdateStatusEventHandler AddStatusMessage;
+        public event SetMaxProgressBarValueDelegate SetMaxProgressBarValue;
+        //
+
+        //Constructors
+
+
+
+
+
+
+
+        public ProjectPackagerBase(Project sourceProject, string packagePath, string formName, string password)
+        {
+            this.sourceProject = sourceProject;
+            this.packagePath = packagePath;
+            this.formName = formName;
+            this.password = password;
+            this.columnsToNull = new Dictionary();
+            this.gridColumnsToNull = new Dictionary();
+            this.config = Configuration.GetNewInstance();
+        }
+
+
+
+
+
+
+
+
+
+
+        public ProjectPackagerBase(Project sourceProject, Dictionary columnsToNull, Dictionary gridColumnsToNull, string packagePath, string formName, string password)
+        {
+            this.sourceProject = sourceProject;
+            this.packagePath = packagePath;
+            this.formName = formName;
+            this.password = password;
+            this.columnsToNull = columnsToNull;
+            this.gridColumnsToNull = gridColumnsToNull;
+            this.config = Configuration.GetNewInstance();
+        }
+        //
+
+        //Public Properties
+
+
+
+        public bool AppendTimestamp
+        {
+            get
+            {
+                return this.appendTimestamp;
+            }
+            set
+            {
+                this.appendTimestamp = value;
+            }
+        }
+
+
+
+
+        public string PackageName
+        {
+            get
+            {
+                return this.packageName;
+            }
+            set
+            {
+                this.packageName = value;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+        public FormInclusionType FormInclusionType
+        {
+            get
+            {
+                return this.formInclusionType;
+            }
+            set
+            {
+                this.formInclusionType = value;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        public bool IncludeCodeTables
+        {
+            get
+            {
+                return this.includeCodeTables;
+            }
+            set
+            {
+                this.includeCodeTables = value;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+        public bool IncludeGridData
+        {
+            get
+            {
+                return this.includeGridData;
+            }
+            set
+            {
+                this.includeGridData = value;
+            }
+        }
+
+
+
+
+        public Project SourceProject
+        {
+            get
+            {
+                return this.sourceProject;
+            }
+        }
+
+
+
+
+        public string PackagePath
+        {
+            get
+            {
+                return this.packagePath;
+            }
+        }
+
+
+
+
+        public string FormName
+        {
+            get
+            {
+                return this.formName;
+            }
+        }
+
+
+
+
+        public Dictionary ColumnsToNull
+        {
+            get
+            {
+                return this.columnsToNull;
+            }
+            set
+            {
+                this.columnsToNull = value;
+            }
+        }
+
+
+
+
+        public Dictionary GridColumnsToNull
+        {
+            get
+            {
+                return this.gridColumnsToNull;
+            }
+            set
+            {
+                this.gridColumnsToNull = value;
+            }
+        }
+
+
+
+
+        public Query SelectQuery
+        {
+            get
+            {
+                return this.selectQuery;
+            }
+            set
+            {
+                this.selectQuery = value;
+            }
+        }
+        //
+
+        //Public Methods
+
+
+
+
+
+
+        public void SetCustomEncryptionParameters(string salt, string initVector, int iterations)
+        {
+            if (salt.Length != 32)
+            {
+                throw new ApplicationException(ImportExportSharedStrings.ERROR_SALT_LENGTH);
+            }
+
+            else if (initVector.Length != 16)
+            {
+                throw new ApplicationException(ImportExportSharedStrings.ERROR_INIT_VECTOR_LENGTH);
+            }
+
+            else if (iterations < 1 || iterations > 100)
+            {
+                throw new ApplicationException(ImportExportSharedStrings.ERROR_ITERATIONS_COUNT);
+            }
+
+            this.customSalt = salt;
+            this.customInitVector = initVector;
+            this.customIterations = iterations;
+        }
+
+
+
+
+
+        public bool PackageProject()
+        {
+            CheckForProblems();
+
+            bool success = false;
+
+            success = CreateProjectCopy();
+            success = CompressProject();
+            success = EncryptPackage();
+
+            try
+            {
+                if (File.Exists(destinationProject.CollectedData.DataSource))
+                {
+                    File.Delete(destinationProject.CollectedData.DataSource);
+                }
+
+                if (File.Exists(destinationProject.CollectedData.DataSource + ".gz"))
+                {
+                    File.Delete(destinationProject.CollectedData.DataSource + ".gz");
+                }
+            }
+            catch
+            {
+            }
+
+            return success;
+        }
+        //
+
+        //Private Methods
+
+
+
+        private void CheckForProblems()
+        {
+            View sourceView = sourceProject.Views[FormName];
+            IDbDriver driver = sourceProject.CollectedData.GetDatabase();
+
+
+            DataTable dt = driver.GetTableData(sourceView.TableName, "GlobalRecordId, RECSTATUS, UniqueKey");
+            int baseTableRowCount = dt.Rows.Count;
+
+
+            if (!dt.Columns[0].DataType.ToString().Equals("System.String"))
+            {
+                throw new ApplicationException(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_INVALID_GUID_COLUMN);
+            }
+
+
+            if (!(dt.Columns[1].DataType.ToString().Equals("System.Byte") || dt.Columns[1].DataType.ToString().Equals("System.Int16") || dt.Columns[1].DataType.ToString().Equals("System.Int32")))
+            {
+                throw new ApplicationException(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_INVALID_RECSTATUS_COLUMN);
+            }
+
+
+
+            if (baseTableRowCount >= 1)
+            {
+                string value = dt.Rows[0][0].ToString();
+                System.Guid guid = new Guid(value);
+
+                if (baseTableRowCount >= 30)
+                {
+                    for (int i = 0; i < 30; i++)
+                    {
+                        value = dt.Rows[i][0].ToString();
+                        guid = new Guid(value);
+                    }
+                }
+            }
+
+
+            Query selectDistinctQuery = driver.CreateQuery("SELECT DISTINCT [GlobalRecordId] FROM [" + sourceView.TableName + "]");
+            DataTable distinctTable = driver.Select(selectDistinctQuery);
+            if (distinctTable.Rows.Count != baseTableRowCount)
+            {
+                throw new ApplicationException(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_GUID_NOT_UNIQUE);
+            }
+
+
+            foreach (Page page in sourceView.Pages)
+            {
+                selectDistinctQuery = driver.CreateQuery("SELECT DISTINCT [GlobalRecordId] FROM [" + page.TableName + "]");
+                distinctTable = driver.Select(selectDistinctQuery);
+                if (distinctTable.Rows.Count != baseTableRowCount)
+                {
+                    throw new ApplicationException(string.Format(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_GUID_NOT_UNIQUE_PAGE, page.TableName));
+                }
+            }
+
+
+            selectDistinctQuery = driver.CreateQuery("SELECT DISTINCT [RecStatus] FROM [" + sourceView.TableName + "]");
+            distinctTable = driver.Select(selectDistinctQuery);
+            foreach (DataRow row in distinctTable.Rows)
+            {
+                if (!row[0].ToString().Equals("1") && !row[0].ToString().Equals("0"))
+                {
+                    throw new ApplicationException(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_RECSTATUS_VALUES_INVALID);
+                }
+            }
+
+
+            List dataTableNames = new List();
+            foreach (View view in sourceProject.Views)
+            {
+                dataTableNames.Add(view.TableName);
+                foreach (Page page in view.Pages)
+                {
+                    dataTableNames.Add(page.TableName);
+                }
+            }
+            DataTable codeTableNames = driver.GetCodeTableNamesForProject(sourceProject);
+            foreach (DataRow row in codeTableNames.Rows)
+            {
+                if (codeTableNames.Columns.Count >= 2)
+                {
+                    if (dataTableNames.Contains(row[2].ToString()))
+                    {
+                        throw new ApplicationException(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_CODE_TABLE_FORM);
+                    }
+                }
+                else
+                {
+                    if (dataTableNames.Contains(row[0].ToString()))
+                    {
+                        throw new ApplicationException(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_CODE_TABLE_FORM);
+                    }
+                }
+            }
+
+
+            if (sourceView.IsRelatedView == true)
+            {
+                throw new ApplicationException(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_RELATED_FORM);
+            }
+
+            distinctTable = null;
+            selectDistinctQuery = null;
+            driver.Dispose();
+            driver = null;
+        }
+
+
+
+
+        private void Construct()
+        {
+            config = Configuration.GetNewInstance();
+        }
+        //
+
+        //Protected Methods
+
+
+
+
+        protected virtual bool RemoveColumnData()
+        {
+            return false;
+        }
+
+
+
+
+
+        protected virtual bool RemoveRowData()
+        {
+            return false;
+        }
+
+
+
+
+
+        protected virtual void OnAddStatusMessage(string message)
+        {
+            if (AddStatusMessage != null)
+            {
+                AddStatusMessage(message);
+            }
+        }
+
+
+
+
+
+        protected virtual void OnSetStatusMessage(string message)
+        {
+            if (AddStatusMessage != null && SetStatus != null)
+            {
+                AddStatusMessage(message);
+                SetStatus(message);
+            }
+        }
+
+
+
+
+
+        protected virtual void OnSetProgress(double progress)
+        {
+            if (SetProgressBar != null)
+            {
+                SetProgressBar(progress);
+            }
+        }
+
+
+
+
+
+        protected virtual void OnSetMaxProgressValue(double maxProgress)
+        {
+            if (SetMaxProgressBarValue != null)
+            {
+                SetMaxProgressBarValue(maxProgress);
+            }
+        }
+
+
+
+
+
+        protected bool CompressProject()
+        {
+            try
+            {
+                OnSetStatusMessage(ImportExportSharedStrings.PACKAGE_COMPRESSION_START);
+
+                string destinationFileName = destinationProject.CollectedData.DataSource;
+                FileInfo fi = new FileInfo(destinationFileName);
+                ImportExportHelper.CompressDataPackage(fi);
+                OnSetStatusMessage(ImportExportSharedStrings.PACKAGE_COMPRESSION_END);
+            }
+            catch
+            {
+                OnSetStatusMessage(ImportExportSharedStrings.PACKAGE_COMPRESSION_FAIL);
+                return false;
+            }
+
+            return true;
+        }
+
+
+
+
+
+        protected bool EncryptPackage()
+        {
+            OnSetStatusMessage(ImportExportSharedStrings.PACKAGE_ENCRYPTION_START);
+            string inputFileName = destinationProject.CollectedData.DataSource + ".gz";
+
+            FileInfo fi = new FileInfo(destinationProject.FilePath);
+            string packageName = this.PackageName;
+
+
+
+            if (packageName.Contains("@@"))
+            {
+
+                System.Data.DataRow[] result = config.PermanentVariables.Select();
+                foreach(System.Data.DataRow row in result)
+                {
+                    if(packageName.Contains("@@" + (((DataSets.Config.PermanentVariableRow)row).Name)))
+                    {
+                        packageName = packageName.Replace("@@" + (((DataSets.Config.PermanentVariableRow)row).Name),
+                            (((DataSets.Config.PermanentVariableRow)row).DataValue));
+                    }
+                }
+            }
+
+            string outputFileName = fi.Directory.FullName + "\\" + packageName; // destinationProject.CollectedData.DataSource.Substring(0, destinationProject.CollectedData.DataSource.Length - 4) + ".edp7";
+
+            if (AppendTimestamp)
+            {
+
+
+                DateTime dt = DateTime.UtcNow;
+                string dateDisplayValue = string.Format(System.Globalization.CultureInfo.CurrentCulture, "{0:s}", dt);
+                dateDisplayValue = dateDisplayValue.Replace(':', '-'); 
+                outputFileName = outputFileName + "_" + dateDisplayValue;
+            }
+
+            outputFileName = outputFileName + ".edp7";
+
+            if (string.IsNullOrEmpty(customInitVector) || string.IsNullOrEmpty(customSalt))
+            {
+                Configuration.EncryptFile(inputFileName, outputFileName, password);
+            }
+            else
+            {
+                Configuration.EncryptFile(inputFileName, outputFileName, password, customInitVector, customSalt, customIterations);
+            }
+
+            OnSetStatusMessage(ImportExportSharedStrings.PACKAGE_ENCRYPTION_END);
+            return true;
+        }
+
+
+
+
+
+
+        protected abstract bool CreateProjectCopy();
+
+
+
+
+
+        protected Project CreateProject()
+        {
+            OnSetStatusMessage(ImportExportSharedStrings.PRJ_FILE_COPY_START);
+
+            DbDriverInfo collectedDataDBInfo = new DbDriverInfo();
+            IDbDriverFactory collectedDBFactory = DbDriverFactoryCreator.GetDbDriverFactory("Epi.Data.Office.AccessDBFactory, Epi.Data.Office");// GetSelectedCollectedDataDriver();
+            string GUID = System.Guid.NewGuid().ToString();
+            collectedDataDBInfo.DBCnnStringBuilder = collectedDBFactory.RequestDefaultConnection(GUID, GUID);
+
+
+            Project project = new Project();
+            project.Name = SourceProject.Name;
+
+            project.Location = PackagePath; 
+
+            if (collectedDataDBInfo.DBCnnStringBuilder.ContainsKey("Provider") && collectedDataDBInfo.DBCnnStringBuilder["Provider"].ToString().ToLower().Equals("microsoft.jet.oledb.4.0"))
+            {
+                collectedDataDBInfo.DBCnnStringBuilder["Data Source"] = project.FilePath.Substring(0, project.FilePath.Length - 4) + ".mdb";
+            }
+
+            if (!Directory.Exists(project.Location))
+            {
+                Directory.CreateDirectory(project.Location);
+            }
+
+            project.Id = project.GetProjectId();
+            project.Description = SourceProject.Description;
+
+
+            project.CollectedDataDbInfo = collectedDataDBInfo;
+            project.CollectedDataDriver = "Epi.Data.Office.AccessDBFactory, Epi.Data.Office";
+            project.CollectedDataConnectionString = collectedDataDBInfo.DBCnnStringBuilder.ToString();
+            try
+            {
+                project.CollectedData.Initialize(collectedDataDBInfo, "Epi.Data.Office.AccessDBFactory, Epi.Data.Office", true);
+            }
+            catch (Exception)
+            {
+
+                return null;
+            }
+
+            Logger.Log(DateTime.Now + ":  " + string.Format(ImportExportSharedStrings.PROJECT_PACKAGE_CREATED_BY_USER, project.Name, project.Location, System.Security.Principal.WindowsIdentity.GetCurrent().Name.ToString()));
+
+
+            project.MetadataSource = MetadataSource.SameDb;
+
+            try
+            {
+
+                OnSetStatusMessage(ImportExportSharedStrings.PRJ_FILE_COPY_END);
+                return project;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return null;
+            }
+        }
+        //
+
+        //StaticMethods
+
+
+        [System.Runtime.InteropServices.DllImport("KERNEL32.DLL", EntryPoint = "RtlZeroMemory")]
+        public static extern bool ZeroMemory(IntPtr Destination, int Length);
+
+        //
+    }
+}
+
+ 

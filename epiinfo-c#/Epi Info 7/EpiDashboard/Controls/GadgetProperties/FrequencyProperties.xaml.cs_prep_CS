@@ -1,0 +1,509 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using Epi;
+using Epi.Fields;
+using EpiDashboard;
+using EpiDashboard.Rules;
+
+namespace EpiDashboard.Controls.GadgetProperties
+{
+
+
+
+    public         class FrequencyProperties : GadgetPropertiesPanelBase
+    {
+        public FrequencyProperties(
+            DashboardHelper dashboardHelper,
+            IGadget gadget,
+            FrequencyParameters parameters,
+            List strataGridList
+            )
+        {
+            InitializeComponent();
+            this.DashboardHelper = dashboardHelper;
+            this.Gadget = gadget;
+            this.Parameters = parameters;
+            this.StrataGridList = strataGridList;
+
+            List fields = new List();
+            List weightFields = new List();
+            List strataItems = new List();
+
+
+            fields.Add(String.Empty);
+            ColumnDataType columnDataType = ColumnDataType.Boolean | ColumnDataType.DateTime | ColumnDataType.Numeric | ColumnDataType.Text | ColumnDataType.UserDefined;
+            foreach (string fieldName in DashboardHelper.GetFieldsAsList(columnDataType))
+            {
+                if (DashboardHelper.IsUsingEpiProject)
+                {
+                    if (!(fieldName == "RecStatus")) fields.Add(fieldName);
+                }
+                else
+                {
+                    fields.Add(fieldName);
+                }
+            }
+            cbxField.ItemsSource = fields;
+
+
+            weightFields.Add(String.Empty);
+            columnDataType = ColumnDataType.Numeric | ColumnDataType.UserDefined;
+            foreach (string fieldName in DashboardHelper.GetFieldsAsList(columnDataType))
+            {
+                if (DashboardHelper.IsUsingEpiProject)
+                {
+                    if (!(fieldName == "RecStatus")) weightFields.Add(fieldName);
+                }
+                else
+                {
+                    weightFields.Add(fieldName);
+                }
+            }
+            weightFields.Sort();
+            cbxFieldWeight.ItemsSource = weightFields;
+
+
+            strataItems.Add(String.Empty);
+            columnDataType = ColumnDataType.Numeric | ColumnDataType.Boolean | ColumnDataType.Text | ColumnDataType.UserDefined;
+            foreach (string fieldName in DashboardHelper.GetFieldsAsList(columnDataType))
+            {
+                if (DashboardHelper.IsUsingEpiProject)
+                {
+                    if (!(fieldName == "RecStatus" || fieldName == "FKEY" || fieldName == "GlobalRecordId")) strataItems.Add(fieldName);
+                }
+                else
+                {
+                    strataItems.Add(fieldName);
+                }
+            }
+            lbxFieldStrata.ItemsSource = strataItems;
+
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(cbxField.ItemsSource);
+            PropertyGroupDescription groupDescription = new PropertyGroupDescription("VariableCategory");
+            view.GroupDescriptions.Add(groupDescription);
+
+            RowFilterControl = new RowFilterControl(this.DashboardHelper, Dialogs.FilterDialogMode.ConditionalMode, (gadget as FrequencyControl).DataFilters, true);
+            RowFilterControl.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
+            panelFilters.Children.Add(RowFilterControl);
+
+            txtRows.PreviewKeyDown += new KeyEventHandler(txtInput_PositiveIntegerOnly_PreviewKeyDown);
+            txtBarWidth.PreviewKeyDown += new KeyEventHandler(txtInput_PositiveIntegerOnly_PreviewKeyDown);
+
+            //Translation
+
+            lblConfigExpandedTitle.Content = DashboardSharedStrings.GADGET_CONFIG_TITLE_FREQUENCY;
+
+
+            tblockMainVariable.Text = DashboardSharedStrings.GADGET_FREQUENCY_VARIABLE;
+            tblockStrataVariable.Text = DashboardSharedStrings.GADGET_STRATA_VARIABLE;
+            tblockWeightVariable.Text = DashboardSharedStrings.GADGET_WEIGHT_VARIABLE;
+
+
+
+            checkboxIncludeMissing.Content = DashboardSharedStrings.GADGET_INCLUDE_MISSING;
+
+            checkboxSortHighLow.Content = DashboardSharedStrings.GADGET_SORT_HI_LOW;
+            checkboxUsePrompts.Content = DashboardSharedStrings.GADGET_USE_FIELD_PROMPT;
+
+
+
+            tblockRows.Text = DashboardSharedStrings.GADGET_MAX_ROWS_TO_DISPLAY;
+            tblockBarWidth.Text = DashboardSharedStrings.GADGET_MAX_PERCENT_BAR_WIDTH;
+
+
+            //
+
+        }
+
+        public bool HasSelectedFields
+        {
+            get
+            {
+                if (cbxField.SelectedIndex > -1)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public FrequencyParameters Parameters { get {return _Parameters; } set{ _Parameters=value; } } FrequencyParameters _Parameters;
+                List StrataGridList { get {return _StrataGridList; } set{ _StrataGridList=value; } } List _StrataGridList;
+
+
+
+
+        protected override void CreateInputVariableList()
+        {
+
+            this.DataFilters = RowFilterControl.DataFilters;
+
+            Dictionary inputVariableList = new Dictionary();
+
+
+            Parameters.ColumnNames = new List();
+            Parameters.StrataVariableNames = new List();
+
+            if (cbxField.SelectedIndex > -1 && !string.IsNullOrEmpty(cbxField.SelectedItem.ToString()))
+            {
+                if (Parameters.ColumnNames.Count > 0)
+                {
+                    Parameters.ColumnNames[0] = cbxField.SelectedItem.ToString();
+                }
+                else
+                {
+                    Parameters.ColumnNames.Add(cbxField.SelectedItem.ToString());
+                }
+            }
+            else
+            {
+                return;
+            }
+
+            if (cbxFieldWeight.SelectedIndex > -1 && !string.IsNullOrEmpty(cbxFieldWeight.SelectedItem.ToString()))
+            {
+                Parameters.WeightVariableName = cbxFieldWeight.SelectedItem.ToString();
+            }
+            else
+            {
+                Parameters.WeightVariableName = String.Empty;
+            }
+
+            Parameters.SortHighToLow = (bool)checkboxSortHighLow.IsChecked;
+
+            if (lbxFieldStrata.SelectedItems.Count > 0)
+            {
+                Parameters.StrataVariableNames = new List();
+                foreach (string s in lbxFieldStrata.SelectedItems)
+                {
+                    Parameters.StrataVariableNames.Add(s.ToString());
+                }
+            }
+
+
+            Parameters.GadgetTitle = txtTitle.Text;
+            Parameters.GadgetDescription = txtDesc.Text;
+
+            Parameters.ShowAllListValues = (bool)checkboxAllValues.IsChecked;
+            Parameters.ShowCommentLegalLabels = (bool)checkboxCommentLegalLabels.IsChecked;
+            Parameters.IncludeMissing = (bool) checkboxIncludeMissing.IsChecked;
+
+            Parameters.UseFieldPrompts = (bool) checkboxUsePrompts.IsChecked;
+
+            Parameters.DrawBorders = (bool) checkboxDrawBorders.IsChecked;
+            Parameters.DrawHeaderRow = (bool)checkboxDrawHeader.IsChecked;
+            Parameters.DrawTotalRow = (bool)checkboxDrawTotal.IsChecked;
+
+
+            Parameters.Precision = cbxFieldPrecision.Text;
+
+            Parameters.PercentBarMode = cmbPercentBarMode.SelectedItem.ToString();
+
+
+            if (string.IsNullOrEmpty(txtRows.Text))
+            {
+                Parameters.RowsToDisplay = null;
+            }
+            else
+            {
+                int rows;
+                bool success = int.TryParse(txtRows.Text, out rows);
+                if (success)
+                {
+                    Parameters.RowsToDisplay = rows;
+                }
+                else
+                {
+                    Parameters.RowsToDisplay = null;
+                    txtRows.Text = string.Empty;
+                }
+            }
+
+            if (String.IsNullOrEmpty(txtBarWidth.Text))
+            {
+                Parameters.PercentBarWidth = 100;
+                txtBarWidth.Text = "100";
+            }
+            else
+            {
+                int barWidth;
+                bool bar_success = int.TryParse(txtBarWidth.Text, out barWidth);
+                if(bar_success) Parameters.PercentBarWidth = barWidth;
+                else Parameters.PercentBarWidth = 100;
+            }
+
+
+            Parameters.ShowFrequencyCol = (bool)checkboxColumnFrequency.IsChecked;
+            Parameters.ShowPercentCol = (bool)checkboxColumnPercent.IsChecked;
+            Parameters.ShowCumPercentCol = (bool)checkboxColumnCumulativePercent.IsChecked;
+            Parameters.Show95CILowerCol = (bool)checkboxColumn95CILower.IsChecked;
+            Parameters.Show95CIUpperCol = (bool)checkboxColumn95CIUpper.IsChecked;
+            Parameters.ShowPercentBarsCol = (bool)checkboxColumnPercentBars.IsChecked;
+
+        }
+
+                void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+
+
+            if (Parameters.ColumnNames.Count > 0)
+            {
+                cbxField.SelectedItem = Parameters.ColumnNames[0];
+            }
+            cbxFieldWeight.SelectedItem = Parameters.WeightVariableName;
+            checkboxSortHighLow.IsChecked = Parameters.SortHighToLow;
+            if (Parameters.StrataVariableNames.Count > 0)
+            {
+                foreach (string s in Parameters.StrataVariableNames)
+                {
+
+                    lbxFieldStrata.SelectedItems.Add(s.ToString());
+                }
+            }
+
+
+            txtTitle.Text = Parameters.GadgetTitle;
+            txtDesc.Text = Parameters.GadgetDescription;
+            checkboxAllValues.IsChecked = Parameters.ShowAllListValues;
+            checkboxCommentLegalLabels.IsChecked = Parameters.ShowCommentLegalLabels;
+            checkboxIncludeMissing.IsChecked = Parameters.IncludeMissing;
+
+            checkboxUsePrompts.IsChecked = Parameters.UseFieldPrompts;
+
+            checkboxDrawBorders.IsChecked = Parameters.DrawBorders;
+            checkboxDrawHeader.IsChecked = Parameters.DrawHeaderRow;
+            checkboxDrawTotal.IsChecked = Parameters.DrawTotalRow;
+
+
+            int precision = 2;
+            bool precise_parse = int.TryParse(Parameters.Precision.ToString(), out precision);
+            if (precise_parse) cbxFieldPrecision.SelectedIndex = precision;
+
+            cmbPercentBarMode.SelectedItem = Parameters.PercentBarMode;
+
+            txtRows.Text = Parameters.RowsToDisplay.ToString();
+            txtBarWidth.Text = Parameters.PercentBarWidth.ToString();
+
+
+
+            checkboxColumnFrequency.IsChecked = Parameters.ShowFrequencyCol;
+            checkboxColumnPercent.IsChecked = Parameters.ShowPercentCol;
+            checkboxColumnCumulativePercent.IsChecked = Parameters.ShowCumPercentCol;
+            checkboxColumn95CILower.IsChecked = Parameters.Show95CILowerCol;
+            checkboxColumn95CIUpper.IsChecked = Parameters.Show95CIUpperCol;
+            checkboxColumnPercentBars.IsChecked = Parameters.ShowPercentBarsCol;
+
+            CheckVariables();
+        }
+
+        public class FieldInfo { public string Name { get {return _Name; } set{ _Name=value; } } string _Name; public string DataType { get {return _DataType; } set{ _DataType=value; } } string _DataType; public VariableCategory VariableCategory { get {return _VariableCategory; } set{ _VariableCategory=value; } } VariableCategory _VariableCategory; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                void CheckVariables()
+        {
+            bool isDropDownList = false;
+            bool isCommentLegal = false;
+            bool isOptionField = false;
+            bool isRecoded = false;
+
+            if (cbxField.SelectedItem != null && !string.IsNullOrEmpty(cbxField.SelectedItem.ToString()))
+            {
+                foreach (DataRow fieldRow in DashboardHelper.FieldTable.Rows)
+                {
+                    if (fieldRow["columnname"].Equals(cbxField.SelectedItem.ToString()))
+                    {
+                        if (fieldRow["epifieldtype"] is TableBasedDropDownField || fieldRow["epifieldtype"] is YesNoField || fieldRow["epifieldtype"] is CheckBoxField)
+                        {
+                            isDropDownList = true;
+                            if (fieldRow["epifieldtype"] is DDLFieldOfCommentLegal)
+                            {
+                                isCommentLegal = true;
+                            }
+                        }
+                        else if (fieldRow["epifieldtype"] is OptionField)
+                        {
+                            isOptionField = true;
+                        }
+                        break;
+                    }
+                }
+
+                if (DashboardHelper.IsUserDefinedColumn(cbxField.SelectedItem.ToString()))
+                {
+                    List associatedRules = DashboardHelper.Rules.GetRules(cbxField.SelectedItem.ToString());
+                    foreach (IDashboardRule rule in associatedRules)
+                    {
+                        if (rule is Rule_Recode)
+                        {
+                            isRecoded = true;
+                        }
+                    }
+                }
+            }
+
+            if (isDropDownList || isRecoded)
+            {
+                checkboxAllValues.IsEnabled = true;
+            }
+            else
+            {
+                checkboxAllValues.IsEnabled = false;
+                checkboxAllValues.IsChecked = false;
+            }
+
+            if (isCommentLegal || isOptionField)
+            {
+                checkboxCommentLegalLabels.IsEnabled = true;
+            }
+            else
+            {
+                checkboxCommentLegalLabels.IsEnabled = false;
+            }
+
+            if (!isCommentLegal && !isOptionField)
+            {
+                checkboxCommentLegalLabels.IsChecked = isCommentLegal;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                void tbtnVariables_Checked(object sender, RoutedEventArgs e)
+        {
+            if (panelVariables == null) return;
+
+            CheckButtonStates(sender as SettingsToggleButton);
+            panelVariables.Visibility = System.Windows.Visibility.Visible;
+
+            panelDisplay.Visibility = System.Windows.Visibility.Collapsed;
+            panelFilters.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+                void tbtnSorting_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckButtonStates(sender as SettingsToggleButton);
+            panelVariables.Visibility = System.Windows.Visibility.Collapsed;
+
+            panelDisplay.Visibility = System.Windows.Visibility.Collapsed;
+            panelFilters.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+                void tbtnDisplay_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckButtonStates(sender as SettingsToggleButton);
+            panelVariables.Visibility = System.Windows.Visibility.Collapsed;
+
+            panelDisplay.Visibility = System.Windows.Visibility.Visible;
+            panelFilters.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+                void tbtnFilters_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckButtonStates(sender as SettingsToggleButton);
+            panelVariables.Visibility = System.Windows.Visibility.Collapsed;
+
+            panelDisplay.Visibility = System.Windows.Visibility.Collapsed;
+            panelFilters.Visibility = System.Windows.Visibility.Visible;
+        }
+
+                void lbxFieldStrata_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            bool clearLbx = false;
+            foreach (string s in lbxFieldStrata.SelectedItems)
+            {
+                if (s == String.Empty)
+                {
+                    clearLbx = true;
+                }
+            }
+            if (clearLbx) lbxFieldStrata.SelectedItems.Clear();
+        }
+
+                void cbxFieldWeight_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+
+
+
+        }
+
+                void cbxField_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            CheckVariables();
+        }
+    }
+}
+
+ 

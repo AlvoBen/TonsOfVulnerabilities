@@ -1,0 +1,141 @@
+﻿//namespaces
+using System;
+using System.Collections.Generic;
+using System.Text;
+//
+
+namespace Epi.Windows.Enter.Utils
+{
+
+    class SearchListBoxItem
+    {
+        //Private Members
+
+        private string name = string.Empty;
+        private string type = string.Empty;
+        private string pattern = string.Empty;
+        private object idVal;
+        private string itemValue = string.Empty;
+
+        //
+
+        //Constructors
+
+
+
+  public SearchListBoxItem()
+  {
+  }
+  //
+
+  //Public Properties
+
+
+
+
+
+  public string Name
+  {
+   get
+   {
+    return name;
+   }
+   set
+   {
+    name = value;
+   }
+  }
+
+
+
+
+
+  public object IDVal
+  {
+   get
+   {
+    return idVal;
+   }
+   set
+   {
+    idVal = value;
+   }
+  }
+
+
+
+
+
+  public string Type
+  {
+   get
+   {
+    return type;
+   }
+   set
+   {
+    type = value;
+   }
+  }
+
+        public string Pattern
+        {
+            get
+            {
+                return pattern;
+            }
+            set
+            {
+                pattern = value;
+            }
+        }
+
+        public string ItemValue
+        {
+            get
+            {
+                return itemValue;
+            }
+            set
+            {
+                itemValue = value;
+            }
+        }
+
+
+  //
+
+  //Public Methods
+
+
+
+
+
+
+
+
+
+
+  public SearchListBoxItem(string name, object idVal, string type, string pattern, string itemValue)
+  {
+   this.name = name;
+   this.idVal = idVal;
+   this.type = type;
+            this.pattern = pattern;
+            this.itemValue = itemValue;
+  }
+
+
+
+
+
+        public override string ToString()
+        {
+            return name;
+        }
+
+        //
+    }
+}
+
+ 

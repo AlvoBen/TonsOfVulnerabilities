@@ -1,0 +1,163 @@
+﻿using System;
+using System.Data;
+using Epi;
+using Epi.Data;
+
+namespace Epi.Fields
+{
+
+
+
+ public abstract class TextField : InputTextBoxField
+ {
+  //Private Class Members
+  private int maxLength;
+  private int sourceFieldId;
+  //
+
+  //Constructors
+
+
+
+
+  public TextField(Page page) : base(page)
+  {
+            construct();
+  }
+
+
+
+
+
+  public TextField(View view) : base (view)
+  {
+            construct();
+  }
+
+
+
+
+
+        public override void LoadFromRow(DataRow row)
+        {
+            base.LoadFromRow(row);
+            if (row["MaxLength"].ToString().Length > 0)
+            {
+                maxLength = Int32.Parse(row["MaxLength"].ToString());
+            }
+            if (row["SourceFieldId"].ToString().Length > 0)
+            {
+                sourceFieldId = Int32.Parse(row["SourceFieldId"].ToString());
+            }
+        }
+
+        public override void AssignMembers(Object field)
+        {
+            (field as TextField).maxLength = this.MaxLength;
+            (field as TextField).sourceFieldId = this.sourceFieldId;
+            base.AssignMembers(field);
+        }
+
+        private void construct()
+        {
+            genericDbColumnType = GenericDbColumnType.String;
+            this.dbColumnType = DbType.String;
+        }
+  //Constructors
+
+  //Public Properties
+
+
+
+
+        public override MetaFieldType FieldType
+        {
+            get
+            {
+                return MetaFieldType.Text;
+            }
+        }
+
+
+
+
+        public string CurrentRecordValue
+        {
+            get
+            {
+                if (base.CurrentRecordValueObject == null) return string.Empty;
+                else return CurrentRecordValueObject.ToString();
+            }
+            set
+            {
+                base.CurrentRecordValueObject = value;
+            }
+        }
+
+
+
+
+        public virtual string CurrentRecordValueString
+        {
+            get
+            {
+                if (CurrentRecordValueObject == null) return string.Empty;
+                else return CurrentRecordValueObject.ToString();
+            }
+            set
+            {
+                if (((TextField)this).MaxLength > 0 && value.Length > ((TextField)this).MaxLength)
+                {
+                    value = value.Substring(0, ((TextField)this).MaxLength);
+                }
+
+                CurrentRecordValueObject = value;
+            }
+        }
+
+
+
+
+  public int MaxLength
+  {
+   get
+   {
+    return (maxLength);
+   }
+   set
+   {
+    maxLength = value;
+   }
+  }
+
+
+
+
+  public int SourceFieldId
+  {
+   get
+   {
+    return sourceFieldId;
+   }
+   set
+   {
+    sourceFieldId = value;
+   }
+  }
+  //Public Properties
+
+        //Public Methods
+
+
+
+
+        public override string GetDbSpecificColumnType()
+        {
+            return base.GetDbSpecificColumnType();
+        }
+
+        //Public Methods
+ }
+}
+
+ 

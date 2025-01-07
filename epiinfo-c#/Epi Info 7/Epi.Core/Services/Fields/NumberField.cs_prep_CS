@@ -1,0 +1,291 @@
+﻿using System;
+using System.ComponentModel;
+using System.Data;
+using System.Xml;
+using Epi;
+using Epi.Data;
+
+namespace Epi.Fields
+{
+
+
+
+ public class NumberField : InputTextBoxField, IPatternable
+ {
+  //Private Members
+  private string pattern = string.Empty;
+        private string lower = string.Empty;
+        private string upper = string.Empty;
+        private XmlElement viewElement;
+        private XmlNode fieldNode;
+        private BackgroundWorker _updater;
+        private BackgroundWorker _inserter;
+  // Private Members
+
+  //Constructors
+
+
+
+
+
+  public NumberField(Page page) : base(page)
+  {
+   Construct();
+  }
+
+
+
+
+
+
+        public NumberField(Page page, XmlElement viewElement)
+            : base(page)
+        {
+            this.viewElement = viewElement;
+            this.Page = page;
+        }
+
+
+
+
+
+  public NumberField(View view) : base(view)
+  {
+   Construct();
+  }
+
+
+
+
+
+
+        public NumberField(View view, XmlNode fieldNode) : base(view)
+        {
+            Construct();
+            this.fieldNode = fieldNode;
+            this.view.Project.Metadata.GetFieldData(this, this.fieldNode);
+        }
+
+
+
+
+
+        public override void LoadFromRow(DataRow row)
+        {
+            base.LoadFromRow(row);
+            pattern = row[ColumnNames.PATTERN].ToString();
+            pattern = pattern == "None" ? "" : pattern;
+            lower = row[ColumnNames.LOWER].ToString();
+            upper = row[ColumnNames.UPPER].ToString();
+        }
+
+        public NumberField Clone()
+        {
+            NumberField clone = (NumberField)this.MemberwiseClone();
+            base.AssignMembers(clone);
+            return clone;
+        }
+
+  private void Construct()
+  {
+            genericDbColumnType = GenericDbColumnType.Double;
+            this.dbColumnType = DbType.Double;
+  }
+  //Constructors
+
+  //Public Events
+  //
+
+  //Public Properties
+
+
+
+        public override MetaFieldType FieldType
+        {
+            get
+            {
+                return MetaFieldType.Number;
+            }
+        }
+
+        public override string GetDbSpecificColumnType()
+        {
+            return GetProject().CollectedData.GetDatabase().GetDbSpecificColumnType(GenericDbColumnType.Double);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public string Pattern
+  {
+   get
+   {
+                return (pattern);
+   }
+   set
+   {
+    pattern = value == "None" ? "" : value;
+   }
+  }
+
+
+
+
+        public string Lower
+        {
+            get
+            {
+                return (lower);
+            }
+            set
+            {
+                lower = value;
+            }
+        }
+
+
+
+
+        public string Upper
+        {
+            get
+            {
+                return (upper);
+            }
+            set
+            {
+                upper = value;
+            }
+        }
+
+  //Public Properties
+
+  //Public Methods
+
+
+
+
+
+
+
+
+
+
+  //
+
+  //Private Methods
+
+
+
+
+        protected override void InsertField()
+        {
+            this.Id = GetMetadata().CreateField(this);
+            base.OnFieldAdded();
+        }
+
+
+
+
+
+        protected override void UpdateField()
+        {
+            GetMetadata().UpdateField(this);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //
+
+  //Event Handlers
+
+
+  //Event Handlers
+
+
+
+
+        public XmlElement ViewElement
+        {
+            get
+            {
+                return viewElement;
+            }
+            set
+            {
+                viewElement = value;
+            }
+        }
+
+ }
+}
+
+ 

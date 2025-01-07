@@ -1,0 +1,29 @@
+﻿using System;
+
+namespace Epi
+{
+
+
+
+    public interface ICommandLine
+ {
+
+
+
+
+
+        string GetArgument(string name);
+
+
+
+
+
+  string[] GetArguments(string name);
+
+
+
+        string[] ArgumentStrings { get;}
+ }
+}
+
+ 

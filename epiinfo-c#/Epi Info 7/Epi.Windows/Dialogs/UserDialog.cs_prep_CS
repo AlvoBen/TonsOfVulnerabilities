@@ -1,0 +1,203 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Xml;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Epi.Windows.Dialogs
+{
+
+
+
+
+    public         class UserDialog : DialogBase
+    {
+        //Private Attributes
+        private String _value = string.Empty;
+        private XmlDocument _doc = null;
+        private String title = String.Empty;
+        //Private Attributes
+
+        //Constructors
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+        public UserDialog()
+        {
+            InitializeComponent();
+        }
+
+
+
+
+
+
+        public UserDialog(MainForm frm, XmlDocument doc)
+            : base(frm)
+        {
+            _doc = doc;
+            InitializeComponent();
+            title = frm.Text;
+            Construct(doc);
+        }
+        //Constructors
+
+        //Public Properties
+
+
+
+
+        public string Value
+        {
+            get
+            {
+                return _value;
+            }
+        }
+        //Public Properties
+
+        //Private Methods
+
+
+
+
+
+        private void SetControls(XmlNode controls)
+        {
+            foreach (XmlElement control in controls)
+            {
+                string controlName = control.Name;
+                bool isVisible = (control.Attributes["Visible"].Value.ToString() != "0");
+
+                if (controlName.StartsWith("btn"))
+                {
+                    panel2.Controls[controlName].Visible = isVisible;
+                }
+                else
+                {
+                    panel1.Controls[controlName].Visible = isVisible;
+                    if (controlName == "txt1")
+                    {
+                        int maxLen;
+                        if (int.TryParse(StripQuotes(control.Attributes["MaxLength"].Value), out maxLen))
+                        {
+                            ((TextBox)panel1.Controls[controlName]).MaxLength = maxLen;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void FillList(ComboBox cmb, XmlNode node)
+        {
+            cmb.Items.Clear();
+            foreach (XmlElement element in node.ChildNodes)
+            {
+
+                cmb.Items.Add(element.Attributes["Value"].Value.ToString());
+            }
+        }
+
+
+
+
+
+
+
+        private string StripQuotes(string quotedString)
+        {
+            return quotedString.Replace(StringLiterals.DOUBLEQUOTES, string.Empty);
+        }
+
+
+
+
+
+        private void Construct(XmlDocument doc)
+        {
+
+            XmlElement xmlDocElement = doc.DocumentElement;
+            if (xmlDocElement != null)
+            {
+                this.Text = StripQuotes(xmlDocElement.GetAttribute("Title"));
+                if (String.IsNullOrEmpty(Text))
+
+                {
+                    Text = title;
+                }
+                Prompt.Text = StripQuotes(xmlDocElement.GetAttribute("Prompt"));
+                string mask = StripQuotes(xmlDocElement.GetAttribute("Mask"));
+                dtp1.Format = (string.IsNullOrEmpty(mask)) ? DateTimePickerFormat.Short : DateTimePickerFormat.Custom;
+                dtp1.CustomFormat = mask;
+                mtb1.Mask = mask;
+                XmlNode controls = doc.SelectSingleNode("/UserDialog/Controls");
+                SetControls(controls);
+                if (xmlDocElement.GetAttribute("DialogType") == "Simple")
+                {
+                    Prompt.Dock = DockStyle.Fill;
+                }
+                else
+                {
+
+                    FillList(cmb1, doc.SelectSingleNode("/UserDialog/ListItems"));
+                }
+            }
+        }
+
+        //Private Methods
+
+        //Event handlers
+        private void btnOk_Click(object sender, EventArgs e)
+        {
+            if (this.mtb1.Visible)
+            {
+                _value = mtb1.Text;
+            }
+            else if (this.cmb1.Visible)
+            {
+                _value = cmb1.Text;
+            }
+            else if (this.dtp1.Visible)
+            {
+
+                _value = dtp1.Text;
+
+                DateTime aDate = DateTime.Now;
+                if (DateTime.TryParse(_value, out aDate))
+                {
+                    string fmt = dtp1.CustomFormat.Replace(" tt", "").Replace("h", "H");
+                    _value = aDate.ToString(fmt);
+                }
+            }
+            else if (this.txt1.Visible)
+            {
+                _value = txt1.Text;
+            }
+            _doc.DocumentElement.SetAttribute("VarValue", _value);
+            Close();
+        }
+        private void btnYes_Click(object sender, EventArgs e)
+        {
+            _value = "(+)";
+            _doc.DocumentElement.SetAttribute("VarValue", _value);
+            Close();
+        }
+        private void btnNo_Click(object sender, EventArgs e)
+        {
+            _value = "(-)";
+            _doc.DocumentElement.SetAttribute("VarValue", _value);
+            Close();
+        }
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+        //Event handlers
+
+    }
+}
+ 

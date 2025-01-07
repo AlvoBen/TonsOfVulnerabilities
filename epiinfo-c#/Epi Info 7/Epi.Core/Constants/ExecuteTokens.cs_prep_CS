@@ -1,0 +1,23 @@
+﻿namespace Epi
+{
+
+
+
+    public enum ExecuteTokens
+    {
+
+
+
+        Command,
+
+
+
+        WaitType,
+
+
+
+        FilePath
+    }
+}
+
+ 

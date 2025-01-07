@@ -1,0 +1,357 @@
+﻿using System;
+using System.Drawing;
+
+namespace Epi.Web
+{
+
+
+
+    public        class HTML
+    {
+        //Public Interface
+        //Constructors
+
+        //Constructors
+
+        //Public Enums and Constants
+
+        //Public Enums and Constants
+
+        //Public Properties
+
+        //Public Properties
+
+        //Public Methods
+
+
+
+
+
+
+        public static string HyperLink(string text, string href)
+        {
+
+            return Tag(text, "a", "href", href);
+        }
+
+
+
+
+
+
+
+
+
+        public static string Anchor(string name)
+        {
+
+            if (name.StartsWith("#"))
+                return Tag(string.Empty, "a", "name", name);
+            else
+                return Tag(string.Empty, "a", "name", "#" + name);
+        }
+
+
+
+
+
+
+
+
+        public static string Font(string text, string color, int size)
+        {
+
+            return Tag(text, "font", "color", color, "size", size.ToString());
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public static string H1(string text)
+        {
+            return Tag(text, "h1");
+        }
+
+
+
+
+
+
+        public static string H3(string text)
+        {
+            return Tag(text, "h3") + Tag("hr");
+        }
+
+
+
+
+
+
+        public static string H4(string text)
+        {
+            return Tag(text, "h4") + Tag("hr");
+        }
+
+
+
+
+
+
+        public static string Bold(string text)
+        {
+            string tag = Tag(text, "b");
+            return tag;
+        }
+
+
+
+
+
+
+        public static string Italics(string text)
+        {
+            return Tag(text, "i");
+        }
+
+
+
+
+
+
+        public static string Underline(string text)
+        {
+            return Tag(text, "u");
+        }
+
+
+
+
+
+
+
+
+        public static string Table(string text, string attributeName, string attributeValue)
+        {
+            return Tag(text, "table", attributeName, attributeValue);
+        }
+
+
+
+
+
+
+        public static string Table(string text)
+        {
+            return Tag(text, "table");
+        }
+
+
+
+
+
+
+
+
+        public static string TableHeader(string text, string attributeName, string attributeValue)
+        {
+            return Tag(text, "th", attributeName, attributeValue);
+        }
+
+
+
+
+
+
+        public static string TableHeader(string text)
+        {
+            return Tag(text, "th");
+        }
+
+
+
+
+
+
+
+
+        public static string TableRow(string text, string attributeName, string attributeValue)
+        {
+            return Tag(text, "tr", attributeName, attributeValue);
+        }
+
+
+
+
+
+
+        public static string TableRow(string text)
+        {
+
+            return Tag(text, "tr");
+        }
+
+
+
+
+
+
+
+
+        public static string TableCell(string text, string attributeName, string attributeValue)
+        {
+
+            return Tag(text, "td", attributeName, attributeValue);
+        }
+
+
+
+
+
+
+        public static string TableCell(string text)
+        {
+
+            return Tag(text, "td");
+        }
+
+
+
+
+
+
+
+
+        public static string HTMLPage(string title, string bgColor, string bodyContents)
+        {
+            string titleTag = Tag(title, "title");
+            string headerTag = Tag(titleTag, "header");
+            string bodyTag = Tag(bodyContents, "body", "bgColor", bgColor);
+
+            return Tag(headerTag + bodyTag, "html");
+        }
+
+
+
+
+
+
+
+
+
+
+        public static string Tag(string text, string HTMLTag, string attributeName, string attributeValue)
+        {
+            return StringLiterals.LESS_THAN + HTMLTag.ToLower() + Attribute(attributeName, attributeValue) + StringLiterals.GREATER_THAN
+                + text
+                + StringLiterals.LESS_THAN + StringLiterals.FORWARD_SLASH + HTMLTag.ToLower() + StringLiterals.GREATER_THAN;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        public static string Tag(string text, string HTMLTag, string attributeName1, string attributeValue1, string attributeName2, string attributeValue2)
+        {
+            return StringLiterals.LESS_THAN + HTMLTag.ToLower()
+                + Attribute(attributeName1, attributeValue1) + StringLiterals.SPACE
+                + Attribute(attributeName2, attributeValue2) + StringLiterals.SPACE
+                + StringLiterals.GREATER_THAN + text
+                + StringLiterals.LESS_THAN + StringLiterals.FORWARD_SLASH + HTMLTag.ToLower() + StringLiterals.GREATER_THAN;
+        }
+
+
+
+
+
+
+
+        public static string Tag(string text, string HTMLTag)
+        {
+            string tag = Tag(text, HTMLTag, string.Empty, string.Empty);
+            return tag;
+        }
+
+
+
+
+
+
+
+        public static string Tag(string HTMLTag)
+        {
+            return StringLiterals.LESS_THAN + HTMLTag.ToLower() + StringLiterals.FORWARD_SLASH + StringLiterals.GREATER_THAN;
+        }
+        //Public Methods
+        //Public Interface
+
+        //Protected Interface
+
+        //Protected Properties
+
+        //Protected Properties
+
+        //Protected Methods
+
+        //Protected Methods
+
+        //Protected Events
+
+        //Protected Events
+        //Protected Interface
+
+        //Private Members
+
+        //Private Enums and Constants
+
+        //Private Enums and Constants
+
+        //Private Attributes
+
+        //Private Attributes
+
+        //Private Properties
+
+        //Private Properties
+
+        //Private Methods
+
+        private static string Attribute(string attributeName, string attributeValue)
+        {
+            string attribute = string.Empty;
+            if ((attributeName.Length != 0) && (attributeValue.Length != 0))
+            {
+                attribute = StringLiterals.SPACE + attributeName.ToLower() + StringLiterals.EQUAL + Util.InsertInDoubleQuotes(attributeValue);
+            }
+            return attribute;
+        }
+        //Private Methods
+
+        //Private Events
+
+        //Private Events
+        //Private Members
+    }
+}
+ 

@@ -1,0 +1,28 @@
+﻿//Namespaces
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+//
+
+namespace Epi.Windows
+{
+
+
+
+    public        class UserKeyboardInput
+    {
+
+
+
+
+
+        public static bool IsInputKey(System.Windows.Forms.Keys keyData)
+        {
+            return (keyData == System.Windows.Forms.Keys.Tab);
+        }
+    }
+}
+
+ 

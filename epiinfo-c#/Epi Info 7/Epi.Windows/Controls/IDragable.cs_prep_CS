@@ -1,0 +1,43 @@
+﻿namespace Epi.Windows.Controls
+{
+
+
+
+ public interface IDragable
+ {
+
+  //Properties
+
+
+
+
+  int XOffset
+  {
+   get;
+   set;
+  }
+
+
+
+
+  int YOffset
+  {
+   get;
+   set;
+  }
+
+
+
+
+  bool HasMoved
+  {
+   get;
+   set;
+  }
+
+  //
+
+ }
+}
+
+ 

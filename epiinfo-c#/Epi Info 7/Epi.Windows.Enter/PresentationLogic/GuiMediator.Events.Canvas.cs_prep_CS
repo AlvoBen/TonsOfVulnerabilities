@@ -1,0 +1,536 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+using Epi.Windows.Controls;
+using Epi.Fields;
+
+
+namespace Epi.Windows.Enter.PresentationLogic
+{
+ public         class GuiMediator
+ {
+
+        private List DebugList = new List();
+
+
+
+
+        public void SetFieldData()
+        {
+            ControlFactory factory = ControlFactory.Instance;
+
+            if(canvas != null && canvas.Panels != null)
+            foreach (Panel panel in canvas.Panels)
+            {
+
+                foreach (Control control in panel.Controls)
+                {
+                    try
+                    {
+
+                        if (control is Label) continue;
+                        if (control is FieldGroupBox) continue;
+
+                        Field field = factory.GetAssociatedField(control);
+                        if (field == null) continue;
+
+                        field = this.view.Fields[field.Name];
+
+                        if (field is ImageField) continue;
+
+                        if (field is YesNoField)
+                        {
+                            YesNoField yesNoField = field as YesNoField;
+                            ComboBox comboBox = control as ComboBox;
+                            if (comboBox.SelectedIndex >= 0)
+                            {
+
+                                if (comboBox.SelectedValue != null)
+                                {
+                                    yesNoField.CurrentRecordValueObject = comboBox.SelectedValue;
+                                }
+                                else if (comboBox.SelectedIndex == 0)
+                                {
+                                    yesNoField.CurrentRecordValueObject = 1; 
+                                }
+                                else
+                                {
+                                    yesNoField.CurrentRecordValueObject = 0; 
+                                }
+                            }
+                            else
+                            {
+                                yesNoField.CurrentRecordValueObject = null;
+                            }
+                        }
+                        else if (field is GridField)
+                        {
+                            DataGridView dgv = (DataGridView)control;
+                            if (dgv.DataSource is DataTable)
+                            {
+                                ((GridField)field).DataSource = (DataTable)dgv.DataSource;
+                            }
+                        }
+                        else if (field is OptionField)
+                        {
+                            OptionField optionField = field as OptionField;
+                            GroupBox groupBox = control as GroupBox;
+
+                            foreach (Control rb in groupBox.Controls)
+                            {
+                                if (((RadioButton)rb).Checked)
+                                {
+                                    int index = 0;
+                                    foreach (string option in optionField.Options)
+                                    {
+                                        if (option == rb.Text)
+                                        {
+                                            optionField.CurrentRecordValueObject = index;
+                                        }
+                                        index++;
+                                    }
+                                }
+                            }
+                        }
+                        else if (control is TextBox || control is RichTextBox || control is ComboBox || control is CheckBox || control is MaskedTextBox || control is DateTimePicker)
+                        {
+                            if (field is IDataField)
+                            {
+                                if (field is DateTimeField)
+                                {
+                                    SetDateTimeData(field as DateTimeField, control);
+                                }
+                                else if (control is TextBox || control is RichTextBox)
+                                {
+                                    SetTextData(field, control);
+                                }
+                                else if (control is MaskedTextBox)
+                                {
+                                    if (field is NumberField || field is PhoneNumberField)
+                                    {
+                                        SetNumberData(field, control);
+                                    }
+                                    else
+                                    {
+                                        SetOtherMaskedData(field, control);
+                                    }
+                                }
+                                else if (control is ComboBox)
+                                {
+                                    SetComboBoxData(field, control);
+                                }
+                                else if (control is CheckBox)
+                                {
+                                    SetCheckBoxData(field, control);
+                                }
+                                else if (control is GroupBox)
+                                {
+                                }
+                                else if (control is DateTimePicker)
+                                {
+
+                                }
+                            }
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+
+                } 
+            } 
+        }
+
+
+
+
+        public void SetFieldData(Control control)
+        {
+            ControlFactory factory = ControlFactory.Instance;
+
+
+
+
+            Field field = factory.GetAssociatedField(control);
+            if (field == null)
+                return;
+            if (field.Name == null)
+            {
+                return;
+            }
+            field = this.view.Fields[field.Name];
+
+            if (field is ImageField) return;
+
+            if (field is YesNoField)
+            {
+                YesNoField yesNoField = field as YesNoField;
+                ComboBox comboBox = control as ComboBox;
+                if (comboBox.SelectedIndex >= 0)
+                {
+                    if (comboBox.SelectedValue != null)
+                    {
+                        yesNoField.CurrentRecordValueObject = comboBox.SelectedValue;
+                    }
+                    else if (comboBox.SelectedIndex == 0)
+                    {
+                        yesNoField.CurrentRecordValueObject = 1; 
+                    }
+                    else
+                    {
+                        yesNoField.CurrentRecordValueObject = 0; 
+                    }
+
+                }
+                else
+                {
+                    yesNoField.CurrentRecordValueObject = null;
+                }
+            }
+            else if (field is GridField)
+            {
+                DataGridView dgv = (DataGridView)control;
+                if (dgv.DataSource is DataTable)
+                {
+                    ((GridField)field).DataSource = (DataTable)dgv.DataSource;
+                }
+            }
+            else if (field is OptionField)
+            {
+                OptionField optionField = field as OptionField;
+                GroupBox groupBox = control as GroupBox;
+
+                foreach (Control rb in groupBox.Controls)
+                {
+                    if (((RadioButton)rb).Checked)
+                    {
+                        int index = 0;
+                        foreach (string option in optionField.Options)
+                        {
+                            if (option == rb.Text)
+                            {
+                                optionField.CurrentRecordValueObject = index;
+                            }
+                            index++;
+                        }
+                    }
+                }
+            }
+            else if (control is TextBox || control is ComboBox || control is CheckBox || control is MaskedTextBox || control is DateTimePicker)
+            {
+                if (field is IDataField)
+                {
+                    if (field is DateTimeField)
+                    {
+                        SetDateTimeData(field as DateTimeField, control);
+                    }
+                    else if (control is TextBox)
+                    {
+                        SetTextData(field, control);
+                    }
+                    else if (control is MaskedTextBox)
+                    {
+                        if (field is NumberField || field is PhoneNumberField)
+                        {
+                            SetNumberData(field, control);
+                        }
+                        else
+                        {
+                            SetOtherMaskedData(field, control);
+                        }
+                    }
+                    else if (control is ComboBox)
+                    {
+                        SetComboBoxData(field, control);
+                    }
+                    else if (control is CheckBox)
+                    {
+                        SetCheckBoxData(field, control);
+                    }
+                    else if (control is GroupBox)
+                    {
+                    }
+                }
+            }
+        }
+
+
+
+        private void ClearPanelControls(Panel panel)
+        {
+            try
+            {
+                while (panel.Controls.Count > 0) panel.Controls[0].Dispose();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+                GC.Collect();
+            }
+        }
+
+        public void SetZeeOrderOfGroups(Panel panel)
+        {
+            SortedList  pointSortedGroups;
+            SetZeeOrderOfGroups(panel, out pointSortedGroups);
+        }
+
+        public void SetZeeOrderOfGroups(Panel panel, out System.Collections.Generic.SortedList pointSortedGroups)
+        {
+            pointSortedGroups = new SortedList(new GroupZeeOrderComparer());
+
+            foreach (Control possibleGroupControl in panel.Controls)
+            {
+                FieldGroupBox groupControl = possibleGroupControl as FieldGroupBox;
+                if (groupControl != null)
+                {
+                    pointSortedGroups.Add(groupControl, ((Control)groupControl).Location);
+                }
+            }
+
+            foreach (KeyValuePair kvp in pointSortedGroups)
+            {
+                ((Control)kvp.Key).SendToBack();
+            }
+        }
+
+
+
+
+
+
+        private bool IsFirstControlOnPage(Control control)
+        {
+            ControlFactory factory = ControlFactory.Instance;
+            Field field = factory.GetAssociatedField(control);
+
+            double minTabIndex = currentPage.GetMetadata().GetMinTabIndex(currentPage.Id, this.view.Id);
+
+            return (((RenderableField)field).TabIndex == minTabIndex);
+        }
+
+
+
+
+
+
+        public bool IsLastControlOnPage(Control control)
+        {
+            //Input Validation
+            if (control == null)
+            {
+                throw new ArgumentNullException("Control");
+            }
+            // 
+
+            int maxTabIndexFound = 0;
+            Control controltab=null;
+
+            foreach (Control candidate in _fieldPanel.Controls)
+            {
+                if (candidate.TabStop && candidate.Enabled && candidate.Visible)
+                {
+                    if (candidate.TabIndex >= maxTabIndexFound)
+                    {
+                        maxTabIndexFound = candidate.TabIndex;
+                        controltab = candidate;
+                    }
+                }
+            }
+
+            if (maxTabIndexFound == control.TabIndex & control == controltab)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+
+
+
+
+        private bool IsLastControlOnView(Control control)
+        {
+            //Input Validation
+            if (control == null)
+            {
+                throw new ArgumentNullException("control");
+            }
+
+            // 
+
+            if (this.currentPage.Position == currentPage.GetMetadata().GetMaxViewPagesPosition(this.view.Id))
+            {
+                return IsLastControlOnPage(control);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+
+        private void MarkRelatedRecoredsAsDeleted(Epi.Data.Services.CollectedDataProvider OutputDriver, View pView, List pIDList)
+        {
+            Dictionary VisitedViews = new Dictionary(StringComparer.OrdinalIgnoreCase);
+            string SQL = null;
+            StringBuilder InSQL = new StringBuilder();
+            InSQL.Append("  (");
+            foreach (int ID in pIDList)
+            {
+                pView.LoadRecord(ID);
+                pView.RecStatusField.CurrentRecordValue = 0;
+                pView.SaveRecord(ID);
+                InSQL.Append("'");
+                InSQL.Append(pView.CurrentGlobalRecordId);
+                InSQL.Append("',");
+            }
+            InSQL.Length = InSQL.Length - 1;
+            InSQL.Append(")");
+
+            foreach (Field field in pView.Fields)
+            {
+                if (field is RelatedViewField)
+                {
+                    RelatedViewField rvf = field as RelatedViewField;
+                    if (!VisitedViews.ContainsKey(rvf.ChildView.Name))
+                    {
+                        SQL = "Select UniqueKey From [" + rvf.ChildView.TableName + "] Where FKey In " + InSQL.ToString();
+                        IDataReader reader = OutputDriver.ExecuteReader(OutputDriver.CreateQuery(SQL));
+                        List NewIdList = new List();
+                        while (reader.Read())
+                        {
+                            if( reader["UniqueKey"] != DBNull.Value)
+                            {
+                                NewIdList.Add((int)reader["UniqueKey"]);
+                            }
+                        }
+                        VisitedViews.Add(rvf.ChildView.Name, true);
+                        MarkRelatedRecoredsAsDeleted(OutputDriver, rvf.ChildView, NewIdList);
+                    }
+                }
+                else if (field is Epi.Fields.GridField)
+                {
+
+                    Epi.Fields.GridField gf = field as Epi.Fields.GridField;
+
+                    SQL = "Update  [" + gf.TableName + "] Set RecStatus = 0 Where FKey In " + InSQL.ToString();
+                    OutputDriver.ExecuteNonQuery(OutputDriver.CreateQuery(SQL));
+
+                }
+            }
+        }
+
+        private void MarkRelatedRecoredsAsDeleted(int pUniqueKey)
+        {
+            List IDList = new List();
+            IDList.Add(pUniqueKey);
+            Epi.Data.Services.CollectedDataProvider OutputDriver = this.EnterCheckCodeEngine.Project.CollectedData;
+            MarkRelatedRecoredsAsDeleted(OutputDriver, this.view, IDList);
+        }
+
+
+        private void UnMarkRelatedRecoredsAsDeleted(Epi.Data.Services.CollectedDataProvider OutputDriver, View pView, List pIDList)
+        {
+            Dictionary VisitedViews = new Dictionary(StringComparer.OrdinalIgnoreCase);
+            string SQL = null;
+            StringBuilder InSQL = new StringBuilder();
+            InSQL.Append(" Where FKey In (");
+            foreach (int ID in pIDList)
+            {
+                pView.LoadRecord(ID);
+                pView.RecStatusField.CurrentRecordValue = 1;
+                pView.SaveRecord(ID);
+                InSQL.Append("'");
+                InSQL.Append(pView.CurrentGlobalRecordId);
+                InSQL.Append("',");
+            }
+            InSQL.Length = InSQL.Length - 1;
+            InSQL.Append(")");
+
+            foreach (Field field in pView.Fields)
+            {
+                if (field is RelatedViewField)
+                {
+                    RelatedViewField rvf = field as RelatedViewField;
+                    if (!VisitedViews.ContainsKey(rvf.ChildView.Name))
+                    {
+                        SQL = "Select UniqueKey From [" + rvf.ChildView.TableName + "] " + InSQL.ToString();
+                        IDataReader reader = OutputDriver.ExecuteReader(OutputDriver.CreateQuery(SQL));
+                        List NewIdList = new List();
+                        while (reader.Read())
+                        {
+                            if (reader["UniqueKey"] != DBNull.Value)
+                            {
+                                NewIdList.Add((int)reader["UniqueKey"]);
+                            }
+                        }
+                        VisitedViews.Add(rvf.ChildView.Name, true);
+                        UnMarkRelatedRecoredsAsDeleted(OutputDriver, rvf.ChildView, NewIdList);
+                    }
+                    else if (field is Epi.Fields.GridField)
+                    {
+
+                        Epi.Fields.GridField gf = field as Epi.Fields.GridField;
+
+                        SQL = "Update  [" + gf.TableName + "] Set RecStatus = 1 Where FKey In " + InSQL.ToString();
+                        OutputDriver.ExecuteNonQuery(OutputDriver.CreateQuery(SQL));
+
+                    }
+                }
+            }
+        }
+
+        private void UnMarkRelatedRecoredsAsDeleted(int pUniqueKey)
+        {
+            List IDList = new List();
+            IDList.Add(pUniqueKey);
+            Epi.Data.Services.CollectedDataProvider OutputDriver = this.EnterCheckCodeEngine.Project.CollectedData;
+            UnMarkRelatedRecoredsAsDeleted(OutputDriver, this.view, IDList);
+        }
+
+    }
+
+    //GroupZeeOrderComparer
+    class GroupZeeOrderComparer : IComparer
+    {
+        public int Compare(FieldGroupBox x, FieldGroupBox y)
+        {
+            if (((Control)x).Top < ((Control)y).Top + 2)
+            {
+                return 1;
+            }
+            else if (((Control)x).Top <= ((Control)y).Top)
+            {
+                if ((((Control)x).Left > ((Control)y).Left))
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+            else
+            {
+                return -1;
+            }
+        }
+    }
+    //
+
+}
+
+ 

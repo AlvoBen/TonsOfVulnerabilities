@@ -1,0 +1,1657 @@
+﻿using System;
+using System.Data;
+using System.Globalization;
+using System.IO;
+using System.Text;
+using System.Windows.Forms;
+using System.Xml;
+using System.Security.Cryptography;
+using Epi;
+using System.Collections.Generic;
+using Epi.Collections;
+using Epi.Data;
+using Epi.Fields;
+using Epi.Resources;
+using Epi.Data.Services;
+
+namespace Epi
+{
+
+
+
+    public class Project : INamedObject, IDisposable 
+    {
+        //Public Events
+
+
+
+        public event TableCopyStatusEventHandler TableCopyStatusEvent;
+
+
+
+
+
+
+        public void RaiseEventTableCopyStatus(string tableName, int recordCount)
+        {
+            if (this.TableCopyStatusEvent != null)
+            {
+                this.TableCopyStatusEvent(this, new TableCopyStatusEventArgs(tableName, recordCount));
+            }
+        }
+        //Public Events
+
+        //Private class members
+
+
+
+
+        public ViewCollection views = null;
+
+
+
+
+
+        public List pages = null;
+
+        private Guid id;
+        private XmlDocument xmlDoc = null;
+        private const int currentSchemaVersion = 102;
+        private XmlElement currentViewElement;
+        private string collectedDataConnectionString;
+        bool _useMetaDataSet = false;
+
+        //Private class members
+
+        //Protected Class Members
+
+
+
+        protected IMetadataProvider metadata = null;
+
+
+
+        protected CollectedDataProvider collectedData = null;
+
+        //Protected Class Members
+
+        //Constructors
+
+
+
+
+        public Project()
+        {
+
+            PreConstruct();
+
+
+            XmlElement root = xmlDoc.CreateElement("Project");
+            xmlDoc.AppendChild(root);
+
+
+            XmlAttribute attr = xmlDoc.CreateAttribute("id");
+            root.Attributes.Append(attr);
+
+            attr = xmlDoc.CreateAttribute("name");
+            root.Attributes.Append(attr);
+
+            attr = xmlDoc.CreateAttribute("location");
+            root.Attributes.Append(attr);
+
+            attr = xmlDoc.CreateAttribute("description");
+            root.Attributes.Append(attr);
+
+            attr = xmlDoc.CreateAttribute("schemaVersion");
+            attr.Value = currentSchemaVersion.ToString();
+            root.Attributes.Append(attr);
+
+            attr = xmlDoc.CreateAttribute("epiVersion");
+            root.Attributes.Append(attr = xmlDoc.CreateAttribute("epiVersion"));
+
+            attr = xmlDoc.CreateAttribute("createDate");
+            attr.Value = DateTime.Now.ToString(CultureInfo.InvariantCulture.DateTimeFormat);
+            root.Attributes.Append(attr);
+
+            attr = xmlDoc.CreateAttribute("useMetadataDbForCollectedData");
+            attr.Value = string.Empty;
+            root.Attributes.Append(attr);
+
+            attr = xmlDoc.CreateAttribute("useBackgroundOnAllPages");
+            attr.Value = Epi.Defaults.UseBackgroundOnAllPages.ToString();
+            root.Attributes.Append(attr);
+
+
+            XmlElement xCollectedData = xmlDoc.CreateElement("CollectedData");
+            root.AppendChild(xCollectedData);
+            XmlElement xDb = xmlDoc.CreateElement("Database");
+            xCollectedData.AppendChild(xDb);
+            xDb.Attributes.Append(xmlDoc.CreateAttribute("connectionString"));
+            xDb.Attributes.Append(xmlDoc.CreateAttribute("dataDriver"));
+
+
+            XmlElement xMetadata = xmlDoc.CreateElement("Metadata");
+            root.AppendChild(xMetadata);
+            attr = xmlDoc.CreateAttribute("source");
+            attr.Value = ((int)MetadataSource.Unknown).ToString();
+            xMetadata.Attributes.Append(attr);
+
+
+            XmlElement xEnter_MakeViewInterpreter = xmlDoc.CreateElement("EnterMakeviewInterpreter");
+            root.AppendChild(xEnter_MakeViewInterpreter);
+            attr = xmlDoc.CreateAttribute("source");
+            attr.Value = "Epi.Core.EnterInterpreter";
+            xEnter_MakeViewInterpreter.Attributes.Append(attr);
+        }
+
+        public Project(string filePath)
+        {
+            Construct(filePath);
+        }
+
+        public Project(string filePath, bool useMetaDataTable)
+        {
+            _useMetaDataSet = useMetaDataTable;
+            Construct(filePath);
+        }
+
+        private void PreConstruct()
+        {
+            xmlDoc = new XmlDocument();
+            metaDbInfo = new DbDriverInfo();
+            collectedDataDbInfo = new DbDriverInfo();
+            collectedData = new CollectedDataProvider(this);
+        }
+
+        private void Construct(string filePath)
+        {
+            PreConstruct();
+
+            try
+            {
+                xmlDoc.Load(filePath);
+                ValidateXmlDoc();
+
+                FileInfo fileInfo = new FileInfo(filePath);
+
+                if (string.IsNullOrEmpty(Location))
+                {
+                    Location = fileInfo.DirectoryName;
+                    Save();
+                }
+                else
+                {
+                    if (string.Compare(fileInfo.DirectoryName, Location, true) != 0)
+                    {
+                        Location = fileInfo.DirectoryName;
+                        Save();
+                    }
+                }
+
+                string[] Driver = this.CollectedDataDriver.Split(',');
+
+                if (Driver[1].Trim().ToLower() == Configuration.WebDriver.ToLower())
+                {
+                    this.collectedData.IsWebMode = true;
+                    switch (Driver[0].Trim())
+                    {
+                        case "Epi.Data.MySQL.MySQLDBFactory":
+                            this.CollectedDataDriver = Configuration.MySQLDriver;
+                            break;
+                        case "Epi.Data.Office.AccessDBFactory":
+                            this.CollectedDataDriver = Configuration.AccessDriver;
+                            break;
+                        case "Epi.Data.SqlServer.SqlDBFactory":
+                        default:
+                            this.CollectedDataDriver = Configuration.SqlDriver;
+                            break;
+                    }
+                }
+
+                this.collectedDataDbInfo.DBCnnStringBuilder.ConnectionString = this.CollectedDataConnectionString;
+                collectedData.Initialize(this.collectedDataDbInfo, this.CollectedDataDriver, false);
+
+                if (MetadataSource == MetadataSource.Xml)
+                {
+                    metadata = new MetadataXmlProvider(this);
+                }
+                else
+                {
+                    if (_useMetaDataSet)
+                    {
+                        metadata = new MetadataDataSet(this);
+                    }
+                    else
+                    {
+                        metadata = new MetadataDbProvider(this);
+                        if (MetadataSource == MetadataSource.SameDb)
+                        {
+                            metadata.AttachDbDriver(CollectedData.GetDbDriver());
+                        }
+                        else
+                        {
+                            this.metaDbInfo.DBCnnStringBuilder.ConnectionString = this.MetadataConnectionString;
+                            metadata.Initialize(this.metaDbInfo, this.MetadataDriver, false);
+                        }
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+
+        //Constructors
+
+        //Public Properties
+
+        public bool UseMetaDataSet
+        {
+            set
+            {
+                _useMetaDataSet = value;
+            }
+        }
+
+
+
+
+        public string Location
+        {
+            get
+            {
+                return xmlDoc.DocumentElement.Attributes["location"].Value;
+            }
+            set
+            {
+                xmlDoc.DocumentElement.Attributes["location"].Value = value;
+            }
+        }
+
+        public string EnterMakeviewIntepreter
+        {
+            get
+            {
+                return xmlDoc.DocumentElement["EnterMakeviewInterpreter"].Attributes["source"].Value;
+            }
+            set
+            {
+                xmlDoc.DocumentElement["EnterMakeviewInterpreter"].Attributes["source"].Value = value;
+            }
+        }
+
+
+
+
+        public string DisplayName
+        {
+            get
+            {
+                return Name;
+            }
+        }
+
+
+
+
+        public string Name
+        {
+            get
+            {
+                return xmlDoc.DocumentElement.Attributes["name"].Value;
+            }
+            set
+            {
+                xmlDoc.DocumentElement.Attributes["name"].Value = value;
+            }
+        }
+
+
+
+
+        public string PageWidth
+        {
+            get
+            {
+                return xmlDoc.DocumentElement.Attributes["pageWidth"].Value;
+            }
+            set
+            {
+                xmlDoc.DocumentElement.Attributes["pageWidth"].Value = value;
+            }
+        }
+
+
+
+
+        public string PageHeight
+        {
+            get
+            {
+                return xmlDoc.DocumentElement.Attributes["pageHeight"].Value;
+            }
+            set
+            {
+                xmlDoc.DocumentElement.Attributes["pageHeight"].Value = value;
+            }
+        }
+
+
+
+
+        public string FileName
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(Name))
+                {
+                    return Name.Replace(FileExtension, string.Empty) + FileExtension;
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+        }
+
+
+
+        public string FilePath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Location) || string.IsNullOrEmpty(FileName))
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    return Path.Combine(Location, FileName);
+                }
+            }
+        }
+
+
+
+
+        public string FullName
+        {
+            get
+            {
+                return FilePath;
+            }
+        }
+
+
+
+
+        public virtual bool UseMetadataDbForCollectedData
+        {
+            get
+            {
+                return bool.Parse(xmlDoc.DocumentElement.Attributes["useMetadataDbForCollectedData"].Value);
+            }
+            set
+            {
+                xmlDoc.DocumentElement.Attributes["useMetadataDbForCollectedData"].Value = value.ToString();
+            }
+        }
+
+
+
+
+        public bool IsEmpty
+        {
+            get
+            {
+                return (string.IsNullOrEmpty(FullName));
+            }
+        }
+
+
+
+
+        public IMetadataProvider Metadata
+        {
+            get
+            {
+                return metadata;
+            }
+        }
+
+
+
+
+        public CollectedDataProvider CollectedData
+        {
+            get
+            {
+                return collectedData;
+            }
+        }
+
+
+
+
+        public IMetadataProvider CodeData
+        {
+            get
+            {
+                return Metadata;
+            }
+        }
+
+
+
+
+        public virtual bool IsEpiCollectedData
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+
+
+
+        public System.Guid Id
+        {
+            get
+            {
+                if (id.Equals(Guid.Empty))
+                {
+                    if (string.IsNullOrEmpty(FilePath))
+                    {
+
+                        id = Guid.NewGuid();
+                    }
+                    else
+                    {
+                        id = Util.GetFileGuid(FilePath);
+                    }
+                }
+                return id;
+            }
+            set
+            {
+                xmlDoc.DocumentElement.Attributes["id"].Value = value.ToString();
+            }
+        }
+
+
+
+
+        public ViewCollection Views
+        {
+            get
+            {
+                if (views == null)
+                {
+                    LoadViews();
+                }
+                return views;
+            }
+        }
+
+
+
+
+        public string EpiVersion
+        {
+            get
+            {
+                return xmlDoc.DocumentElement.Attributes["epiVersion"].Value;
+            }
+        }
+
+
+
+
+        public DateTime CreateDate
+        {
+            get
+            {
+                return DateTime.Parse(xmlDoc.DocumentElement.Attributes["createDate"].Value, CultureInfo.InvariantCulture.DateTimeFormat);
+            }
+        }
+
+
+
+
+        public string Description
+        {
+            get
+            {
+                return xmlDoc.DocumentElement.Attributes["description"].Value;
+            }
+            set
+            {
+                xmlDoc.DocumentElement.Attributes["description"].Value = value;
+            }
+        }
+
+        private XmlNode GetMetadataDbNode()
+        {
+            return xmlDoc.DocumentElement.SelectSingleNode("/Project/Metadata/Database");
+        }
+
+        private XmlNode GetCollectedDataDbNode()
+        {
+            return xmlDoc.DocumentElement.SelectSingleNode("/Project/CollectedData/Database");
+        }
+
+
+
+
+        public string MetadataConnectionString
+        {
+            get
+            {
+                return GetMetadataDbNode().Attributes["connectionString"].Value;
+            }
+            set
+            {
+                GetMetadataDbNode().Attributes["connectionString"].Value = value;
+            }
+        }
+
+
+
+
+        public string MetadataDriver
+        {
+            get
+            {
+                return GetMetadataDbNode().Attributes["dataDriver"].Value;
+            }
+            set
+            {
+                GetMetadataDbNode().Attributes["dataDriver"].Value = value.ToString();
+            }
+        }
+        private DbDriverInfo metaDbInfo;
+
+
+
+        public DbDriverInfo MetaDbInfo
+        {
+            get
+            {
+                return metaDbInfo;
+            }
+            set
+            {
+                metaDbInfo = value;
+            }
+        }
+
+        private DbDriverInfo collectedDataDbInfo;
+
+
+
+        public DbDriverInfo CollectedDataDbInfo
+        {
+            get
+            {
+                return collectedDataDbInfo;
+            }
+            set
+            {
+                collectedDataDbInfo = value;
+            }
+        }
+
+
+
+
+        public Epi.MetadataSource MetadataSource
+        {
+            get
+            {
+                XmlNode metadataNode = GetMetadataNode();
+                XmlAttribute sourceAttribute = metadataNode.Attributes.GetNamedItem("source") as XmlAttribute;
+                if (sourceAttribute == null)
+                {
+                    return MetadataSource.Unknown;
+                }
+                else
+                {
+                    return (MetadataSource)Int32.Parse(sourceAttribute.Value);
+                }
+            }
+            set
+            {
+                XmlNode metadataNode = GetMetadataNode();
+                metadataNode.Attributes["source"].Value = ((int)value).ToString();
+                switch (value)
+                {
+                    case MetadataSource.Xml:
+                        metadata = new MetadataXmlProvider(this);
+                        break;
+                    case MetadataSource.SameDb:
+                        metadata = new MetadataDbProvider(this);
+                        break;
+                    case MetadataSource.DifferentDb:
+                        metadata = new MetadataDbProvider(this);
+                        XmlElement xDb = xmlDoc.CreateElement("Database");
+                        GetMetadataNode().AppendChild(xDb);
+                        xDb.Attributes.Append(xmlDoc.CreateAttribute("connectionString"));
+                        xDb.Attributes.Append(xmlDoc.CreateAttribute("dataDriver"));
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+
+
+
+        public string CollectedDataConnectionString
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(collectedDataConnectionString))
+                {
+                    collectedDataConnectionString = Configuration.Decrypt(GetCollectedDataDbNode().Attributes["connectionString"].Value);
+                }
+                if (this.CollectedDataDriver == "Epi.Data.Office.AccessDBFactory, Epi.Data.Office")
+                    return this.SetOleDbDatabaseFilePath(collectedDataConnectionString);
+                else
+                    return collectedDataConnectionString;
+
+            }
+            set
+            {
+                GetCollectedDataDbNode().Attributes["connectionString"].Value = Configuration.Encrypt(value);
+                collectedDataConnectionString = value;
+            }
+        }
+
+
+
+
+
+
+        public string CollectedDataDriver
+        {
+            get
+            {
+                return GetCollectedDataDbNode().Attributes["dataDriver"].Value;
+            }
+            set
+            {
+                GetCollectedDataDbNode().Attributes["dataDriver"].Value = value.ToString();
+            }
+        }
+
+        //Public Properties
+
+        //Static Methods
+
+
+
+
+
+
+
+        public static bool IsValidProjectName(string projectName, ref string validationStatus)
+        {
+
+            bool valid = true;
+
+            if (string.IsNullOrEmpty(projectName.Trim()))
+            {
+
+                validationStatus = SharedStrings.MISSING_PROJECT_NAME;
+                valid = false;
+            }
+            else if (AppData.Instance.IsReservedWord(projectName))
+            {
+
+                validationStatus = SharedStrings.INVALID_PROJECT_NAME_RESERVED_WORD;
+                valid = false;
+            }
+            else if (projectName.Length > 64)
+            {
+                validationStatus = SharedStrings.INVALID_PROJECT_NAME_TOO_LONG;
+                valid = false;
+            }
+            else
+            {
+
+                System.Text.RegularExpressions.Match numMatch = System.Text.RegularExpressions.Regex.Match(projectName.Substring(0, 1), "[0-9]");
+
+                if (numMatch.Success)
+                {
+
+                    validationStatus = SharedStrings.PROJECT_NAME_BEGIN_NUMERIC;
+                    valid = false;
+                }
+
+                else
+                {
+
+                    for (int i = 0; i < projectName.Length; i++)
+                    {
+                        string viewChar = projectName.Substring(i, 1);
+                        System.Text.RegularExpressions.Match m = System.Text.RegularExpressions.Regex.Match(viewChar, "[A-Za-z0-9_]");
+
+                        if (!m.Success)
+                        {
+
+                            validationStatus = SharedStrings.INVALID_PROJECT_NAME;
+                            valid = false;
+                            break; 
+                        }
+                    }
+                }
+            }
+
+            return valid;
+        }
+
+        //
+
+        //Public Methods
+
+
+
+
+        public Guid GetProjectId()
+        {
+            return this.Id;
+        }
+
+
+
+
+        public void Dispose()
+        {
+            if (metadata != null)
+            {
+
+                metadata = null;
+            }
+            if (collectedData != null)
+            {
+
+                collectedData = null;
+            }
+            if (views != null)
+            {
+
+                views = null;
+            }
+        }
+
+
+
+
+        public void Save()
+        {
+            try
+            {
+                xmlDoc.Save(FilePath);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                throw ex;
+            }
+            catch (XmlException xmlEx)
+            {
+                throw xmlEx;
+            }
+        }
+
+
+
+
+
+        public XmlDocument GetXmlDocument()
+        {
+            return xmlDoc;
+        }
+
+
+
+
+
+        public virtual DataTable GetViewsAsDataTable()
+        {
+            return (Metadata.GetViewsAsDataTable());
+        }
+
+
+
+
+
+        public List GetViewNames()
+        {
+            DataTable dt = Metadata.GetViewsAsDataTable();
+            List list = new List();
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(row[ColumnNames.NAME].ToString());
+            }
+            return list;
+        }
+
+
+
+
+
+        public List GetParentViewNames()
+        {
+            DataTable dt = Metadata.GetViewsAsDataTable();
+            List list = new List();
+
+            if (dt == null || dt.Rows.Count == 0 )
+            {
+                return list;
+            }
+            DataRow[] rows = dt.Select(ColumnNames.IS_RELATED_VIEW + "=false");
+            foreach (DataRow row in rows)
+            {
+                list.Add(row[ColumnNames.NAME].ToString());
+            }
+            return list;
+        }
+
+
+
+
+
+
+
+
+
+        public bool IsView(string name)
+        {
+
+
+
+
+
+
+
+
+
+            foreach (string s in GetViewNames())
+            {
+                if (string.Compare(s, name, true) == 0)
+                {
+                    return true;
+                }
+
+
+            }
+            return false;
+
+        }
+
+
+
+
+
+
+        public View GetViewByName(string viewName)
+        {
+
+            foreach (View view in Views)
+            {
+                if (string.Compare(view.Name, viewName, true) == 0)
+                {
+                    return view;
+                }
+            }
+            throw new System.ApplicationException(string.Format(SharedStrings.ERROR_LOADING_VIEW, viewName));
+        }
+
+
+
+
+
+
+        public List GetTableColumnNames(string tableName)
+        {
+            return CollectedData.GetTableColumnNames(tableName);
+        }
+
+
+
+
+
+
+        public List GetPrimaryKeyNames(string tableName)
+        {
+            DataTable dt = CollectedData.GetPrimaryKeysAsDataTable(tableName);
+            List list = new List();
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(row[ColumnNames.COLUMN_NAME].ToString());
+            }
+            return list;
+        }
+
+
+
+
+
+        public virtual DataTable GetNonViewTablesAsDataTable()
+        {
+            return CollectedData.GetNonViewTablesAsDataTable();
+        }
+
+
+
+
+
+        public List GetNonViewTableNames()
+        {
+            DataTable dt = Metadata.GetNonViewTablesAsDataTable();
+            List list = new List();
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(row[ColumnNames.NAME].ToString());
+            }
+            return list;
+        }
+
+
+
+
+
+
+        public View GetViewById(int viewId)
+        {
+            return (Views.GetViewById(viewId));
+        }
+
+
+
+
+        public virtual Project CreateProject(string projectName, string projectDescription, string projectLocation, string collectedDataDriver, DbDriverInfo collectedDataDBInfo)
+        {
+            Project newProject = new Project();
+            newProject.Name = projectName;
+
+            newProject.Location = Path.Combine(projectLocation, projectName);
+
+            if (collectedDataDBInfo.DBCnnStringBuilder.ContainsKey("Provider") && (collectedDataDBInfo.DBCnnStringBuilder["Provider"].ToString() == "Microsoft.Jet.OLEDB.4.0"))
+            {
+                collectedDataDBInfo.DBCnnStringBuilder["Data Source"] = newProject.FilePath.Substring(0, newProject.FilePath.Length - 4) + ".mdb";
+            }
+
+            if (!Directory.Exists(newProject.Location))
+            {
+                Directory.CreateDirectory(newProject.Location);
+            }
+
+            newProject.Id = newProject.GetProjectId();
+            if (File.Exists(newProject.FilePath))
+            {
+                DialogResult dr = MessageBox.Show(string.Format(SharedStrings.PROJECT_ALREADY_EXISTS, newProject.FilePath), SharedStrings.PROJECT_ALREADY_EXISTS_TITLE, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                switch (dr)
+                {
+                    case DialogResult.Yes:
+                        break;
+                    case DialogResult.No:
+                        return null;
+                }
+            }
+
+            newProject.Description = projectDescription;
+
+
+            newProject.CollectedDataDbInfo = collectedDataDBInfo;
+            newProject.CollectedDataConnectionString = collectedDataDBInfo.DBCnnStringBuilder.ToString();
+
+            newProject.CollectedDataDriver = collectedDataDriver;
+            newProject.CollectedData.Initialize(collectedDataDBInfo, collectedDataDriver, true);
+
+
+            if (newProject.CollectedDataDriver != "Epi.Data.Office.AccessDBFactory, Epi.Data.Office")
+            {
+                List tableNames = new List();
+                tableNames.Add("metaBackgrounds");
+                tableNames.Add("metaDataTypes");
+                tableNames.Add("metaDbInfo");
+                tableNames.Add("metaFields");
+                tableNames.Add("metaFieldTypes");
+                tableNames.Add("metaGridColumns");
+                tableNames.Add("metaImages");
+                tableNames.Add("metaLayerRenderTypes");
+                tableNames.Add("metaLayers");
+                tableNames.Add("metaMapLayers");
+                tableNames.Add("metaMapPoints");
+                tableNames.Add("metaMaps");
+                tableNames.Add("metaPages");
+                tableNames.Add("metaPatterns");
+                tableNames.Add("metaPrograms");
+                tableNames.Add("metaViews");
+
+                bool projectExists = false;
+                foreach (string s in tableNames)
+                {
+                    if (newProject.CollectedData.TableExists(s))
+                    {
+                        projectExists = true;
+                        break;
+                    }
+                }
+
+                if (projectExists)
+                {
+                    DialogResult result = MessageBox.Show(SharedStrings.WARNING_PROJECT_MAY_ALREADY_EXIST, SharedStrings.WARNING_PROJECT_MAY_ALREADY_EXIST_SHORT, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                    if (result == DialogResult.Cancel)
+                    {
+                        Logger.Log(DateTime.Now + ":  " + "Project creation aborted by user [" + System.Security.Principal.WindowsIdentity.GetCurrent().Name.ToString() + "] after being prompted to overwrite existing Epi Info 7 project metadata.");
+                        return null;
+                    }
+                    else
+                    {
+                        Logger.Log(DateTime.Now + ":  " + "Project creation proceeded by user [" + System.Security.Principal.WindowsIdentity.GetCurrent().Name.ToString() + "] after being prompted to overwrite existing Epi Info 7 project metadata.");
+                    }
+                }
+            }
+
+            Logger.Log(DateTime.Now + ":  " + string.Format("Project [{0}] created in {1} by user [{2}].", newProject.Name, newProject.Location, System.Security.Principal.WindowsIdentity.GetCurrent().Name.ToString()));
+
+
+            newProject.MetadataSource = MetadataSource.SameDb;
+            MetadataDbProvider typedMetadata = newProject.Metadata as MetadataDbProvider;
+            typedMetadata.AttachDbDriver(newProject.CollectedData.GetDbDriver());
+            typedMetadata.CreateMetadataTables();
+
+            try
+            {
+                newProject.Save();
+                return newProject;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show(ex.Message);
+                return newProject;
+            }
+        }
+
+
+
+
+
+
+        public View CreateView(string viewName)
+        {
+            return CreateView(viewName, false);
+        }
+
+
+
+
+
+
+
+        public View CreateView(string viewName, bool isChildView)
+        {
+            View newView = new View(this);
+            newView.Name = viewName;
+            newView.SetTableName(newView.Name);
+            newView.IsRelatedView = isChildView;
+
+            if (!Views.Contains(newView))
+            {
+                Views.Add(newView);
+            }
+
+            Metadata.InsertView(newView);
+            currentViewElement = newView.ViewElement;
+            LoadViews();
+            return newView;
+        }
+
+
+
+
+
+        public virtual DataTable GetPgms()
+        {
+            return (Metadata.GetPgms());
+        }
+
+
+
+
+
+        public List GetPgmNames()
+        {
+            DataTable dt = Metadata.GetPgms();
+            List list = new List();
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(row[ColumnNames.NAME].ToString());
+            }
+            return list;
+        }
+
+
+
+
+
+
+
+
+        public virtual void InsertPgm(string name, string content, string comment, string author)
+        {
+            Metadata.InsertPgm(name, content, comment, author);
+        }
+
+
+
+
+        public virtual void InsertPgm(DataRow pgmRow)
+        {
+
+            Metadata.InsertPgm(pgmRow[ColumnNames.PGM_NAME].ToString(), pgmRow[ColumnNames.PGM_CONTENT].ToString(),
+                                   pgmRow[ColumnNames.PGM_COMMENT].ToString(), pgmRow[ColumnNames.PGM_AUTHOR].ToString());
+        }
+
+
+
+
+
+        public virtual void DeletePgm(string programName, int programId)
+        {
+            Metadata.DeletePgm(programId);
+        }
+
+
+
+
+
+
+
+
+
+        public virtual void UpdatePgm(int programId, string name, string content, string comment, string author)
+        {
+            Metadata.UpdatePgm(programId, name, content, comment, author);
+        }
+
+
+
+
+
+
+        public virtual List GetDataTableList()
+        {
+            return (Metadata.GetDataTableList());
+        }
+
+
+
+
+
+
+        public List GetDataTableNames()
+        {
+            return Metadata.GetDataTableList();
+        }
+
+
+
+
+
+
+        public virtual void CreateCodeTable(string tableName, string[] columnNames)
+        {
+            CodeData.CreateCodeTable(tableName, columnNames);
+        }
+
+
+
+
+
+
+        public virtual void CreateCodeTable(string tableName, string columnName)
+        {
+            CodeData.CreateCodeTable(tableName, columnName);
+        }
+
+
+
+
+
+
+
+        public virtual void SaveCodeTableData(DataTable dataTable, string tableName, string columnName)
+        {
+            CodeData.SaveCodeTableData(dataTable, tableName, columnName);
+        }
+
+
+
+
+
+
+
+        public virtual void SaveCodeTableData(DataTable dataTable, string tablename, string[] columnNames)
+        {
+            CodeData.SaveCodeTableData(dataTable, tablename, columnNames);
+        }
+
+
+
+
+
+
+
+
+        public virtual void InsertCodeTableData(DataTable dataTable, string tablename, string[] columnNames)
+        {
+            CodeData.InsertCodeTableData(dataTable, tablename, columnNames);
+        }
+
+
+
+
+
+
+        [Obsolete("Use of DataTable in      context is no different than the use of a multidimensional System.Object array (not recommended).", false)]
+        public virtual DataTable GetCodeTableData(string codeTableName)
+        {
+            return CodeData.GetCodeTableData(codeTableName);
+        }
+
+
+
+
+
+        public DataTable GetTableData(string tableName)
+        {
+            if (tableName.StartsWith("code", StringComparison.InvariantCultureIgnoreCase)) // it is a code table
+            {
+                return CodeData.GetCodeTableData(tableName);
+            }
+            else 
+            {
+                return CollectedData.GetTableData(tableName);
+            }
+        }
+
+
+
+
+
+
+
+        public DataTable GetTableData(string tableName, string columnNames)
+        {
+            if (tableName.StartsWith("code", StringComparison.InvariantCultureIgnoreCase)) // it is a code table
+            {
+                return CodeData.GetCodeTableData(tableName, columnNames);
+            }
+            else 
+            {
+                return CollectedData.GetTableData(tableName, columnNames);
+            }
+        }
+
+
+
+
+
+
+
+
+        public DataTable GetTableData(string tableName, string columnNames, string sortCriteria)
+        {
+            if (tableName.StartsWith("code", StringComparison.InvariantCultureIgnoreCase)) // it is a code table
+            {
+                return CodeData.GetCodeTableData(tableName, columnNames, sortCriteria);
+            }
+            else 
+            {
+                return CollectedData.GetTableData(tableName, columnNames, sortCriteria);
+            }
+        }
+
+
+
+
+
+
+
+        public virtual void CreateLinkTable(string linkName, string tableName, string connectionString)
+        {
+
+
+        }
+
+
+
+
+
+        public void DeleteLinkTable(string linkName)
+        {
+
+        }
+
+
+
+
+
+
+        public virtual bool Equals(Project other)
+        {
+            return (this.Id == other.Id);
+        }
+
+
+
+
+
+        public DataSets.TableSchema.TablesDataTable GetCodeTableList()
+        {
+            return CodeData.GetCodeTableList();
+        }
+
+
+
+
+
+        public List GetCodeTableNames()
+        {
+            DataTable dt = CodeData.GetCodeTableList();
+            List list = new List();
+            foreach (DataRow row in dt.Rows)
+            {
+                if (dt.Columns.Contains(ColumnNames.TABLE_NAME))
+                {
+                    list.Add(row[ColumnNames.TABLE_NAME].ToString());
+                }
+                else
+                {
+                    list.Add(row[ColumnNames.NAME].ToString());
+                }
+            }
+            return list;
+        }
+
+
+
+
+        public virtual void LoadViews()
+        {
+            if (MetadataSource == MetadataSource.Unknown)
+            {
+                throw new GeneralException(SharedStrings.ERROR_LOADING_METADATA_UNKNOWN_SOURCE);
+            }
+            if (MetadataSource != MetadataSource.Xml)
+            {
+                views = Metadata.GetViews();
+            }
+            else
+            {
+                XmlNode viewsNode = GetViewsNode();
+                views = Metadata.GetViews(currentViewElement, viewsNode);
+            }
+        }
+
+        //OBSOLETE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //OBSOLETE
+        //Public Methods
+
+        //Protected properties
+
+
+
+        protected virtual string FileExtension
+        {
+            get
+            {
+                return Epi.FileExtensions.EPI_PROJ;
+            }
+        }
+        //Protected properties
+
+        //Protected Methods
+
+        //Protected Methods
+
+        //Private properties
+
+        private bool IsNew
+        {
+            get
+            {
+                return (id.Equals(Guid.Empty));
+            }
+        }
+        //Private properties
+
+        //Private Methods
+
+        //Deprecated
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //
+
+
+
+
+
+        public XmlNode GetMetadataNode()
+        {
+            XmlNode metadataNode = xmlDoc.DocumentElement.SelectSingleNode("/Project/Metadata");
+            return metadataNode;
+        }
+
+        private XmlNode GetViewsNode()
+        {
+
+            return xmlDoc.DocumentElement.SelectSingleNode("/Project/Metadata/Views");
+        }
+
+        private XmlNode GetFieldsNode()
+        {
+            return xmlDoc.DocumentElement.SelectSingleNode("/Project/Metadata/Views/View/Fields");
+        }
+
+
+
+
+        private void ValidateXmlDoc()
+        {
+
+            if (xmlDoc.DocumentElement.HasAttribute("schemaVersion"))
+            {
+                int schemaVersion = Int32.Parse(xmlDoc.DocumentElement.Attributes["schemaVersion"].Value.ToString());
+                if (schemaVersion < currentSchemaVersion)
+                {
+                    throw new GeneralException(SharedStrings.PROJECT_SCHEMA_OUT_OF_DATE);
+                }
+            }
+            else
+            {
+                throw new GeneralException(SharedStrings.PROJECT_SCHEMA_OUT_OF_DATE);
+            }
+        }
+
+
+
+
+
+        private XmlNode GetPagesNode()
+        {
+            return xmlDoc.DocumentElement.SelectSingleNode("/Project/Views/View/Pages");
+        }
+
+        private String SetOleDbDatabaseFilePath(string pConnectionString)
+        {
+            System.Data.OleDb.OleDbConnectionStringBuilder connectionBuilder = new System.Data.OleDb.OleDbConnectionStringBuilder(pConnectionString);
+
+            connectionBuilder.DataSource = this.FilePath.Replace(".prj", ".mdb");
+
+            return connectionBuilder.ToString();
+
+        }
+
+        //Private Methods
+    }
+}
+
+ 

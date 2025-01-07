@@ -1,0 +1,110 @@
+﻿//namespaces
+using System;
+//
+
+namespace Epi.Windows.MakeView.Utils
+{
+
+
+
+ public class EditorComboBoxItem
+ {
+
+  //Constructors
+
+
+
+  public EditorComboBoxItem()
+  {
+  }
+  //
+
+  //Private Members
+
+  private string name = string.Empty;
+  private string type = string.Empty;
+  private object idVal;
+
+  //
+
+  //Public Properties
+
+
+
+
+
+  public string Name
+  {
+   get
+   {
+    return name;
+   }
+   set
+   {
+    name = value;
+   }
+  }
+
+
+
+
+
+  public object IDVal
+  {
+   get
+   {
+    return idVal;
+   }
+   set
+   {
+    idVal = value;
+   }
+  }
+
+
+
+
+
+  public string Type
+  {
+   get
+   {
+    return type;
+   }
+   set
+   {
+    type = value;
+   }
+  }
+  //
+
+  //Public Methods
+
+
+
+
+
+
+
+
+  public EditorComboBoxItem(string name, object idVal, string type)
+  {
+   this.name = name;
+   this.idVal = idVal;
+   this.type = type;
+  }
+
+
+
+
+
+  public override string ToString()
+  {
+   return name;
+  }
+
+  //
+ }
+}
+
+ 

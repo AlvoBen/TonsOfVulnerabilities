@@ -1,0 +1,102 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Security.Permissions;
+
+namespace Epi.WPF.Dashboard.Rules
+{
+    public class DefectiveRuleException : System.Exception
+    {
+        //Private Members
+        private RuleIssue issue;
+        //
+
+        //Constructors
+
+
+
+
+        public DefectiveRuleException(RuleIssue issue)
+            : this(issue, string.Empty)
+        {
+        }
+
+
+
+
+
+
+        public DefectiveRuleException(RuleIssue issue, string message)
+            : this(issue, message, null)
+        {
+        }
+
+
+
+
+
+
+
+
+        public DefectiveRuleException(RuleIssue issue, Exception innerException)
+            : this(issue, innerException == null ? string.Empty : innerException.Message, innerException)
+        {
+        }
+
+
+
+
+
+
+
+
+
+        public DefectiveRuleException(RuleIssue issue, string message, Exception innerException)
+            : base(message, innerException)
+        {
+            this.issue = issue;
+        }
+
+
+
+
+
+
+        protected DefectiveRuleException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+        //Constructors
+
+        //Public Methods
+        //Public Methods
+
+        //Public Properties
+
+
+
+        public RuleIssue Issue
+        {
+            get { return issue; }
+            set { issue = value; }
+        }
+        //Public Properties
+
+        //Public Enums
+
+
+
+        public enum RuleIssue
+        {
+
+
+
+            SubstringInvalidStartPosition
+        }
+        //Public Enums
+    }
+}
+
+ 

@@ -1,0 +1,568 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using Epi;
+using Epi.WPF.Dashboard;
+using Epi.WPF.Dashboard.Rules;
+
+namespace Epi.WPF.Dashboard.Rules
+{
+    public enum VariableDependencyType
+    {
+        DestinationColumn = 0,
+        SourceColumn = 1
+    }
+
+    public struct VariableDependency
+    {
+        public List DependsOn;
+        public string VariableName;
+    }
+
+    public class DashboardRules : IEnumerable
+    {
+        //Private Members
+        private DataTable ruleTable;
+        private DashboardHelper dashboardHelper;
+        //
+
+        //Constants
+        public const string COLUMN_RUN_ORDER = "Run Order";   // the order in which the rule should be run
+        public const string COLUMN_RULE = "Rule";
+        //
+
+        //Constructors
+
+
+
+        public DashboardRules()
+        {
+        }
+
+
+
+
+        public DashboardRules(DashboardHelper dashboardHelper)
+        {
+            this.dashboardHelper = dashboardHelper;
+
+            DataColumn runOrderColumn = new DataColumn(COLUMN_RUN_ORDER, typeof(int));
+            DataColumn ruleColumn = new DataColumn(COLUMN_RULE, typeof(IDashboardRule));
+
+            runOrderColumn.AllowDBNull = false;
+            ruleColumn.AllowDBNull = false;
+
+            this.ruleTable = new DataTable("ruleTable");
+            RuleTable.Columns.Add(runOrderColumn);
+            RuleTable.Columns.Add(ruleColumn);
+        }
+        //
+
+        //Private Properties
+
+
+
+        private DataTable RuleTable
+        {
+            get
+            {
+                return this.ruleTable;
+            }
+        }
+
+
+
+
+        private DashboardHelper DashboardHelper
+        {
+            get
+            {
+                return this.dashboardHelper;
+            }
+        }
+        //
+
+        //Public Properties
+
+
+
+        public int Count
+        {
+            get
+            {
+                if (this.RuleTable != null)
+                {
+                    return this.RuleTable.Rows.Count;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+        //
+
+        //Public Methods
+
+
+
+
+
+        public bool AddRule(IDashboardRule rule)
+        {
+            //Input Validation
+            if (rule == null || string.IsNullOrEmpty(rule.FriendlyRule))
+            {
+                throw new ArgumentNullException("rule");
+            }
+            //
+
+
+            foreach (DataRow row in RuleTable.Rows)
+            {
+                IDashboardRule rRule = (IDashboardRule)row[COLUMN_RULE];
+
+                if (rRule.FriendlyRule.Equals(rule.FriendlyRule))
+                {
+
+                    return false;
+                }
+            }
+
+
+            int maxInt = int.MinValue;
+
+            foreach (DataRow row in RuleTable.Rows)
+            {
+                int value = row.Field(COLUMN_RUN_ORDER);
+                maxInt = Math.Max(maxInt, value);
+            }
+
+            RuleTable.Rows.Add(maxInt + 1, rule);
+
+
+            this.ruleTable = RuleTable.Select("", COLUMN_RUN_ORDER).CopyToDataTable().DefaultView.ToTable("RuleTable");
+
+            if (rule is DataAssignmentRule)
+            {
+                DataAssignmentRule assignRule = rule as DataAssignmentRule;
+                if (!dashboardHelper.TableColumnNames.ContainsKey(assignRule.DestinationColumnName))
+                {
+                    dashboardHelper.TableColumnNames.Add(assignRule.DestinationColumnName, assignRule.DestinationColumnType);
+                }
+            }
+
+            return true;
+        }
+
+
+
+
+        public void ClearRules()
+        {
+            this.RuleTable.Rows.Clear();
+        }
+
+
+
+
+
+        public bool RemoveRule(string friendlyRule)
+        {
+            int i;
+            int rowIndexToRemove = -1;
+            DataRow row = null;
+
+            for (i = 0; i < RuleTable.Rows.Count; i++)
+            {
+                row = RuleTable.Rows[i];
+                string str = row[COLUMN_RULE].ToString();
+
+                if (str.Equals(friendlyRule))
+                {
+                    rowIndexToRemove = i;
+                    break;
+                }
+            }
+
+            if (rowIndexToRemove >= 0)
+            {
+                row = RuleTable.Rows[rowIndexToRemove];
+
+                IDashboardRule rule = ((IDashboardRule)row[COLUMN_RULE]);
+
+                if (rule is DataAssignmentRule && this.GetColumnAssignmentCount(rule.FriendlyRule) == 1)
+                {
+                    DataAssignmentRule assignRule = rule as DataAssignmentRule;
+                    if (dashboardHelper.TableColumnNames.ContainsKey(assignRule.DestinationColumnName))
+                    {
+                        dashboardHelper.TableColumnNames.Remove(assignRule.DestinationColumnName);
+                    }
+                }
+
+                RuleTable.Rows.Remove(row);
+                return true;
+            }
+            return false;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public int GetDependencyCount(string friendlyRule)
+        {
+            return GetDependencyList(friendlyRule).Count;
+        }
+
+
+
+
+
+        public List GetDependencyList(string friendlyRule)
+        {
+            IDashboardRule rule = GetRule(friendlyRule);
+            List dependencies = new List();
+
+            if (rule is DataAssignmentRule)
+            {
+
+                DataAssignmentRule assignRule = rule as DataAssignmentRule;
+
+                for (int i = 0; i < RuleTable.Rows.Count; i++)
+                {
+                    DataRow row = RuleTable.Rows[i];
+                    IDashboardRule iRule = ((IDashboardRule)row[COLUMN_RULE]);
+
+                    if (rule is DataAssignmentRule && rule.FriendlyRule != friendlyRule)
+                    {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    }
+                }
+            }
+
+            return dependencies;
+        }
+
+
+
+
+
+        public int GetColumnAssignmentCount(string friendlyRule)
+        {
+            IDashboardRule rule = GetRule(friendlyRule);
+
+            if (rule is DataAssignmentRule)
+            {
+                DataAssignmentRule assignRule = rule as DataAssignmentRule;
+                return GetRules(assignRule.DestinationColumnName).Count;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
+
+
+
+
+
+        public IDashboardRule GetRule(string friendlyRule)
+        {
+            int i;
+            DataRow row = null;
+
+            for (i = 0; i < RuleTable.Rows.Count; i++)
+            {
+                row = RuleTable.Rows[i];
+                string str = row[COLUMN_RULE].ToString();
+
+                if (str.Equals(friendlyRule))
+                {
+                    return ((IDashboardRule)row[COLUMN_RULE]);
+                }
+            }
+
+            return null;
+        }
+
+
+
+
+
+
+        public int GetRuleRunOrder(string friendlyRule)
+        {
+            int i;
+            DataRow row = null;
+
+            for (i = 0; i < RuleTable.Rows.Count; i++)
+            {
+                row = RuleTable.Rows[i];
+                string str = row[COLUMN_RULE].ToString();
+
+                if (str.Equals(friendlyRule))
+                {
+                    return ((int)row[COLUMN_RUN_ORDER]);
+                }
+            }
+
+            return -1;
+        }
+
+
+
+
+
+
+        public List GetRules(string destinationColumnName)
+        {
+            int i;
+            DataRow row = null;
+            List rules = new List();
+
+            for (i = 0; i < RuleTable.Rows.Count; i++)
+            {
+                row = RuleTable.Rows[i];
+                IDashboardRule rule = ((IDashboardRule)row[COLUMN_RULE]);
+                if (rule is DataAssignmentRule)
+                {
+                    DataAssignmentRule assignRule = rule as DataAssignmentRule;
+                    if (assignRule.DestinationColumnName.ToLower().Equals(destinationColumnName.ToLower()))
+                    {
+                        rules.Add(assignRule);
+                    }
+                }
+            }
+
+            return rules;
+        }
+
+
+
+
+
+        public Dictionary GetUserDefinedVariables()
+        {
+            Dictionary userDefinedVariableNames = new Dictionary();
+            foreach (IDashboardRule rule in this)
+            {
+                if (rule is DataAssignmentRule)
+                {
+                    DataAssignmentRule assignRule = rule as DataAssignmentRule;
+                    userDefinedVariableNames.Add(assignRule.DestinationColumnName, assignRule.DestinationColumnType);
+                }
+            }
+
+            return userDefinedVariableNames;
+        }
+
+
+
+
+
+
+
+        public bool UpdateRule(IDashboardRule originalRule, IDashboardRule updatedRule)
+        {
+            int i;
+            int rowIndexToUpdate = -1;
+            DataRow row = null;
+
+            for (i = 0; i < RuleTable.Rows.Count; i++)
+            {
+                row = RuleTable.Rows[i];
+
+                IDashboardRule currentRowRule = ((IDashboardRule)row[COLUMN_RULE]);
+
+                if (currentRowRule.Equals(originalRule))
+                {
+                    rowIndexToUpdate = i;
+                    break;
+                }
+            }
+
+            if (rowIndexToUpdate >= 0)
+            {
+                row = RuleTable.Rows[rowIndexToUpdate];
+                row[COLUMN_RULE] = updatedRule;
+                return true;
+            }
+            return false;
+        }
+
+
+
+
+
+        public XmlElement Serialize(XmlDocument doc)
+        {
+            System.Xml.XmlElement root = doc.CreateElement("dashboardRules");
+
+            foreach (IDashboardRule rule in this)
+            {
+                root.AppendChild(rule.Serialize(doc));
+            }
+            return root;
+        }
+
+
+
+
+
+        public void CreateFromXml(XmlElement element)
+        {
+            foreach (System.Xml.XmlElement iChild in element.ChildNodes)
+            {
+                if (iChild.Name.Equals("rule"))
+                {
+                    string type = string.Empty;
+                    foreach (XmlAttribute attribute in iChild.Attributes)
+                    {
+                        switch (attribute.Name.ToLower())
+                        {
+                            case "ruletype":
+                                type = attribute.Value;
+                                break;
+                        }
+                    }
+
+                    IDashboardRule rule = (IDashboardRule)Activator.CreateInstance(Type.GetType(type),  CxNull);
+
+                    try
+                    {
+                        rule.CreateFromXml(iChild);
+                        AddRule(rule);
+                    }
+                    catch (NullReferenceException ex)
+                    {
+                        Epi.WPF.Dashboard.Dialogs.MsgBox.ShowWarning(ex.Message);
+                    }
+                }
+            }
+        }
+
+
+
+
+
+        public string GetDefinedVariableType(string variableName)
+        {
+            foreach (IDashboardRule rule in this)
+            {
+                if (rule is DataAssignmentRule)
+                {
+                    DataAssignmentRule assignRule = rule as DataAssignmentRule;
+                    return assignRule.DestinationColumnType;
+                }
+            }
+
+            throw new ApplicationException(string.Format(SharedStrings.DASHBOARD_ERROR_DEFINED_VARIABLE_MISSING, variableName));
+        }
+        //
+
+        //IEnumerable Members
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return new DashboardRulesEnumerator(RuleTable);
+        }
+
+        public void Dispose() { }
+
+        //
+
+
+
+
+        protected class DashboardRulesEnumerator : IEnumerator
+        {
+            //Private Members
+            private DataTable ruleTable;
+            private int currentIndex;
+            //Private Members
+
+            public DashboardRulesEnumerator(DataTable table)
+            {
+                ruleTable = table;
+                Reset();
+            }
+
+            public void Reset()
+            {
+                currentIndex = -1;
+            }
+
+            public IDashboardRule Current
+            {
+                get
+                {
+                    return (IDashboardRule)ruleTable.Rows[currentIndex][COLUMN_RULE];
+                }
+            }
+
+            object IEnumerator.Current
+            {
+                get
+                {
+                    return Current;
+                }
+            }
+
+            public bool MoveNext()
+            {
+                currentIndex++;
+                return currentIndex < ruleTable.Rows.Count;
+            }
+
+            public void Dispose() { }
+        }
+    }
+}
+
+ 

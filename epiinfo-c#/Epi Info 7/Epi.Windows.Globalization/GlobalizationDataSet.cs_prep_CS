@@ -1,0 +1,69 @@
+﻿using System.Data;
+using System;
+
+namespace Epi.Windows.Globalization
+{
+
+            class GlobalizationDataSet
+    {
+                class CulturalResourcesDataTable
+        {
+
+
+
+
+
+
+            public GlobalizationDataSet.CulturalResourcesDataTable SelectFilter(string expression)
+            {
+                GlobalizationDataSet.CulturalResourcesDataTable dt = new GlobalizationDataSet.CulturalResourcesDataTable();
+
+                foreach (DataRow dr in this.Select(expression))
+                {
+                    dt.Rows.Add(dr.ItemArray);
+                }
+
+                return dt;
+            }
+
+
+
+
+
+
+            public GlobalizationDataSet.CulturalResourcesDataTable SelectDistinct(string FieldName)
+            {
+                GlobalizationDataSet.CulturalResourcesDataTable dt = new GlobalizationDataSet.CulturalResourcesDataTable();
+
+                object LastValue = null;
+                foreach (DataRow dr in this.Select("", FieldName))
+                {
+                    if (LastValue == null || !(ColumnEqual(LastValue, dr[FieldName])))
+                    {
+                        LastValue = dr[FieldName];
+                        dt.Rows.Add(dr.ItemArray);
+                    }
+                }
+
+                return dt;
+            }
+
+            private bool ColumnEqual(object A, object B)
+            {
+
+
+
+
+
+                if (A == DBNull.Value && B == DBNull.Value) 
+                    return true;
+                if (A == DBNull.Value || B == DBNull.Value) 
+                    return false;
+                return (A.Equals(B));  
+            }
+
+        }
+    }
+}
+
+ 

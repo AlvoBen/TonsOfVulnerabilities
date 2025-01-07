@@ -1,0 +1,25 @@
+﻿namespace Epi
+{
+
+
+
+    public enum MessageType
+    {
+
+
+
+        OkOnly = 1,
+
+
+
+
+        YesNo = 2,
+
+
+
+
+        Beep
+    }
+}
+
+ 

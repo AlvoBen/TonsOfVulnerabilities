@@ -1,0 +1,384 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using com.calitha.goldparser;
+using EpiInfo.Plugin;
+
+namespace Epi.Core.AnalysisInterpreter.Rules
+{
+    public class Rule_CoxPH : AnalysisRule
+    {
+
+        bool HasRun = false;
+
+
+
+
+
+
+
+        /*
+ ::= Identifier
+ ::= Identifier  '('   ')'
+                    | Identifier  '(' Boolean ')'
+
+ ::= COXPH  '='   '*'  
+                    | COXPH  '='   '*'   
+
+ ::=  |  
+
+ ::= WEIGHTVAR '=' Identifier
+       | TIMEUNIT '=' String
+       | GRAPHTYPE '=' String
+       | OUTTABLE '=' Identifier
+       | STRATAVAR '=' 
+       | GRAPH '=' 
+       | DIALOG
+       | SHOWOBSERVED
+       | PVALUE '=' Percentage
+       | PVALUE '=' RealLiteral
+
+
+ ::=  |  
+ ::= ':'  ':'
+                    | ':' Identifier ':'
+ ::= Identifier
+       | '(' Identifier ')'
+       | Identifier  orSet
+       | '(' Identifier ')' 
+        */
+        string commandText = null;
+
+        string time_variable = null;
+        List DiscreteList = new List();
+        List CovariateList = new List();
+        string time_function = null;
+        string censor_variable = null;
+        string censor_value = null;
+        string time_unit = null;
+        string out_table = null;
+        string graph_type = null;
+        string weightvar = null;
+        string p_value = null;
+
+        List StrataVarList = new List();
+        List GraphVariableList = new List();
+
+        public Rule_CoxPH(Rule_Context pContext, NonterminalToken pToken)
+            : base(pContext)
+        {
+            /*
+             ::= COXPH Identifier '='  '*' Identifier '(' DecLiteral ')' 
+             ::= COXPH Identifier '='  '*' Identifier '(' Boolean ')' */
+
+
+
+            string[] saCensorArray;
+
+            this.commandText = this.ExtractTokens(pToken.Tokens);
+            this.time_variable = this.GetCommandElement(pToken.Tokens, 1).Trim( CxNull);
+
+            saCensorArray = GetUncensoredVarVal(this.GetCommandElement(pToken.Tokens, 5));
+            this.censor_variable = saCensorArray[0].Trim( CxNull);
+            this.censor_value = saCensorArray[1].Trim( CxNull);
+
+            this.SetTermList((NonterminalToken) pToken.Tokens[3]);
+
+            if (pToken.Tokens.Length > 6)
+            {
+                this.SetOptionList((NonterminalToken)pToken.Tokens[6]);
+            }
+        }
+
+
+
+
+
+
+
+        protected string[] GetUncensoredVarVal(string censored_input)
+        {
+            Int32 iOpenParen;
+            Int32 iCloseParen;
+            Int32 iCensorLen;
+            string[] strUncensoredVarVal = new string[2];
+            char[] charsToTrim = { '"', ' ', '\'' };
+
+            iOpenParen = censored_input.IndexOf("(");
+            if (iOpenParen > 0)
+            {
+
+                strUncensoredVarVal[0] = censored_input.Substring(0, iOpenParen).Trim();
+                iCloseParen = censored_input.IndexOf(")");
+                iCensorLen = iCloseParen - iOpenParen;
+
+                strUncensoredVarVal[1] = censored_input.Substring(iOpenParen + 1, iCensorLen - 1).Trim(charsToTrim);
+            }
+            else
+            {
+                strUncensoredVarVal[0] = censored_input;
+                strUncensoredVarVal[1] = censored_input;
+            }
+            return strUncensoredVarVal;
+        }
+
+
+        private void SetTermList(NonterminalToken pToken)
+        {
+
+            if (pToken.Symbol.ToString() == "")
+            {
+                this.SetTerm(pToken);
+            }
+            else if (pToken.Symbol.ToString() == "")
+            {
+                    this.SetTerm((NonterminalToken)pToken.Tokens[0]);
+                    this.SetTermList((NonterminalToken)pToken.Tokens[1]);
+            }
+            else
+            {
+                foreach (Token T in pToken.Tokens)
+                {
+                    if (T is NonterminalToken)
+                    {
+                        NonterminalToken NT = (NonterminalToken)T;
+                        switch (NT.Symbol.ToString())
+                        {
+                            case "":
+                            case "":
+                                this.SetTerm(NT);
+                                break;
+                            case "":
+                                this.SetTermList(NT);
+                                break;
+                        }
+                    }
+
+                }
+            }
+        }
+
+        private void SetTerm(NonterminalToken pToken)
+        {
+            /*
+             ::= Identifier
+                   | '(' Identifier ')'
+                   | Identifier ':' 
+                   | '(' Identifier ')' ':' 
+                   | Identifier ':'  Identifier ':'
+                   | '(' Identifier ')' ':' Identifier ':'
+            */
+            string value = null;
+            switch (pToken.Rule.Rhs[0].ToString())
+            {
+                case "Identifier":
+
+
+
+                    value = this.GetCommandElement(pToken.Tokens, 0).Trim( CxNull);
+                    if (pToken.Tokens.Length > 2)
+                    {
+                        value += ":" + this.GetCommandElement(pToken.Tokens, 2).Trim('"');
+                    }
+                    this.CovariateList.Add(value);
+                    break;
+
+                case "(":
+
+
+                    value = this.GetCommandElement(pToken.Tokens, 1);
+                    if (pToken.Tokens.Length > 3)
+                    {
+                        value += ":" + this.GetCommandElement(pToken.Tokens, 4).Trim( CxNull);
+                    }
+                    this.DiscreteList.Add(value);
+                    this.CovariateList.Add(value);
+                    break;
+                default:
+
+                    break;
+            }
+        }
+
+        private void SetOptionList(NonterminalToken pToken)
+        {
+
+            switch (pToken.Symbol.ToString())
+            {
+                case "":
+                    this.SetOption(pToken);
+                    break;
+                case "":
+                    foreach (Token T in pToken.Tokens)
+                    {
+                        if (T is NonterminalToken)
+                        {
+                            NonterminalToken NT = (NonterminalToken)T;
+                            switch (NT.Symbol.ToString())
+                            {
+                                case "":
+                                    this.SetOption(NT);
+                                    break;
+                                case "":
+                                    this.SetOptionList(NT);
+                                    break;
+                            }
+
+                        }
+
+                    }
+                    break;
+            }
+        }
+
+        private void SetOption(NonterminalToken pToken)
+        {
+            /*
+             ::= WEIGHTVAR '=' Identifier
+                   | TIMEUNIT '=' String
+                   | GRAPHTYPE '=' String
+                   | OUTTABLE '=' Identifier
+                   | STRATAVAR '=' 
+                   | GRAPH '=' 
+                   | DIALOG
+                   | SHOWOBSERVED
+                   | PVALUE '=' Percentage
+                   | PVALUE '=' RealLiteral
+            */
+            switch (pToken.Rule.Rhs[0].ToString())
+            {
+                case "WEIGHTVAR":
+                    this.weightvar = this.GetCommandElement(pToken.Tokens, 2).Trim('"').Trim( CxNull);
+                    break;
+                case "TIMEUNIT":
+                    this.time_unit = this.GetCommandElement(pToken.Tokens, 2).Trim('"').Trim( CxNull);
+                    break;
+                case "GRAPHTYPE":
+                    this.graph_type = this.GetCommandElement(pToken.Tokens, 2).Trim('"').Trim( CxNull);
+                    break;
+                case "OUTTABLE":
+                    this.out_table = this.GetCommandElement(pToken.Tokens, 2).Trim('"').Trim( CxNull);
+                    break;
+                case "STRATAVAR":
+                    this.StrataVarList.AddRange(AnalysisRule.SpliIdentifierList(this.GetCommandElement(pToken.Tokens, 2)));
+                    break;
+                case "GRAPH":
+                    this.GraphVariableList.AddRange(AnalysisRule.SpliIdentifierList(this.GetCommandElement(pToken.Tokens, 2)));
+                    break;
+                case "DIALOG":
+                case "SHOWOBSERVED":
+                case "PVALUE":
+                    this.p_value = this.GetCommandElement(pToken.Tokens, 2).Trim( CxNull);
+                    break;
+                default:
+
+                    break;
+            }
+        }
+
+
+
+
+
+        public override object Execute()
+        {
+            object result = null;
+
+            if (!this.HasRun)
+            {
+
+
+                IAnalysisStatistic CoxPH = null;
+
+
+
+
+
+
+                Dictionary setProperties = this.Context.GetGlobalSettingProperties();
+                if (this.Context.CurrentRead == null)
+                {
+                    setProperties.Add("TableName", "");
+                }
+                else
+                {
+                    setProperties.Add("TableName", this.Context.CurrentRead.Identifier);
+                }
+                setProperties.Add("CommandText", this.commandText);
+                Dictionary inputVariableList = new Dictionary(StringComparer.OrdinalIgnoreCase);
+
+                inputVariableList.Add("time_variable", time_variable);
+                StringBuilder sb = new StringBuilder();
+                foreach (string s in this.CovariateList)
+                {
+                    sb.Append(s);
+                    sb.Append(",");
+                }
+                if (sb.Length > 0)
+                {
+                    sb.Length = sb.Length - 1;
+                }
+                inputVariableList.Add("CovariateList", sb.ToString());
+                sb.Length = 0;
+                foreach (string s in this.DiscreteList)
+                {
+                    sb.Append(s);
+                    sb.Append(",");
+                }
+                if (this.DiscreteList.Count > 0)
+                {
+                    sb.Length = sb.Length - 1;
+                }
+
+                inputVariableList.Add("DiscreteList", sb.ToString());
+                inputVariableList.Add("time_function", time_function);
+                inputVariableList.Add("censor_variable", censor_variable);
+                inputVariableList.Add("censor_value", censor_value);
+                inputVariableList.Add("time_unit", time_unit);
+
+                inputVariableList.Add("out_table", out_table);
+                inputVariableList.Add("graph_type", graph_type);
+                inputVariableList.Add("weightvar", weightvar);
+
+                sb.Length = 0;
+
+                foreach (string s in StrataVarList)
+                {
+                    sb.Append(s);
+                    sb.Append(",");
+                }
+                if (sb.Length > 0)
+                {
+                    sb.Length = sb.Length - 1;
+                }
+                inputVariableList.Add("StrataVarList", sb.ToString());
+
+                sb.Length = 0;
+                foreach (string s in GraphVariableList)
+                {
+                    sb.Append(s);
+                    sb.Append(",");
+                }
+                if (sb.Length > 0)
+                {
+                    sb.Length = sb.Length - 1;
+                }
+                inputVariableList.Add("GraphVariableList", sb.ToString());
+
+                IDataSource DataSource = this.Context.GetDefaultIDataSource();
+
+                AnalysisStatisticExecuteHost statisticHost = new AnalysisStatisticExecuteHost(this.Context, setProperties, DataSource, inputVariableList, this.Context.CurrentSelect.ToString(), this.Context.AnalysisInterpreterHost);
+
+                CoxPH = this.Context.GetStatistic("CoxProportionalHazards", statisticHost);
+                CoxPH.Execute();
+                this.HasRun = true;
+            }
+
+            return result;
+        }
+    }
+}
+
+
+ 

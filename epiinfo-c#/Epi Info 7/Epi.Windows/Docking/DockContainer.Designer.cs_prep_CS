@@ -1,0 +1,66 @@
+﻿namespace Epi.Windows.Docking
+{
+            class DockContainer
+    {
+
+
+
+        private System.ComponentModel.IContainer components = null;
+
+
+
+
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+  //Component Designer generated code
+
+
+
+
+  private void InitializeComponent()
+  {
+   this.components = new System.ComponentModel.Container();
+   this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+   this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+   this.autoHideTimer = new System.Windows.Forms.Timer(this.components);
+   this.SuspendLayout();
+
+
+
+   this.toolTip.Active = false;
+
+
+
+   this.contextMenuStrip.Name = "contextMenuStrip";
+   this.contextMenuStrip.Size = new System.Drawing.Size(61, 4);
+   this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
+
+
+
+   this.autoHideTimer.Interval = 25;
+   this.autoHideTimer.Tick += new System.EventHandler(this.autoHideTimer_Tick);
+
+
+
+   this.BackColor = System.Drawing.Color.Transparent;
+   this.ResumeLayout(false);
+
+  }
+  //
+
+
+
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
+        private System.Windows.Forms.Timer autoHideTimer;
+        private System.Windows.Forms.ToolTip toolTip;
+    }
+}
+ 

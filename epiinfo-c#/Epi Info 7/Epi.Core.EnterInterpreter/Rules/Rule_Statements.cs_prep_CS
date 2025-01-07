@@ -1,0 +1,59 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using com.calitha.goldparser;
+
+namespace Epi.Core.EnterInterpreter.Rules
+{
+   public class Rule_Statements: EnterRule
+   {
+
+       public EnterRule statement = null;
+       public EnterRule statements = null;
+
+       public Rule_Statements(Rule_Context pContext, NonterminalToken pToken) : base(pContext)
+       {
+
+
+           if (pToken.Tokens.Length > 1)
+           {
+
+
+
+               this.statements = EnterRule.BuildStatments(pContext, pToken.Tokens[0]);
+
+
+
+               this.statement = EnterRule.BuildStatments(pContext, pToken.Tokens[1]);
+           }
+           else
+           {
+
+
+
+               this.statement = EnterRule.BuildStatments(pContext, pToken.Tokens[0]);
+           }
+       }
+
+
+
+
+
+      public override object Execute()
+      {
+        object result = null;
+
+        if (! this.statements.IsNull())
+        {
+          result = this.statements.Execute();
+
+        }
+
+        result = this.statement.Execute();
+
+        return result;
+       }
+    }
+}
+
+ 

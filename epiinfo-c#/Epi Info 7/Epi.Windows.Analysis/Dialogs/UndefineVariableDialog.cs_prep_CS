@@ -1,0 +1,154 @@
+﻿using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Epi.Analysis;
+using Epi;
+using Epi.Windows;
+using Epi.Windows.Dialogs;
+using Epi.Windows.Analysis;
+
+namespace Epi.Windows.Analysis.Dialogs
+{
+
+
+
+    public         class UndefineVariableDialog : CommandDesignDialog
+ {
+
+  //Constructors
+
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+  public UndefineVariableDialog()
+  {
+   InitializeComponent();
+        }
+
+
+
+
+
+        public UndefineVariableDialog(Epi.Windows.Analysis.Forms.AnalysisMainForm frm)
+            : base(frm)
+  {
+   InitializeComponent();
+            Construct();
+        }
+        private void Construct()
+        {
+            if (!this.DesignMode)
+            {
+                this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+                this.btnSaveOnly.Click += new System.EventHandler(this.btnSaveOnly_Click);
+            }
+  }
+  //Constructors
+
+
+  //Event Handlers
+
+
+
+
+
+  private void cmbVarName_Leave(object sender, System.EventArgs e)
+  {
+   CheckForInputSufficiency();
+  }
+
+
+
+
+
+  private void btnClear_Click(object sender, System.EventArgs e)
+  {
+   cmbVarName.Text = string.Empty;
+   CheckForInputSufficiency();
+  }
+
+
+
+
+
+
+        protected override void btnHelp_Click(object sender, System.EventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://wwwn.cdc.gov/epiinfo/user-guide/command-reference/analysis-commands-undefine.html");
+        }
+
+  //
+
+  //Protected Methods
+
+
+
+
+  protected override bool ValidateInput()
+  {
+   base.ValidateInput ();
+
+   if (string.IsNullOrEmpty(cmbVarName.Text.Trim()))
+   {
+    ErrorMessages.Add(SharedStrings.EMPTY_VARNAME);
+   }
+   return (ErrorMessages.Count == 0);
+  }
+
+
+
+  protected override void GenerateCommand()
+  {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(CommandNames.UNDEFINE);
+            sb.Append(StringLiterals.SPACE);
+            sb.Append(FieldNameNeedsBrackets(cmbVarName.Text) ? Util.InsertInSquareBrackets(cmbVarName.Text) : cmbVarName.Text);
+            CommandText = sb.ToString();
+  }
+
+
+
+        public override void CheckForInputSufficiency()
+  {
+   bool inputValid = ValidateInput();
+   btnOK.Enabled = inputValid;
+   btnSaveOnly.Enabled = inputValid;
+  }
+  //
+
+  private void UndefineVariableDialog_Load(object sender, System.EventArgs e)
+  {
+   LoadDefinedVariables();
+  }
+
+  //Private Methods
+  private void LoadDefinedVariables()
+  {
+
+
+
+
+
+
+
+
+
+
+
+
+
+            VariableType scopeWord = VariableType.Standard | VariableType.Global | VariableType.Permanent;
+            FillVariableCombo(cmbVarName, scopeWord);
+   cmbVarName.SelectedIndex = -1;
+  }
+  //Private Methods
+ }
+}
+
+
+ 

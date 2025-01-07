@@ -1,0 +1,209 @@
+﻿using System;
+using System.Data;
+using System.Drawing;
+using System.Xml;
+
+using Epi.Data.Services;
+using EpiInfo.Plugin;
+
+namespace Epi.Fields
+{
+
+
+
+ public class ForeignKeyField : PredefinedDataField, IMirrorable, IInputField
+ {
+  //Constructors
+
+
+
+
+
+  public ForeignKeyField(View view) : base(view)
+  {
+   Construct();
+  }
+
+
+
+
+
+
+        public ForeignKeyField(View view, XmlElement viewElement)
+            : this(view)
+        {
+            this.viewElement = viewElement;
+        }
+
+
+
+
+
+
+        public ForeignKeyField(View view, XmlNode fieldNode)
+            : this(view)
+        {
+            this.fieldNode = fieldNode;
+            this.view.Project.Metadata.GetFieldData(this, fieldNode);
+        }
+
+
+
+
+  private void Construct()
+  {
+            this.Name = ColumnNames.FOREIGN_KEY;
+  }
+  //Constructors
+
+        //Private Data Members
+        private XmlElement viewElement;
+        private XmlNode fieldNode;
+        // 
+
+        //Public Properties
+
+
+
+        public override MetaFieldType FieldType
+        {
+            get
+            {
+                return MetaFieldType.ForeignKey;
+            }
+        }
+
+
+
+
+        public override string PromptText
+        {
+            get
+            {
+                return SharedStrings.FOREIGN_KEY;
+            }
+            set
+            {
+                throw new GeneralException("Prompt for Foreign key is pre-defined");
+            }
+        }
+        public string Prompt { get { return SharedStrings.FOREIGN_KEY; } set { return; } }
+
+
+
+
+
+        public  bool IsReadOnly
+        {
+            get
+            {
+                return true;
+            }
+            set
+            {
+                throw new GeneralException("IsReadOnly for Foreign Key is pre-defined");
+            }
+        }
+
+
+
+
+        public  bool IsRequired
+        {
+            get
+            {
+                return false;
+            }
+            set
+            {
+                throw new GeneralException("IsRequired for Foreign Key is pre-defined");
+            }
+        }
+
+
+
+
+        public  bool ShouldRepeatLast
+        {
+            get
+            {
+                return false;
+            }
+            set
+            {
+                throw new GeneralException("ShouldRepeatLast for Foreign Key is pre-defined");
+            }
+        }
+
+
+
+
+        public string GetDbSpecificColumnType()
+        {
+            return SqlDataTypes.NVARCHAR;
+        }
+
+
+
+        public XmlElement ViewElement
+        {
+            get
+            {
+                return viewElement;
+            }
+            set
+            {
+                viewElement = value;
+            }
+        }
+
+
+         //Public Properties
+
+        //Public Methods
+
+
+
+
+  protected override void InsertField()
+  {
+   if (this.Id == 0)
+   {
+                this.Id = GetMetadata().CreateField(this);
+   }
+   else
+   {
+    throw new System.ApplicationException("Foreign key field already exists");
+   }
+  }
+
+
+
+
+  public override void Delete()
+  {
+   GetMetadata().DeleteField(this);
+  }
+
+
+
+
+
+        public virtual string GetReflectedValue()
+        {
+            return this.CurrentRecordValueString;
+        }
+
+  //
+
+        //ICloneable Members
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+
+        //
+ }
+}
+ 

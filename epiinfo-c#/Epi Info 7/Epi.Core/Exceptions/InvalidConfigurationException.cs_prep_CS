@@ -1,0 +1,51 @@
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Epi
+{
+
+
+
+    [Serializable]
+    public class InvalidConfigurationException : GeneralException
+    {
+        //Constructors
+
+
+
+
+        public InvalidConfigurationException(string message)
+            : base(message)
+        {
+        }
+
+
+
+
+
+
+
+
+        public InvalidConfigurationException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
+
+
+
+
+
+
+        public InvalidConfigurationException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+
+        //
+    }
+}
+
+ 

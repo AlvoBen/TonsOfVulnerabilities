@@ -1,0 +1,245 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows.Controls;
+using ComponentArt.Win.DataVisualization.Charting;
+using ComponentArt.Win.DataVisualization.Common;
+using ComponentArt.Win.DataVisualization;
+
+namespace EpiDashboard.Gadgets.Charting
+{
+
+
+
+
+
+
+
+
+
+    public interface IChartSettings
+    {
+        bool UseRefValues { get; set; }
+        bool ShowAnnotationsY2 { get; set; }
+        bool ShowDefaultGridLines { get; set; }
+        Palette Palette { get; set; }
+        LineKind LineKindY2 { get; set; }
+        LineDashStyle LineDashStyleY2 { get; set; }
+        string Y2AxisLabel { get; set; }
+        string Y2AxisLegendTitle { get; set; }
+        string YAxisLabel { get; set; }
+        string XAxisLabel { get; set; }
+        double Y2LineThickness { get; set; }
+        XAxisLabelType XAxisLabelType { get; set; }
+        int XAxisLabelRotation { get; set; }
+        string ChartTitle { get; set; }
+        string ChartStrataTitle { get; set; }
+        string ChartSubTitle { get; set; }
+        bool ShowLegend { get; set; }
+        bool ShowLegendBorder { get; set; }
+        bool ShowLegendVarNames { get; set; }
+        double LegendFontSize { get; set; }
+        int ChartWidth { get; set; }
+        int ChartHeight { get; set; }
+        string YAxisFormattingString { get; set; }
+        string Y2AxisFormattingString { get; set; }
+
+        ComponentArt.Win.DataVisualization.Charting.Dock LegendDock { get; set; }
+    }
+
+    public class AreaChartSettings : IChartSettings
+    {
+        public bool ShowSeriesLine { get {return _ShowSeriesLine; } set{ _ShowSeriesLine=value; } } bool _ShowSeriesLine;
+        public bool UseRefValues { get {return _UseRefValues; } set{ _UseRefValues=value; } } bool _UseRefValues;
+        public bool ShowAnnotationsY2 { get {return _ShowAnnotationsY2; } set{ _ShowAnnotationsY2=value; } } bool _ShowAnnotationsY2;
+        public bool ShowDefaultGridLines { get {return _ShowDefaultGridLines; } set{ _ShowDefaultGridLines=value; } } bool _ShowDefaultGridLines;
+        public CompositionKind Composition { get {return _Composition; } set{ _Composition=value; } } CompositionKind _Composition;
+        public Palette Palette { get {return _Palette; } set{ _Palette=value; } } Palette _Palette;
+        public LineKind AreaType { get {return _AreaType; } set{ _AreaType=value; } } LineKind _AreaType;
+        public LineKind LineKindY2 { get {return _LineKindY2; } set{ _LineKindY2=value; } } LineKind _LineKindY2;
+        public LineDashStyle LineDashStyleY2 { get {return _LineDashStyleY2; } set{ _LineDashStyleY2=value; } } LineDashStyle _LineDashStyleY2;
+        public string Y2AxisLabel { get {return _Y2AxisLabel; } set{ _Y2AxisLabel=value; } } string _Y2AxisLabel;
+        public string Y2AxisLegendTitle { get {return _Y2AxisLegendTitle; } set{ _Y2AxisLegendTitle=value; } } string _Y2AxisLegendTitle;
+        public int TransparencyTop { get {return _TransparencyTop; } set{ _TransparencyTop=value; } } int _TransparencyTop;
+        public int TransparencyBottom { get {return _TransparencyBottom; } set{ _TransparencyBottom=value; } } int _TransparencyBottom;
+        public string YAxisLabel { get {return _YAxisLabel; } set{ _YAxisLabel=value; } } string _YAxisLabel;
+        public string XAxisLabel { get {return _XAxisLabel; } set{ _XAxisLabel=value; } } string _XAxisLabel;
+        public double Y2LineThickness { get {return _Y2LineThickness; } set{ _Y2LineThickness=value; } } double _Y2LineThickness;
+        public XAxisLabelType XAxisLabelType { get {return _XAxisLabelType; } set{ _XAxisLabelType=value; } } XAxisLabelType _XAxisLabelType;
+        public int XAxisLabelRotation { get {return _XAxisLabelRotation; } set{ _XAxisLabelRotation=value; } } int _XAxisLabelRotation;
+        public string ChartTitle { get {return _ChartTitle; } set{ _ChartTitle=value; } } string _ChartTitle;
+        public string ChartStrataTitle { get {return _ChartStrataTitle; } set{ _ChartStrataTitle=value; } } string _ChartStrataTitle;
+        public string ChartSubTitle { get {return _ChartSubTitle; } set{ _ChartSubTitle=value; } } string _ChartSubTitle;
+        public bool ShowLegend { get {return _ShowLegend; } set{ _ShowLegend=value; } } bool _ShowLegend;
+        public bool ShowLegendBorder { get {return _ShowLegendBorder; } set{ _ShowLegendBorder=value; } } bool _ShowLegendBorder;
+        public bool ShowLegendVarNames { get {return _ShowLegendVarNames; } set{ _ShowLegendVarNames=value; } } bool _ShowLegendVarNames;
+        public double LegendFontSize { get {return _LegendFontSize; } set{ _LegendFontSize=value; } } double _LegendFontSize;
+        public int ChartWidth { get {return _ChartWidth; } set{ _ChartWidth=value; } } int _ChartWidth;
+        public int ChartHeight { get {return _ChartHeight; } set{ _ChartHeight=value; } } int _ChartHeight;
+        public string YAxisFormattingString { get {return _YAxisFormattingString; } set{ _YAxisFormattingString=value; } } string _YAxisFormattingString;
+        public string Y2AxisFormattingString { get {return _Y2AxisFormattingString; } set{ _Y2AxisFormattingString=value; } } string _Y2AxisFormattingString;
+
+        public ComponentArt.Win.DataVisualization.Charting.Dock LegendDock { get {return _LegendDock; } set{ _LegendDock=value; } } Dock _LegendDock;
+    }
+
+    public class LineChartSettings : IChartSettings
+    {
+        public bool UseRefValues { get {return _UseRefValues; } set{ _UseRefValues=value; } } bool _UseRefValues;
+        public bool ShowAnnotations { get {return _ShowAnnotations; } set{ _ShowAnnotations=value; } } bool _ShowAnnotations;
+        public bool ShowAnnotationsY2 { get {return _ShowAnnotationsY2; } set{ _ShowAnnotationsY2=value; } } bool _ShowAnnotationsY2;
+        public bool ShowDefaultGridLines { get {return _ShowDefaultGridLines; } set{ _ShowDefaultGridLines=value; } } bool _ShowDefaultGridLines;
+        public Palette Palette { get {return _Palette; } set{ _Palette=value; } } Palette _Palette;
+        public LineKind LineKind { get {return _LineKind; } set{ _LineKind=value; } } LineKind _LineKind;
+        public LineKind LineKindY2 { get {return _LineKindY2; } set{ _LineKindY2=value; } } LineKind _LineKindY2;
+        public LineDashStyle LineDashStyleY2 { get {return _LineDashStyleY2; } set{ _LineDashStyleY2=value; } } LineDashStyle _LineDashStyleY2;
+        public string Y2AxisLabel { get {return _Y2AxisLabel; } set{ _Y2AxisLabel=value; } } string _Y2AxisLabel;
+        public string Y2AxisLegendTitle { get {return _Y2AxisLegendTitle; } set{ _Y2AxisLegendTitle=value; } } string _Y2AxisLegendTitle;
+        public string YAxisLabel { get {return _YAxisLabel; } set{ _YAxisLabel=value; } } string _YAxisLabel;
+        public string XAxisLabel { get {return _XAxisLabel; } set{ _XAxisLabel=value; } } string _XAxisLabel;
+        public double LineThickness { get {return _LineThickness; } set{ _LineThickness=value; } } double _LineThickness;
+        public double Y2LineThickness { get {return _Y2LineThickness; } set{ _Y2LineThickness=value; } } double _Y2LineThickness;
+        public XAxisLabelType XAxisLabelType { get {return _XAxisLabelType; } set{ _XAxisLabelType=value; } } XAxisLabelType _XAxisLabelType;
+        public int XAxisLabelRotation { get {return _XAxisLabelRotation; } set{ _XAxisLabelRotation=value; } } int _XAxisLabelRotation;
+        public string ChartTitle { get {return _ChartTitle; } set{ _ChartTitle=value; } } string _ChartTitle;
+        public string ChartStrataTitle { get {return _ChartStrataTitle; } set{ _ChartStrataTitle=value; } } string _ChartStrataTitle;
+        public string ChartSubTitle { get {return _ChartSubTitle; } set{ _ChartSubTitle=value; } } string _ChartSubTitle;
+        public bool ShowLegend { get {return _ShowLegend; } set{ _ShowLegend=value; } } bool _ShowLegend;
+        public bool ShowLegendBorder { get {return _ShowLegendBorder; } set{ _ShowLegendBorder=value; } } bool _ShowLegendBorder;
+        public bool ShowLegendVarNames { get {return _ShowLegendVarNames; } set{ _ShowLegendVarNames=value; } } bool _ShowLegendVarNames;
+        public double LegendFontSize { get {return _LegendFontSize; } set{ _LegendFontSize=value; } } double _LegendFontSize;
+        public int ChartWidth { get {return _ChartWidth; } set{ _ChartWidth=value; } } int _ChartWidth;
+        public int ChartHeight { get {return _ChartHeight; } set{ _ChartHeight=value; } } int _ChartHeight;
+        public string YAxisFormattingString { get {return _YAxisFormattingString; } set{ _YAxisFormattingString=value; } } string _YAxisFormattingString;
+        public string Y2AxisFormattingString { get {return _Y2AxisFormattingString; } set{ _Y2AxisFormattingString=value; } } string _Y2AxisFormattingString;
+
+        public ComponentArt.Win.DataVisualization.Charting.Dock LegendDock { get {return _LegendDock; } set{ _LegendDock=value; } } Dock _LegendDock;
+    }
+
+    public class ColumnChartSettings : IChartSettings
+    {
+        public bool UseDiffColors { get {return _UseDiffColors; } set{ _UseDiffColors=value; } } bool _UseDiffColors;
+        public bool UseRefValues { get {return _UseRefValues; } set{ _UseRefValues=value; } } bool _UseRefValues;
+        public bool ShowAnnotations { get {return _ShowAnnotations; } set{ _ShowAnnotations=value; } } bool _ShowAnnotations;
+        public bool ShowAnnotationsY2 { get {return _ShowAnnotationsY2; } set{ _ShowAnnotationsY2=value; } } bool _ShowAnnotationsY2;
+        public bool ShowDefaultGridLines { get {return _ShowDefaultGridLines; } set{ _ShowDefaultGridLines=value; } } bool _ShowDefaultGridLines;
+        public CompositionKind Composition { get {return _Composition; } set{ _Composition=value; } } CompositionKind _Composition;
+        public Orientation Orientation { get {return _Orientation; } set{ _Orientation=value; } } Orientation _Orientation;
+        public BarSpacing BarSpacing { get {return _BarSpacing; } set{ _BarSpacing=value; } } BarSpacing _BarSpacing;
+        public Palette Palette { get {return _Palette; } set{ _Palette=value; } } Palette _Palette;
+        public BarKind BarKind { get {return _BarKind; } set{ _BarKind=value; } } BarKind _BarKind;
+        public LineKind LineKindY2 { get {return _LineKindY2; } set{ _LineKindY2=value; } } LineKind _LineKindY2;
+        public LineDashStyle LineDashStyleY2 { get {return _LineDashStyleY2; } set{ _LineDashStyleY2=value; } } LineDashStyle _LineDashStyleY2;
+        public string Y2AxisLabel { get {return _Y2AxisLabel; } set{ _Y2AxisLabel=value; } } string _Y2AxisLabel;
+        public string Y2AxisLegendTitle { get {return _Y2AxisLegendTitle; } set{ _Y2AxisLegendTitle=value; } } string _Y2AxisLegendTitle;
+        public string YAxisLabel { get {return _YAxisLabel; } set{ _YAxisLabel=value; } } string _YAxisLabel;
+        public string XAxisLabel { get {return _XAxisLabel; } set{ _XAxisLabel=value; } } string _XAxisLabel;
+        public double Y2LineThickness { get {return _Y2LineThickness; } set{ _Y2LineThickness=value; } } double _Y2LineThickness;
+        public XAxisLabelType XAxisLabelType { get {return _XAxisLabelType; } set{ _XAxisLabelType=value; } } XAxisLabelType _XAxisLabelType;
+        public int XAxisLabelRotation { get {return _XAxisLabelRotation; } set{ _XAxisLabelRotation=value; } } int _XAxisLabelRotation;
+        public string ChartTitle { get {return _ChartTitle; } set{ _ChartTitle=value; } } string _ChartTitle;
+        public string ChartStrataTitle { get {return _ChartStrataTitle; } set{ _ChartStrataTitle=value; } } string _ChartStrataTitle;
+        public string ChartSubTitle { get {return _ChartSubTitle; } set{ _ChartSubTitle=value; } } string _ChartSubTitle;
+        public bool ShowLegend { get {return _ShowLegend; } set{ _ShowLegend=value; } } bool _ShowLegend;
+        public bool ShowLegendBorder { get {return _ShowLegendBorder; } set{ _ShowLegendBorder=value; } } bool _ShowLegendBorder;
+        public bool ShowLegendVarNames { get {return _ShowLegendVarNames; } set{ _ShowLegendVarNames=value; } } bool _ShowLegendVarNames;
+        public double LegendFontSize { get {return _LegendFontSize; } set{ _LegendFontSize=value; } } double _LegendFontSize;
+        public int ChartWidth { get {return _ChartWidth; } set{ _ChartWidth=value; } } int _ChartWidth;
+        public int ChartHeight { get {return _ChartHeight; } set{ _ChartHeight=value; } } int _ChartHeight;
+        public string YAxisFormattingString { get {return _YAxisFormattingString; } set{ _YAxisFormattingString=value; } } string _YAxisFormattingString;
+        public string Y2AxisFormattingString { get {return _Y2AxisFormattingString; } set{ _Y2AxisFormattingString=value; } } string _Y2AxisFormattingString;
+        public bool Y2IsCumulativePercent { get {return _Y2IsCumulativePercent; } set{ _Y2IsCumulativePercent=value; } } bool _Y2IsCumulativePercent;
+
+        public ComponentArt.Win.DataVisualization.Charting.Dock LegendDock { get {return _LegendDock; } set{ _LegendDock=value; } } Dock _LegendDock;
+    }
+
+    public class HistogramChartSettings : IChartSettings
+    {
+        public bool UseRefValues { get {return _UseRefValues; } set{ _UseRefValues=value; } } bool _UseRefValues;
+        public bool ShowAnnotations { get {return _ShowAnnotations; } set{ _ShowAnnotations=value; } } bool _ShowAnnotations;
+        public bool ShowAnnotationsY2 { get {return _ShowAnnotationsY2; } set{ _ShowAnnotationsY2=value; } } bool _ShowAnnotationsY2;
+        public bool ShowDefaultGridLines { get {return _ShowDefaultGridLines; } set{ _ShowDefaultGridLines=value; } } bool _ShowDefaultGridLines;
+        public Palette Palette { get {return _Palette; } set{ _Palette=value; } } Palette _Palette;
+        public BarKind BarKind { get {return _BarKind; } set{ _BarKind=value; } } BarKind _BarKind;
+        public LineKind LineKindY2 { get {return _LineKindY2; } set{ _LineKindY2=value; } } LineKind _LineKindY2;
+        public LineDashStyle LineDashStyleY2 { get {return _LineDashStyleY2; } set{ _LineDashStyleY2=value; } } LineDashStyle _LineDashStyleY2;
+        public BarSpacing BarSpacing { get {return _BarSpacing; } set{ _BarSpacing=value; } } BarSpacing _BarSpacing;
+        public int Step { get {return _Step; } set{ _Step=value; } } int _Step;
+        public DateType DateType { get {return _DateType; } set{ _DateType=value; } } DateType _DateType;
+
+        public DateTime StartDate { get {return _StartDate; } set{ _StartDate=value; } } DateTime _StartDate;
+        public DateTime EndDate { get {return _EndDate; } set{ _EndDate=value; } } DateTime _EndDate;
+
+        public string Y2AxisLabel { get {return _Y2AxisLabel; } set{ _Y2AxisLabel=value; } } string _Y2AxisLabel;
+        public string Y2AxisLegendTitle { get {return _Y2AxisLegendTitle; } set{ _Y2AxisLegendTitle=value; } } string _Y2AxisLegendTitle;
+
+        public string YAxisLabel { get {return _YAxisLabel; } set{ _YAxisLabel=value; } } string _YAxisLabel;
+        public string XAxisLabel { get {return _XAxisLabel; } set{ _XAxisLabel=value; } } string _XAxisLabel;
+        public double Y2LineThickness { get {return _Y2LineThickness; } set{ _Y2LineThickness=value; } } double _Y2LineThickness;
+        public XAxisLabelType XAxisLabelType { get {return _XAxisLabelType; } set{ _XAxisLabelType=value; } } XAxisLabelType _XAxisLabelType;
+        public int XAxisLabelRotation { get {return _XAxisLabelRotation; } set{ _XAxisLabelRotation=value; } } int _XAxisLabelRotation;
+        public string ChartTitle { get {return _ChartTitle; } set{ _ChartTitle=value; } } string _ChartTitle;
+        public string ChartStrataTitle { get {return _ChartStrataTitle; } set{ _ChartStrataTitle=value; } } string _ChartStrataTitle;
+        public string ChartSubTitle { get {return _ChartSubTitle; } set{ _ChartSubTitle=value; } } string _ChartSubTitle;
+        public bool ShowLegend { get {return _ShowLegend; } set{ _ShowLegend=value; } } bool _ShowLegend;
+        public bool ShowLegendBorder { get {return _ShowLegendBorder; } set{ _ShowLegendBorder=value; } } bool _ShowLegendBorder;
+        public bool ShowLegendVarNames { get {return _ShowLegendVarNames; } set{ _ShowLegendVarNames=value; } } bool _ShowLegendVarNames;
+        public double LegendFontSize { get {return _LegendFontSize; } set{ _LegendFontSize=value; } } double _LegendFontSize;
+        public int ChartWidth { get {return _ChartWidth; } set{ _ChartWidth=value; } } int _ChartWidth;
+        public int ChartHeight { get {return _ChartHeight; } set{ _ChartHeight=value; } } int _ChartHeight;
+
+        public string YAxisFormattingString { get {return _YAxisFormattingString; } set{ _YAxisFormattingString=value; } } string _YAxisFormattingString;
+        public string Y2AxisFormattingString { get {return _Y2AxisFormattingString; } set{ _Y2AxisFormattingString=value; } } string _Y2AxisFormattingString;
+
+        public ComponentArt.Win.DataVisualization.Charting.Dock LegendDock { get {return _LegendDock; } set{ _LegendDock=value; } } Dock _LegendDock;
+    }
+
+    public enum DateType
+    {
+        Minute,
+        Hour,
+        Day,
+        Month,
+        Year
+    }
+
+    public class PieChartSettings : IChartSettings
+    {
+        public bool UseRefValues { get {return _UseRefValues; } set{ _UseRefValues=value; } } bool _UseRefValues;
+        public bool ShowAnnotations { get {return _ShowAnnotations; } set{ _ShowAnnotations=value; } } bool _ShowAnnotations;
+        public bool ShowAnnotationsY2 { get {return _ShowAnnotationsY2; } set{ _ShowAnnotationsY2=value; } } bool _ShowAnnotationsY2;
+        public bool ShowDefaultGridLines { get {return _ShowDefaultGridLines; } set{ _ShowDefaultGridLines=value; } } bool _ShowDefaultGridLines;
+        public bool ShowAnnotationLabel { get {return _ShowAnnotationLabel; } set{ _ShowAnnotationLabel=value; } } bool _ShowAnnotationLabel;
+        public bool ShowAnnotationValue { get {return _ShowAnnotationValue; } set{ _ShowAnnotationValue=value; } } bool _ShowAnnotationValue;
+        public bool ShowAnnotationPercent { get {return _ShowAnnotationPercent; } set{ _ShowAnnotationPercent=value; } } bool _ShowAnnotationPercent;
+        public Palette Palette { get {return _Palette; } set{ _Palette=value; } } Palette _Palette;
+        public LineKind LineKindY2 { get {return _LineKindY2; } set{ _LineKindY2=value; } } LineKind _LineKindY2;
+        public LineDashStyle LineDashStyleY2 { get {return _LineDashStyleY2; } set{ _LineDashStyleY2=value; } } LineDashStyle _LineDashStyleY2;
+        public string Y2AxisLabel { get {return _Y2AxisLabel; } set{ _Y2AxisLabel=value; } } string _Y2AxisLabel;
+        public string Y2AxisLegendTitle { get {return _Y2AxisLegendTitle; } set{ _Y2AxisLegendTitle=value; } } string _Y2AxisLegendTitle;
+        public double Y2LineThickness { get {return _Y2LineThickness; } set{ _Y2LineThickness=value; } } double _Y2LineThickness;
+        public string YAxisLabel { get {return _YAxisLabel; } set{ _YAxisLabel=value; } } string _YAxisLabel;
+        public string XAxisLabel { get {return _XAxisLabel; } set{ _XAxisLabel=value; } } string _XAxisLabel;
+        public XAxisLabelType XAxisLabelType { get {return _XAxisLabelType; } set{ _XAxisLabelType=value; } } XAxisLabelType _XAxisLabelType;
+        public int XAxisLabelRotation { get {return _XAxisLabelRotation; } set{ _XAxisLabelRotation=value; } } int _XAxisLabelRotation;
+        public string ChartTitle { get {return _ChartTitle; } set{ _ChartTitle=value; } } string _ChartTitle;
+        public string ChartStrataTitle { get {return _ChartStrataTitle; } set{ _ChartStrataTitle=value; } } string _ChartStrataTitle;
+        public string ChartSubTitle { get {return _ChartSubTitle; } set{ _ChartSubTitle=value; } } string _ChartSubTitle;
+        public bool ShowLegend { get {return _ShowLegend; } set{ _ShowLegend=value; } } bool _ShowLegend;
+        public bool ShowLegendBorder { get {return _ShowLegendBorder; } set{ _ShowLegendBorder=value; } } bool _ShowLegendBorder;
+        public bool ShowLegendVarNames { get {return _ShowLegendVarNames; } set{ _ShowLegendVarNames=value; } } bool _ShowLegendVarNames;
+        public double LegendFontSize { get {return _LegendFontSize; } set{ _LegendFontSize=value; } } double _LegendFontSize;
+        public PieChartKind PieChartKind { get {return _PieChartKind; } set{ _PieChartKind=value; } } PieChartKind _PieChartKind;
+        public int ChartWidth { get {return _ChartWidth; } set{ _ChartWidth=value; } } int _ChartWidth;
+        public int ChartHeight { get {return _ChartHeight; } set{ _ChartHeight=value; } } int _ChartHeight;
+        public double AnnotationPercent { get {return _AnnotationPercent; } set{ _AnnotationPercent=value; } } double _AnnotationPercent;
+
+        public string YAxisFormattingString { get {return _YAxisFormattingString; } set{ _YAxisFormattingString=value; } } string _YAxisFormattingString;
+        public string Y2AxisFormattingString { get {return _Y2AxisFormattingString; } set{ _Y2AxisFormattingString=value; } } string _Y2AxisFormattingString;
+
+        public ComponentArt.Win.DataVisualization.Charting.Dock LegendDock { get {return _LegendDock; } set{ _LegendDock=value; } } Dock _LegendDock;
+    }
+}
+
+
+ 

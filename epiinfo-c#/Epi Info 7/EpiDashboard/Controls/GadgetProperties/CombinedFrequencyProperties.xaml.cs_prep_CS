@@ -1,0 +1,269 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using EpiDashboard;
+using Epi;
+
+namespace EpiDashboard.Controls.GadgetProperties
+{
+
+
+
+    public         class CombinedFrequencyProperties : GadgetPropertiesPanelBase
+    {
+        public CombinedFrequencyProperties(
+            DashboardHelper dashboardHelper,
+            IGadget gadget,
+            IGadgetParameters parameters
+            )
+        {
+            InitializeComponent();
+            this.DashboardHelper = dashboardHelper;
+            this.Gadget = gadget;
+            this.Parameters = (parameters as CombinedFrequencyParameters);
+
+            List items = new List();
+            List fields = new List();
+
+            ColumnDataType columnDataType = ColumnDataType.Boolean | ColumnDataType.Numeric | ColumnDataType.Text | ColumnDataType.UserDefined;
+            foreach (string fieldName in DashboardHelper.GetFieldsAsList(columnDataType))
+            {
+                items.Add(new FieldInfo()
+
+
+
+
+);
+
+                fields.Add(fieldName);
+            }
+
+            foreach (string fieldName in DashboardHelper.GetAllGroupsAsList())
+            {
+                FieldInfo fieldInfo = new FieldInfo()
+
+
+
+
+;
+                items.Add(fieldInfo);
+            }
+
+            if (DashboardHelper.IsUsingEpiProject)
+            {
+                for (int i = 0; i < DashboardHelper.View.Pages.Count; i++)
+                {
+                    items.Add(new FieldInfo()
+
+
+
+
+);
+                }
+            }
+
+            fields.Sort();
+
+            lvGroupVariables.ItemsSource = items;
+
+
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(lvGroupVariables.ItemsSource);
+            PropertyGroupDescription groupDescription = new PropertyGroupDescription("VariableCategory");
+            view.GroupDescriptions.Add(groupDescription);
+
+            RowFilterControl = new RowFilterControl(this.DashboardHelper, Dialogs.FilterDialogMode.ConditionalMode, (gadget as CombinedFrequencyControl).DataFilters, true);
+            RowFilterControl.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
+            panelFilters.Children.Add(RowFilterControl);
+        }
+
+        public bool HasSelectedFields
+        {
+            get
+            {
+                if (lvGroupVariables.SelectedItems.Count > 0)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+        public CombinedFrequencyParameters Parameters { get {return _Parameters; } set{ _Parameters=value; } } CombinedFrequencyParameters _Parameters;
+                List StrataGridList { get {return _StrataGridList; } set{ _StrataGridList=value; } } List _StrataGridList;
+                List ColumnOrder { get {return _ColumnOrder; } set{ _ColumnOrder=value; } } List _ColumnOrder;
+
+
+
+
+        protected override void CreateInputVariableList()
+        {
+            this.DataFilters = RowFilterControl.DataFilters;
+
+            Dictionary inputVariableList = new Dictionary();
+
+            Parameters.ColumnNames = new List();
+            Parameters.GadgetTitle = txtTitle.Text;
+            Parameters.GadgetDescription = txtDesc.Text;
+
+            List listFields = new List();
+
+            if (lvGroupVariables.SelectedItems.Count > 0)
+            {
+                foreach (FieldInfo fieldInfo in lvGroupVariables.SelectedItems)
+                {
+                    if (!string.IsNullOrEmpty(fieldInfo.Name))
+                    {
+                        listFields.Add(fieldInfo.Name);
+                    }
+                }
+            }
+
+            listFields.Sort();
+
+            foreach (string field in listFields)
+            {
+                Parameters.ColumnNames.Add(field);
+            }
+
+            Parameters.CombineMode = CombineModeTypes.Automatic;
+            switch (cmbCombineMode.Text)
+            {
+                case "Boolean":
+                    Parameters.CombineMode = CombineModeTypes.Boolean;
+                    break;
+                case "Categorical":
+                    Parameters.CombineMode = CombineModeTypes.Categorical;
+                    break;
+            }
+
+            Parameters.TrueValue = txtTrueValue.Text;
+            Parameters.SortHighToLow = checkboxSortHighLow.IsChecked.Value;
+            Parameters.ShowDenominator = checkboxShowDenominator.IsChecked.Value;
+        }
+
+                void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            lvGroupVariables.MaxHeight = this.ActualHeight - 200;
+
+            Dictionary inputVariableList = Parameters.InputVariableList;
+
+            foreach (string columnName in Parameters.ColumnNames)
+            {
+                foreach (FieldInfo info in lvGroupVariables.Items)
+                {
+                    if (info.Name == columnName)
+                    {
+                        lvGroupVariables.SelectedItems.Add(info);
+                        continue;
+                    }
+                }
+            }
+
+            switch (Parameters.CombineMode)
+            {
+                case CombineModeTypes.Automatic:
+                    cmbCombineMode.SelectedIndex = 0;
+                    break;
+                case CombineModeTypes.Boolean:
+                    cmbCombineMode.SelectedIndex = 1;
+                    break;
+                case CombineModeTypes.Categorical:
+                    cmbCombineMode.SelectedIndex = 2;
+                    break;
+            }
+
+            if (String.IsNullOrEmpty(Parameters.TrueValue))
+            {
+                tblockTrueValue.Visibility = System.Windows.Visibility.Collapsed;
+                txtTrueValue.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            else
+            {
+                tblockTrueValue.Visibility = System.Windows.Visibility.Visible;
+                txtTrueValue.Visibility = System.Windows.Visibility.Visible;
+            }
+
+            txtTrueValue.Text = Parameters.TrueValue;
+
+            checkboxShowDenominator.IsChecked = Parameters.ShowDenominator;
+            checkboxSortHighLow.IsChecked = Parameters.SortHighToLow;
+
+            txtTitle.Text = Parameters.GadgetTitle;
+            txtDesc.Text = Parameters.GadgetDescription;
+        }
+
+        public class FieldInfo { public string Name { get {return _Name; } set{ _Name=value; } } string _Name; public string DataType { get {return _DataType; } set{ _DataType=value; } } string _DataType; public VariableCategory VariableCategory { get {return _VariableCategory; } set{ _VariableCategory=value; } } VariableCategory _VariableCategory; }
+
+                void tbtnVariables_Checked(object sender, RoutedEventArgs e)
+        {
+            if (panelVariables == null) return;
+
+            CheckButtonStates(sender as SettingsToggleButton);
+            panelVariables.Visibility = System.Windows.Visibility.Visible;
+            panelSorting.Visibility = System.Windows.Visibility.Collapsed;
+            panelDisplay.Visibility = System.Windows.Visibility.Collapsed;
+            panelFilters.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+                void tbtnSorting_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckButtonStates(sender as SettingsToggleButton);
+            panelVariables.Visibility = System.Windows.Visibility.Collapsed;
+            panelSorting.Visibility = System.Windows.Visibility.Visible;
+            panelDisplay.Visibility = System.Windows.Visibility.Collapsed;
+            panelFilters.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+                void tbtnDisplay_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckButtonStates(sender as SettingsToggleButton);
+            panelVariables.Visibility = System.Windows.Visibility.Collapsed;
+            panelSorting.Visibility = System.Windows.Visibility.Collapsed;
+            panelDisplay.Visibility = System.Windows.Visibility.Visible;
+            panelFilters.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+                void tbtnFilters_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckButtonStates(sender as SettingsToggleButton);
+            panelVariables.Visibility = System.Windows.Visibility.Collapsed;
+            panelSorting.Visibility = System.Windows.Visibility.Collapsed;
+            panelDisplay.Visibility = System.Windows.Visibility.Collapsed;
+            panelFilters.Visibility = System.Windows.Visibility.Visible;
+        }
+
+
+
+
+
+
+                void cmbCombineMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (txtTrueValue != null && tblockTrueValue != null)
+            {
+                if (cmbCombineMode.SelectedIndex == 1)
+                {
+                    txtTrueValue.Visibility = System.Windows.Visibility.Visible;
+                    tblockTrueValue.Visibility = System.Windows.Visibility.Visible;
+                }
+                else
+                {
+                    txtTrueValue.Visibility = System.Windows.Visibility.Collapsed;
+                    tblockTrueValue.Visibility = System.Windows.Visibility.Collapsed;
+                    txtTrueValue.Text = string.Empty;
+                }
+            }
+        }
+    }
+}
+
+ 

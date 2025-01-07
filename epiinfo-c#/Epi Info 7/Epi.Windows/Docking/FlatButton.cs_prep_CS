@@ -1,0 +1,182 @@
+﻿using System;
+using System.Drawing;
+using System.ComponentModel;
+using System.Collections;
+using System.Diagnostics;
+using System.Windows.Forms;
+
+namespace Epi.Windows.Docking
+{
+
+
+
+ [ToolboxItem(true)]
+ [ToolboxBitmap(typeof(FlatButton))]
+ public         class FlatButton : System.Windows.Forms.Button
+ {
+        //Constructors
+
+
+
+
+  public FlatButton(System.ComponentModel.IContainer container)
+  {
+   container.Add(this);
+   InitializeComponent();
+  }
+
+
+
+
+  public FlatButton()
+  {
+   InitializeComponent();
+        }
+        //Constructors
+
+        //Variables
+        private bool pressed = false;
+
+  private Color lightColor = Color.White;
+  private Color shadowColor = Color.Black;
+  private Color selectColor = Color.Transparent;
+  //
+
+  //Properties
+
+
+
+  public Color LightColor
+  {
+   get { return lightColor; }
+   set { lightColor = value; }
+  }
+
+
+
+
+  public Color ShadowColor
+  {
+   get { return shadowColor; }
+   set { shadowColor = value; }
+  }
+
+
+
+
+  public Color SelectColor
+  {
+   get { return selectColor; }
+   set { selectColor = value; }
+  }
+
+
+
+
+  public bool Pressed
+  {
+   get { return pressed; }
+  }
+  //
+
+  //Paint
+
+
+
+
+  public event PaintEventHandler PostPaint;
+
+
+
+
+
+  protected override void OnPaint(PaintEventArgs e)
+  {
+   Graphics g = e.Graphics;
+
+   g.Clear(this.BackColor);
+
+   Point pt = MousePosition;
+   Rectangle rc = RectangleToScreen(this.ClientRectangle);
+
+   if (rc.Contains(pt) && this.Enabled)
+   {
+    if (selectColor != Color.Transparent)
+     g.FillRectangle(new SolidBrush(selectColor), this.ClientRectangle);
+
+    Pen pen1, pen2;
+
+    if (MouseButtons == MouseButtons.Left)
+    {
+     pen1 = new Pen(shadowColor);
+     pen2 = new Pen(lightColor);
+
+     pressed = true;
+    }
+    else
+    {
+     pen1 = new Pen(lightColor);
+     pen2 = new Pen(shadowColor);
+
+     pressed = false;
+    }
+
+    g.DrawLine(pen1, 0, 0, this.Width - 1, 0);
+    g.DrawLine(pen1, 0, 1, 0, this.Height - 2);
+    g.DrawLine(pen2, 0, this.Height - 1, this.Width - 1, this.Height - 1);
+    g.DrawLine(pen2, this.Width - 1, 1, this.Width - 1, this.Height - 2);
+   }
+
+   if (PostPaint != null)
+    PostPaint(this, e);
+  }
+
+
+
+
+
+
+  protected override void OnMouseEnter(EventArgs e)
+  {
+   base.OnMouseEnter(e);
+   Invalidate();
+  }
+
+
+
+
+
+
+  protected override void OnMouseLeave(EventArgs e)
+  {
+   base.OnMouseLeave(e);
+   pressed = false;
+   Invalidate();
+  }
+
+
+
+
+
+
+  protected override void OnMouseDown(MouseEventArgs e)
+  {
+   base.OnMouseDown(e);
+   Invalidate();
+  }
+
+
+
+
+
+
+  protected override void OnMouseUp(MouseEventArgs e)
+  {
+   base.OnMouseUp(e);
+   Invalidate();
+  }
+  //
+ }
+}
+
+ 

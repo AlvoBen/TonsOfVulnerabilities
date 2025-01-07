@@ -1,0 +1,116 @@
+﻿//Namespaces
+using System;
+using System.Drawing;
+using System.Collections;
+using System.ComponentModel;
+using System.Windows.Forms;
+using Epi;
+using Epi.Fields;
+
+//Namespaces
+
+namespace Epi.Windows.MakeView.Dialogs.FieldDefinitionDialogs
+{
+
+    public         class MultilineTextFieldDefinition : TextFieldDefinition
+ {
+        private MultilineTextField field;
+
+  //Constructors
+
+
+
+        public MultilineTextFieldDefinition()
+        {
+            InitializeComponent();
+        }
+
+
+
+
+
+  public MultilineTextFieldDefinition(MainForm frm) : base(frm)
+  {
+   InitializeComponent();
+  }
+
+
+
+
+
+
+  public MultilineTextFieldDefinition(MainForm frm, Page page) : base(frm)
+  {
+   InitializeComponent();
+   this.mode = FormMode.Create;
+   this.page = page;
+  }
+
+
+
+
+
+
+        public MultilineTextFieldDefinition(MainForm frm, MultilineTextField field) : base(frm)
+  {
+   InitializeComponent();
+   this.mode = FormMode.Edit;
+   this.field = field;
+   this.page = field.Page;
+   LoadFormData();
+  }
+  //
+
+  //Private Methods
+
+  private void LoadFormData()
+  {
+            SetFontStyles(field);
+
+   txtPrompt.Text = field.PromptText;
+   txtFieldName.Text = field.Name;
+   chkReadOnly.Checked = field.IsReadOnly;
+   chkRepeatLast.Checked = field.ShouldRepeatLast;
+   chkRequired.Checked = field.IsRequired;
+  }
+
+  //
+
+  //Public Methods
+
+
+
+
+        protected override void SetFieldProperties()
+        {
+            field.PromptText = txtPrompt.Text;
+            field.Name = txtFieldName.Text;
+            if (promptFont != null)
+            {
+                field.PromptFont = promptFont;
+            }
+            if (controlFont != null)
+            {
+                field.ControlFont = controlFont;
+            }
+            field.IsRequired = chkRequired.Checked;
+            field.IsReadOnly = chkReadOnly.Checked;
+            field.ShouldRepeatLast = chkRepeatLast.Checked;
+        }
+
+
+
+
+  public override RenderableField Field
+  {
+   get
+   {
+    return field;
+   }
+  }
+  //
+
+ }
+}
+
+ 

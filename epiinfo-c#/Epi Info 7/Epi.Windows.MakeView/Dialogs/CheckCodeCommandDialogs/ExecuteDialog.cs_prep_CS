@@ -1,0 +1,125 @@
+﻿//Namespaces
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+using Epi.Windows.Dialogs;
+
+// 
+
+namespace Epi.Windows.MakeView.Dialogs.CheckCodeCommandDialogs
+{
+
+
+
+    public         class ExecuteDialog : CheckCodeDesignDialog
+    {
+        //Constructors
+
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+  public ExecuteDialog()
+  {
+   InitializeComponent();
+            cbxWaitforExecution.Checked = true;
+  }
+
+
+
+        public ExecuteDialog(MainForm frm) : base(frm)
+        {
+            InitializeComponent();
+            cbxWaitforExecution.Checked = true;
+        }
+
+        // 
+
+        //Private Event Handlers
+
+
+
+
+
+
+  private void btnCancel_Click(object sender, System.EventArgs e)
+  {
+   this.Close();
+  }
+
+
+
+
+
+
+        private void btnBrowse_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Multiselect = false;
+            dialog.Filter = "Executables (*.exe)|*.exe|All Files (*.*)|*.*";
+            DialogResult result = dialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+
+                txtFileName.Text = dialog.FileName;
+            }
+        }
+
+
+
+
+
+
+        private void btnOk_Click(object sender, System.EventArgs e)
+        {
+            Output = CommandNames.EXECUTE + StringLiterals.SPACE;
+
+            if (cbxWaitforExecution.Checked)
+            {
+                Output += CommandNames.WAITFOREXIT + StringLiterals.SPACE;
+            }
+            else
+            {
+                Output += CommandNames.NOWAITFOREXIT + StringLiterals.SPACE;
+            }
+
+            Output += StringLiterals.DOUBLEQUOTES + txtFileName.Text + StringLiterals.DOUBLEQUOTES;
+
+            this.DialogResult = DialogResult.OK;
+            this.Hide();
+        }
+
+
+
+
+
+
+        private void txtFileName_TextChanged(object sender, EventArgs e)
+        {
+            btnOk.Enabled = !string.IsNullOrEmpty(txtFileName.Text);
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            txtFileName.Text = String.Empty;
+            cbxWaitforExecution.Checked = true;
+        }
+
+
+
+
+
+
+        protected override void btnHelp_Click(object sender, System.EventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://wwwn.cdc.gov/epiinfo/user-guide/command-reference/check-commands-execute.html");
+        }
+
+        // 
+    }
+}
+
+
+ 

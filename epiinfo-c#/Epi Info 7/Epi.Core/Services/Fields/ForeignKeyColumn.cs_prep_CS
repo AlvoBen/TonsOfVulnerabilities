@@ -1,0 +1,119 @@
+﻿using System;
+using System.Data;
+using System.Drawing;
+using Epi.Data;
+using Epi.Data.Services;
+
+namespace Epi.Fields
+{
+
+
+
+ public class ForeignKeyColumn : PredefinedColumn, IMirrorable
+ {
+  //Constructors
+
+
+
+
+
+        public ForeignKeyColumn(GridField grid)
+            : base(grid)
+  {
+            Construct();
+  }
+
+
+
+
+
+        public ForeignKeyColumn(DataRow gridRow, GridField grid)
+            : base(gridRow, grid)
+        {
+            Construct();
+        }
+
+
+
+
+  private void Construct()
+  {
+            this.Name = ColumnNames.FOREIGN_KEY;
+            this.GridColumnType = MetaFieldType.ForeignKey;
+            genericDbColumnType = GenericDbColumnType.UInt64;
+  }
+  //Constructors
+
+        //Public Properties
+
+
+
+        public override string PromptText
+        {
+            get
+            {
+                return SharedStrings.FOREIGN_KEY;
+            }
+            set
+            {
+                throw new GeneralException("Text for Foreign key is pre-defined.");
+            }
+        }
+
+
+
+
+
+
+
+
+        //Public Properties
+
+        //protected Methods
+
+
+
+  protected override void InsertColumn()
+  {
+            if (Id == 0)
+            {
+                Id = GetMetadata().CreateGridColumn(this);
+                base.OnColumnInserted();
+            }
+            else
+            {
+                throw new System.ApplicationException("Unique key column already exists.");
+            }
+  }
+
+
+
+
+        protected override void DeleteColumn()
+        {
+            GetMetadata().DeleteGridColumn(this);
+        }
+
+
+
+
+        protected override void UpdateColumn()
+        {
+            return;
+        }
+  //
+
+        //
+
+
+
+
+        public virtual string GetReflectedValue()
+        {
+            return this.CurrentRecordValueString;
+        }
+        //
+
+ }
+}
+ 

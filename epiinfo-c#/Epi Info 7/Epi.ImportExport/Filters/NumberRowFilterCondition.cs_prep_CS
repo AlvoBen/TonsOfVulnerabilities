@@ -1,0 +1,69 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Epi.Data;
+
+namespace Epi.ImportExport
+{
+
+
+
+    public class NumberRowFilterCondition : RowFilterConditionBase
+    {
+        //Constructors
+
+
+
+        public NumberRowFilterCondition() :
+            base()
+        {
+        }
+
+
+
+
+        public NumberRowFilterCondition(string sql, string columnName, string paramName, object value) :
+            base(sql, columnName, paramName, value)
+        {
+        }
+        //
+
+        //Protected Methods
+
+
+
+        protected override void ValidateCondition()
+        {
+            if (
+                (Value == null) ||
+                (string.IsNullOrEmpty(Value.ToString().Trim())) ||
+                (string.IsNullOrEmpty(ParameterName.Trim())) ||
+                !(ParameterName.Contains("@"))
+                )
+            {
+                throw new InvalidInputException();
+            }
+            else
+            {
+                double result = -1;
+                bool success = double.TryParse(Value.ToString(), out result);
+                if (!success)
+                {
+                    throw new InvalidInputException();
+                }
+            }
+        }
+
+
+
+
+        protected override void Construct()
+        {
+            Parameter = new QueryParameter(ParameterName, System.Data.DbType.Double, Value);
+        }
+        //
+    }
+}
+
+ 

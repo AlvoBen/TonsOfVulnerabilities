@@ -1,0 +1,175 @@
+﻿using System;
+using System.Collections;
+using System.Text;
+
+namespace Epi.Collections
+{
+
+
+
+ public class KeyValuePairCollection : CollectionBase
+ {
+  //Private class members
+
+  private char delimiter = CharLiterals.SEMI_COLON;
+
+  //Private class members
+
+  //Constructors
+
+
+
+
+
+        public KeyValuePairCollection(string str, char delim)
+        {
+            ConstructFromString(str, delim);
+        }
+
+
+
+  public KeyValuePairCollection(string str)
+  {
+   ConstructFromString(str);
+  }
+
+
+
+
+  public KeyValuePairCollection()
+  {
+  }
+
+  //Constructors
+
+  //Public Properties
+
+
+
+        public char Delimiter
+  {
+   get
+   {
+    return delimiter;
+   }
+   set
+   {
+    this.delimiter = value;
+   }
+  }
+  //Public Properties
+
+        //Private Methods
+
+
+
+
+        private void ConstructFromString(string str)
+        {
+            string[] kvPairStrings = str.Split(delimiter);
+            foreach (string kvPairString in kvPairStrings)
+            {
+                if (!Util.IsEmpty(kvPairString))
+                {
+                    Add(new KeyValuePair(kvPairString));
+                }
+            }
+        }
+
+
+
+
+
+
+        private void ConstructFromString(string str, char delim)
+        {
+            this.Delimiter = delim;
+            ConstructFromString(str);
+        }
+        //Private Methods
+
+        //Public Methods
+
+
+
+
+
+
+
+  public int Add(KeyValuePair item)
+  {
+   return List.Add(item);
+  }
+
+
+
+
+
+  public void Remove(KeyValuePair item)
+  {
+   List.Remove(item);
+  }
+
+
+
+
+
+
+  public bool Contains(KeyValuePair item)
+  {
+   return List.Contains(item);
+  }
+
+
+
+
+
+
+  public int IndexOf(KeyValuePair item)
+  {
+   return List.IndexOf(item);
+  }
+
+
+
+
+
+
+  public void CopyTo(KeyValuePair[] array, int index)
+  {
+   List.CopyTo(array, index);
+  }
+
+
+
+
+  public KeyValuePair this[int index]
+  {
+   get
+   {
+    return (KeyValuePair)List[index];
+   }
+   set
+   {
+    List[index] = value;
+   }
+  }
+
+
+
+
+  public override string ToString()
+  {
+   StringBuilder sb = new StringBuilder();
+   foreach (KeyValuePair pair in this)
+   {
+    sb.Append(pair.ToString());
+    sb.Append(Delimiter);
+   }
+   return sb.ToString();
+  }
+  //Public Methods
+ }
+}
+
+ 

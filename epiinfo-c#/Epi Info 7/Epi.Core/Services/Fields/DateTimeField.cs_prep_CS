@@ -1,0 +1,218 @@
+﻿using System;
+using System.ComponentModel;
+using System.Data;
+using System.Xml;
+using Epi;
+using Epi.Data;
+using Epi.Data.Services;
+
+namespace Epi.Fields
+{
+
+
+
+ public class DateTimeField : InputTextBoxField
+ {
+  //Private Members
+        private XmlElement viewElement;
+        private XmlNode fieldNode;
+        private BackgroundWorker _updater;
+        private BackgroundWorker _inserter;
+  //Private members
+
+  //Constructors
+
+
+
+
+
+  public DateTimeField(Page page)
+            : base(page)
+  {
+            construct();
+  }
+
+
+
+
+
+  public DateTimeField(View view)
+            : base(view)
+  {
+            construct();
+  }
+
+
+
+
+
+
+        public DateTimeField(Page page, XmlElement viewElement)
+            : base(page)
+        {
+            construct();
+            this.viewElement = viewElement;
+            this.Page = page;
+        }
+
+
+
+
+
+
+        public DateTimeField(View view, XmlNode fieldNode)
+            : base(view)
+        {
+            construct();
+            this.fieldNode = fieldNode;
+            this.view.Project.Metadata.GetFieldData(this, this.fieldNode);
+        }
+
+        private void construct()
+        {
+            genericDbColumnType = GenericDbColumnType.DateTime;
+            this.dbColumnType = DbType.DateTime;
+        }
+
+
+
+
+
+        public override void LoadFromRow(DataRow row)
+        {
+            base.LoadFromRow(row);
+        }
+
+        public DateTimeField Clone()
+        {
+            DateTimeField clone = (DateTimeField)this.MemberwiseClone();
+            base.AssignMembers(clone);
+            return clone;
+        }
+
+  //Constructors
+
+        //Public Properties
+
+        public virtual string Watermark
+        {
+            get
+            {
+                System.Globalization.DateTimeFormatInfo formatInfo = System.Globalization.DateTimeFormatInfo.CurrentInfo;
+                return string.Format("{0} {1}", formatInfo.ShortDatePattern.ToUpper(), formatInfo.LongTimePattern.ToUpper());
+            }
+            set { ;}
+        }
+
+
+
+
+        public override MetaFieldType FieldType
+        {
+            get
+            {
+                return MetaFieldType.DateTime;
+            }
+        }
+
+
+
+
+        public XmlElement ViewElement
+        {
+            get
+            {
+                return viewElement;
+            }
+            set
+            {
+                viewElement = value;
+            }
+        }
+
+
+
+
+        public override string CurrentRecordValueString
+        {
+            get
+            {
+                if (CurrentRecordValueObject == null || CurrentRecordValueObject.Equals(DBNull.Value))
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    string dateTime = string.Empty;
+                    dateTime = ((DateTime)CurrentRecordValueObject).ToString();
+                    return dateTime;
+                }
+            }
+
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    bool result;
+                    DateTime dateTimeEntered;
+
+                    result = DateTime.TryParse(value, out dateTimeEntered);
+
+                    if (result)
+                    {
+                        CurrentRecordValueObject = dateTimeEntered;
+                    }
+                    else
+                    {
+                        CurrentRecordValueObject = null;
+                    }
+                }
+                else
+                {
+                    CurrentRecordValueObject = null;
+                }
+            }
+        }
+
+        //Public Properties
+
+  //Public Methods
+
+
+
+
+
+        public virtual string GetReflectedValue()
+        {
+            return this.CurrentRecordValueObject.ToString();
+        }
+
+  //Public methods
+
+  //Private Methods
+
+
+
+
+        protected override void InsertField()
+        {
+            this.Id = GetMetadata().CreateField(this);
+            base.OnFieldAdded();
+        }
+
+
+
+
+        protected override void UpdateField()
+        {
+            GetMetadata().UpdateField(this);
+        }
+
+  //Protected Methods
+
+  //Event Handlers
+
+  //
+ }
+}
+ 

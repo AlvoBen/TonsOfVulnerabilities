@@ -1,0 +1,488 @@
+﻿
+namespace Epi
+{
+
+
+
+    public        class ColumnNames
+    {
+
+
+
+
+        public const string SCHEMA_TABLE_NAME = "TABLE_NAME";
+        public const string SCHEMA_NAME = "TABLE_SCHEMA";
+
+
+
+
+        public const string BACKGROUND_ID = "BackgroundId";
+
+
+
+        public const string BACKGROUND_COLOR = "BackgroundColor";
+
+
+
+        public const string CHECKBOX_COLUMN = "CheckboxColumn";
+
+
+
+        public const string CHECK_CODE = "CheckCode";
+
+
+
+        public const string CHECK_CODE_AFTER = "CheckCodeAfter";
+
+
+
+        public const string CHECK_CODE_BEFORE = "CheckCodeBefore";
+
+
+
+        public const string CHECK_CODE_VARIABLE_DEFINITIONS = "CheckCodeVariableDefinitions";
+
+
+
+        public const string CHILD_TYPE = "Child Type";
+
+
+
+        public const string CHILD_TABLES = "Child Tables";
+
+
+
+        public const string CODE_COLUMN_NAME = "CodeColumnName";
+
+
+
+        public const string COLUMN_NAME = "COLUMN_NAME";
+
+
+
+        public const string COUNT = "COUNT";
+
+
+
+        public const string CULTURE_NAME = "CULTURE_NAME";
+
+
+
+        public const string DATA_TABLE_NAME = "DataTableName";
+
+
+
+        public const string DATESUBMITTED = "DateSubmitted";
+
+
+
+        public const string DATEACCEPTED = "DateAccepted";
+
+
+
+        public const string DATEPUBLISHED = "DatePublished";
+
+
+
+        public const string PAGE_WIDTH = "Width";
+
+
+
+        public const string PAGE_HEIGHT = "Height";
+
+
+
+        public const string PAGE_ORIENTATION = "Orientation";
+
+
+
+        public const string PAGE_LABEL_ALIGN = "LabelAlign";
+
+
+
+        public const string DISPLAY_NAME = "DisplayName";
+
+
+
+        public const string NUMBER_OF_FIELDS = "Number of Fields";
+
+
+
+        public const string LINK = "Link";
+
+
+
+        public const string PARENT_VIEW = "Parent View";
+
+
+
+        public const string PARENT_TABLE_ID = "ParentTableId";
+
+
+
+  public const string EXPRESSION = "Expression";
+
+
+
+        public const string EXPOSURE = "Exposure";
+
+
+
+        public const string FIELD_ID = "FieldId";
+
+
+
+        public const string FIELD_NAME = "FieldName";
+
+
+
+        public const string FIELDTYPE = "Field Type";
+
+
+
+        public const string FIELD_TYPE_ID = "FieldTypeId";
+
+
+
+        public const string FOREIGN_KEY = "FKEY";
+
+
+
+        public const string FORMATSTRING = "Formatstring";
+
+
+
+        public const string FORMATVALUE = "Format/Value";
+
+
+
+        public const string GLOBAL_RECORD_ID = "GlobalRecordId";
+
+
+
+        public const string GRID_COLUMN_ID = "GridColumnId";
+
+
+
+        public const string GROUP_ID = "GroupId";
+
+
+
+        public const string HEIGHT_PERCENTAGE = "HeightPercentage";
+
+
+
+        public const string HAS_RANGE = "HasRange";
+
+
+
+        public const string ID = "Id";
+
+
+
+        public const string INDEX = "Index";
+
+
+
+        public const string IS_EXCLUSIVE_TABLE = "IsExclusiveTable";
+
+
+
+        public const string IS_READ_ONLY = "IsReadOnly";
+
+
+
+        public const string IS_RELATED_VIEW = "IsRelatedView";
+
+
+
+        public const string IS_REQUIRED = "IsRequired";
+
+
+
+        public const string IS_UNIQUE_FIELD = "IsUniqueField";
+
+
+
+        public const string LAST_ACCESSED = "LastAccessed";
+
+
+
+        public const string LEFT_POSITION_PERCENTAGE = "LeftPositionPercentage";
+
+
+
+        public const string LIST = "List";
+
+
+
+        public const string LISTS = "Lists";
+
+
+
+        public const string LOWER = "Lower";
+
+
+
+        public const string NAME = "Name";
+
+
+
+        public const string NUMBER = "Number";
+
+
+
+        public const string OUTCOME = "Outcome";
+
+
+
+        public const string DATA_TYPE = "DataType";
+
+
+
+        public const string FREQUENCY = "Frequency";
+
+
+
+        public const string VARIABLE = "Variable";
+
+
+
+        public const string VARIABLE_SCOPE = "VariableScope";
+
+
+
+        public const string VARIABLE_VALUE = "Value";
+
+
+
+        public const string ADDITIONAL_INFO = "Info";
+
+
+
+        public const string PROMPT = "Prompt";
+
+
+
+        public const string OPTION_ID = "OptionId";
+
+
+
+        public const string PATTERN = "Pattern";
+
+
+
+        public const string PATTERN_ID = "PatternId";
+
+
+
+        public const string PAGE_ID = "PageId";
+
+
+
+        public const string PAGE_NUMBER = "PageNumber";
+
+
+
+        public const string POSITION = "Position";
+
+
+
+        public const string PROGRAM_ID = "ProgramId";
+
+
+
+        public const string PURPOSE = "Purpose";
+
+
+
+        public const string RECORD_CHECK_CODE_AFTER = "RecordCheckCodeAfter";
+
+
+
+        public const string RECORD_CHECK_CODE_BEFORE = "RecordCheckCodeBefore";
+
+
+
+        public const string RECORD_FIRST_SAVE_LOGON_NAME = "FirstSaveLogonName";
+
+
+
+        public const string RECORD_FIRST_SAVE_TIME = "FirstSaveTime";
+
+
+
+        public const string RECORD_LAST_SAVE_LOGON_NAME = "LastSaveLogonName";
+
+
+
+        public const string RECORD_LAST_SAVE_TIME = "LastSaveTime";
+
+
+
+        public const string REC_STATUS = "RECSTATUS";
+
+
+
+        public const string RELATE_TABLE = "RelateTable";
+
+
+
+        public const string RELATE_CONDITION = "RelateCondition";
+
+
+
+        public const string SHOULD_RETURN_TO_PARENT = "ShouldReturnToParent";
+
+
+
+        public const string SHOULD_REPEAT_LAST = "ShouldRepeatLast";
+
+
+
+        public const string SIZE = "Size";
+
+
+
+        public const string SORT = "Sort";
+
+
+
+        public const string SOURCE_TABLE_NAME = "SourceTableName";
+
+
+
+        public const string SPECIALINFO = "Special Value";
+
+
+
+        public const string SUBTITLE = "Subtitle";
+
+
+
+        public const string TAB_INDEX = "TabIndex";
+
+
+
+        public const string TABLE = "Table";
+
+
+
+        public const string TABLE_NAME = "table_name";
+
+
+
+        public const string TEXT = "Text";
+
+
+
+        public const string TEXT_COLUMN_NAME = "TextColumnName";
+
+
+
+        public const string TITLE = "Title";
+
+
+
+        public const string TOP_POSITION_PERCENTAGE = "TopPositionPercentage";
+
+
+
+        public const string TRANSLATION_TABLE = "TranslationTable";
+
+
+
+        public const string TYPE = "Type";
+
+
+
+        public const string UNIQUE_KEY = "UniqueKey";
+
+
+
+        public const string UNIQUE_IDENTIFIER = "UniqueIdentifier";
+
+
+
+        public const string UNIQUE_RECORD_ID = "UniqueRecId";
+
+
+
+        public const string UNIQUE_ROW_ID = "UniqueRowId";
+
+
+
+        public const string PRIMARY_KEY = "Primary Key";
+
+
+
+        public const string DESCRIPTION = "Description";
+
+
+
+        public const string UPPER = "Upper";
+
+
+
+        public const string VIEW_ID = "ViewId";
+
+
+
+        public const string VOLUME = "Volume";
+
+
+
+        public const string WEIGHT = "weight";
+
+
+
+        public const string WIDTH = "Width";
+
+
+
+        public const string WIDTH_PERCENTAGE = "WidthPercentage";
+
+
+
+        public const string LEGAL_VALUE = "LegalValue";
+
+
+
+        public const string COMMENT_LEGAL = "CommentLegal";
+
+
+
+        public const string PGM_NAME = "Name";
+
+
+
+        public const string PGM_CONTENT = "Content";
+
+
+
+
+        public const string PGM_COMMENT = "Comment";
+
+
+
+        public const string PGM_CREATE_DATE = "DateCreated";
+
+
+
+        public const string PGM_MODIFY_DATE = "DateModified";
+
+
+
+        public const string PGM_AUTHOR = "Author";
+
+
+
+        public const string DATATYPEID = "DataTypeId";
+
+
+
+        public const string YESNO_COLUMN = "YesNoColumn";
+    }
+}
+
+ 

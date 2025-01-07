@@ -1,0 +1,835 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using Epi.Data;
+using Epi.Fields;
+using Epi.ImportExport.Filters;
+
+namespace Epi.ImportExport.ProjectPackagers
+{
+
+
+
+
+
+    public class XmlDataPackager
+    {
+        //Events
+        public event SetProgressBarDelegate UpdateProgress;
+        public event SimpleEventHandler ResetProgress;
+        public event UpdateStatusEventHandler StatusChanged;
+        //
+
+        //Constructors
+
+
+
+
+
+        public XmlDataPackager(View sourceForm, string packageName)
+        {
+            //Input Validation
+            if (sourceForm == null) { throw new ArgumentNullException("sourceForm"); }
+            if (string.IsNullOrEmpty(packageName)) { throw new ArgumentNullException("packageName"); }
+            //
+
+            SourceForm = sourceForm;
+            SourceProject = SourceForm.Project;
+            PackageName = packageName;
+            GridColumnsToNull = new Dictionary();
+            FieldsToNull = new Dictionary();
+            KeyFields = new List();
+            ParentIdList = new List();
+            CurrentDistanceFromRoot = 0;
+            PreviousDistanceFromRoot = 0;
+        }
+        //
+
+        //Properties
+
+
+
+        public View SourceForm { get {return _SourceForm; } set{ _SourceForm=value; } } View _SourceForm;
+
+
+
+
+        public string PackageName { get {return _PackageName; } set{ _PackageName=value; } } string _PackageName;
+
+
+
+
+        public ExportInfo ExportInfo { get {return _ExportInfo; } set{ _ExportInfo=value; } } ExportInfo _ExportInfo;
+
+
+
+
+        public Dictionary FieldsToNull { get {return _FieldsToNull; } set{ _FieldsToNull=value; } } Dictionary _FieldsToNull;
+
+
+
+
+        public List KeyFields { get {return _KeyFields; } set{ _KeyFields=value; } } List _KeyFields;
+
+
+
+
+        public Dictionary Filters { get {return _Filters; } set{ _Filters=value; } } Dictionary _Filters;
+
+
+
+
+        public Dictionary GridColumnsToNull { get {return _GridColumnsToNull; } set{ _GridColumnsToNull=value; } } Dictionary _GridColumnsToNull;
+
+
+
+
+                Project SourceProject { get {return _SourceProject; } set{ _SourceProject=value; } } Project _SourceProject;
+
+
+
+
+                Dictionary IdList { get {return _IdList; } set{ _IdList=value; } } Dictionary _IdList;
+
+
+
+
+                List ParentIdList { get {return _ParentIdList; } set{ _ParentIdList=value; } } List _ParentIdList;
+
+
+
+
+        public bool IsUsingCustomMatchkeys { get { return (this.KeyFields.Count > 0); } }
+
+
+
+
+
+
+
+
+
+
+                int CurrentDistanceFromRoot { get {return _CurrentDistanceFromRoot; } set{ _CurrentDistanceFromRoot=value; } } int _CurrentDistanceFromRoot;
+
+
+
+
+                int PreviousDistanceFromRoot { get {return _PreviousDistanceFromRoot; } set{ _PreviousDistanceFromRoot=value; } } int _PreviousDistanceFromRoot;
+        //
+
+        //Public Methods
+
+
+
+
+
+
+        public XmlDocument PackageForm()
+        {
+            if (StatusChanged != null) { StatusChanged("Starting package processing..."); }
+
+            ExportInfo = new ExportInfo();
+            ExportInfo.UserID = System.Security.Principal.WindowsIdentity.GetCurrent().Name.ToString();
+            ExportInfo.ExportInitiated = DateTime.Now;
+            ExportInfo.FormsProcessed = 0;
+
+            CheckForProblems(); 
+
+            IdList = new Dictionary();
+            XmlDocument xmlDataPackage = new XmlDocument();
+            XmlElement root = xmlDataPackage.CreateElement("DataPackage");
+            CreateRootAttributes(xmlDataPackage, root);
+
+
+            root.AppendChild(CreateXmlFormElement(xmlDataPackage, SourceForm));
+            ExportInfo.FormsProcessed++;
+
+
+
+
+            List formsToProcess = new List();
+            SortedDictionary forms = new SortedDictionary();
+
+
+            foreach (View form in SourceProject.Views)
+            {
+
+                if (form.Name == SourceForm.Name) { continue; }
+
+
+                if (ImportExportHelper.IsFormDescendant(form, SourceForm))
+                {
+
+
+                    int level = ImportExportHelper.GetFormDescendantLevel(form, SourceForm, 0);
+                    if (!forms.ContainsKey(level))
+                    {
+                        forms.Add(level, new List());
+                    }
+                    forms[level].Add(form);
+                }
+            }
+
+            foreach (KeyValuePair kvp in forms)
+            {
+                foreach (View form in kvp.Value)
+                {
+                    CurrentDistanceFromRoot = kvp.Key;
+                    root.AppendChild(CreateXmlFormElement(xmlDataPackage, form));
+                    PreviousDistanceFromRoot = kvp.Key;
+                    ExportInfo.FormsProcessed++;
+                }
+            }
+
+            xmlDataPackage.AppendChild(root);
+
+            if (StatusChanged != null) { StatusChanged(PackagerStrings.PACKAGE_CREATED); }
+
+            ExportInfo.Succeeded = true;
+            ExportInfo.ExportCompleted = DateTime.Now;
+
+            return xmlDataPackage;
+        }
+        //
+
+        //Private Methods
+
+
+
+                void CheckForProblems()
+        {
+            IDbDriver driver = SourceProject.CollectedData.GetDatabase();
+
+
+            DataTable dt = driver.GetTableData(SourceForm.TableName, "GlobalRecordId, RECSTATUS, UniqueKey");
+            int baseTableRowCount = dt.Rows.Count;
+
+
+            if (!dt.Columns[0].DataType.ToString().Equals("System.String"))
+            {
+                ExportInfo.Succeeded = false;
+                ExportInfo.AddError(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_INVALID_GUID_COLUMN, "101000");
+                throw new ApplicationException(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_INVALID_GUID_COLUMN);
+            }
+
+
+            if (!(dt.Columns[1].DataType.ToString().Equals("System.Byte") || dt.Columns[1].DataType.ToString().Equals("System.Int16") || dt.Columns[1].DataType.ToString().Equals("System.Int32")))
+            {
+                ExportInfo.Succeeded = false;
+                ExportInfo.AddError(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_INVALID_RECSTATUS_COLUMN, "101001");
+                throw new ApplicationException(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_INVALID_RECSTATUS_COLUMN);
+            }
+
+
+
+            if (baseTableRowCount >= 1)
+            {
+                string value = dt.Rows[0][0].ToString();
+                System.Guid guid = new Guid(value);
+
+                if (baseTableRowCount >= 30)
+                {
+                    for (int i = 0; i < 30; i++)
+                    {
+                        value = dt.Rows[i][0].ToString();
+                        guid = new Guid(value);
+                    }
+                }
+            }
+
+
+            Query selectDistinctQuery = driver.CreateQuery("SELECT DISTINCT [GlobalRecordId] FROM [" + SourceForm.TableName + "]");
+            DataTable distinctTable = driver.Select(selectDistinctQuery);
+            if (distinctTable.Rows.Count != baseTableRowCount)
+            {
+                ExportInfo.Succeeded = false;
+                ExportInfo.AddError(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_GUID_NOT_UNIQUE, "101002");
+                throw new ApplicationException(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_GUID_NOT_UNIQUE);
+            }
+
+
+            foreach (Page page in SourceForm.Pages)
+            {
+                selectDistinctQuery = driver.CreateQuery("SELECT DISTINCT [GlobalRecordId] FROM [" + page.TableName + "]");
+                distinctTable = driver.Select(selectDistinctQuery);
+                if (distinctTable.Rows.Count != baseTableRowCount)
+                {
+                    ExportInfo.Succeeded = false;
+                    ExportInfo.AddError(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_GUID_NOT_UNIQUE_PAGE, "101003");
+                    throw new ApplicationException(string.Format(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_GUID_NOT_UNIQUE_PAGE, page.TableName));
+                }
+            }
+
+
+            selectDistinctQuery = driver.CreateQuery("SELECT DISTINCT [RecStatus] FROM [" + SourceForm.TableName + "]");
+            distinctTable = driver.Select(selectDistinctQuery);
+            foreach (DataRow row in distinctTable.Rows)
+            {
+                if (!row[0].ToString().Equals("1") && !row[0].ToString().Equals("0"))
+                {
+                    ExportInfo.Succeeded = false;
+                    ExportInfo.AddError(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_RECSTATUS_VALUES_INVALID, "101004");
+                    throw new ApplicationException(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_RECSTATUS_VALUES_INVALID);
+                }
+            }
+
+
+            if (SourceForm.IsRelatedView == true)
+            {
+                ExportInfo.Succeeded = false;
+                ExportInfo.AddError(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_RELATED_FORM, "101005");
+                throw new ApplicationException(ImportExportSharedStrings.ERROR_PACKAGER_CHECK_RELATED_FORM);
+            }
+
+            distinctTable = null;
+            selectDistinctQuery = null;
+            driver.Dispose();
+            driver = null;
+        }
+
+
+
+
+
+
+                void CreateRootAttributes(XmlDocument xmlDataPackage, XmlElement root)
+        {
+            //Input Validation
+            if (xmlDataPackage == null) { throw new ArgumentNullException("xmlDataPackage"); }
+            if (root == null) { throw new ArgumentNullException("root"); }
+            //
+
+            ApplicationIdentity appId = new ApplicationIdentity(typeof(Configuration).Assembly);
+
+
+            DateTime dt = DateTime.UtcNow;
+            string dateDisplayValue = string.Format(System.Globalization.CultureInfo.CurrentCulture, "{0:s}", dt);
+
+            XmlAttribute version = xmlDataPackage.CreateAttribute("Version"); // The version of Epi Info 7 that was used to create it
+            XmlAttribute created = xmlDataPackage.CreateAttribute("Created"); // The date/time the package creation started
+            XmlAttribute pakName = xmlDataPackage.CreateAttribute("Name"); // The name of the package (should mirror the file name but without a filename-based timestamp)
+            XmlAttribute guidStr = xmlDataPackage.CreateAttribute("Id"); // Unique ID value for the package; may be useful to avoid importing the same package twice depending on how system designers have set up their import mechanisms
+
+            version.Value = appId.Version;
+            created.Value = dateDisplayValue;
+            pakName.Value = PackageName;
+            guidStr.Value = System.Guid.NewGuid().ToString();
+
+            root.Attributes.Append(version);
+            root.Attributes.Append(created);
+            root.Attributes.Append(pakName);
+            root.Attributes.Append(guidStr);
+        }
+
+
+
+
+
+
+
+
+                XmlElement CreateXmlGridElement(XmlDocument xmlDataPackage, View form, GridField gridField)
+        {
+            //Input Validation
+            if (xmlDataPackage == null) { throw new ArgumentNullException("xmlDataPackage"); }
+            if (form == null) { throw new ArgumentNullException("form"); }
+            if (gridField == null) { throw new ArgumentNullException("gridField"); }
+            //
+
+            XmlElement gridElement = xmlDataPackage.CreateElement("Grid");
+
+            XmlAttribute name = xmlDataPackage.CreateAttribute("Name");
+            XmlAttribute columns = xmlDataPackage.CreateAttribute("Columns"); // The column count is here so we can check to see if the # of columns match between the Xml document and the destination project during import
+            XmlAttribute parent = xmlDataPackage.CreateAttribute("ParentForm");
+
+            name.Value = gridField.Name;
+            columns.Value = gridField.Columns.Count.ToString();
+            parent.Value = form.Name;
+
+            gridElement.Attributes.Append(name);
+            gridElement.Attributes.Append(columns);
+            gridElement.Attributes.Append(parent);
+
+            gridElement.AppendChild(CreateXmlGridMetadataElement(xmlDataPackage, form, gridField));
+            gridElement.AppendChild(CreateXmlGridDataElement(xmlDataPackage, form, gridField));
+
+            return gridElement;
+        }
+
+
+
+
+
+
+
+                XmlElement CreateXmlFormElement(XmlDocument xmlDataPackage, View form)
+        {
+            //Input Validation
+            if (xmlDataPackage == null) { throw new ArgumentNullException("xmlDataPackage"); }
+            if (form == null) { throw new ArgumentNullException("form"); }
+            //
+
+            XmlElement formElement = xmlDataPackage.CreateElement("Form");
+
+            XmlAttribute name = xmlDataPackage.CreateAttribute("Name");
+            XmlAttribute pages = xmlDataPackage.CreateAttribute("Pages"); // The page count is here so we can check to see if the # of pages match between the Xml document and the destination project during import
+            XmlAttribute related = xmlDataPackage.CreateAttribute("IsRelatedForm");
+
+            name.Value = form.Name;
+            pages.Value = form.Pages.Count.ToString();
+            related.Value = form.IsRelatedView.ToString();
+
+            formElement.Attributes.Append(name);
+            formElement.Attributes.Append(pages);
+            formElement.Attributes.Append(related);
+
+            if (form.IsRelatedView)
+            {
+
+                XmlAttribute parent = xmlDataPackage.CreateAttribute("ParentForm");
+                parent.Value = form.ParentView.Name;
+                formElement.Attributes.Append(parent);
+
+
+
+                XmlAttribute level = xmlDataPackage.CreateAttribute("DescendantLevel");
+                level.Value = ImportExportHelper.GetFormDescendantLevel(form, SourceForm, 0).ToString();
+                formElement.Attributes.Append(level);
+            }
+
+            if (this.IsUsingCustomMatchkeys) { formElement.AppendChild(CreateXmlFormKeyElement(xmlDataPackage, form)); } 
+            formElement.AppendChild(CreateXmlFormMetadataElement(xmlDataPackage, form));
+            formElement.AppendChild(CreateXmlFormDataElement(xmlDataPackage, form));
+
+            return formElement;
+        }
+
+
+
+
+
+
+
+                XmlElement CreateXmlFormKeyElement(XmlDocument xmlDataPackage, View form)
+        {
+            //Input Validation
+            if (xmlDataPackage == null) { throw new ArgumentNullException("xmlDataPackage"); }
+            if (form == null) { throw new ArgumentNullException("form"); }
+            //
+
+            XmlElement fields = xmlDataPackage.CreateElement("KeyFields");
+
+            foreach (Field field in this.KeyFields)
+            {
+                if (field is IDataField && field is RenderableField)
+                {
+                    RenderableField renderableField = field as RenderableField;
+                    XmlElement fieldInfo = xmlDataPackage.CreateElement("KeyField");
+
+                    XmlAttribute name = xmlDataPackage.CreateAttribute("Name");
+                    XmlAttribute type = xmlDataPackage.CreateAttribute("FieldType");
+                    XmlAttribute page = xmlDataPackage.CreateAttribute("Page"); // records page position, NOT page id and NOT page name
+
+                    name.Value = renderableField.Name;
+                    type.Value = renderableField.FieldType.ToString();
+                    page.Value = renderableField.Page.Position.ToString();
+
+                    fieldInfo.Attributes.Append(name);
+                    fieldInfo.Attributes.Append(type);
+                    fieldInfo.Attributes.Append(page);
+
+                    fields.AppendChild(fieldInfo);
+                }
+            }
+
+            return fields;
+        }
+
+
+
+
+
+
+
+                XmlElement CreateXmlFormMetadataElement(XmlDocument xmlDataPackage, View form)
+        {
+            //Input Validation
+            if (xmlDataPackage == null) { throw new ArgumentNullException("xmlDataPackage"); }
+            if (form == null) { throw new ArgumentNullException("form"); }
+            //
+
+            if (StatusChanged != null) { StatusChanged(string.Format(PackagerStrings.ADDING_FIELD_METADATA, form.Name)); }
+
+            XmlElement fields = xmlDataPackage.CreateElement("FieldMetadata");
+
+            foreach (Field field in form.Fields)
+            {
+                if (field is IDataField && field is RenderableField)
+                {
+                    RenderableField renderableField = field as RenderableField;
+                    XmlElement fieldInfo = xmlDataPackage.CreateElement("FieldInfo");
+
+                    XmlAttribute name = xmlDataPackage.CreateAttribute("Name");
+                    XmlAttribute type = xmlDataPackage.CreateAttribute("FieldType");
+                    XmlAttribute page = xmlDataPackage.CreateAttribute("Page"); // records page position, NOT page id and NOT page name
+
+                    name.Value = renderableField.Name;
+                    type.Value = renderableField.FieldType.ToString();
+                    page.Value = renderableField.Page.Position.ToString();
+
+                    fieldInfo.Attributes.Append(name);
+                    fieldInfo.Attributes.Append(type);
+                    fieldInfo.Attributes.Append(page);
+
+                    fields.AppendChild(fieldInfo);
+                }
+            }
+
+            return fields;
+        }
+
+
+
+
+
+
+
+
+                XmlElement CreateXmlGridMetadataElement(XmlDocument xmlDataPackage, View form, GridField gridField)
+        {
+            //Input Validation
+            if (xmlDataPackage == null) { throw new ArgumentNullException("xmlDataPackage"); }
+            if (form == null) { throw new ArgumentNullException("form"); }
+            if (gridField == null) { throw new ArgumentNullException("gridField"); }
+            //
+
+            if (StatusChanged != null) { StatusChanged(string.Format(PackagerStrings.ADDING_GRID_METADATA, gridField.Name, form.Name)); }
+
+            XmlElement gridFields = xmlDataPackage.CreateElement("GridMetadata");
+
+            foreach (GridColumnBase column in gridField.Columns)
+            {
+                if (!(column.Name.Equals("UniqueRowId") || column.Name.Equals("GlobalRecordId") || column.Name.Equals("FKEY") || column.Name.Equals("RECSTATUS")))
+                {
+                    XmlElement gridFieldInfo = xmlDataPackage.CreateElement("GridFieldInfo");
+
+                    XmlAttribute name = xmlDataPackage.CreateAttribute("Name");
+                    XmlAttribute type = xmlDataPackage.CreateAttribute("FieldType");
+
+                    name.Value = column.Name;
+                    type.Value = column.GridColumnType.ToString();
+
+                    gridFieldInfo.Attributes.Append(name);
+                    gridFieldInfo.Attributes.Append(type);
+
+                    gridFields.AppendChild(gridFieldInfo);
+                }
+            }
+
+            return gridFields;
+        }
+
+
+
+
+
+
+
+                XmlElement CreateXmlFormDataElement(XmlDocument xmlDataPackage, View form)
+        {
+            //Input Validation
+            if (xmlDataPackage == null) { throw new ArgumentNullException("xmlDataPackage"); }
+            if (form == null) { throw new ArgumentNullException("form"); }
+            //
+
+            XmlElement data = xmlDataPackage.CreateElement("Data");
+
+            if (StatusChanged != null) { StatusChanged(string.Format(PackagerStrings.GUID_LIST_SETUP, form.Name)); }
+            if (ResetProgress != null) { ResetProgress(); }
+
+            /* This seems like an usual set of steps to just iterate over the data. The problem is that we can't "just
+             * iterate over the data" - the data is split up page tables, with one table representing one page on the
+             * form. While a JOIN might be able to bring everything together into one table, it might not - for example,
+             * if there are >255 fields after the JOIN, an OleDb exception will be thrown.
+             *
+             * To get around      issue: The code first iterates over the rows in the BASE TABLE, obtaining the GUID
+             * values for each. The GUIDs and their corresponding XmlElement go into a dictionary.
+             *
+             * Later, each row in each page is iterated over; as the GUIDs for each page table are accessed, the corresponding
+             * XmlElement is pulled from the dictionary. Field data is added to it for each field that has data. In this
+             * manner, it doesn't matter that each row is technically accessed out-of-order because they'll still show up
+             * in-order in the resulting Xml.
+             *
+             * Filtering adds another layer of complexity. To filter, a JOIN operation is needed so that the filters can
+             * be applied across all those tables, since the fields in the filter may be across different tables. The
+             * RowFilter class provides a way to handle this; we simply get the query from that object and apply it to the
+             * reader. Only GUIDs that match the filter are added to the dictionary of guids.
+             */
+
+
+            if (form.IsRelatedView && PreviousDistanceFromRoot < CurrentDistanceFromRoot)
+            {
+                ParentIdList.Clear();
+                foreach (KeyValuePair kvp in IdList) { ParentIdList.Add(kvp.Key); }
+            }
+
+            IdList.Clear(); 
+
+            if(!ExportInfo.RecordsPackaged.ContainsKey(form))
+            {
+                ExportInfo.RecordsPackaged.Add(form, 0);
+            }
+
+            bool filterThisForm = false;
+            RowFilters filters = null;
+            Query selectQuery = null;
+
+            if (Filters != null && Filters.ContainsKey(form.Name) && Filters[form.Name].Count() > 0)
+            {
+                filterThisForm = true;
+                filters = Filters[form.Name];
+                selectQuery = filters.GetGuidSelectQuery(form);
+            }
+
+            double totalRecords = 0;
+
+            using (IDataReader guidReader = filterThisForm ? SourceProject.CollectedData.GetDatabase().ExecuteReader(selectQuery) : SourceProject.CollectedData.GetDatabase().GetTableDataReader(form.TableName))
+            {
+                while (guidReader.Read())
+                {
+                    string guid = guidReader["GlobalRecordId"].ToString();
+                    string fkey = guidReader["FKEY"].ToString();
+                    string recstatus = guidReader["RECSTATUS"].ToString();
+                    string firstSaveUserId = string.Empty;
+                    DateTime  firstSaveTime = null;
+                    string lastSaveUserId = string.Empty;
+                    DateTime  lastSaveTime = null;
+
+                    if (guidReader.FieldCount > 3)
+                    {
+                        try
+                        {
+                            firstSaveUserId = guidReader["FirstSaveLogonName"].ToString();
+                            if (guidReader["FirstSaveTime"] != DBNull.Value)
+                            {
+                                firstSaveTime = (DateTime)guidReader["FirstSaveTime"];
+                            }
+                            lastSaveUserId = guidReader["LastSaveLogonName"].ToString();
+                            if (guidReader["LastSaveTime"] != DBNull.Value)
+                            {
+                                lastSaveTime = (DateTime)guidReader["LastSaveTime"];
+                            }
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+
+                        }
+                    }
+
+                    if (recstatus.Equals("1")) // only include undeleted records
+                    {
+                        if (!form.IsRelatedView || ParentIdList.Contains(fkey))
+                        {
+                            XmlElement record = xmlDataPackage.CreateElement("Record");
+                            XmlAttribute id = xmlDataPackage.CreateAttribute("Id");
+                            id.Value = guid;
+                            record.Attributes.Append(id);
+
+                            if (!string.IsNullOrEmpty(fkey))
+                            {
+                                XmlAttribute foreignKey = xmlDataPackage.CreateAttribute("Fkey");
+                                foreignKey.Value = fkey;
+                                record.Attributes.Append(foreignKey);
+                            }
+                            if (!string.IsNullOrEmpty(firstSaveUserId))
+                            {
+                                XmlAttribute firstSaveId = xmlDataPackage.CreateAttribute("FirstSaveUserId");
+                                firstSaveId.Value = firstSaveUserId;
+                                record.Attributes.Append(firstSaveId);
+                            }
+                            if (!string.IsNullOrEmpty(lastSaveUserId))
+                            {
+                                XmlAttribute lastSaveId = xmlDataPackage.CreateAttribute("LastSaveUserId");
+                                lastSaveId.Value = lastSaveUserId;
+                                record.Attributes.Append(lastSaveId);
+                            }
+                            if (firstSaveTime.HasValue)
+                            {
+                                XmlAttribute firstSaveDateTime = xmlDataPackage.CreateAttribute("FirstSaveTime");
+                                firstSaveDateTime.Value = firstSaveTime.Value.Ticks.ToString();
+                                record.Attributes.Append(firstSaveDateTime);
+                            }
+                            if (lastSaveTime.HasValue)
+                            {
+                                XmlAttribute lastSaveDateTime = xmlDataPackage.CreateAttribute("LastSaveTime");
+                                lastSaveDateTime.Value = lastSaveTime.Value.Ticks.ToString();
+                                record.Attributes.Append(lastSaveDateTime);
+                            }
+                            IdList.Add(guid, record);
+                            totalRecords++;
+
+                            ExportInfo.TotalRecordsPackaged++;
+                            ExportInfo.RecordsPackaged[form]++;
+                        }
+                    }
+                }
+            }
+
+            totalRecords = totalRecords * form.Pages.Count;
+            int processedRecords = 0;
+
+            if (StatusChanged != null) { StatusChanged(string.Format(PackagerStrings.ADDING_FIELD_DATA, form.Name)); }
+
+            foreach (Page page in form.Pages)
+            {
+                using (IDataReader reader = SourceProject.CollectedData.GetDatabase().GetTableDataReader(page.TableName))
+                {
+                    while (reader.Read())
+                    {
+                        string guid = reader["GlobalRecordId"].ToString();
+
+                        if (IdList.ContainsKey(guid))
+                        {
+                            XmlElement element = IdList[guid];
+
+                            foreach (Field field in page.Fields)
+                            {
+                                if (field is IDataField && field is RenderableField && !(field is GridField) && !(FieldsToNull.ContainsKey(form.Name) && FieldsToNull[form.Name].Contains(field.Name)))
+                                {
+                                    RenderableField renderableField = field as RenderableField;
+                                    XmlElement fieldData = xmlDataPackage.CreateElement("Field");
+
+                                    XmlAttribute name = xmlDataPackage.CreateAttribute("Name");
+                                    name.Value = renderableField.Name;
+                                    fieldData.Attributes.Append(name);
+
+                                    string value = reader[field.Name].ToString();
+
+                                    if (!string.IsNullOrEmpty(value))
+                                    {
+                                        if (field is DateTimeField)
+                                        {
+                                            DateTime dt = Convert.ToDateTime(value);
+                                            fieldData.InnerText = dt.Ticks.ToString();
+                                        }
+                                        else if (field is ImageField)
+                                        {
+                                            value = Convert.ToBase64String((Byte[])reader[field.Name]);
+                                            fieldData.InnerText = value;
+                                        }
+                                        else
+                                        {
+                                            fieldData.InnerText = value;
+                                        }
+                                    }
+                                    element.AppendChild(fieldData);
+                                    data.AppendChild(element);
+                                }
+                            }
+                        }
+                        processedRecords++;
+                        double progress = (((double)processedRecords) / ((double)totalRecords)) * 100;
+                        if (UpdateProgress != null) { UpdateProgress(progress); }
+                    }
+                }
+            }
+            foreach (GridField gridField in form.Fields.GridFields)
+            {
+                data.AppendChild(CreateXmlGridElement(xmlDataPackage, form, gridField));
+                ExportInfo.GridsProcessed++;
+            }
+
+            return data;
+        }
+
+
+
+
+
+
+
+
+                XmlElement CreateXmlGridDataElement(XmlDocument xmlDataPackage, View form, GridField gridField)
+        {
+            //Input Validation
+            if (xmlDataPackage == null) { throw new ArgumentNullException("xmlDataPackage"); }
+            if (form == null) { throw new ArgumentNullException("form"); }
+            if (gridField == null) { throw new ArgumentNullException("gridField"); }
+            //
+
+            XmlElement data = xmlDataPackage.CreateElement("GridData");
+
+            if (StatusChanged != null) { StatusChanged(string.Format(PackagerStrings.ADDING_GRID_DATA, gridField.Name, form.Name)); }
+
+            using (IDataReader reader = SourceProject.CollectedData.GetDatabase().GetTableDataReader(gridField.TableName))
+            {
+                while (reader.Read())
+                {
+                    string guid = reader["GlobalRecordId"].ToString();
+                    string fkey = reader["FKEY"].ToString();
+                    string urid = reader["UniqueRowId"].ToString();
+                    string recstatus = reader["RECSTATUS"].ToString();
+
+                    if (recstatus.Equals("1"))
+                    {
+                        XmlElement element = xmlDataPackage.CreateElement("Record");
+                        XmlAttribute id = xmlDataPackage.CreateAttribute("Id");
+                        XmlAttribute foreignKey = xmlDataPackage.CreateAttribute("FKEY");
+                        XmlAttribute uniqueRowId = xmlDataPackage.CreateAttribute("UniqueRowId");
+
+                        id.Value = guid;
+                        foreignKey.Value = fkey;
+                        uniqueRowId.Value = urid;
+
+                        element.Attributes.Append(id);
+                        element.Attributes.Append(foreignKey);
+                        element.Attributes.Append(uniqueRowId);
+
+                        foreach (GridColumnBase column in gridField.Columns)
+                        {
+                            if (GridColumnsToNull == null || !(GridColumnsToNull.ContainsKey(gridField.Name) && GridColumnsToNull[gridField.Name].Contains(column.Name)))
+                            {
+                                if (!(column.Name.Equals("UniqueRowId") || column.Name.Equals("GlobalRecordId") || column.Name.Equals("FKEY") || column.Name.Equals("RECSTATUS")))
+                                {
+                                    XmlElement gridFieldData = xmlDataPackage.CreateElement("GridColumn");
+
+                                    XmlAttribute name = xmlDataPackage.CreateAttribute("Name");
+                                    name.Value = column.Name;
+                                    gridFieldData.Attributes.Append(name);
+
+                                    string value = reader[column.Name].ToString();
+
+
+
+
+                                    if (!string.IsNullOrEmpty(value))
+                                    {
+                                        if (column is DateTimeColumn || column is DateColumn || column is TimeColumn)
+                                        {
+                                            DateTime dt = Convert.ToDateTime(value);
+                                            gridFieldData.InnerText = dt.Ticks.ToString();
+                                        }
+                                        else
+                                        {
+                                            gridFieldData.InnerText = value;
+                                        }
+                                    }
+                                    element.AppendChild(gridFieldData);
+                                    data.AppendChild(element);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return data;
+        }
+        //
+    }
+}
+ 

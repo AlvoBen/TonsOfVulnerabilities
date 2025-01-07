@@ -1,0 +1,115 @@
+﻿//Namespaces
+
+using System;
+using Epi.Windows.Controls;
+using Epi;
+
+// 
+
+namespace Epi.Windows.Controls
+{
+
+
+
+ public class ProjectNode : TreeValueNode
+    {
+        //Constructors
+
+
+
+
+  public ProjectNode() : base()
+  {
+   Initialize();
+  }
+
+
+
+
+
+  public ProjectNode(Project project)
+  {
+   Initialize();
+   this.Project = project;
+   this.Text = project.Name;
+   foreach (View view in project.Views)
+   {
+    Nodes.Add(new ViewNode(view));
+   }
+        }
+
+        // 
+
+        //Public Methods
+
+
+
+
+
+        public void SelectViewNode(int index)
+        {
+            this.TreeView.SelectedNode = this.Nodes[index];
+        }
+
+
+
+
+
+
+        public ViewNode InsertViewNode(View view)
+        {
+            ViewNode node = new ViewNode(view);
+            Nodes.Add(node);
+            return node;
+        }
+
+
+
+
+  public override void Dispose()
+  {
+   if (Project != null)
+   {
+    Project.Dispose();
+    Project = null;
+   }
+   base.Dispose();
+        }
+
+        // 
+
+        //Private Methods
+
+
+
+
+        private void Initialize()
+  {
+   this.ImageIndex = 0;
+   this.SelectedImageIndex = 0;
+        }
+
+        // 
+
+        //Public Properties
+
+
+
+
+  public Project Project
+  {
+   get
+   {
+    return (Project)this.Value;
+   }
+   set
+   {
+    this.Value = value;
+   }
+        }
+
+        // 
+ }
+}
+
+ 

@@ -1,0 +1,159 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Epi.Windows.Dialogs
+{
+
+
+
+    public         class ReplaceDialog : Epi.Windows.Dialogs.DialogBase
+    {
+
+        //Enumerated type
+
+
+
+        public enum Direction
+        {
+
+
+
+            None,
+
+
+
+            Beginning,
+
+
+
+            Forward,
+
+
+
+            Backward
+        }
+        //Enumerated type
+
+        //Constructors
+
+
+
+
+        public ReplaceDialog()
+        {
+            InitializeComponent();
+        }
+
+
+
+
+
+        public ReplaceDialog(string searchString)
+        {
+            InitializeComponent();
+            this.txtReplace.Text = searchString;
+        }
+
+        //Constructors
+
+        //Public Properties
+
+
+
+
+        public string ReplaceString
+        {
+            get
+            {
+                return txtReplace.Text;
+            }
+        }
+
+
+
+
+
+        public string ReplacementString
+        {
+            get
+            {
+                return txtReplacement.Text;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public bool CaseSensitive
+        {
+            get
+            {
+                return chkReplaceAll.Checked;
+            }
+        }
+
+
+
+
+        public bool WholeWord
+        {
+            get
+            {
+                return chkWholeWord.Checked;
+            }
+        }
+
+
+
+
+        public bool ReplaceAll
+        {
+            get
+            {
+                return chkReplaceAll.Checked;
+            }
+        }
+
+        //Public Properties
+
+        //Event Handlers
+
+        private void txtSearchString_Leave(object sender, EventArgs e)
+        {
+            btnOK.Enabled = ( (!string.IsNullOrEmpty(txtReplace.Text)) &&
+                            (!string.IsNullOrEmpty(txtReplacement.Text)) );
+        }
+
+        //Event Handlers
+    }
+}
+
+
+ 

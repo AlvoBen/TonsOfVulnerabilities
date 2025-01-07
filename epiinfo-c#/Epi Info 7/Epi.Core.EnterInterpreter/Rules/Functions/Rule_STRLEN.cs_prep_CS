@@ -1,0 +1,45 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using com.calitha.goldparser;
+
+namespace Epi.Core.EnterInterpreter.Rules
+{
+    public         class Rule_STRLEN : EnterRule
+    {
+        object _result = null;
+        object _fullString = null;
+        object _startIndex = 0;
+        object _length = 0;
+
+        private List ParameterList = new List();
+
+        public Rule_STRLEN(Rule_Context pContext, NonterminalToken pToken)
+            : base(pContext)
+        {
+            this.ParameterList = EnterRule.GetFunctionParameters(pContext, pToken);
+        }
+
+
+
+
+        public override object Execute()
+        {
+            _fullString = null;
+            _length = null;
+
+            _fullString = this.ParameterList[0].Execute();
+
+            if (_fullString is string)
+            {
+                string fullString = _fullString.ToString();
+                _length = fullString.Length;
+            }
+
+            return _length;
+        }
+    }
+}
+
+ 

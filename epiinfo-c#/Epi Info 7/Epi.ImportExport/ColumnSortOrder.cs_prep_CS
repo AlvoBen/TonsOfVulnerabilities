@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Epi.ImportExport
+{
+
+
+
+    public enum ColumnSortOrder
+    {
+
+
+
+        None = 0,
+
+
+
+
+        Alphabetical = 1,
+
+
+
+
+        TabOrder = 2
+    }
+}
+
+ 

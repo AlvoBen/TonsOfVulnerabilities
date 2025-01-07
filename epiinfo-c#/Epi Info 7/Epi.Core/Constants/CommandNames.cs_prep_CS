@@ -1,0 +1,674 @@
+﻿
+namespace Epi
+{
+
+
+
+    public        class CommandNames
+    {
+
+
+
+        public const string ABS = "ABS";
+
+
+
+        public const string AND = "AND";
+
+
+
+        public const string ALWAYS = "ALWAYS";
+
+
+
+        public const string APPEND = "APPEND";
+
+
+
+        public const string ASCENDING = "ASCENDING";
+
+
+
+
+        public const string ASSIGN = "ASSIGN";
+
+
+
+        public const string AUTOSEARCH = "AUTOSEARCH";
+
+
+
+        public const string BEEP = "BEEP";
+
+
+
+        public const string CALL = "CALL";
+
+
+
+        public const string CANCELSELECT = "SELECT";
+
+
+
+        public const string CANCELSORT = "SORT";
+
+
+
+        public const string CLEAR = "CLEAR";
+
+
+
+        public const string CLOSEOUT = "CLOSEOUT";
+
+
+
+        public const string COLUMNSIZE = "COLUMNSIZE";
+
+
+
+        public const string COS = "COS";
+
+
+
+        public const string COXPH = "COXPH";
+
+
+
+        public const string CURRENCY_FORMAT = "\"Currency\"";
+
+
+
+        public const string CURRENTUSER = "CURRENTUSER";
+
+
+
+        public const string DATABASES = "DATABASES";
+
+
+
+        public const string DAY = "DAY";
+
+
+
+        public const string DAYS = "DAYS";
+
+
+
+        public const string DBVALUES = "DBVALUES";
+
+
+
+        public const string DBVARIABLES = "DBVARIABLES";
+
+
+
+        public const string DBVIEWS = "DBVIEWS";
+
+
+
+        public const string DESCENDING = "DESCENDING";
+
+
+
+        public const string DEFINE = "DEFINE";
+
+
+
+        public const string DELETE = "DELETE";
+
+
+
+        public const string DIALOG = "DIALOG";
+
+
+
+        public const string DISABLE = "DISABLE";
+
+
+
+        public const string DISPLAY = "DISPLAY";
+
+
+
+        public const string DISPLAYLIST = "DISPLAYLIST";
+
+
+
+  public const string ELSE = "ELSE";
+
+
+
+        public const string ENABLE = "ENABLE";
+
+
+
+        public const string END = "END";
+
+
+
+        public const string ENVIRON = "ENVIRON";
+
+
+
+        public const string EPIWEEK = "EPIWEEK";
+
+
+
+        public const string EXCEPT = "EXCEPT";
+
+
+
+        public const string EXECUTE = "EXECUTE";
+
+
+
+        public const string EXISTS = "EXISTS";
+
+
+
+        public const string EXIT = "EXIT";
+
+
+
+        public const string EXP = "EXP";
+
+
+
+        public const string FIELDVAR = "FIELDVAR";
+
+
+
+        public const string FILEDATE = "FILEDATE";
+
+
+
+        public const string FINDTEXT = "FINDTEXT";
+
+
+
+        public const string FIXED_FORMAT = "\"Fixed\"";
+
+
+
+        public const string FREQ = "FREQ";
+
+
+
+  public const string FREQGRAPH = "FREQGRAPH";
+
+
+
+        public const string FORMAT = "FORMAT";
+
+
+
+        public const string GENERAL_DATE_FORMAT = "\"General Date\"";
+
+
+
+        public const string GENERAL_NUMBER_FORMAT = "\"General Number\"";
+
+
+
+        public const string GOTO = "GOTO";
+
+
+
+        public const string GRAPH = "GRAPH";
+
+
+
+  public const string GRAPHTYPE = "GRAPHTYPE";
+
+
+
+        public const string GRIDTABLE = "GRIDTABLE";
+
+
+
+        public const string GROUPVAR = "GROUPVAR";
+
+
+
+        public const string HEADER = "HEADER";
+
+
+
+        public const string HELP = "HELP";
+
+
+
+        public const string HIDE = "HIDE";
+
+
+
+        public const string HIGHLIGHT = "HIGHLIGHT";
+
+
+
+        public const string HIVALUE = "HIVALUE";
+
+
+
+        public const string HOUR = "HOUR";
+
+
+
+        public const string HOURS = "HOURS";
+
+
+
+  public const string HYPERLINKS = "HYPERLINKS";
+
+
+
+        public const string IF = "IF";
+
+
+
+        public const string KMSURVIVAL = "KMSURVIVAL";
+
+
+
+        public const string LIKE = "LIKE";
+
+
+
+        public const string LINEBREAK = "LINEBREAK";
+
+
+
+        public const string LIST = "LIST";
+
+
+
+        public const string LN = "LN";
+
+
+
+        public const string LOG = "LOG";
+
+
+
+        public const string LOGISTIC = "LOGISTIC";
+
+
+
+        public const string LONG_DATE_FORMAT = "\"Long Date\"";
+
+
+
+        public const string LONG_TIME_FORMAT = "\"Long Time\"";
+
+
+
+        public const string LOVALUE = "LOVALUE";
+
+
+
+        public const string MATCH = "MATCH";
+
+
+
+        public const string MATCHVAR = "MATCHVAR";
+
+
+
+        public const string MEANS = "MEANS";
+
+
+
+        public const string MERGE = "MERGE";
+
+
+
+        public const string MINUTE = "MINUTE";
+
+
+
+        public const string MINUTES = "MINUTES";
+
+
+
+        public const string MISSING = "MISSING";
+
+
+
+        public const string MOD = "MOD";
+
+
+
+        public const string MONTH = "MONTH";
+
+
+
+        public const string MONTHS = "MONTHS";
+
+
+
+        public const string NEWRECORD = "NEWRECORD";
+
+
+
+        public const string NOINTERCEPT = "NOINTERCEPT";
+
+
+
+        public const string NOT = "NOT";
+
+
+
+        public const string NOWAITFOREXIT = "NOWAITFOREXIT";
+
+
+
+        public const string NOWRAP = "NOWRAP";
+
+
+
+        public const string NUMTODATE = "NUMTODATE";
+
+
+
+        public const string NUMTOTIME = "NUMTOTIME";
+
+
+
+        public const string ON_OFF_FORMAT = "\"On/Off\"";
+
+
+
+        public const string OR = "OR";
+
+
+
+        public const string OUTTABLE = "OUTTABLE";
+
+
+
+        public const string PERCENT_FORMAT = "\"Percent\"";
+
+
+
+        public const string PERCENTS = "PERCENTS";
+
+
+
+        public const string PERMANENT = "PERMANENT";
+
+
+
+        public const string PFROMZ = "PFROMZ";
+
+
+
+        public const string PRINTOUT = "PRINTOUT";
+
+
+
+  public const string PROCESS = "PROCESS";
+
+
+
+        public const string PSUVAR = "PSUVAR";
+
+
+
+  public const string PVALUE = "PVALUE";
+
+
+
+        public const string QUIT = "QUIT";
+
+
+
+        public const string READ = "READ";
+
+
+
+        public const string RECODE = "RECODE";
+
+
+
+        public const string RECORDCOUNT = "RECORDCOUNT";
+
+
+
+        public const string REGRESS = "REGRESS";
+
+
+
+        public const string REPLACE = "REPLACE";
+
+
+
+        public const string RELATE = "RELATE";
+
+
+
+        public const string RND = "RND";
+
+
+
+        public const string REPORT = "REPORT";
+
+
+
+
+        public const string ROUND = "ROUND";
+
+
+
+
+        public const string ROUTEOUT = "ROUTEOUT";
+
+
+
+        public const string RUNPGM = "RUNPGM";
+
+
+
+        public const string RUNSILENT = "RUNSILENT";
+
+
+
+        public const string SAVEDATA = "SAVEDATA";
+
+
+
+        public const string SCIENTIFIC_FORMAT = "\"Scientific\"";
+
+
+
+        public const string SECOND = "SECOND";
+
+
+
+        public const string SECONDS = "SECONDS";
+
+
+
+        public const string SELECT = "SELECT";
+
+
+
+        public const string SET = "SET";
+
+
+
+        public const string SET_REQUIRED = "SET-REQUIRED";
+
+
+
+        public const string SET_NOT_REQUIRED = "SET-NOT-REQUIRED";
+
+
+
+        public const string SHORT_DATE_FORMAT = "\"Short Date\"";
+
+
+
+        public const string SHORT_TIME_FORMAT = "\"Short Time\"";
+
+
+
+  public const string SHOWPROMPTS = "SHOWPROMPTS";
+
+
+
+        public const string SIN = "SIN";
+
+
+
+        public const string SORT = "SORT";
+
+
+
+        public const string STANDARD_FORMAT = "\"Standard\"";
+
+
+
+  public const string STATISTICS = "STATISTICS";
+
+
+
+        public const string STEP = "STEP";
+
+
+
+        public const string STRATAVAR = "STRATAVAR";
+
+
+
+        public const string STRLEN = "STRLEN";
+
+
+
+        public const string SUBSTRING = "SUBSTRING";
+
+
+
+        public const string SUMMARIZE = "SUMMARIZE";
+
+
+
+        public const string SYSTEMDATE = "SYSTEMDATE";
+
+
+
+        public const string SYSTEMTIME = "SYSTEMTIME";
+
+
+
+        public const string TABLES = "TABLES";
+
+
+
+        public const string TAN = "TAN";
+
+
+
+        public const string TITLETEXT = "TITLETEXT";
+
+
+
+        public const string TEXTFONT = "TEXTFONT";
+
+
+
+  public const string THEN = "THEN";
+
+
+
+        public const string TIMEUNIT = "TIMEUNIT";
+
+
+
+  public const string TO = "TO";
+
+
+
+        public const string TRUE_FALSE_FORMAT = "\"True/False\"";
+
+
+
+        public const string TRUNC = "TRUNC";
+
+
+
+
+
+
+        public const string TYPEOUT = "TYPEOUT";
+
+
+
+        public const string TXTTODATE = "TXTTODATE";
+
+
+
+        public const string TXTTONUM = "TXTTONUM";
+
+
+
+        public const string UNDEFINE = "UNDEFINE";
+
+
+
+        public const string UNDELETE = "UNDELETE";
+
+
+
+        public const string UNHIDE = "UNHIDE";
+
+
+
+        public const string UNHIGHLIGHT = "UNHIGHLIGHT";
+
+
+
+        public const string UPDATE = "UPDATE";
+
+
+
+        public const string UPPERCASE = "UPPERCASE";
+
+
+
+        public const string WAITFOREXIT = "WAITFOREXIT";
+
+
+
+        public const string WEIGHTVAR = "WEIGHTVAR";
+
+
+
+        public const string WRITE = "WRITE";
+
+
+
+        public const string XOR = "XOR";
+
+
+
+        public const string YESNO_FORMAT = "\"Yes/No\"";
+
+
+
+        public const string YN = "YN";
+
+
+
+        public const string YEAR = "YEAR";
+
+
+
+        public const string YEARS = "YEARS";
+
+
+
+        public const string ZSCORE = "ZSCORE";
+    }
+}
+
+ 

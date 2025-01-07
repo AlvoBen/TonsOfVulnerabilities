@@ -1,0 +1,33 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using com.calitha.goldparser;
+
+namespace Epi.Core.EnterInterpreter.Rules
+{
+
+    public         class Rule_RecordCount : EnterRule
+    {
+        public Rule_RecordCount(Rule_Context pContext, NonterminalToken pToken)
+            : base(pContext)
+        {
+
+
+        }
+
+
+
+
+
+
+        public override object Execute()
+        {
+            object result = this.Context.EnterCheckCodeInterface.RecordCount();
+
+            return result;
+        }
+    }
+}
+
+ 

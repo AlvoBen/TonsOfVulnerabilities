@@ -1,0 +1,78 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using com.calitha.goldparser;
+
+namespace Epi.Core.EnterInterpreter.Rules
+{
+    public class Rule_View_Checkcode_Statement : EnterRule
+    {
+        private EnterRule BeginBefore = null;
+        private EnterRule BeginAfter = null;
+
+        private string TextField = null;
+
+        public Rule_View_Checkcode_Statement(Rule_Context pContext, NonterminalToken pToken)
+            : base(pContext)
+        {
+
+            this.TextField = this.ExtractTokensWithFormat(pToken.Tokens);
+
+            for (int i = 1; i < pToken.Tokens.Length; i++)
+            {
+                if (pToken.Tokens[i] is NonterminalToken)
+                {
+                    NonterminalToken T = (NonterminalToken)pToken.Tokens[i];
+                    switch (T.Symbol.ToString())
+                    {
+                        case "":
+                            this.BeginBefore = EnterRule.BuildStatments(pContext, pToken.Tokens[i]);
+                            break;
+                        case "":
+                            this.BeginAfter = EnterRule.BuildStatments(pContext, pToken.Tokens[i]);
+                            break;
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+        public override object Execute()
+        {
+            this.Context.View_Checkcode = this;
+
+
+
+
+                if (this.Context.BeforeCheckCode.ContainsKey("view"))
+                {
+                    this.Context.BeforeCheckCode.Remove("view");
+                }
+                this.Context.BeforeCheckCode.Add("view", this.BeginBefore);
+
+
+
+
+                if (this.Context.AfterCheckCode.ContainsKey("view"))
+                {
+                    this.Context.AfterCheckCode.Remove("view");
+                }
+                this.Context.AfterCheckCode.Add("view", this.BeginAfter);
+
+            return null;
+        }
+
+        public override string ToString()
+        {
+            return this.TextField;
+        }
+
+        public override bool IsNull() { return BeginBefore == null && BeginAfter == null; }
+    }
+}
+
+ 

@@ -1,0 +1,392 @@
+﻿//Namespaces
+
+using System;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Xml;
+using Epi;
+
+// 
+
+namespace Epi.Fields
+{
+
+
+
+    public class RelatedViewField : FieldWithoutSeparatePrompt, IFieldWithCheckCodeClick 
+    {
+        //Private Members
+
+        private XmlElement viewElement;
+        private XmlElement fieldElement;
+        private XmlNode fieldNode;
+
+        private string condition = string.Empty;
+        private bool shouldReturnToParent;
+        private BackgroundWorker _updater;
+        private BackgroundWorker _inserter;
+        //Private Members
+
+        //Constructors
+
+
+
+
+
+        public RelatedViewField(Page page)
+            : base(page)
+        {
+        }
+
+
+
+
+
+        public RelatedViewField(View view)
+            : base(view)
+        {
+        }
+
+
+
+
+
+
+        public RelatedViewField(Page page, XmlElement viewElement)
+            : base(page)
+        {
+            this.viewElement = viewElement;
+            this.Page = page;
+        }
+
+
+
+
+
+
+        public RelatedViewField(View view, XmlNode fieldNode)
+            : base(view)
+        {
+            this.fieldNode = fieldNode;
+            this.view.Project.Metadata.GetFieldData(this, this.fieldNode);
+        }
+
+
+
+
+
+        public override void LoadFromRow(DataRow row)
+        {
+            base.LoadFromRow(row);
+            condition = row["RelateCondition"].ToString();
+
+
+            shouldReturnToParent = (bool)row["ShouldReturnToParent"];
+            if (row["RelatedViewId"] != System.DBNull.Value)
+            {
+                relatedViewID = (int)row["RelatedViewId"];
+            }
+        }
+
+        public RelatedViewField Clone()
+        {
+            RelatedViewField clone = (RelatedViewField)this.MemberwiseClone();
+            base.AssignMembers(clone);
+            return clone;
+        }
+        //
+
+        //Public Events
+
+
+
+
+        public event ChildViewRequestedEventHandler ChildViewRequested;
+
+        //
+
+        //Public Properties
+
+
+
+
+        public override MetaFieldType FieldType
+        {
+            get
+            {
+                return MetaFieldType.Relate;
+            }
+        }
+
+
+
+
+        public View ChildView
+        {
+            get
+            {
+                return GetMetadata().GetChildView(this);
+            }
+        }
+
+
+
+
+        public string Condition
+        {
+            get
+            {
+                return (condition);
+            }
+            set
+            {
+                condition = value;
+            }
+        }
+
+
+
+
+        public bool ShouldReturnToParent
+        {
+            get
+            {
+                return (shouldReturnToParent);
+            }
+            set
+            {
+                shouldReturnToParent = value;
+            }
+        }
+
+        private int relatedViewID;
+
+
+
+        public int RelatedViewID
+        {
+            get { return relatedViewID; }
+            set { relatedViewID = value; }
+        }
+
+
+
+
+
+        public string CheckCodeAfter
+        {
+            get
+            {
+                return (checkCodeAfter);
+            }
+            set
+            {
+                checkCodeAfter = value;
+            }
+        }
+
+
+
+
+        public string CheckCodeClick
+        {
+            get
+            {
+                return (checkCodeBefore);
+            }
+            set
+            {
+                checkCodeBefore = value;
+            }
+        }
+
+
+        //
+
+        //Protected Properties
+
+
+
+        protected string checkCodeAfter = string.Empty;
+
+
+
+        protected string checkCodeBefore = string.Empty;
+
+        //Protected Properties
+
+        //Public Methods
+
+
+
+
+        public override void Delete()
+        {
+            View childView = this.GetProject().GetViewById(RelatedViewID);
+
+            if (childView != null)
+            {
+                childView.IsRelatedView = false;
+                GetMetadata().UpdateView(childView);
+            }
+
+            GetMetadata().DeleteField(this);
+            view.MustRefreshFieldCollection = true;
+        }
+
+
+
+
+        public XmlElement ViewElement
+        {
+            get
+            {
+                return viewElement;
+            }
+            set
+            {
+                viewElement = value;
+            }
+        }
+        //
+
+        //Protected Methods
+
+
+
+
+        protected override void InsertField()
+        {
+            this.Id = GetMetadata().CreateField(this);
+            base.OnFieldAdded();
+        }
+
+
+
+
+
+        protected override void UpdateField()
+        {
+            GetMetadata().UpdateField(this);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //Protected Methods
+
+        //Event Handlers
+
+
+
+
+
+
+        private void MnuEditRelate_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
+
+
+
+
+        private void MnuRelatedView_Click(object sender, EventArgs e)
+        {
+            if (ChildViewRequested != null)
+            {
+                ChildViewRequested(this, new ChildViewRequestedEventArgs(ChildView));
+            }
+        }
+
+        //Event Handlers
+
+        //Private Methods
+
+
+
+
+
+
+
+        private void AppendAttributeValue(string Attribute, string Value)
+        {
+            try
+            {
+                XmlAttribute xmlAttribute = viewElement.OwnerDocument.CreateAttribute(Attribute);
+                xmlAttribute.Value = Value;
+                if (fieldElement == null) fieldElement = viewElement.OwnerDocument.CreateElement("Field");
+                fieldElement.Attributes.Append(xmlAttribute);
+
+            }
+            catch (ArgumentException ex)
+            {
+
+                throw new GeneralException(SharedStrings.EXCEPTION_OCCURRED, ex);
+            }
+        }
+
+        // 
+
+
+
+
+
+
+    }
+}
+
+ 

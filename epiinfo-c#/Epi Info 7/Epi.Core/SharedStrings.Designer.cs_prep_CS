@@ -1,0 +1,8002 @@
+﻿
+
+
+
+
+
+
+
+
+
+namespace Epi {
+    using System;
+
+
+
+
+
+
+
+
+
+    [        System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [        System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [        System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    public class SharedStrings {
+
+        private static         System.Resources.ResourceManager resourceMan;
+
+        private static         System.Globalization.CultureInfo resourceCulture;
+
+        [        System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        internal SharedStrings() {
+        }
+
+
+
+
+        [        System.ComponentModel.EditorBrowsableAttribute(        System.ComponentModel.EditorBrowsableState.Advanced)]
+        public static         System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
+                            System.Resources.ResourceManager temp = new         System.Resources.ResourceManager("Epi.SharedStrings", typeof(SharedStrings).Assembly);
+                    resourceMan = temp;
+                }
+                return resourceMan;
+            }
+        }
+
+
+
+
+
+        [        System.ComponentModel.EditorBrowsableAttribute(        System.ComponentModel.EditorBrowsableState.Advanced)]
+        public static         System.Globalization.CultureInfo Culture {
+            get {
+                return resourceCulture;
+            }
+            set {
+                resourceCulture = value;
+            }
+        }
+
+
+
+
+        public static string ABOUT_EPIINFO_LINE1 {
+            get {
+                return ResourceManager.GetString("ABOUT_EPIINFO_LINE1", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ABOUT_EPIINFO_LINE2 {
+            get {
+                return ResourceManager.GetString("ABOUT_EPIINFO_LINE2", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public static string ABOUT_EPIINFO_LINE3 {
+            get {
+                return ResourceManager.GetString("ABOUT_EPIINFO_LINE3", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ADD_BLOCK {
+            get {
+                return ResourceManager.GetString("ADD_BLOCK", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ADD_FORM {
+            get {
+                return ResourceManager.GetString("ADD_FORM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ADD_PAGE {
+            get {
+                return ResourceManager.GetString("ADD_PAGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ADDITIONAL_INFORMATION {
+            get {
+                return ResourceManager.GetString("ADDITIONAL_INFORMATION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ALIGN_1_COLUMN {
+            get {
+                return ResourceManager.GetString("ALIGN_1_COLUMN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ALIGN_2_COLUMN {
+            get {
+                return ResourceManager.GetString("ALIGN_2_COLUMN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ALIGN_3_COLUMN {
+            get {
+                return ResourceManager.GetString("ALIGN_3_COLUMN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ALIGN_4_COLUMN {
+            get {
+                return ResourceManager.GetString("ALIGN_4_COLUMN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ALIGN_5_COLUMN {
+            get {
+                return ResourceManager.GetString("ALIGN_5_COLUMN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ALIGN_AS_ROW {
+            get {
+                return ResourceManager.GetString("ALIGN_AS_ROW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANALYSIS {
+            get {
+                return ResourceManager.GetString("ANALYSIS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANDROID_TOO_FEW_FIELDS {
+            get {
+                return ResourceManager.GetString("ANDROID_TOO_FEW_FIELDS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANOVA_BARTLETT {
+            get {
+                return ResourceManager.GetString("ANOVA_BARTLETT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANOVA_BETWEEN {
+            get {
+                return ResourceManager.GetString("ANOVA_BETWEEN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANOVA_CHI {
+            get {
+                return ResourceManager.GetString("ANOVA_CHI", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANOVA_DESCRIPTION_FOR_MEANS {
+            get {
+                return ResourceManager.GetString("ANOVA_DESCRIPTION_FOR_MEANS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANOVA_DESCRIPTION_FOR_MEANS_SUBTITLE {
+            get {
+                return ResourceManager.GetString("ANOVA_DESCRIPTION_FOR_MEANS_SUBTITLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANOVA_DF_LONG {
+            get {
+                return ResourceManager.GetString("ANOVA_DF_LONG", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANOVA_DF_SHORT {
+            get {
+                return ResourceManager.GetString("ANOVA_DF_SHORT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANOVA_F {
+            get {
+                return ResourceManager.GetString("ANOVA_F", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANOVA_KWH {
+            get {
+                return ResourceManager.GetString("ANOVA_KWH", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANOVA_MS {
+            get {
+                return ResourceManager.GetString("ANOVA_MS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANOVA_MWWTST {
+            get {
+                return ResourceManager.GetString("ANOVA_MWWTST", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANOVA_P_VAL {
+            get {
+                return ResourceManager.GetString("ANOVA_P_VAL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANOVA_SMALL_P {
+            get {
+                return ResourceManager.GetString("ANOVA_SMALL_P", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANOVA_SS {
+            get {
+                return ResourceManager.GetString("ANOVA_SS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANOVA_TOTAL {
+            get {
+                return ResourceManager.GetString("ANOVA_TOTAL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANOVA_VARIATION {
+            get {
+                return ResourceManager.GetString("ANOVA_VARIATION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ANOVA_WITHIN {
+            get {
+                return ResourceManager.GetString("ANOVA_WITHIN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string APPLY_DEFAULT_FONTS {
+            get {
+                return ResourceManager.GetString("APPLY_DEFAULT_FONTS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string APPLY_DEFAULT_FONTS_FORM {
+            get {
+                return ResourceManager.GetString("APPLY_DEFAULT_FONTS_FORM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string APPLY_DEFAULT_FONTS_PAGE {
+            get {
+                return ResourceManager.GetString("APPLY_DEFAULT_FONTS_PAGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string APPLY_DEFAULT_FONTS_PROJECT {
+            get {
+                return ResourceManager.GetString("APPLY_DEFAULT_FONTS_PROJECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string AUTOSEARCH {
+            get {
+                return ResourceManager.GetString("AUTOSEARCH", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string BEGIN {
+            get {
+                return ResourceManager.GetString("BEGIN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string BLOCK_ALREADY_EXISTS {
+            get {
+                return ResourceManager.GetString("BLOCK_ALREADY_EXISTS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string BOOKMARK {
+            get {
+                return ResourceManager.GetString("BOOKMARK", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string BROWSE_FOR_FILE {
+            get {
+                return ResourceManager.GetString("BROWSE_FOR_FILE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string BROWSE_FOR_MORE {
+            get {
+                return ResourceManager.GetString("BROWSE_FOR_MORE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string BUILD {
+            get {
+                return ResourceManager.GetString("BUILD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CAN_NOT_CONNECT_MYSQL {
+            get {
+                return ResourceManager.GetString("CAN_NOT_CONNECT_MYSQL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CAN_NOT_CREATE_NEW_MYSQL {
+            get {
+                return ResourceManager.GetString("CAN_NOT_CREATE_NEW_MYSQL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CANNOT_ADD_FIELD_VIEW_MAX {
+            get {
+                return ResourceManager.GetString("CANNOT_ADD_FIELD_VIEW_MAX", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CANNOT_CLOSE_RECORD_INVALID_DATA {
+            get {
+                return ResourceManager.GetString("CANNOT_CLOSE_RECORD_INVALID_DATA", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CANNOT_CLOSE_REQUIRED_FIELDS {
+            get {
+                return ResourceManager.GetString("CANNOT_CLOSE_REQUIRED_FIELDS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CANNOT_CONNECT_MYSQL {
+            get {
+                return ResourceManager.GetString("CANNOT_CONNECT_MYSQL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CANNOT_CONNECT_TO_SQL_SERVER {
+            get {
+                return ResourceManager.GetString("CANNOT_CONNECT_TO_SQL_SERVER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CANNOT_CREATE_SHORTCUT_FOR_CHILD_FORM {
+            get {
+                return ResourceManager.GetString("CANNOT_CREATE_SHORTCUT_FOR_CHILD_FORM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CANNOT_DELETE_FILE {
+            get {
+                return ResourceManager.GetString("CANNOT_DELETE_FILE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CANNOT_DETERMINE_RELATIONSHIP {
+            get {
+                return ResourceManager.GetString("CANNOT_DETERMINE_RELATIONSHIP", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CANNOT_LOAD_APPLICATION {
+            get {
+                return ResourceManager.GetString("CANNOT_LOAD_APPLICATION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CANNOT_LOAD_PROGRAM {
+            get {
+                return ResourceManager.GetString("CANNOT_LOAD_PROGRAM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CANNOT_OPEN_PROJECT_FILE {
+            get {
+                return ResourceManager.GetString("CANNOT_OPEN_PROJECT_FILE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CANNOT_OPEN_VIEW_NO_DATA_TABLE {
+            get {
+                return ResourceManager.GetString("CANNOT_OPEN_VIEW_NO_DATA_TABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CANNOT_OPEN_VIEW_RELATED {
+            get {
+                return ResourceManager.GetString("CANNOT_OPEN_VIEW_RELATED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CANNOT_OPEN_VIEW_RELATED_NAMES {
+            get {
+                return ResourceManager.GetString("CANNOT_OPEN_VIEW_RELATED_NAMES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CHANGE_NOT_EFFECT_UNTIL_RESTART {
+            get {
+                return ResourceManager.GetString("CHANGE_NOT_EFFECT_UNTIL_RESTART", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CHANGE_TO {
+            get {
+                return ResourceManager.GetString("CHANGE_TO", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CHECK_CODE_EDITOR {
+            get {
+                return ResourceManager.GetString("CHECK_CODE_EDITOR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CHECK_CODE_EXECUTION_WAS_UNSUCCESSFUL_FOR_ASSOCIATED_PROGRAM {
+            get {
+                return ResourceManager.GetString("CHECK_CODE_EXECUTION_WAS_UNSUCCESSFUL_FOR_ASSOCIATED_PROGRAM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CHECKCODE_CHANGED {
+            get {
+                return ResourceManager.GetString("CHECKCODE_CHANGED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CLICK_TO_CHANGE {
+            get {
+                return ResourceManager.GetString("CLICK_TO_CHANGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CLOSE_PROJECT {
+            get {
+                return ResourceManager.GetString("CLOSE_PROJECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CLOSE_PROJECT_LITERAL {
+            get {
+                return ResourceManager.GetString("CLOSE_PROJECT_LITERAL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CLOSE_VIEW {
+            get {
+                return ResourceManager.GetString("CLOSE_VIEW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CLOSE_VIEW_LITERAL {
+            get {
+                return ResourceManager.GetString("CLOSE_VIEW_LITERAL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CLOSING_PROJECT {
+            get {
+                return ResourceManager.GetString("CLOSING_PROJECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_ADVSTATS {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_ADVSTATS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_ASSIGN {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_ASSIGN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_AUTOSEARCH {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_AUTOSEARCH", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_BEEP {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_BEEP", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_CALL {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_CALL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_CANCELSELECT {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_CANCELSELECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_CANCELSORT {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_CANCELSORT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_CLEAR {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_CLEAR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_CLOSEOUT {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_CLOSEOUT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_COMPSAMPFREQ {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_COMPSAMPFREQ", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_COMPSAMPMEANS {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_COMPSAMPMEANS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_COMPSAMPTABLES {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_COMPSAMPTABLES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_COXPH {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_COXPH", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_DATA {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_DATA", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_DELETEFILETABLE {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_DELETEFILETABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_DELETERECORDS {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_DELETERECORDS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_DIALOG {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_DIALOG", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_DISABLE {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_DISABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_DISPLAY {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_DISPLAY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_ENABLE {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_ENABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_EXECUTE {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_EXECUTE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_EXECUTEFILE {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_EXECUTEFILE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_FREQ {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_FREQ", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_GEOCODE {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_GEOCODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_GOTO {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_GOTO", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_GRAPH {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_GRAPH", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_HEADER {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_HEADER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_HELP {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_HELP", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_HIDE {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_HIDE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_HIGHLIGHT {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_HIGHLIGHT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_IF {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_IF", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_KMSURV {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_KMSURV", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_LINEARREGRESSION {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_LINEARREGRESSION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_LIST {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_LIST", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_LOGISTICREGRESSION {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_LOGISTICREGRESSION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_MAP {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_MAP", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_MATCH {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_MATCH", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_MEANS {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_MEANS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_MERGE {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_MERGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_NEWRECORD {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_NEWRECORD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_OPTIONS {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_OPTIONS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_OUTPUT {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_OUTPUT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_PRINTOUT {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_PRINTOUT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_QUIT {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_QUIT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_READ {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_READ", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_RECODE {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_RECODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_RELATE {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_RELATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_REPORTS {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_REPORTS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_ROUTEOUT {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_ROUTEOUT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_RUNSAVED {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_RUNSAVED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_SELECT {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_SELECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_SELECTIF {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_SELECTIF", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_SET {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_SET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_SET_NOT_REQUIRED {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_SET_NOT_REQUIRED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_SET_REQUIRED {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_SET_REQUIRED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_SORT {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_SORT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_STATS {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_STATS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_STORINGOUTPUT {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_STORINGOUTPUT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_SUMMARIZE {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_SUMMARIZE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_TABLES {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_TABLES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_TYPE {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_TYPE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_UNDELETERECORDS {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_UNDELETERECORDS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_UNHIDE {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_UNHIDE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_UNHIGHLIGHT {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_UNHIGHLIGHT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_USERCMDS {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_USERCMDS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_USERCOMMAND {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_USERCOMMAND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_USERINTERACTION {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_USERINTERACTION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_VARIABLES {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_VARIABLES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_CMD_WRITE {
+            get {
+                return ResourceManager.GetString("CNTXT_CMD_WRITE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_DATFX {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_DATFX", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_DATFX_TMPLT1 {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_DATFX_TMPLT1", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_DATFX_TMPLT2 {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_DATFX_TMPLT2", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_FRMT_DATES {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_FRMT_DATES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_FRMT_DATES_GEN {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_FRMT_DATES_GEN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_FRMT_DATES_LONGDATE {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_FRMT_DATES_LONGDATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_FRMT_DATES_LONGTIME {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_FRMT_DATES_LONGTIME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_FRMT_DATES_SHORTDATE {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_FRMT_DATES_SHORTDATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_FRMT_DATES_SHORTTIME {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_FRMT_DATES_SHORTTIME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_FRMT_NUM {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_FRMT_NUM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_FRMT_NUM_CURRENCY {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_FRMT_NUM_CURRENCY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_FRMT_NUM_FIXED {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_FRMT_NUM_FIXED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_FRMT_NUM_GEN {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_FRMT_NUM_GEN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_FRMT_NUM_ONOFF {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_FRMT_NUM_ONOFF", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_FRMT_NUM_PERCENT {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_FRMT_NUM_PERCENT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_FRMT_NUM_SCIENTIFIC {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_FRMT_NUM_SCIENTIFIC", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_FRMT_NUM_STANDARD {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_FRMT_NUM_STANDARD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_FRMT_NUM_TF {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_FRMT_NUM_TF", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_FRMT_NUM_YN {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_FRMT_NUM_YN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_LGOPS {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_LGOPS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_LGOPS_AND {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_LGOPS_AND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_LGOPS_NOT {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_LGOPS_NOT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_LGOPS_OR {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_LGOPS_OR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_LGOPS_XOR {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_LGOPS_XOR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMCOPS {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMCOPS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMCOPS_EQUAL {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMCOPS_EQUAL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMCOPS_EXP {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMCOPS_EXP", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMCOPS_GT {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMCOPS_GT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMCOPS_GTE {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMCOPS_GTE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMCOPS_LIKE {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMCOPS_LIKE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMCOPS_LT {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMCOPS_LT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMCOPS_LTE {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMCOPS_LTE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMCOPS_LTGT {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMCOPS_LTGT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMCOPS_MOD {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMCOPS_MOD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMFX {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMFX", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMFX_ABS {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMFX_ABS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMFX_COS {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMFX_COS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMFX_EXP {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMFX_EXP", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMFX_LN {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMFX_LN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMFX_LOG {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMFX_LOG", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMFX_RECCOUNT {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMFX_RECCOUNT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMFX_RND {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMFX_RND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMFX_ROUND {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMFX_ROUND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMFX_SIN {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMFX_SIN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMFX_TAN {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMFX_TAN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_NUMFX_TRUNC {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_NUMFX_TRUNC", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_SYSFXN {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_SYSFXN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_SYSFXN_CURRUSER {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_SYSFXN_CURRUSER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_TEXTFXN {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_TEXTFXN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_TIMEFXN {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_TIMEFXN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_TMPLT_DATEPARTS {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_TMPLT_DATEPARTS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_TMPLT_ENVVAR {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_TMPLT_ENVVAR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_TMPLT_FILENAME {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_TMPLT_FILENAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_TMPLT_FINDTEXT {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_TMPLT_FINDTEXT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_TMPLT_SUBSTRING {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_TMPLT_SUBSTRING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_TMPLT_TIMEPARTS {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_TMPLT_TIMEPARTS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_TMPLT_VAR_PARM {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_TMPLT_VAR_PARM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_TMPLT_VARIABLE {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_TMPLT_VARIABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CNTXT_FXN_TMPLT_ZSCORE {
+            get {
+                return ResourceManager.GetString("CNTXT_FXN_TMPLT_ZSCORE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string COL_WORD {
+            get {
+                return ResourceManager.GetString("COL_WORD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string COLLECTED_DATA_INFORMATION_REQUIRED {
+            get {
+                return ResourceManager.GetString("COLLECTED_DATA_INFORMATION_REQUIRED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string COMFIRM_DELETE_VIEW {
+            get {
+                return ResourceManager.GetString("COMFIRM_DELETE_VIEW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string COMFIRM_DELETE_VIEW_WITH_DATATABLE {
+            get {
+                return ResourceManager.GetString("COMFIRM_DELETE_VIEW_WITH_DATATABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string COMMAND_NOT_IDENTIFIED {
+            get {
+                return ResourceManager.GetString("COMMAND_NOT_IDENTIFIED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string COMPLETE_ALL_SELECTION_FIELDS {
+            get {
+                return ResourceManager.GetString("COMPLETE_ALL_SELECTION_FIELDS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CONFIG_NOT_LOADED {
+            get {
+                return ResourceManager.GetString("CONFIG_NOT_LOADED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CONFIRM_DELETE_GRID_COLUMN {
+            get {
+                return ResourceManager.GetString("CONFIRM_DELETE_GRID_COLUMN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CONFIRM_DELETE_RECORDS {
+            get {
+                return ResourceManager.GetString("CONFIRM_DELETE_RECORDS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CONFIRM_FILE_DELETE {
+            get {
+                return ResourceManager.GetString("CONFIRM_FILE_DELETE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CONFIRM_GROUP_DROP_PICKUP_FIELD {
+            get {
+                return ResourceManager.GetString("CONFIRM_GROUP_DROP_PICKUP_FIELD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CONFIRM_LANGUAGE_DELETE {
+            get {
+                return ResourceManager.GetString("CONFIRM_LANGUAGE_DELETE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CONFIRM_PAGE_DELETE {
+            get {
+                return ResourceManager.GetString("CONFIRM_PAGE_DELETE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CONFIRM_PROGRAM_DELETE {
+            get {
+                return ResourceManager.GetString("CONFIRM_PROGRAM_DELETE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CONFIRM_VIEW_DELETE {
+            get {
+                return ResourceManager.GetString("CONFIRM_VIEW_DELETE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CONFIRMATION {
+            get {
+                return ResourceManager.GetString("CONFIRMATION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CONTINUE_TAB_ORDER {
+            get {
+                return ResourceManager.GetString("CONTINUE_TAB_ORDER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string COPY {
+            get {
+                return ResourceManager.GetString("COPY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CORRUPTION_DUPE_PERM {
+            get {
+                return ResourceManager.GetString("CORRUPTION_DUPE_PERM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CREATE_DIRECTORY {
+            get {
+                return ResourceManager.GetString("CREATE_DIRECTORY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CREATE_NEW_DATA_TABLE {
+            get {
+                return ResourceManager.GetString("CREATE_NEW_DATA_TABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CREATE_NEW_PGM {
+            get {
+                return ResourceManager.GetString("CREATE_NEW_PGM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CREATING_FIELD {
+            get {
+                return ResourceManager.GetString("CREATING_FIELD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CREATING_PROJECT {
+            get {
+                return ResourceManager.GetString("CREATING_PROJECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CURRENT_LOCALE {
+            get {
+                return ResourceManager.GetString("CURRENT_LOCALE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CURRENT_PROJECT {
+            get {
+                return ResourceManager.GetString("CURRENT_PROJECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CURRENT_VIEW {
+            get {
+                return ResourceManager.GetString("CURRENT_VIEW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string CUT {
+            get {
+                return ResourceManager.GetString("CUT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_100_PERCENT_LABEL {
+            get {
+                return ResourceManager.GetString("DASHBOARD_100_PERCENT_LABEL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_ADVANCED_OPTIONS_LABEL {
+            get {
+                return ResourceManager.GetString("DASHBOARD_ADVANCED_OPTIONS_LABEL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CANNOT_RELATE_NO_DATA_SOURCE {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CANNOT_RELATE_NO_DATA_SOURCE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CANNOT_SAVE_CANVAS_NO_DATA_SOURCE {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CANNOT_SAVE_CANVAS_NO_DATA_SOURCE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CANVAS_SAVED {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CANVAS_SAVED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_2X2_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_2X2_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_ANALYSIS_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_ANALYSIS_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_CHART_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_CHART_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_COMBINED_FREQUENCY_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_COMBINED_FREQUENCY_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_COX_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_COX_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_CSAMPLE_FREQUENCY_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_CSAMPLE_FREQUENCY_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_CSAMPLE_MEANS_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_CSAMPLE_MEANS_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_CSAMPLE_TABLE_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_CSAMPLE_TABLE_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_EARS_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_EARS_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_FREQUENCY_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_FREQUENCY_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_KMSURVIVAL_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_KMSURVIVAL_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_LINE_LIST_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_LINE_LIST_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_LOGISTIC_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_LOGISTIC_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_MATCH_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_MATCH_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_MEANS_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_MEANS_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_MXN_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_MXN_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_REGRESS_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_REGRESS_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_STATCALC_2X2_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_STATCALC_2X2_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_STATCALC_CHI_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_STATCALC_CHI_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_STATCALC_COHORT_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_STATCALC_COHORT_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_STATCALC_POPULATION_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_STATCALC_POPULATION_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_STATCALC_SAMPLE_SIZE_POWER_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_STATCALC_SAMPLE_SIZE_POWER_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_STATCALC_UCC_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_STATCALC_UCC_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_ADD_TABLES_GADGET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_ADD_TABLES_GADGET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_REFRESH {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_REFRESH", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_RESET {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_RESET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CONTEXTMENU_SET_DATA_SOURCE {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CONTEXTMENU_SET_DATA_SOURCE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_CROSSTAB_FIELD_LABEL {
+            get {
+                return ResourceManager.GetString("DASHBOARD_CROSSTAB_FIELD_LABEL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_ERROR_DEFINED_VARIABLE_MISSING {
+            get {
+                return ResourceManager.GetString("DASHBOARD_ERROR_DEFINED_VARIABLE_MISSING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_ERROR_INVALID_COLUMN_TYPE {
+            get {
+                return ResourceManager.GetString("DASHBOARD_ERROR_INVALID_COLUMN_TYPE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_ERROR_PROJECT_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("DASHBOARD_ERROR_PROJECT_NOT_FOUND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_ERROR_PROJECT_NOT_FOUND_FOR_CANVAS {
+            get {
+                return ResourceManager.GetString("DASHBOARD_ERROR_PROJECT_NOT_FOUND_FOR_CANVAS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_EXPORT_CANCELLED {
+            get {
+                return ResourceManager.GetString("DASHBOARD_EXPORT_CANCELLED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_EXPORT_CREATE_TABLE {
+            get {
+                return ResourceManager.GetString("DASHBOARD_EXPORT_CREATE_TABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_EXPORT_EXCEL_NUMERIC_FIELD_OVERFLOW_FAIL {
+            get {
+                return ResourceManager.GetString("DASHBOARD_EXPORT_EXCEL_NUMERIC_FIELD_OVERFLOW_FAIL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_EXPORT_EXCEL_TABLE_OVERWRITE_FAIL {
+            get {
+                return ResourceManager.GetString("DASHBOARD_EXPORT_EXCEL_TABLE_OVERWRITE_FAIL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_EXPORT_PROGRESS {
+            get {
+                return ResourceManager.GetString("DASHBOARD_EXPORT_PROGRESS", resourceCulture);
+            }
+        }
+
+
+
+
+
+        public static string DASHBOARD_EXPORT_PROGRESS_INCLUDE_SKIPPED {
+            get {
+                return ResourceManager.GetString("DASHBOARD_EXPORT_PROGRESS_INCLUDE_SKIPPED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_EXPORT_SUCCESS {
+            get {
+                return ResourceManager.GetString("DASHBOARD_EXPORT_SUCCESS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_EXPORT_SUCCESS_SOME_SKIPPED {
+            get {
+                return ResourceManager.GetString("DASHBOARD_EXPORT_SUCCESS_SOME_SKIPPED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_EXPORT_SUCCESS_SOME_SKIPPED_NUMERIC_FIELD_OVERFLOW {
+            get {
+                return ResourceManager.GetString("DASHBOARD_EXPORT_SUCCESS_SOME_SKIPPED_NUMERIC_FIELD_OVERFLOW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_EXPORT_WARNING {
+            get {
+                return ResourceManager.GetString("DASHBOARD_EXPORT_WARNING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_EXPORT_WIDE_TABLE_FAIL {
+            get {
+                return ResourceManager.GetString("DASHBOARD_EXPORT_WIDE_TABLE_FAIL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_FIELD_LABEL {
+            get {
+                return ResourceManager.GetString("DASHBOARD_FIELD_LABEL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_FREQUENCY_CI_LOWER {
+            get {
+                return ResourceManager.GetString("DASHBOARD_FREQUENCY_CI_LOWER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_FREQUENCY_CI_UPPER {
+            get {
+                return ResourceManager.GetString("DASHBOARD_FREQUENCY_CI_UPPER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_FREQUENCY_CONFIG_PANEL_LABEL {
+            get {
+                return ResourceManager.GetString("DASHBOARD_FREQUENCY_CONFIG_PANEL_LABEL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_FREQUENCY_CUMULATIVE_PERCENT {
+            get {
+                return ResourceManager.GetString("DASHBOARD_FREQUENCY_CUMULATIVE_PERCENT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_FREQUENCY_FREQUENCY {
+            get {
+                return ResourceManager.GetString("DASHBOARD_FREQUENCY_FREQUENCY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_FREQUENCY_OUTER_LABEL {
+            get {
+                return ResourceManager.GetString("DASHBOARD_FREQUENCY_OUTER_LABEL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_FREQUENCY_PERCENT {
+            get {
+                return ResourceManager.GetString("DASHBOARD_FREQUENCY_PERCENT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_LOAD_ERROR {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_LOAD_ERROR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_ASSIGNED_VALUES_TO {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_ASSIGNED_VALUES_TO", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_CACHING {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_CACHING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_CACHING_WAIT {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_CACHING_WAIT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_CALCULATING_DESCRIPTIVE_STATISTICS {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_CALCULATING_DESCRIPTIVE_STATISTICS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_CALCULATING_DESCRIPTIVE_STATISTICS_ADVANCED {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_CALCULATING_DESCRIPTIVE_STATISTICS_ADVANCED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_CALCULATING_TOTALS {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_CALCULATING_TOTALS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_CHART_ERROR {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_CHART_ERROR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_CHECKING_INPUTS {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_CHECKING_INPUTS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_COMPARED_FREQ_VALUES {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_COMPARED_FREQ_VALUES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_COMPARING_FREQ_VALUES {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_COMPARING_FREQ_VALUES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_CREATING_VARIABLES {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_CREATING_VARIABLES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_DISPLAYING_OUTPUT {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_DISPLAYING_OUTPUT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_FINDING_CROSSTAB_VALUES {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_FINDING_CROSSTAB_VALUES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_FINDING_DATE_VALUES {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_FINDING_DATE_VALUES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_FINDING_FREQ_VALUES {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_FINDING_FREQ_VALUES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_FINDING_LIST_VALUES {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_FINDING_LIST_VALUES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_FINDING_STRATA_VALUES {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_FINDING_STRATA_VALUES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_FINISHED_CACHING {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_FINISHED_CACHING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_GENERATING_EPI_CURVE_TABLE {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_GENERATING_EPI_CURVE_TABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_GENERATING_TABLE {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_GENERATING_TABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_INITIALIZING {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_INITIALIZING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_OPERATION_CANCELLED {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_OPERATION_CANCELLED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_PREPROCESSING_RELATED_TABLE {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_PREPROCESSING_RELATED_TABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_PROCESSED_TABLES {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_PROCESSED_TABLES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_PROCESSING {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_PROCESSING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_PROCESSING_RELATED_TABLE {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_PROCESSING_RELATED_TABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_RELATING_PAGES {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_RELATING_PAGES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_RELATING_PAGES_NO_PROGRESS {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_RELATING_PAGES_NO_PROGRESS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_RELATING_TABLE {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_RELATING_TABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_ROW_LIMIT {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_ROW_LIMIT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_SORTING_FREQ_VALUES {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_SORTING_FREQ_VALUES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_GADGET_STATUS_TOTALS_EPI_CURVE_TABLE {
+            get {
+                return ResourceManager.GetString("DASHBOARD_GADGET_STATUS_TOTALS_EPI_CURVE_TABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_HTML_HEADING {
+            get {
+                return ResourceManager.GetString("DASHBOARD_HTML_HEADING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_HTML_TITLE {
+            get {
+                return ResourceManager.GetString("DASHBOARD_HTML_TITLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_INSTRUCTIONS {
+            get {
+                return ResourceManager.GetString("DASHBOARD_INSTRUCTIONS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_INSTRUCTIONS_FINISHED_CACHING {
+            get {
+                return ResourceManager.GetString("DASHBOARD_INSTRUCTIONS_FINISHED_CACHING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_MEANS_25 {
+            get {
+                return ResourceManager.GetString("DASHBOARD_MEANS_25", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_MEANS_75 {
+            get {
+                return ResourceManager.GetString("DASHBOARD_MEANS_75", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_MEANS_CONFIG_PANEL_LABEL {
+            get {
+                return ResourceManager.GetString("DASHBOARD_MEANS_CONFIG_PANEL_LABEL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_MEANS_MAX {
+            get {
+                return ResourceManager.GetString("DASHBOARD_MEANS_MAX", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_MEANS_MEAN {
+            get {
+                return ResourceManager.GetString("DASHBOARD_MEANS_MEAN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_MEANS_MEDIAN {
+            get {
+                return ResourceManager.GetString("DASHBOARD_MEANS_MEDIAN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_MEANS_MIN {
+            get {
+                return ResourceManager.GetString("DASHBOARD_MEANS_MIN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_MEANS_MODE {
+            get {
+                return ResourceManager.GetString("DASHBOARD_MEANS_MODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_MEANS_OBSERVATIONS {
+            get {
+                return ResourceManager.GetString("DASHBOARD_MEANS_OBSERVATIONS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_MEANS_OUTER_LABEL {
+            get {
+                return ResourceManager.GetString("DASHBOARD_MEANS_OUTER_LABEL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_MEANS_STANDARD_DEVIATION {
+            get {
+                return ResourceManager.GetString("DASHBOARD_MEANS_STANDARD_DEVIATION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_MEANS_SUM {
+            get {
+                return ResourceManager.GetString("DASHBOARD_MEANS_SUM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_MEANS_TOTAL {
+            get {
+                return ResourceManager.GetString("DASHBOARD_MEANS_TOTAL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_MEANS_VARIANCE {
+            get {
+                return ResourceManager.GetString("DASHBOARD_MEANS_VARIANCE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_OPTION_ALL_VALUES {
+            get {
+                return ResourceManager.GetString("DASHBOARD_OPTION_ALL_VALUES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_OPTION_INCLUDE_MISSING {
+            get {
+                return ResourceManager.GetString("DASHBOARD_OPTION_INCLUDE_MISSING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_OPTION_MAX_ROWS {
+            get {
+                return ResourceManager.GetString("DASHBOARD_OPTION_MAX_ROWS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_OPTION_SHOW_CONFIDENCE_LIMITS {
+            get {
+                return ResourceManager.GetString("DASHBOARD_OPTION_SHOW_CONFIDENCE_LIMITS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_OPTION_SHOW_CUMULATIVE_PERCENT {
+            get {
+                return ResourceManager.GetString("DASHBOARD_OPTION_SHOW_CUMULATIVE_PERCENT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_OPTION_SORT_HIGH_TO_LOW {
+            get {
+                return ResourceManager.GetString("DASHBOARD_OPTION_SORT_HIGH_TO_LOW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_OUTPUT_SAVED {
+            get {
+                return ResourceManager.GetString("DASHBOARD_OUTPUT_SAVED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_SAVE_CANVAS {
+            get {
+                return ResourceManager.GetString("DASHBOARD_SAVE_CANVAS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_STRATA_FIELD_SINGLE_LABEL {
+            get {
+                return ResourceManager.GetString("DASHBOARD_STRATA_FIELD_SINGLE_LABEL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_TITLE {
+            get {
+                return ResourceManager.GetString("DASHBOARD_TITLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DASHBOARD_WEIGHT_FIELD_LABEL {
+            get {
+                return ResourceManager.GetString("DASHBOARD_WEIGHT_FIELD_LABEL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATA_DICTIONARY {
+            get {
+                return ResourceManager.GetString("DATA_DICTIONARY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATA_ENTRY_EXECUTION_ONLY {
+            get {
+                return ResourceManager.GetString("DATA_ENTRY_EXECUTION_ONLY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATA_FILTERS {
+            get {
+                return ResourceManager.GetString("DATA_FILTERS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATA_TABLE_NAME_ALREADY_EXISTS {
+            get {
+                return ResourceManager.GetString("DATA_TABLE_NAME_ALREADY_EXISTS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATA_TABLE_NAME_BEGIN_NUMERIC {
+            get {
+                return ResourceManager.GetString("DATA_TABLE_NAME_BEGIN_NUMERIC", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATA_TABLE_NAME_BEGIN_UNDERSCORE {
+            get {
+                return ResourceManager.GetString("DATA_TABLE_NAME_BEGIN_UNDERSCORE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATA_TABLE_NAME_TOO_LONG {
+            get {
+                return ResourceManager.GetString("DATA_TABLE_NAME_TOO_LONG", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATA_TABLE_NOT_CREATED {
+            get {
+                return ResourceManager.GetString("DATA_TABLE_NOT_CREATED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATA_TABLE_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("DATA_TABLE_NOT_FOUND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATA_TRANSFER_IN_PROGRESS {
+            get {
+                return ResourceManager.GetString("DATA_TRANSFER_IN_PROGRESS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATA_TYPE_MISMATCH {
+            get {
+                return ResourceManager.GetString("DATA_TYPE_MISMATCH", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATABASE_ALREADY_EXISTS_SQL {
+            get {
+                return ResourceManager.GetString("DATABASE_ALREADY_EXISTS_SQL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATABASE_AREADY_EXISTS_ACCESS {
+            get {
+                return ResourceManager.GetString("DATABASE_AREADY_EXISTS_ACCESS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATABASE_NAME_CONTAINS_INVALID_CHARACTERS {
+            get {
+                return ResourceManager.GetString("DATABASE_NAME_CONTAINS_INVALID_CHARACTERS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATABASE_NAME_MUST_START_WITH_A_LETTE_OR_UNDERSCORE {
+            get {
+                return ResourceManager.GetString("DATABASE_NAME_MUST_START_WITH_A_LETTE_OR_UNDERSCORE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATABASE_NAME_REQUIRED {
+            get {
+                return ResourceManager.GetString("DATABASE_NAME_REQUIRED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATABASE_NAME_TOO_LONG {
+            get {
+                return ResourceManager.GetString("DATABASE_NAME_TOO_LONG", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATASOURCE_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("DATASOURCE_NOT_FOUND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DATATABLE_NAME_TOO_LONG_AND_INVALID_CHARACTERS {
+            get {
+                return ResourceManager.GetString("DATATABLE_NAME_TOO_LONG_AND_INVALID_CHARACTERS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DEFAULT_AUTO_SIZE {
+            get {
+                return ResourceManager.GetString("DEFAULT_AUTO_SIZE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DEFAULT_BACKROUND_IMAGE {
+            get {
+                return ResourceManager.GetString("DEFAULT_BACKROUND_IMAGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DEFAULT_CHART_LEGEND_ITEM {
+            get {
+                return ResourceManager.GetString("DEFAULT_CHART_LEGEND_ITEM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DEFAULT_PROMPT_ALIGN {
+            get {
+                return ResourceManager.GetString("DEFAULT_PROMPT_ALIGN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DEFINE_CMD_VARIABLE_MISSING {
+            get {
+                return ResourceManager.GetString("DEFINE_CMD_VARIABLE_MISSING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DEFINED_VARIABLE {
+            get {
+                return ResourceManager.GetString("DEFINED_VARIABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DEFINED_VARIABLE_1 {
+            get {
+                return ResourceManager.GetString("DEFINED_VARIABLE_1", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DEFINED_VARIABLES_SECTION {
+            get {
+                return ResourceManager.GetString("DEFINED_VARIABLES_SECTION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DELETE {
+            get {
+                return ResourceManager.GetString("DELETE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DELETE_DATA_FIELD_WARNING {
+            get {
+                return ResourceManager.GetString("DELETE_DATA_FIELD_WARNING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DELETE_DATA_TABLE {
+            get {
+                return ResourceManager.GetString("DELETE_DATA_TABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DELETE_DATA_TABLE_WARNING {
+            get {
+                return ResourceManager.GetString("DELETE_DATA_TABLE_WARNING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DELETE_FORM {
+            get {
+                return ResourceManager.GetString("DELETE_FORM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DELETE_LINK_TO_CODE_TABLE {
+            get {
+                return ResourceManager.GetString("DELETE_LINK_TO_CODE_TABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DELETE_PAGE {
+            get {
+                return ResourceManager.GetString("DELETE_PAGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DELETE_PROGRAM {
+            get {
+                return ResourceManager.GetString("DELETE_PROGRAM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DELETE_TEMPLATE {
+            get {
+                return ResourceManager.GetString("DELETE_TEMPLATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DELETED_RECORD {
+            get {
+                return ResourceManager.GetString("DELETED_RECORD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DELETED_RECORDS_EXCLUDED {
+            get {
+                return ResourceManager.GetString("DELETED_RECORDS_EXCLUDED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DELETED_RECORDS_INCLUDED {
+            get {
+                return ResourceManager.GetString("DELETED_RECORDS_INCLUDED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DELETED_RECORDS_ONLY {
+            get {
+                return ResourceManager.GetString("DELETED_RECORDS_ONLY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DESC_STATS_ERR {
+            get {
+                return ResourceManager.GetString("DESC_STATS_ERR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DEV {
+            get {
+                return ResourceManager.GetString("DEV", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DIRECTORY_CREATED {
+            get {
+                return ResourceManager.GetString("DIRECTORY_CREATED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DIRECTORY_FAILED {
+            get {
+                return ResourceManager.GetString("DIRECTORY_FAILED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DIRECTORY_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("DIRECTORY_NOT_FOUND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DUPLICATE_FIELD_NAME {
+            get {
+                return ResourceManager.GetString("DUPLICATE_FIELD_NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DUPLICATE_VALUE {
+            get {
+                return ResourceManager.GetString("DUPLICATE_VALUE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DUPLICATE_VARIABLE_DEFINITION {
+            get {
+                return ResourceManager.GetString("DUPLICATE_VARIABLE_DEFINITION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string DUPLICATE_VIEW_NAME {
+            get {
+                return ResourceManager.GetString("DUPLICATE_VIEW_NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string EI3X_PROJECT_FILES {
+            get {
+                return ResourceManager.GetString("EI3X_PROJECT_FILES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string EI7_PROJECT_FILES {
+            get {
+                return ResourceManager.GetString("EI7_PROJECT_FILES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string EMPTY_DLL_DEF {
+            get {
+                return ResourceManager.GetString("EMPTY_DLL_DEF", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string EMPTY_VARNAME {
+            get {
+                return ResourceManager.GetString("EMPTY_VARNAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string END {
+            get {
+                return ResourceManager.GetString("END", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ENTER {
+            get {
+                return ResourceManager.GetString("ENTER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ENTER_COLUMN_NAME_FOR_GRID {
+            get {
+                return ResourceManager.GetString("ENTER_COLUMN_NAME_FOR_GRID", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ENTER_FIELD_NAME {
+            get {
+                return ResourceManager.GetString("ENTER_FIELD_NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ENTER_QUESTION_OR_PROMPT {
+            get {
+                return ResourceManager.GetString("ENTER_QUESTION_OR_PROMPT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ENTER_VALID_DATE {
+            get {
+                return ResourceManager.GetString("ENTER_VALID_DATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ENTER_VALID_DATE_AND_TIME {
+            get {
+                return ResourceManager.GetString("ENTER_VALID_DATE_AND_TIME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ENTER_VALID_NUMBER {
+            get {
+                return ResourceManager.GetString("ENTER_VALID_NUMBER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ENTER_VALID_PHONE_NUMBER {
+            get {
+                return ResourceManager.GetString("ENTER_VALID_PHONE_NUMBER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ENTER_VALID_TIME {
+            get {
+                return ResourceManager.GetString("ENTER_VALID_TIME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string EOF {
+            get {
+                return ResourceManager.GetString("EOF", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string EPI_MAP {
+            get {
+                return ResourceManager.GetString("EPI_MAP", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string EPI3_PROJECTS {
+            get {
+                return ResourceManager.GetString("EPI3_PROJECTS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR {
+            get {
+                return ResourceManager.GetString("ERROR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_CLOSING_CONNECTION {
+            get {
+                return ResourceManager.GetString("ERROR_CLOSING_CONNECTION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_CONNECT_DATA_SOURCE {
+            get {
+                return ResourceManager.GetString("ERROR_CONNECT_DATA_SOURCE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_CREATE_PACKAGE_RELATED_FORM {
+            get {
+                return ResourceManager.GetString("ERROR_CREATE_PACKAGE_RELATED_FORM", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        public static string ERROR_CRYPTO_KEYS {
+            get {
+                return ResourceManager.GetString("ERROR_CRYPTO_KEYS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_IMPORT_FORM_RELATED_FORM {
+            get {
+                return ResourceManager.GetString("ERROR_IMPORT_FORM_RELATED_FORM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_IMPORT_PACKAGE_RELATED_FORM {
+            get {
+                return ResourceManager.GetString("ERROR_IMPORT_PACKAGE_RELATED_FORM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_INCOMPATIBLE_TYPES {
+            get {
+                return ResourceManager.GetString("ERROR_INCOMPATIBLE_TYPES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_LOADING_METADATA_UNKNOWN_SOURCE {
+            get {
+                return ResourceManager.GetString("ERROR_LOADING_METADATA_UNKNOWN_SOURCE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_LOADING_PROJECT {
+            get {
+                return ResourceManager.GetString("ERROR_LOADING_PROJECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_LOADING_PROJECT_CMDLINE {
+            get {
+                return ResourceManager.GetString("ERROR_LOADING_PROJECT_CMDLINE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_LOADING_VIEW {
+            get {
+                return ResourceManager.GetString("ERROR_LOADING_VIEW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_ON_LINE_COLUMN {
+            get {
+                return ResourceManager.GetString("ERROR_ON_LINE_COLUMN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_OPENING_CONNECTION {
+            get {
+                return ResourceManager.GetString("ERROR_OPENING_CONNECTION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_PAGE_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("ERROR_PAGE_NOT_FOUND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_PM_NOT_REGISTERED {
+            get {
+                return ResourceManager.GetString("ERROR_PM_NOT_REGISTERED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_RELATE_KEYS {
+            get {
+                return ResourceManager.GetString("ERROR_RELATE_KEYS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_SELECT_QUERY_DATA_SOURCE {
+            get {
+                return ResourceManager.GetString("ERROR_SELECT_QUERY_DATA_SOURCE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_UPDATING_DATA {
+            get {
+                return ResourceManager.GetString("ERROR_UPDATING_DATA", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ERROR_VARIABLE_NOT_DEFINED {
+            get {
+                return ResourceManager.GetString("ERROR_VARIABLE_NOT_DEFINED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string EXCEPTION_OCCURRED {
+            get {
+                return ResourceManager.GetString("EXCEPTION_OCCURRED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string EXISTING_TABLE_APPEND {
+            get {
+                return ResourceManager.GetString("EXISTING_TABLE_APPEND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string EXISTING_TABLE_REPLACE {
+            get {
+                return ResourceManager.GetString("EXISTING_TABLE_REPLACE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string EXIT_ANALYSIS {
+            get {
+                return ResourceManager.GetString("EXIT_ANALYSIS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string EXPORT_CANNOT_PROCEED_LEADING_TRAILING_SPACES {
+            get {
+                return ResourceManager.GetString("EXPORT_CANNOT_PROCEED_LEADING_TRAILING_SPACES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string EXPOSURE_VALUES_TOO_FEW {
+            get {
+                return ResourceManager.GetString("EXPOSURE_VALUES_TOO_FEW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string EXPOSURE_VALUES_TOO_MANY {
+            get {
+                return ResourceManager.GetString("EXPOSURE_VALUES_TOO_MANY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FEATURE_NOT_YET_IMPLEMENTED {
+            get {
+                return ResourceManager.GetString("FEATURE_NOT_YET_IMPLEMENTED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FIELD_CHECK_CODE {
+            get {
+                return ResourceManager.GetString("FIELD_CHECK_CODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FIELD_IS_REQUIRED {
+            get {
+                return ResourceManager.GetString("FIELD_IS_REQUIRED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FIELD_IS_REQUIRED_LONG {
+            get {
+                return ResourceManager.GetString("FIELD_IS_REQUIRED_LONG", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FIELD_NAME_BEGIN_NUMERIC {
+            get {
+                return ResourceManager.GetString("FIELD_NAME_BEGIN_NUMERIC", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FIELD_NAME_IS_RESERVED {
+            get {
+                return ResourceManager.GetString("FIELD_NAME_IS_RESERVED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FIELD_NAME_TOO_LONG {
+            get {
+                return ResourceManager.GetString("FIELD_NAME_TOO_LONG", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FIELDS {
+            get {
+                return ResourceManager.GetString("FIELDS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FILE_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("FILE_NOT_FOUND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FILE_NOT_VALID {
+            get {
+                return ResourceManager.GetString("FILE_NOT_VALID", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FONT {
+            get {
+                return ResourceManager.GetString("FONT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FOREIGN_KEY {
+            get {
+                return ResourceManager.GetString("FOREIGN_KEY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FORMS {
+            get {
+                return ResourceManager.GetString("FORMS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FRIENDLY_CONDITION_DATA_FILTER {
+            get {
+                return ResourceManager.GetString("FRIENDLY_CONDITION_DATA_FILTER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FRIENDLY_CONDITION_DATA_FILTER_BETWEEN {
+            get {
+                return ResourceManager.GetString("FRIENDLY_CONDITION_DATA_FILTER_BETWEEN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FRIENDLY_OPERATOR_AND {
+            get {
+                return ResourceManager.GetString("FRIENDLY_OPERATOR_AND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FRIENDLY_OPERATOR_BETWEEN {
+            get {
+                return ResourceManager.GetString("FRIENDLY_OPERATOR_BETWEEN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FRIENDLY_OPERATOR_EQUAL_TO {
+            get {
+                return ResourceManager.GetString("FRIENDLY_OPERATOR_EQUAL_TO", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FRIENDLY_OPERATOR_GREATER_THAN {
+            get {
+                return ResourceManager.GetString("FRIENDLY_OPERATOR_GREATER_THAN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FRIENDLY_OPERATOR_GREATER_THAN_OR_EQUAL {
+            get {
+                return ResourceManager.GetString("FRIENDLY_OPERATOR_GREATER_THAN_OR_EQUAL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FRIENDLY_OPERATOR_IS_ANY_OF {
+            get {
+                return ResourceManager.GetString("FRIENDLY_OPERATOR_IS_ANY_OF", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FRIENDLY_OPERATOR_IS_NOT_ANY_OF {
+            get {
+                return ResourceManager.GetString("FRIENDLY_OPERATOR_IS_NOT_ANY_OF", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FRIENDLY_OPERATOR_LESS_THAN {
+            get {
+                return ResourceManager.GetString("FRIENDLY_OPERATOR_LESS_THAN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FRIENDLY_OPERATOR_LESS_THAN_OR_EQUAL {
+            get {
+                return ResourceManager.GetString("FRIENDLY_OPERATOR_LESS_THAN_OR_EQUAL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FRIENDLY_OPERATOR_LIKE {
+            get {
+                return ResourceManager.GetString("FRIENDLY_OPERATOR_LIKE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FRIENDLY_OPERATOR_MISSING {
+            get {
+                return ResourceManager.GetString("FRIENDLY_OPERATOR_MISSING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FRIENDLY_OPERATOR_NOT_EQUAL_TO {
+            get {
+                return ResourceManager.GetString("FRIENDLY_OPERATOR_NOT_EQUAL_TO", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FRIENDLY_OPERATOR_NOT_MISSING {
+            get {
+                return ResourceManager.GetString("FRIENDLY_OPERATOR_NOT_MISSING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FRIENDLY_OPERATOR_OR {
+            get {
+                return ResourceManager.GetString("FRIENDLY_OPERATOR_OR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FROM_TO_RANGE_CONFIRM {
+            get {
+                return ResourceManager.GetString("FROM_TO_RANGE_CONFIRM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FROM_TO_RANGE_ERROR_HEADER {
+            get {
+                return ResourceManager.GetString("FROM_TO_RANGE_ERROR_HEADER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string FROM_TO_RANGE_INCORRECT {
+            get {
+                return ResourceManager.GetString("FROM_TO_RANGE_INCORRECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string GLOBAL_RECORD_ID {
+            get {
+                return ResourceManager.GetString("GLOBAL_RECORD_ID", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string GLOBAL_VARIABLE {
+            get {
+                return ResourceManager.GetString("GLOBAL_VARIABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string GO_TO_RELATED_FORM {
+            get {
+                return ResourceManager.GetString("GO_TO_RELATED_FORM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string GRID_CANNOT_BE_COPIED {
+            get {
+                return ResourceManager.GetString("GRID_CANNOT_BE_COPIED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string GRIDTABLE_TITLE {
+            get {
+                return ResourceManager.GetString("GRIDTABLE_TITLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string HISTORY {
+            get {
+                return ResourceManager.GetString("HISTORY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_ADD_GUIDS {
+            get {
+                return ResourceManager.GetString("IMPORT_ADD_GUIDS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_BAD_FIELD_DATA {
+            get {
+                return ResourceManager.GetString("IMPORT_BAD_FIELD_DATA", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_COMPLETE {
+            get {
+                return ResourceManager.GetString("IMPORT_COMPLETE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_COMPLETED {
+            get {
+                return ResourceManager.GetString("IMPORT_COMPLETED", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        public static string IMPORT_DATA_ALREADY_EXISTS {
+            get {
+                return ResourceManager.GetString("IMPORT_DATA_ALREADY_EXISTS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_ERROR_BAD_DATE_DATA {
+            get {
+                return ResourceManager.GetString("IMPORT_ERROR_BAD_DATE_DATA", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_ERROR_BAD_METADATA_IN_FIELD {
+            get {
+                return ResourceManager.GetString("IMPORT_ERROR_BAD_METADATA_IN_FIELD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_ERROR_PROCESSING_VIEW {
+            get {
+                return ResourceManager.GetString("IMPORT_ERROR_PROCESSING_VIEW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_ERROR_SOURCE_VIEW_NULL {
+            get {
+                return ResourceManager.GetString("IMPORT_ERROR_SOURCE_VIEW_NULL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_LOG_NO_DATA_COLUMN {
+            get {
+                return ResourceManager.GetString("IMPORT_LOG_NO_DATA_COLUMN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_NO_VALID_VIEWS {
+            get {
+                return ResourceManager.GetString("IMPORT_NO_VALID_VIEWS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_NOTIFICATION_COLUMN_NOT_REMOVED_BUT_ATTEMPTED {
+            get {
+                return ResourceManager.GetString("IMPORT_NOTIFICATION_COLUMN_NOT_REMOVED_BUT_ATTEMPTED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_NOTIFICATION_COLUMN_REMOVED_NO_MATCH {
+            get {
+                return ResourceManager.GetString("IMPORT_NOTIFICATION_COLUMN_REMOVED_NO_MATCH", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_NOTIFICATION_CONVERTING_VIEW_RELATIONS {
+            get {
+                return ResourceManager.GetString("IMPORT_NOTIFICATION_CONVERTING_VIEW_RELATIONS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_NOTIFICATION_ELAPSED_TIME {
+            get {
+                return ResourceManager.GetString("IMPORT_NOTIFICATION_ELAPSED_TIME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_NOTIFICATION_IMAGE_UPDATE_END {
+            get {
+                return ResourceManager.GetString("IMPORT_NOTIFICATION_IMAGE_UPDATE_END", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_NOTIFICATION_IMAGE_UPDATE_NONE {
+            get {
+                return ResourceManager.GetString("IMPORT_NOTIFICATION_IMAGE_UPDATE_NONE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_NOTIFICATION_IMAGE_UPDATE_START {
+            get {
+                return ResourceManager.GetString("IMPORT_NOTIFICATION_IMAGE_UPDATE_START", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_NOTIFICATION_PAGE_RENAME {
+            get {
+                return ResourceManager.GetString("IMPORT_NOTIFICATION_PAGE_RENAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_NOTIFICATION_UPDATE_GUIDS {
+            get {
+                return ResourceManager.GetString("IMPORT_NOTIFICATION_UPDATE_GUIDS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_NOTIFICATION_UPDATE_KEYS {
+            get {
+                return ResourceManager.GetString("IMPORT_NOTIFICATION_UPDATE_KEYS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_NOTIFICATION_USER_WILL_NOT_OVERWRITE {
+            get {
+                return ResourceManager.GetString("IMPORT_NOTIFICATION_USER_WILL_NOT_OVERWRITE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_NOTIFICATION_USER_WILL_OVERWRITE {
+            get {
+                return ResourceManager.GetString("IMPORT_NOTIFICATION_USER_WILL_OVERWRITE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_NOTIFICATION_VIEW_SKIPPED_FIELD_LIMIT {
+            get {
+                return ResourceManager.GetString("IMPORT_NOTIFICATION_VIEW_SKIPPED_FIELD_LIMIT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_NOTIFICATION_VIEW_SKIPPED_NO_PAGES {
+            get {
+                return ResourceManager.GetString("IMPORT_NOTIFICATION_VIEW_SKIPPED_NO_PAGES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_OVERWRITE_DATA {
+            get {
+                return ResourceManager.GetString("IMPORT_OVERWRITE_DATA", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_PREFIX_ERROR {
+            get {
+                return ResourceManager.GetString("IMPORT_PREFIX_ERROR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_PREFIX_NOTICE {
+            get {
+                return ResourceManager.GetString("IMPORT_PREFIX_NOTICE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_PREFIX_WARNING {
+            get {
+                return ResourceManager.GetString("IMPORT_PREFIX_WARNING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_PROCESSED_ALL_GUIDS {
+            get {
+                return ResourceManager.GetString("IMPORT_PROCESSED_ALL_GUIDS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_PROCESSED_GUIDS {
+            get {
+                return ResourceManager.GetString("IMPORT_PROCESSED_GUIDS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_PROCESSED_RECORDS {
+            get {
+                return ResourceManager.GetString("IMPORT_PROCESSED_RECORDS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_PROCESSED_RECORDS_BASE_TABLE {
+            get {
+                return ResourceManager.GetString("IMPORT_PROCESSED_RECORDS_BASE_TABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_SKIPPED_VIEWS {
+            get {
+                return ResourceManager.GetString("IMPORT_SKIPPED_VIEWS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_WARNING_CHECKCODE {
+            get {
+                return ResourceManager.GetString("IMPORT_WARNING_CHECKCODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_WARNING_DELETE_COLUMN {
+            get {
+                return ResourceManager.GetString("IMPORT_WARNING_DELETE_COLUMN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_WARNING_FIELD_LEADING_DIGIT {
+            get {
+                return ResourceManager.GetString("IMPORT_WARNING_FIELD_LEADING_DIGIT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_WARNING_GRID_NOT_SUPPORTED {
+            get {
+                return ResourceManager.GetString("IMPORT_WARNING_GRID_NOT_SUPPORTED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_WARNING_MESSAGE {
+            get {
+                return ResourceManager.GetString("IMPORT_WARNING_MESSAGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_WARNING_MIRROR_FIELD_NO_SOURCE {
+            get {
+                return ResourceManager.GetString("IMPORT_WARNING_MIRROR_FIELD_NO_SOURCE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_WARNING_NO_IMAGE_COPIED {
+            get {
+                return ResourceManager.GetString("IMPORT_WARNING_NO_IMAGE_COPIED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_WARNING_RELATE_FIELD {
+            get {
+                return ResourceManager.GetString("IMPORT_WARNING_RELATE_FIELD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_WARNING_RELATED_TABLE_HAS_NO_FKEY {
+            get {
+                return ResourceManager.GetString("IMPORT_WARNING_RELATED_TABLE_HAS_NO_FKEY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_WARNING_RELATED_TABLE_NOT_PROCESSED {
+            get {
+                return ResourceManager.GetString("IMPORT_WARNING_RELATED_TABLE_NOT_PROCESSED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string IMPORT_WARNING_TABLE_NAME {
+            get {
+                return ResourceManager.GetString("IMPORT_WARNING_TABLE_NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INADEQUATE_PERMISSIONS_ACCESS {
+            get {
+                return ResourceManager.GetString("INADEQUATE_PERMISSIONS_ACCESS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INADEQUATE_PERMISSIONS_MODIFY {
+            get {
+                return ResourceManager.GetString("INADEQUATE_PERMISSIONS_MODIFY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INFORMATION {
+            get {
+                return ResourceManager.GetString("INFORMATION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INPUT_FORMAT {
+            get {
+                return ResourceManager.GetString("INPUT_FORMAT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INSERT_PAGE {
+            get {
+                return ResourceManager.GetString("INSERT_PAGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INSERTED_PAGE {
+            get {
+                return ResourceManager.GetString("INSERTED_PAGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INSUFFICIENT_ARGUMENTS_SUPPLIED {
+            get {
+                return ResourceManager.GetString("INSUFFICIENT_ARGUMENTS_SUPPLIED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_CHARS_IN_FIELD_NAME {
+            get {
+                return ResourceManager.GetString("INVALID_CHARS_IN_FIELD_NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_CHARS_IN_VAR_NAME {
+            get {
+                return ResourceManager.GetString("INVALID_CHARS_IN_VAR_NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_CHECKCODE {
+            get {
+                return ResourceManager.GetString("INVALID_CHECKCODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_CURRENT_PROJECT {
+            get {
+                return ResourceManager.GetString("INVALID_CURRENT_PROJECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_DATA_SOURCE {
+            get {
+                return ResourceManager.GetString("INVALID_DATA_SOURCE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_DATATABLE_NAME {
+            get {
+                return ResourceManager.GetString("INVALID_DATATABLE_NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_DATE_RANGE {
+            get {
+                return ResourceManager.GetString("INVALID_DATE_RANGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_DROPDOWN_VALUE {
+            get {
+                return ResourceManager.GetString("INVALID_DROPDOWN_VALUE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_DROPDOWN_VALUE_CAPTION {
+            get {
+                return ResourceManager.GetString("INVALID_DROPDOWN_VALUE_CAPTION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_EXPRESSION {
+            get {
+                return ResourceManager.GetString("INVALID_EXPRESSION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_GROUP {
+            get {
+                return ResourceManager.GetString("INVALID_GROUP", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_LOWER_DATE_RANGE {
+            get {
+                return ResourceManager.GetString("INVALID_LOWER_DATE_RANGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_MDB_FILE {
+            get {
+                return ResourceManager.GetString("INVALID_MDB_FILE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_METADATA_DATABASE {
+            get {
+                return ResourceManager.GetString("INVALID_METADATA_DATABASE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_NUMBER_OPTIONS {
+            get {
+                return ResourceManager.GetString("INVALID_NUMBER_OPTIONS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_NUMBER_OPTIONS_EXCEED_MAX_COUNT {
+            get {
+                return ResourceManager.GetString("INVALID_NUMBER_OPTIONS_EXCEED_MAX_COUNT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_NUMBER_RANGE {
+            get {
+                return ResourceManager.GetString("INVALID_NUMBER_RANGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_NUMERIC_PATTERN {
+            get {
+                return ResourceManager.GetString("INVALID_NUMERIC_PATTERN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_PAGE_NAME {
+            get {
+                return ResourceManager.GetString("INVALID_PAGE_NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_PAGE_NAME_BLANK {
+            get {
+                return ResourceManager.GetString("INVALID_PAGE_NAME_BLANK", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_PAGE_NAME_DUPLICATE {
+            get {
+                return ResourceManager.GetString("INVALID_PAGE_NAME_DUPLICATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_PAGE_NAME_IS_RESERVED {
+            get {
+                return ResourceManager.GetString("INVALID_PAGE_NAME_IS_RESERVED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_PARAMETER_WAS_SUPPLIED {
+            get {
+                return ResourceManager.GetString("INVALID_PARAMETER_WAS_SUPPLIED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_PROGRAM_FILE {
+            get {
+                return ResourceManager.GetString("INVALID_PROGRAM_FILE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_PROJECT_FILE {
+            get {
+                return ResourceManager.GetString("INVALID_PROJECT_FILE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_PROJECT_LOCATION {
+            get {
+                return ResourceManager.GetString("INVALID_PROJECT_LOCATION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_PROJECT_LOCATION_TITLE {
+            get {
+                return ResourceManager.GetString("INVALID_PROJECT_LOCATION_TITLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_PROJECT_NAME {
+            get {
+                return ResourceManager.GetString("INVALID_PROJECT_NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_PROJECT_NAME_DUPLICATE {
+            get {
+                return ResourceManager.GetString("INVALID_PROJECT_NAME_DUPLICATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_PROJECT_NAME_RESERVED_WORD {
+            get {
+                return ResourceManager.GetString("INVALID_PROJECT_NAME_RESERVED_WORD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_PROJECT_NAME_TOO_LONG {
+            get {
+                return ResourceManager.GetString("INVALID_PROJECT_NAME_TOO_LONG", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_PROJECT_NAME_TOO_SHORT {
+            get {
+                return ResourceManager.GetString("INVALID_PROJECT_NAME_TOO_SHORT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_PROMPT_TEXT {
+            get {
+                return ResourceManager.GetString("INVALID_PROMPT_TEXT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_SEARCH_QUERY {
+            get {
+                return ResourceManager.GetString("INVALID_SEARCH_QUERY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_SEARCH_QUERY_CHECKBOX {
+            get {
+                return ResourceManager.GetString("INVALID_SEARCH_QUERY_CHECKBOX", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_SEARCH_QUERY_DATE {
+            get {
+                return ResourceManager.GetString("INVALID_SEARCH_QUERY_DATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_SEARCH_QUERY_NUMERIC {
+            get {
+                return ResourceManager.GetString("INVALID_SEARCH_QUERY_NUMERIC", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_SEARCH_QUERY_YESNO {
+            get {
+                return ResourceManager.GetString("INVALID_SEARCH_QUERY_YESNO", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_STARTING_UNIQUE_ID {
+            get {
+                return ResourceManager.GetString("INVALID_STARTING_UNIQUE_ID", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_TEMPLATE_FILE {
+            get {
+                return ResourceManager.GetString("INVALID_TEMPLATE_FILE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_UPPER_DATE_RANGE {
+            get {
+                return ResourceManager.GetString("INVALID_UPPER_DATE_RANGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_VIEW_ID {
+            get {
+                return ResourceManager.GetString("INVALID_VIEW_ID", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_VIEW_NAME {
+            get {
+                return ResourceManager.GetString("INVALID_VIEW_NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_VIEW_NAME_DUPLICATE {
+            get {
+                return ResourceManager.GetString("INVALID_VIEW_NAME_DUPLICATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_VIEW_NAME_DUPLICATE_PREFIX {
+            get {
+                return ResourceManager.GetString("INVALID_VIEW_NAME_DUPLICATE_PREFIX", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_VIEW_NAME_RESERVED_WORD {
+            get {
+                return ResourceManager.GetString("INVALID_VIEW_NAME_RESERVED_WORD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_VIEW_NAME_TOO_LONG {
+            get {
+                return ResourceManager.GetString("INVALID_VIEW_NAME_TOO_LONG", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_YES_NO_VALUE {
+            get {
+                return ResourceManager.GetString("INVALID_YES_NO_VALUE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string INVALID_YES_NO_VALUE_CAPTION {
+            get {
+                return ResourceManager.GetString("INVALID_YES_NO_VALUE_CAPTION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string KMSURV_CENSORED {
+            get {
+                return ResourceManager.GetString("KMSURV_CENSORED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string KMSURV_CUMFAILURES {
+            get {
+                return ResourceManager.GetString("KMSURV_CUMFAILURES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string KMSURV_FAILURES {
+            get {
+                return ResourceManager.GetString("KMSURV_FAILURES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string KMSURV_RISK {
+            get {
+                return ResourceManager.GetString("KMSURV_RISK", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string KMSURV_SURVIVALPROB {
+            get {
+                return ResourceManager.GetString("KMSURV_SURVIVALPROB", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string LANGUAGE_READY {
+            get {
+                return ResourceManager.GetString("LANGUAGE_READY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string LANGUAGE_REMOVAL_FAIL {
+            get {
+                return ResourceManager.GetString("LANGUAGE_REMOVAL_FAIL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string LOADING_MODULE {
+            get {
+                return ResourceManager.GetString("LOADING_MODULE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string LOADING_PROJECT {
+            get {
+                return ResourceManager.GetString("LOADING_PROJECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string LOWER_RANGE_GREATER_THAN_UPPER_RANGE {
+            get {
+                return ResourceManager.GetString("LOWER_RANGE_GREATER_THAN_UPPER_RANGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MAKE_SAME_HEIGHT_MAX {
+            get {
+                return ResourceManager.GetString("MAKE_SAME_HEIGHT_MAX", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MAKE_SAME_HEIGHT_MIN {
+            get {
+                return ResourceManager.GetString("MAKE_SAME_HEIGHT_MIN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MAKE_SAME_SIZE_MAX {
+            get {
+                return ResourceManager.GetString("MAKE_SAME_SIZE_MAX", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MAKE_SAME_SIZE_MIN {
+            get {
+                return ResourceManager.GetString("MAKE_SAME_SIZE_MIN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MAKE_SAME_WIDTH_MAX {
+            get {
+                return ResourceManager.GetString("MAKE_SAME_WIDTH_MAX", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MAKE_SAME_WIDTH_MIN {
+            get {
+                return ResourceManager.GetString("MAKE_SAME_WIDTH_MIN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MAKE_VIEW {
+            get {
+                return ResourceManager.GetString("MAKE_VIEW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MAKE_VIEW_WINDOW_TITLE {
+            get {
+                return ResourceManager.GetString("MAKE_VIEW_WINDOW_TITLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MASK {
+            get {
+                return ResourceManager.GetString("MASK", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MAX_NONE_MASK_DIGITS_EXCEEDED {
+            get {
+                return ResourceManager.GetString("MAX_NONE_MASK_DIGITS_EXCEEDED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MAX_PAGES_REACHED {
+            get {
+                return ResourceManager.GetString("MAX_PAGES_REACHED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MAXIMUM_NUMBER_PAGES {
+            get {
+                return ResourceManager.GetString("MAXIMUM_NUMBER_PAGES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MENU {
+            get {
+                return ResourceManager.GetString("MENU", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string METADATA_DATABASE_INFORMATION_REQUIRED {
+            get {
+                return ResourceManager.GetString("METADATA_DATABASE_INFORMATION_REQUIRED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string METADATA_PREFIX {
+            get {
+                return ResourceManager.GetString("METADATA_PREFIX", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MISSING_PROJECT_NAME {
+            get {
+                return ResourceManager.GetString("MISSING_PROJECT_NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MISSING_VIEW_NAME {
+            get {
+                return ResourceManager.GetString("MISSING_VIEW_NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MOBILE_FORM_COPIED {
+            get {
+                return ResourceManager.GetString("MOBILE_FORM_COPIED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MOBILE_FORM_COPY_TITLE {
+            get {
+                return ResourceManager.GetString("MOBILE_FORM_COPY_TITLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MOBILE_NO_DEVICES {
+            get {
+                return ResourceManager.GetString("MOBILE_NO_DEVICES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MOBILE_NO_EI_EXT_FOUND {
+            get {
+                return ResourceManager.GetString("MOBILE_NO_EI_EXT_FOUND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MODIFICATION_NOT_PERMITTED {
+            get {
+                return ResourceManager.GetString("MODIFICATION_NOT_PERMITTED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MODULE_NOT_LOADED {
+            get {
+                return ResourceManager.GetString("MODULE_NOT_LOADED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MS_ACCESS_FILES {
+            get {
+                return ResourceManager.GetString("MS_ACCESS_FILES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MUST_SELECT_CENSORED {
+            get {
+                return ResourceManager.GetString("MUST_SELECT_CENSORED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MUST_SELECT_EXPOSURE {
+            get {
+                return ResourceManager.GetString("MUST_SELECT_EXPOSURE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MUST_SELECT_GRAPH_VAR {
+            get {
+                return ResourceManager.GetString("MUST_SELECT_GRAPH_VAR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MUST_SELECT_GROUP {
+            get {
+                return ResourceManager.GetString("MUST_SELECT_GROUP", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MUST_SELECT_GROUP_OR_PREDICTOR {
+            get {
+                return ResourceManager.GetString("MUST_SELECT_GROUP_OR_PREDICTOR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MUST_SELECT_OUTCOME {
+            get {
+                return ResourceManager.GetString("MUST_SELECT_OUTCOME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MUST_SELECT_PSU {
+            get {
+                return ResourceManager.GetString("MUST_SELECT_PSU", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MUST_SELECT_TERMS {
+            get {
+                return ResourceManager.GetString("MUST_SELECT_TERMS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MUST_SELECT_TIME_VAR {
+            get {
+                return ResourceManager.GetString("MUST_SELECT_TIME_VAR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MUST_SELECT_UNCENSORED_VALUE {
+            get {
+                return ResourceManager.GetString("MUST_SELECT_UNCENSORED_VALUE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MYSQL_DATABASE {
+            get {
+                return ResourceManager.GetString("MYSQL_DATABASE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string MYSQL_DATABASE_INFO {
+            get {
+                return ResourceManager.GetString("MYSQL_DATABASE_INFO", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NAME {
+            get {
+                return ResourceManager.GetString("NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NEW_FIELD {
+            get {
+                return ResourceManager.GetString("NEW_FIELD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NEW_GROUP_FIELD {
+            get {
+                return ResourceManager.GetString("NEW_GROUP_FIELD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NEW_PAGE {
+            get {
+                return ResourceManager.GetString("NEW_PAGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NEW_PROGRAM {
+            get {
+                return ResourceManager.GetString("NEW_PROGRAM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NEW_RECORD {
+            get {
+                return ResourceManager.GetString("NEW_RECORD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_AGGREGATE_SPECIFIED {
+            get {
+                return ResourceManager.GetString("NO_AGGREGATE_SPECIFIED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_ASSIGN_EXPRESSION {
+            get {
+                return ResourceManager.GetString("NO_ASSIGN_EXPRESSION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_ASSIGN_VAR {
+            get {
+                return ResourceManager.GetString("NO_ASSIGN_VAR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_COLUMNS_FOR_SELECT_QUERY {
+            get {
+                return ResourceManager.GetString("NO_COLUMNS_FOR_SELECT_QUERY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_COMMAND {
+            get {
+                return ResourceManager.GetString("NO_COMMAND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_CURRENT_PROJECT {
+            get {
+                return ResourceManager.GetString("NO_CURRENT_PROJECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_DATA_SOURCE {
+            get {
+                return ResourceManager.GetString("NO_DATA_SOURCE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_DEFINE_VAR {
+            get {
+                return ResourceManager.GetString("NO_DEFINE_VAR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_DELETE_CRITERIA {
+            get {
+                return ResourceManager.GetString("NO_DELETE_CRITERIA", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_DIALOG_FORMAT {
+            get {
+                return ResourceManager.GetString("NO_DIALOG_FORMAT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_FILENAME {
+            get {
+                return ResourceManager.GetString("NO_FILENAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_FILENAME_COMMAND {
+            get {
+                return ResourceManager.GetString("NO_FILENAME_COMMAND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_FILES_SELECTED {
+            get {
+                return ResourceManager.GetString("NO_FILES_SELECTED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_INPUT_VARIABLE {
+            get {
+                return ResourceManager.GetString("NO_INPUT_VARIABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_LINKED_FIELD_SELECTED {
+            get {
+                return ResourceManager.GetString("NO_LINKED_FIELD_SELECTED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_MATCHVAR {
+            get {
+                return ResourceManager.GetString("NO_MATCHVAR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_PROGRAM {
+            get {
+                return ResourceManager.GetString("NO_PROGRAM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_RADIO_BUTTON_SELECTED {
+            get {
+                return ResourceManager.GetString("NO_RADIO_BUTTON_SELECTED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_RECODE_VARIABLE {
+            get {
+                return ResourceManager.GetString("NO_RECODE_VARIABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_RECODINGS_DESIGNATED {
+            get {
+                return ResourceManager.GetString("NO_RECODINGS_DESIGNATED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_RECORDS_SELECTED {
+            get {
+                return ResourceManager.GetString("NO_RECORDS_SELECTED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_RELATE_KEYS {
+            get {
+                return ResourceManager.GetString("NO_RELATE_KEYS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_SAVED_PGM {
+            get {
+                return ResourceManager.GetString("NO_SAVED_PGM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_SEARCH_TEXT {
+            get {
+                return ResourceManager.GetString("NO_SEARCH_TEXT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_SELECTION_TO_ALIGN {
+            get {
+                return ResourceManager.GetString("NO_SELECTION_TO_ALIGN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_SELECTION_TO_COPY {
+            get {
+                return ResourceManager.GetString("NO_SELECTION_TO_COPY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_SHOW_VARIABLE {
+            get {
+                return ResourceManager.GetString("NO_SHOW_VARIABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_SORT_VARIABLES_SELECTED {
+            get {
+                return ResourceManager.GetString("NO_SORT_VARIABLES_SELECTED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_TABLE_SELECTED {
+            get {
+                return ResourceManager.GetString("NO_TABLE_SELECTED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_TEXT_VALUE {
+            get {
+                return ResourceManager.GetString("NO_TEXT_VALUE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_UNDELETE_CRITERIA {
+            get {
+                return ResourceManager.GetString("NO_UNDELETE_CRITERIA", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_VARS_SELECTED {
+            get {
+                return ResourceManager.GetString("NO_VARS_SELECTED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NO_VIEW_SELECTED {
+            get {
+                return ResourceManager.GetString("NO_VIEW_SELECTED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NOT_A_NUMBER {
+            get {
+                return ResourceManager.GetString("NOT_A_NUMBER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NOT_VALID_ENUM_TYPE {
+            get {
+                return ResourceManager.GetString("NOT_VALID_ENUM_TYPE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NOT_VALID_IN_DATA_ENTRY_MODE {
+            get {
+                return ResourceManager.GetString("NOT_VALID_IN_DATA_ENTRY_MODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NOT_VALID_IN_FORM_DESIGN_MODE {
+            get {
+                return ResourceManager.GetString("NOT_VALID_IN_FORM_DESIGN_MODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NUMBER_OF_RECORDS_AFFECTED {
+            get {
+                return ResourceManager.GetString("NUMBER_OF_RECORDS_AFFECTED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NUMBER_RECORDS_DELETED {
+            get {
+                return ResourceManager.GetString("NUMBER_RECORDS_DELETED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string NUMBER_RECORDS_UNDELETED {
+            get {
+                return ResourceManager.GetString("NUMBER_RECORDS_UNDELETED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string OPEN {
+            get {
+                return ResourceManager.GetString("OPEN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string OPEN_CONTAINING_FOLDER {
+            get {
+                return ResourceManager.GetString("OPEN_CONTAINING_FOLDER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string OPEN_PROGRAM {
+            get {
+                return ResourceManager.GetString("OPEN_PROGRAM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string OPENING_PROJECT {
+            get {
+                return ResourceManager.GetString("OPENING_PROJECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string OPENING_VIEW {
+            get {
+                return ResourceManager.GetString("OPENING_VIEW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string OUT_OF {
+            get {
+                return ResourceManager.GetString("OUT_OF", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string OUT_OF_MEMORY {
+            get {
+                return ResourceManager.GetString("OUT_OF_MEMORY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string OUTCOME_VALUES_TOO_FEW {
+            get {
+                return ResourceManager.GetString("OUTCOME_VALUES_TOO_FEW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string OUTCOME_VALUES_TOO_MANY {
+            get {
+                return ResourceManager.GetString("OUTCOME_VALUES_TOO_MANY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string OUTPUT_TABLE_NAME_COMMAND {
+            get {
+                return ResourceManager.GetString("OUTPUT_TABLE_NAME_COMMAND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string OUTPUT_TABLE_NOT_SPECIFIED {
+            get {
+                return ResourceManager.GetString("OUTPUT_TABLE_NOT_SPECIFIED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PAGE_CHECK_CODE {
+            get {
+                return ResourceManager.GetString("PAGE_CHECK_CODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PAGE_NAME {
+            get {
+                return ResourceManager.GetString("PAGE_NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PAGE_NOT_SELECTED {
+            get {
+                return ResourceManager.GetString("PAGE_NOT_SELECTED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PAGES {
+            get {
+                return ResourceManager.GetString("PAGES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PASTE {
+            get {
+                return ResourceManager.GetString("PASTE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PATTERN_RESTRICTS_ENTRY_OF_LOWER_RANGE {
+            get {
+                return ResourceManager.GetString("PATTERN_RESTRICTS_ENTRY_OF_LOWER_RANGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PATTERN_RESTRICTS_ENTRY_OF_UPPER_RANGE {
+            get {
+                return ResourceManager.GetString("PATTERN_RESTRICTS_ENTRY_OF_UPPER_RANGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_CHECKBOX_NODE {
+            get {
+                return ResourceManager.GetString("PE_CHECKBOX_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_CODES_NODE {
+            get {
+                return ResourceManager.GetString("PE_CODES_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_COMMAND_BUTTON_NODE {
+            get {
+                return ResourceManager.GetString("PE_COMMAND_BUTTON_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_COMMENT_LEGAL_NODE {
+            get {
+                return ResourceManager.GetString("PE_COMMENT_LEGAL_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_DATE_NODE {
+            get {
+                return ResourceManager.GetString("PE_DATE_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_DATETIME_NODE {
+            get {
+                return ResourceManager.GetString("PE_DATETIME_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_FIELDS_NODE {
+            get {
+                return ResourceManager.GetString("PE_FIELDS_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_GRID_NODE {
+            get {
+                return ResourceManager.GetString("PE_GRID_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_GROUP_NODE {
+            get {
+                return ResourceManager.GetString("PE_GROUP_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_GUID_NODE {
+            get {
+                return ResourceManager.GetString("PE_GUID_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_IMAGE_NODE {
+            get {
+                return ResourceManager.GetString("PE_IMAGE_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_LABEL_NODE {
+            get {
+                return ResourceManager.GetString("PE_LABEL_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_LEGAL_VALUE_NODE {
+            get {
+                return ResourceManager.GetString("PE_LEGAL_VALUE_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_MIRROR_NODE {
+            get {
+                return ResourceManager.GetString("PE_MIRROR_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_MULTI_LINE_NODE {
+            get {
+                return ResourceManager.GetString("PE_MULTI_LINE_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_NUMBER_NODE {
+            get {
+                return ResourceManager.GetString("PE_NUMBER_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_OPTION_NODE {
+            get {
+                return ResourceManager.GetString("PE_OPTION_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_PHONE_NODE {
+            get {
+                return ResourceManager.GetString("PE_PHONE_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_RELATE_NODE {
+            get {
+                return ResourceManager.GetString("PE_RELATE_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_SINGLE_LINE_NODE {
+            get {
+                return ResourceManager.GetString("PE_SINGLE_LINE_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_TEMPLATES {
+            get {
+                return ResourceManager.GetString("PE_TEMPLATES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_TIME_NODE {
+            get {
+                return ResourceManager.GetString("PE_TIME_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_UPPER_CASE_NODE {
+            get {
+                return ResourceManager.GetString("PE_UPPER_CASE_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PE_YESNO_NODE {
+            get {
+                return ResourceManager.GetString("PE_YESNO_NODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PERMANENT_VARIABLE {
+            get {
+                return ResourceManager.GetString("PERMANENT_VARIABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PLEASE_WAIT {
+            get {
+                return ResourceManager.GetString("PLEASE_WAIT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PLEASE_WAIT_FIELD_BEING_CREATED {
+            get {
+                return ResourceManager.GetString("PLEASE_WAIT_FIELD_BEING_CREATED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PRINT {
+            get {
+                return ResourceManager.GetString("PRINT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROGRAM_EDITOR {
+            get {
+                return ResourceManager.GetString("PROGRAM_EDITOR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROGRAM_EDITOR_EMPTY {
+            get {
+                return ResourceManager.GetString("PROGRAM_EDITOR_EMPTY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROGRAM_FILE {
+            get {
+                return ResourceManager.GetString("PROGRAM_FILE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROJECT_ALREADY_EXISTS {
+            get {
+                return ResourceManager.GetString("PROJECT_ALREADY_EXISTS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROJECT_ALREADY_EXISTS_TITLE {
+            get {
+                return ResourceManager.GetString("PROJECT_ALREADY_EXISTS_TITLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROJECT_FILE {
+            get {
+                return ResourceManager.GetString("PROJECT_FILE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROJECT_FILE_CORRUPT {
+            get {
+                return ResourceManager.GetString("PROJECT_FILE_CORRUPT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROJECT_FILE_CREATED {
+            get {
+                return ResourceManager.GetString("PROJECT_FILE_CREATED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROJECT_FILE_NOT_CREATED {
+            get {
+                return ResourceManager.GetString("PROJECT_FILE_NOT_CREATED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROJECT_LOCATION_REQUIRED {
+            get {
+                return ResourceManager.GetString("PROJECT_LOCATION_REQUIRED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROJECT_NAME_BEGIN_INVALID {
+            get {
+                return ResourceManager.GetString("PROJECT_NAME_BEGIN_INVALID", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROJECT_NAME_BEGIN_NUMERIC {
+            get {
+                return ResourceManager.GetString("PROJECT_NAME_BEGIN_NUMERIC", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROJECT_NAME_MISSING {
+            get {
+                return ResourceManager.GetString("PROJECT_NAME_MISSING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROJECT_NAME_TOO_LONG {
+            get {
+                return ResourceManager.GetString("PROJECT_NAME_TOO_LONG", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROJECT_NAME_TOO_LONG_AND_INVALID_CHARACTERS {
+            get {
+                return ResourceManager.GetString("PROJECT_NAME_TOO_LONG_AND_INVALID_CHARACTERS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROJECT_SCHEMA_OUT_OF_DATE {
+            get {
+                return ResourceManager.GetString("PROJECT_SCHEMA_OUT_OF_DATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROJECTS {
+            get {
+                return ResourceManager.GetString("PROJECTS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string PROPERTIES {
+            get {
+                return ResourceManager.GetString("PROPERTIES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string QUESTION {
+            get {
+                return ResourceManager.GetString("QUESTION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string QUICK_SAVE_PROJECT_AS_TEMPLATE {
+            get {
+                return ResourceManager.GetString("QUICK_SAVE_PROJECT_AS_TEMPLATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string READY {
+            get {
+                return ResourceManager.GetString("READY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string REC_STATUS {
+            get {
+                return ResourceManager.GetString("REC_STATUS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string RECORD_COUNT {
+            get {
+                return ResourceManager.GetString("RECORD_COUNT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string RECORD_SORT {
+            get {
+                return ResourceManager.GetString("RECORD_SORT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string RECORDS_COPIED {
+            get {
+                return ResourceManager.GetString("RECORDS_COPIED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string RELEASE_DATE {
+            get {
+                return ResourceManager.GetString("RELEASE_DATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string RENAME {
+            get {
+                return ResourceManager.GetString("RENAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string RENAME_DATA_TABLE_NAME {
+            get {
+                return ResourceManager.GetString("RENAME_DATA_TABLE_NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string RENAME_PAGE {
+            get {
+                return ResourceManager.GetString("RENAME_PAGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string RENAME_PROJECT_NAME {
+            get {
+                return ResourceManager.GetString("RENAME_PROJECT_NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string RENAME_VIEW_NAME {
+            get {
+                return ResourceManager.GetString("RENAME_VIEW_NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string RESERVED_WORD {
+            get {
+                return ResourceManager.GetString("RESERVED_WORD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string RESERVED_WORD_ERROR {
+            get {
+                return ResourceManager.GetString("RESERVED_WORD_ERROR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string RESERVED_WORD_INVALID_USE {
+            get {
+                return ResourceManager.GetString("RESERVED_WORD_INVALID_USE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string RESTORE_CONFIGURATION_Q {
+            get {
+                return ResourceManager.GetString("RESTORE_CONFIGURATION_Q", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string ROW_WORD {
+            get {
+                return ResourceManager.GetString("ROW_WORD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SAVE {
+            get {
+                return ResourceManager.GetString("SAVE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SAVE_AS_TEMPLATE {
+            get {
+                return ResourceManager.GetString("SAVE_AS_TEMPLATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SAVE_CHANGES_TO_RECORD {
+            get {
+                return ResourceManager.GetString("SAVE_CHANGES_TO_RECORD", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SAVE_FORM_AS_TEMPLATE {
+            get {
+                return ResourceManager.GetString("SAVE_FORM_AS_TEMPLATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SAVE_PAGE_AS_TEMPLATE {
+            get {
+                return ResourceManager.GetString("SAVE_PAGE_AS_TEMPLATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SAVE_PROGRAM {
+            get {
+                return ResourceManager.GetString("SAVE_PROGRAM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SAVE_PROJECT_AS_TEMPLATE {
+            get {
+                return ResourceManager.GetString("SAVE_PROJECT_AS_TEMPLATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SEARCH_LIMIT_EXCEEDED {
+            get {
+                return ResourceManager.GetString("SEARCH_LIMIT_EXCEEDED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SEARCH_RECORDS_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("SEARCH_RECORDS_NOT_FOUND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SELECT_DATA_SOURCE {
+            get {
+                return ResourceManager.GetString("SELECT_DATA_SOURCE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SELECT_DATABASE {
+            get {
+                return ResourceManager.GetString("SELECT_DATABASE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SELECT_DATABASE_TYPE {
+            get {
+                return ResourceManager.GetString("SELECT_DATABASE_TYPE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SELECT_EXCLUSION_VARIABLES {
+            get {
+                return ResourceManager.GetString("SELECT_EXCLUSION_VARIABLES", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SELECT_PROGRAM {
+            get {
+                return ResourceManager.GetString("SELECT_PROGRAM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SELECT_PROJECT {
+            get {
+                return ResourceManager.GetString("SELECT_PROJECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SELECT_VARIABLE {
+            get {
+                return ResourceManager.GetString("SELECT_VARIABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SELECTION_EVALUATION_ERROR {
+            get {
+                return ResourceManager.GetString("SELECTION_EVALUATION_ERROR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SELECTION_SYNTAX_ERROR {
+            get {
+                return ResourceManager.GetString("SELECTION_SYNTAX_ERROR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SEPARATE_COMMENT_LEGAL_WITH_HYPEN {
+            get {
+                return ResourceManager.GetString("SEPARATE_COMMENT_LEGAL_WITH_HYPEN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SHOW_TAB_ORDER {
+            get {
+                return ResourceManager.GetString("SHOW_TAB_ORDER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SOURCE_PROJECT_CONTAINS_ERRORS {
+            get {
+                return ResourceManager.GetString("SOURCE_PROJECT_CONTAINS_ERRORS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SOURCE_TABLE_NOT_SET {
+            get {
+                return ResourceManager.GetString("SOURCE_TABLE_NOT_SET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SPECIFY_DATAFORMAT {
+            get {
+                return ResourceManager.GetString("SPECIFY_DATAFORMAT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SPECIFY_DATASOURCE {
+            get {
+                return ResourceManager.GetString("SPECIFY_DATASOURCE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SPECIFY_PROJECT {
+            get {
+                return ResourceManager.GetString("SPECIFY_PROJECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SPECIFY_TABLE_OR_VIEW {
+            get {
+                return ResourceManager.GetString("SPECIFY_TABLE_OR_VIEW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SPECIFY_VIEW {
+            get {
+                return ResourceManager.GetString("SPECIFY_VIEW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string SPECIFY_VIEW_TO_ADD_PAGE {
+            get {
+                return ResourceManager.GetString("SPECIFY_VIEW_TO_ADD_PAGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string STANDARD_VARIABLE {
+            get {
+                return ResourceManager.GetString("STANDARD_VARIABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string START_END_BY_EMPTY {
+            get {
+                return ResourceManager.GetString("START_END_BY_EMPTY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string START_FIELD_DROP {
+            get {
+                return ResourceManager.GetString("START_FIELD_DROP", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string START_NEW_TAB_ORDER {
+            get {
+                return ResourceManager.GetString("START_NEW_TAB_ORDER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TABLE_DELETE_ASK {
+            get {
+                return ResourceManager.GetString("TABLE_DELETE_ASK", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TABLE_EXISTS_OUTPUT {
+            get {
+                return ResourceManager.GetString("TABLE_EXISTS_OUTPUT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TABLE_HAS_VIEW {
+            get {
+                return ResourceManager.GetString("TABLE_HAS_VIEW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TABLE_HAS_VIEWS {
+            get {
+                return ResourceManager.GetString("TABLE_HAS_VIEWS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TABLE_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("TABLE_NOT_FOUND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TABLES_CHI_SQUARE_NOT_VALID {
+            get {
+                return ResourceManager.GetString("TABLES_CHI_SQUARE_NOT_VALID", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TABS {
+            get {
+                return ResourceManager.GetString("TABS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TEMPLATE_CANNOT_READ_FILE {
+            get {
+                return ResourceManager.GetString("TEMPLATE_CANNOT_READ_FILE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TEMPLATE_GET_ALREADY_EXISTS {
+            get {
+                return ResourceManager.GetString("TEMPLATE_GET_ALREADY_EXISTS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TEMPLATE_GET_CANCEL {
+            get {
+                return ResourceManager.GetString("TEMPLATE_GET_CANCEL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TEMPLATE_GET_NO_OVERWRITE {
+            get {
+                return ResourceManager.GetString("TEMPLATE_GET_NO_OVERWRITE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TEMPLATE_GET_RENAME_TEMPLATE {
+            get {
+                return ResourceManager.GetString("TEMPLATE_GET_RENAME_TEMPLATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TEMPLATE_GET_TITLE {
+            get {
+                return ResourceManager.GetString("TEMPLATE_GET_TITLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TEMPLATE_GET_YES_RENAME {
+            get {
+                return ResourceManager.GetString("TEMPLATE_GET_YES_RENAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TOKEN_EXCEPTION {
+            get {
+                return ResourceManager.GetString("TOKEN_EXCEPTION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TOTAL {
+            get {
+                return ResourceManager.GetString("TOTAL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TOTAL_IN_CAPS {
+            get {
+                return ResourceManager.GetString("TOTAL_IN_CAPS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TWO_BY_TWO_VALUES_TOO_FEW {
+            get {
+                return ResourceManager.GetString("TWO_BY_TWO_VALUES_TOO_FEW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string TYPE {
+            get {
+                return ResourceManager.GetString("TYPE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string UNABLE_CONNECT_TO_DATABASE {
+            get {
+                return ResourceManager.GetString("UNABLE_CONNECT_TO_DATABASE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string UNABLE_CREATE_2X2 {
+            get {
+                return ResourceManager.GetString("UNABLE_CREATE_2X2", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string UNABLE_CREATE_DATABASE {
+            get {
+                return ResourceManager.GetString("UNABLE_CREATE_DATABASE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string UNABLE_CREATE_GRAPH {
+            get {
+                return ResourceManager.GetString("UNABLE_CREATE_GRAPH", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string UNABLE_READ_PGM {
+            get {
+                return ResourceManager.GetString("UNABLE_READ_PGM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string UNABLE_TO_INITIALIZE_PROJECT {
+            get {
+                return ResourceManager.GetString("UNABLE_TO_INITIALIZE_PROJECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string UNABLE_WRITE_PGM {
+            get {
+                return ResourceManager.GetString("UNABLE_WRITE_PGM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string UNDEFINED {
+            get {
+                return ResourceManager.GetString("UNDEFINED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string UNEXPECTED_TOKEN {
+            get {
+                return ResourceManager.GetString("UNEXPECTED_TOKEN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string UNIQUE_KEY {
+            get {
+                return ResourceManager.GetString("UNIQUE_KEY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string UNIQUE_RECORD_ID {
+            get {
+                return ResourceManager.GetString("UNIQUE_RECORD_ID", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string UNIQUE_ROW_ID {
+            get {
+                return ResourceManager.GetString("UNIQUE_ROW_ID", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string UNIQUEIDENTIFIER {
+            get {
+                return ResourceManager.GetString("UNIQUEIDENTIFIER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string UPDATE_TITLE {
+            get {
+                return ResourceManager.GetString("UPDATE_TITLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string UPGRADING_PROJECT {
+            get {
+                return ResourceManager.GetString("UPGRADING_PROJECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string UPPER_DATE_RANGE_IS_LOWER {
+            get {
+                return ResourceManager.GetString("UPPER_DATE_RANGE_IS_LOWER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string UPPER_NUMBER_RANGE_IS_LOWER {
+            get {
+                return ResourceManager.GetString("UPPER_NUMBER_RANGE_IS_LOWER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string VALIDATING_SOURCE_PROJECT {
+            get {
+                return ResourceManager.GetString("VALIDATING_SOURCE_PROJECT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string VALUE_NOT_IN_RANGE {
+            get {
+                return ResourceManager.GetString("VALUE_NOT_IN_RANGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string VAR_NAME_IS_RESERVED {
+            get {
+                return ResourceManager.GetString("VAR_NAME_IS_RESERVED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string VARIABLE_ALREADY_DEFINED {
+            get {
+                return ResourceManager.GetString("VARIABLE_ALREADY_DEFINED", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string VARIABLE_NOT_EXIST {
+            get {
+                return ResourceManager.GetString("VARIABLE_NOT_EXIST", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string VERSION_NUMBER {
+            get {
+                return ResourceManager.GetString("VERSION_NUMBER", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string VIEW_CHECK_CODE {
+            get {
+                return ResourceManager.GetString("VIEW_CHECK_CODE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string VIEW_NAME_BEGIN_INVALID {
+            get {
+                return ResourceManager.GetString("VIEW_NAME_BEGIN_INVALID", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string VIEW_NAME_BEGIN_NUMERIC {
+            get {
+                return ResourceManager.GetString("VIEW_NAME_BEGIN_NUMERIC", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string VIEW_NAME_MISSING {
+            get {
+                return ResourceManager.GetString("VIEW_NAME_MISSING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string VIEW_NAME_TOO_LONG_AND_INVALID_CHARACTERS {
+            get {
+                return ResourceManager.GetString("VIEW_NAME_TOO_LONG_AND_INVALID_CHARACTERS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string VIEW_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("VIEW_NOT_FOUND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string VIEW_VARIABLE {
+            get {
+                return ResourceManager.GetString("VIEW_VARIABLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string VOCABULARY_FIELDS {
+            get {
+                return ResourceManager.GetString("VOCABULARY_FIELDS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARING_RadioButton_Caption_Missing {
+            get {
+                return ResourceManager.GetString("WARING_RadioButton_Caption_Missing", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARING_VIEW_NAME_MISSING {
+            get {
+                return ResourceManager.GetString("WARING_VIEW_NAME_MISSING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING {
+            get {
+                return ResourceManager.GetString("WARNING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_ADD_RELATE_CONDITION {
+            get {
+                return ResourceManager.GetString("WARNING_ADD_RELATE_CONDITION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_ADD_RELATED_VIEW_NAME {
+            get {
+                return ResourceManager.GetString("WARNING_ADD_RELATED_VIEW_NAME", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_APPLICATION_RUNNING {
+            get {
+                return ResourceManager.GetString("WARNING_APPLICATION_RUNNING", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_CANNOT_CONNECT_TO_COLLECTED_DATA_DATABASE {
+            get {
+                return ResourceManager.GetString("WARNING_CANNOT_CONNECT_TO_COLLECTED_DATA_DATABASE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_CANNOT_CONNECT_TO_METADATA_DATABASE {
+            get {
+                return ResourceManager.GetString("WARNING_CANNOT_CONNECT_TO_METADATA_DATABASE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_CANNOT_DELETE_PRIMARY_PAGE {
+            get {
+                return ResourceManager.GetString("WARNING_CANNOT_DELETE_PRIMARY_PAGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_CANNOT_DELETE_PRIMARY_VIEW {
+            get {
+                return ResourceManager.GetString("WARNING_CANNOT_DELETE_PRIMARY_VIEW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_CANNOT_DELETE_THIS_PAGE {
+            get {
+                return ResourceManager.GetString("WARNING_CANNOT_DELETE_THIS_PAGE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_CANNOT_OPEN_PROGRAM {
+            get {
+                return ResourceManager.GetString("WARNING_CANNOT_OPEN_PROGRAM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_CANNOT_SAVE_BLANK_PGM {
+            get {
+                return ResourceManager.GetString("WARNING_CANNOT_SAVE_BLANK_PGM", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_CANNOT_SET_COLLECTED_DATA_TEXT {
+            get {
+                return ResourceManager.GetString("WARNING_CANNOT_SET_COLLECTED_DATA_TEXT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_CANNOT_SYNCHRONIZE {
+            get {
+                return ResourceManager.GetString("WARNING_CANNOT_SYNCHRONIZE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_CANNOT_SYNCHRONIZE_ACCESSS {
+            get {
+                return ResourceManager.GetString("WARNING_CANNOT_SYNCHRONIZE_ACCESSS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_CHILD_VIEW_NOT_SET {
+            get {
+                return ResourceManager.GetString("WARNING_CHILD_VIEW_NOT_SET", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_COMMAND_SYNTAX_ERROR {
+            get {
+                return ResourceManager.GetString("WARNING_COMMAND_SYNTAX_ERROR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_DELETE_PARENT_VIEW {
+            get {
+                return ResourceManager.GetString("WARNING_DELETE_PARENT_VIEW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_DELETE_RELATED_VIEW {
+            get {
+                return ResourceManager.GetString("WARNING_DELETE_RELATED_VIEW", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_DELETE_VIEW_ERROR {
+            get {
+                return ResourceManager.GetString("WARNING_DELETE_VIEW_ERROR", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_HIGH_CENSOR_VAL_COUNT {
+            get {
+                return ResourceManager.GetString("WARNING_HIGH_CENSOR_VAL_COUNT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_MUST_CREATE_TEXT_FIRST {
+            get {
+                return ResourceManager.GetString("WARNING_MUST_CREATE_TEXT_FIRST", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_Not_FOR_GLOBAL_PERM_VARS {
+            get {
+                return ResourceManager.GetString("WARNING_Not_FOR_GLOBAL_PERM_VARS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_OKAY_TO_CLEAR_CLIPBOARD_CAPTION {
+            get {
+                return ResourceManager.GetString("WARNING_OKAY_TO_CLEAR_CLIPBOARD_CAPTION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_OKAY_TO_CLEAR_CLIPBOARD_MESSAGE {
+            get {
+                return ResourceManager.GetString("WARNING_OKAY_TO_CLEAR_CLIPBOARD_MESSAGE", resourceCulture);
+            }
+        }
+
+
+
+
+
+
+        public static string WARNING_PROJECT_MAY_ALREADY_EXIST {
+            get {
+                return ResourceManager.GetString("WARNING_PROJECT_MAY_ALREADY_EXIST", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_PROJECT_MAY_ALREADY_EXIST_SHORT {
+            get {
+                return ResourceManager.GetString("WARNING_PROJECT_MAY_ALREADY_EXIST_SHORT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_RECODE_GROUP_OVERSIZE {
+            get {
+                return ResourceManager.GetString("WARNING_RECODE_GROUP_OVERSIZE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WARNING_UNEXPECTED_TOKEN {
+            get {
+                return ResourceManager.GetString("WARNING_UNEXPECTED_TOKEN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WEBFORM_DEPARTMENT {
+            get {
+                return ResourceManager.GetString("WEBFORM_DEPARTMENT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WEBFORM_EXITTEXT {
+            get {
+                return ResourceManager.GetString("WEBFORM_EXITTEXT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WEBFORM_FUTUREDATE {
+            get {
+                return ResourceManager.GetString("WEBFORM_FUTUREDATE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WEBFORM_GIVETITLE {
+            get {
+                return ResourceManager.GetString("WEBFORM_GIVETITLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WEBFORM_INTRODUCTIONTEXT {
+            get {
+                return ResourceManager.GetString("WEBFORM_INTRODUCTIONTEXT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WEBFORM_ORGANIZATION {
+            get {
+                return ResourceManager.GetString("WEBFORM_ORGANIZATION", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WEBFORM_ORGANIZATION_KEY {
+            get {
+                return ResourceManager.GetString("WEBFORM_ORGANIZATION_KEY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WEBFORM_PUBWOEXIT {
+            get {
+                return ResourceManager.GetString("WEBFORM_PUBWOEXIT", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WEBFORM_SECURITYTOKEN {
+            get {
+                return ResourceManager.GetString("WEBFORM_SECURITYTOKEN", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WEBFORM_SUCCESS {
+            get {
+                return ResourceManager.GetString("WEBFORM_SUCCESS", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WEBFORM_SURVEYID {
+            get {
+                return ResourceManager.GetString("WEBFORM_SURVEYID", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WEBFORM_SURVEYKEY {
+            get {
+                return ResourceManager.GetString("WEBFORM_SURVEYKEY", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WEBFORM_TITLE {
+            get {
+                return ResourceManager.GetString("WEBFORM_TITLE", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WEBFORM_URLTOSEND {
+            get {
+                return ResourceManager.GetString("WEBFORM_URLTOSEND", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string WORD_ALL {
+            get {
+                return ResourceManager.GetString("WORD_ALL", resourceCulture);
+            }
+        }
+
+
+
+
+        public static string XML {
+            get {
+                return ResourceManager.GetString("XML", resourceCulture);
+            }
+        }
+    }
+}
+
+ 

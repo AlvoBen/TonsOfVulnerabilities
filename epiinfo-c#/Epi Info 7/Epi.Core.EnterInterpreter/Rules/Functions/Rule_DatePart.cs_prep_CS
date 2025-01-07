@@ -1,0 +1,68 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using com.calitha.goldparser;
+
+namespace Epi.Core.EnterInterpreter.Rules
+{
+
+
+
+    public abstract         class Rule_DatePart : EnterRule
+    {
+        //Private Variables
+
+        private List ParameterList = new List();
+
+        private EnterRule functionCall = null;
+        private Rule_FunctionParameterList ParamList = null;
+        private FunctionUtils.DateInterval currentInterval;
+        //
+        //Constructors
+        public Rule_DatePart(Rule_Context pContext, NonterminalToken pToken, FunctionUtils.DateInterval interval)
+            : base(pContext)
+        {
+            currentInterval = interval;
+
+            this.ParameterList = EnterRule.GetFunctionParameters(pContext, pToken);
+            /*
+            NonterminalToken T = (NonterminalToken)pToken.Tokens[0];
+            string type = pToken.Rule.Lhs.ToString();
+            switch (type)
+            {
+                case "":
+                    this.ParamList = new Rule_FunctionParameterList(pContext, T);
+                    break;
+                case "":
+                    this.functionCall = new Rule_FunctionCall(pContext, T);
+                    break;
+                default:
+                    break;
+            }*/
+        }
+        //
+        //Public Methods
+
+
+
+
+        public override object Execute()
+        {
+            object result = null;
+
+            DateTime date1;
+            if (DateTime.TryParse(this.ParameterList[0].Execute().ToString(), out date1))
+            {
+                result = FunctionUtils.GetDatePart(currentInterval, date1);
+            }
+
+            return result;
+        }
+
+        //
+    }
+
+}
+
+ 

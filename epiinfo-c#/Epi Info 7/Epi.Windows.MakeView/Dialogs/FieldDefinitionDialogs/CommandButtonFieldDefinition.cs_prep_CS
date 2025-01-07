@@ -1,0 +1,144 @@
+﻿//Namespaces
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+using Epi;
+using Epi.Fields;
+
+//Namespaces
+
+namespace Epi.Windows.MakeView.Dialogs.FieldDefinitionDialogs
+{
+
+    public         class CommandButtonFieldDefinition : GenericFieldDefinition
+ {
+
+  //Fields
+
+
+
+  private CommandButtonField field;
+  //
+
+  //Constructors
+
+
+
+        public CommandButtonFieldDefinition()
+        {
+            InitializeComponent();
+        }
+
+
+
+
+
+  public CommandButtonFieldDefinition(MainForm frm) : base(frm)
+  {
+   InitializeComponent();
+  }
+
+
+
+
+
+
+  public CommandButtonFieldDefinition(MainForm frm, Page page) : base(frm)
+  {
+   InitializeComponent();
+   this.mode = FormMode.Create;
+   this.page = page;
+  }
+
+
+
+
+
+
+  public CommandButtonFieldDefinition(MainForm frm, CommandButtonField field) : base(frm)
+  {
+   InitializeComponent();
+   this.mode = FormMode.Edit;
+   this.field = field;
+   this.page = field.Page;
+   LoadFormData();
+  }
+  //
+
+  //Event Handlers
+  private void btnButtonFont_Click(object sender, System.EventArgs e)
+  {
+   FontDialog dialog = new FontDialog();
+   if (controlFont != null)
+   {
+    dialog.Font = controlFont;
+   }
+   DialogResult result = dialog.ShowDialog();
+   if (result == DialogResult.OK)
+   {
+    controlFont = dialog.Font;
+                promptFont = dialog.Font;
+                ((GenericFieldDefinition)this).Controls["txtPrompt"].Focus();
+   }
+  }
+  //
+
+  //Private Methods
+  private void LoadFormData()
+  {
+            Configuration config = Configuration.GetNewInstance();
+            FontStyle style = FontStyle.Regular;
+            if (config.Settings.EditorFontBold)
+            {
+                style |= FontStyle.Bold;
+            }
+            if (config.Settings.EditorFontItalics)
+            {
+                style |= FontStyle.Italic;
+            }
+            if ((field.ControlFont == null) || ((field.ControlFont.Name == "Microsoft Sans Serif") && (field.ControlFont.Size == 8.5)))
+            {
+                field.ControlFont = new Font(config.Settings.EditorFontName, (float)config.Settings.EditorFontSize, style);
+            }
+   txtPrompt.Text = field.PromptText;
+   txtFieldName.Text = field.Name;
+            controlFont = field.ControlFont;
+  }
+  //
+
+  //Public Methods
+
+
+
+
+        protected override void SetFieldProperties()
+        {
+            field.PromptText = txtPrompt.Text;
+            field.Name = txtFieldName.Text;
+            if (controlFont != null)
+            {
+                field.ControlFont = controlFont;
+            }
+            if (promptFont != null)
+            {
+                field.PromptFont = promptFont;
+            }
+        }
+
+
+
+
+  public override RenderableField Field
+  {
+   get
+   {
+    return field;
+   }
+  }
+  //
+
+
+ }
+}
+
+ 

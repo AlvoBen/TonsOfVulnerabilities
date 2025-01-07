@@ -1,0 +1,38 @@
+﻿using System;
+
+namespace Epi.Diagnostics
+{
+
+
+
+ public class Debugger
+ {
+
+
+
+  public Debugger()
+  {
+
+  }
+
+
+
+
+  public static void Break()
+  {             
+
+      
+  }
+
+
+
+
+
+  public static void LogException(Exception ex)
+  {
+   System.Diagnostics.Debug.WriteLine(ex.ToString());
+  }
+ }
+}
+
+ 

@@ -1,0 +1,38 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+
+namespace Epi
+{
+
+
+
+    public interface IVariable : INamedObject
+    {
+
+
+
+        DataType DataType { get; set; }
+
+
+
+        VariableType VarType { get; }
+
+
+
+        string Expression { get; set; }
+
+
+
+        string PromptText { get; set;}
+
+
+
+
+
+        bool IsVarType(VariableType typeCombination);
+    }
+}
+
+ 

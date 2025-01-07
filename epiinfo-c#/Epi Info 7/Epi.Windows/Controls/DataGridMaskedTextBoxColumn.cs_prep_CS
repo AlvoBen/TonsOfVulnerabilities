@@ -1,0 +1,1016 @@
+﻿using System;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Data;
+using Epi.Core;
+using Epi.Fields;
+
+namespace Epi.Windows.Controls
+{
+
+
+
+    public class MaskedTextBoxCell : DataGridViewTextBoxCell
+    {
+        private string mask;
+        private char promptChar;
+        private DataGridViewTriState includePrompt;
+        private DataGridViewTriState includeLiterals;
+        private DataGridViewTriState hidePromptOnLeave;
+        private Type validatingType;
+        private GridColumnBase gridColumn;
+
+
+
+
+        public static MaskInputRejectedEventHandler control_MaskInputRejected;
+
+
+
+
+
+
+
+
+
+        public MaskedTextBoxCell()
+            : base()
+        {
+            this.mask = "";
+            this.promptChar = '_';
+            this.includePrompt = DataGridViewTriState.NotSet;
+            this.includeLiterals = DataGridViewTriState.NotSet;
+            this.hidePromptOnLeave = DataGridViewTriState.NotSet;
+            this.validatingType = typeof(string);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        public override void InitializeEditingControl(int rowIndex,
+                                                      object initialFormattedValue,
+                                                      DataGridViewCellStyle dataGridViewCellStyle)
+        {
+            MaskedTextBoxEditingControl mtbec;
+            MaskedTextBoxColumn mtbcol;
+            DataGridViewColumn dgvc;
+
+            base.InitializeEditingControl(rowIndex, initialFormattedValue,
+                                          dataGridViewCellStyle);
+
+            mtbec = DataGridView.EditingControl as MaskedTextBoxEditingControl;
+
+
+
+            dgvc = this.OwningColumn;
+            if (dgvc is MaskedTextBoxColumn)
+            {
+                mtbcol = dgvc as MaskedTextBoxColumn;
+
+
+                if (string.IsNullOrEmpty(this.mask))
+                {
+                    mtbec.Mask = mtbcol.Mask;
+                }
+                else
+                {
+                    mtbec.Mask = this.mask;
+                }
+
+
+                mtbec.PromptChar = this.PromptChar;
+
+
+                if (this.includePrompt == DataGridViewTriState.NotSet)
+                {
+
+                }
+                else
+                {
+
+                }
+
+
+                if (this.includeLiterals == DataGridViewTriState.NotSet)
+                {
+
+                }
+                else
+                {
+
+                }
+
+                if (this.hidePromptOnLeave == DataGridViewTriState.NotSet)
+                {
+                    mtbec.HidePromptOnLeave = false;
+                }
+                else
+                {
+                    mtbec.HidePromptOnLeave = BoolFromTri(this.hidePromptOnLeave);
+                }
+
+
+                if (this.ValidatingType == null)
+                {
+                    mtbec.ValidatingType = mtbcol.ValidatingType;
+                }
+                else
+                {
+                    mtbec.ValidatingType = this.ValidatingType;
+                }
+
+                mtbec.GridColumn = mtbcol.GridColumn;
+
+                string fmt;
+                string textValue;
+
+                if (this.RowIndex == -1)
+                {
+                    mtbec.Text = initialFormattedValue.ToString();
+                }
+                else
+                {
+                    try
+                    {
+                        if (this.Value == null || this.Value == DBNull.Value)
+                        {
+                            mtbec.Text = string.Empty;
+                        }
+                        else if (this.Value is DateTime)
+                        {
+                            fmt = "{0:" + dataGridViewCellStyle.Format + "}";
+                            textValue = string.Format(fmt, this.Value);
+                            mtbec.Text = textValue;
+                        }
+                        else if (this.Value is Double && !string.IsNullOrEmpty(dataGridViewCellStyle.Format))
+                        {
+                            string format = dataGridViewCellStyle.Format;
+                            fmt = format.Substring(0, format.IndexOf('.'));
+                            fmt = fmt.Replace("#", "0");
+                            fmt += format.Substring(format.IndexOf('.'));
+                            fmt = "{0:" + fmt + "}";
+                            textValue = string.Format(fmt, this.Value);
+                            mtbec.Text = textValue;
+                        }
+                        else
+                        {
+                            mtbec.Text = this.Value.ToString();
+                        }
+                    }
+                    catch { }
+                }
+
+                mtbec.MaskInputRejected -= control_MaskInputRejected;
+                mtbec.MaskInputRejected += control_MaskInputRejected;
+            }
+        }
+
+
+
+
+        public virtual GridColumnBase GridColumn
+        {
+            get
+            {
+                return this.gridColumn;
+            }
+            set
+            {
+                this.gridColumn = value;
+            }
+        }
+
+
+
+
+
+
+
+        public override Type EditType
+        {
+            get
+            {
+                return typeof(MaskedTextBoxEditingControl);
+            }
+        }
+
+
+
+
+
+
+        public virtual string Mask
+        {
+            get
+            {
+                return this.mask;
+            }
+            set
+            {
+                this.mask = value;
+            }
+        }
+
+
+
+
+
+        public virtual char PromptChar
+        {
+            get
+            {
+                return this.promptChar;
+            }
+            set
+            {
+                this.promptChar = value;
+            }
+        }
+
+
+
+
+        public virtual DataGridViewTriState HidePromptOnLeave
+        {
+            get
+            {
+                return this.hidePromptOnLeave;
+            }
+            set
+            {
+                this.hidePromptOnLeave = value;
+            }
+        }
+
+
+
+
+
+
+        public virtual DataGridViewTriState IncludePrompt
+        {
+            get
+            {
+                return this.includePrompt;
+            }
+            set
+            {
+                this.includePrompt = value;
+            }
+        }
+
+
+
+
+
+        public virtual DataGridViewTriState IncludeLiterals
+        {
+            get
+            {
+                return this.includeLiterals;
+            }
+            set
+            {
+                this.includeLiterals = value;
+            }
+        }
+
+
+
+
+        public virtual Type ValidatingType
+        {
+            get
+            {
+                return this.validatingType;
+            }
+            set
+            {
+                this.validatingType = value;
+            }
+        }
+
+
+
+
+
+
+
+        protected static bool BoolFromTri(DataGridViewTriState tri)
+        {
+            return (tri == DataGridViewTriState.True) ? true : false;
+        }
+    }
+
+
+
+
+
+
+
+    public class MaskedTextBoxColumn : DataGridViewColumn
+    {
+        private string mask;
+        private char promptChar;
+        private bool includePrompt;
+        private bool includeLiterals;
+        private Type validatingType;
+        private GridColumnBase gridColumn;
+        private DataGridViewTriState hidePromptOnLeave;
+        private MaskInputRejectedEventHandler control_MaskInputRejected;
+
+
+
+
+
+
+        public MaskedTextBoxColumn()
+            : base(new MaskedTextBoxCell())
+        {
+        }
+
+
+        private static DataGridViewTriState TriBool(bool value)
+        {
+            return value ? DataGridViewTriState.True
+                         : DataGridViewTriState.False;
+        }
+
+
+
+
+        public GridColumnBase GridColumn
+        {
+            get
+            {
+                return this.gridColumn;
+            }
+            set
+            {
+                MaskedTextBoxCell mtbc;
+                DataGridViewCell dgvc;
+                int rowCount;
+
+                if (this.gridColumn != value)
+                {
+                    this.gridColumn = value;
+
+
+                    mtbc = (MaskedTextBoxCell)this.CellTemplate;
+                    mtbc.GridColumn = value;
+
+
+                    if (this.DataGridView != null && this.DataGridView.Rows != null)
+                    {
+                        rowCount = this.DataGridView.Rows.Count;
+                        for (int x = 0; x < rowCount; x++)
+                        {
+                            dgvc = this.DataGridView.Rows.SharedRow(x).Cells[x];
+                            if (dgvc is MaskedTextBoxCell)
+                            {
+                                mtbc = (MaskedTextBoxCell)dgvc;
+                                mtbc.GridColumn = value;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+        public override DataGridViewCell CellTemplate
+        {
+            get
+            {
+                return base.CellTemplate;
+            }
+
+            set
+            {
+
+                if (value != null && !value.GetType().IsAssignableFrom(typeof(MaskedTextBoxCell)))
+                {
+                    string s = "Cell type is not based upon the MaskedTextBoxCell.";//CustomColumnMain.GetResourceManager().GetString("excNotMaskedTextBox");
+                    throw new InvalidCastException(s);
+                }
+
+                base.CellTemplate = value;
+            }
+        }
+
+
+
+
+        public virtual DataGridViewTriState HidePromptOnLeave
+        {
+            get
+            {
+                return this.hidePromptOnLeave;
+            }
+            set
+            {
+                MaskedTextBoxCell mtbc;
+                DataGridViewCell dgvc;
+                int rowCount;
+
+                if (this.hidePromptOnLeave != value)
+                {
+                    this.hidePromptOnLeave = value;
+
+
+                    mtbc = (MaskedTextBoxCell)this.CellTemplate;
+                    mtbc.HidePromptOnLeave = value;
+
+
+                    if (this.DataGridView != null && this.DataGridView.Rows != null)
+                    {
+                        rowCount = this.DataGridView.Rows.Count;
+                        for (int x = 0; x < rowCount; x++)
+                        {
+                            dgvc = this.DataGridView.Rows.SharedRow(x).Cells[x];
+                            if (dgvc is MaskedTextBoxCell)
+                            {
+                                mtbc = (MaskedTextBoxCell)dgvc;
+                                mtbc.HidePromptOnLeave = value;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+        public virtual MaskInputRejectedEventHandler MaskInputRejected
+        {
+            set
+            {
+                if (this.control_MaskInputRejected != value)
+                {
+                    this.control_MaskInputRejected = value;
+                    MaskedTextBoxCell.control_MaskInputRejected = value;
+                }
+            }
+        }
+
+
+
+
+
+
+
+        public virtual string Mask
+        {
+            get
+            {
+                return this.mask;
+            }
+            set
+            {
+                MaskedTextBoxCell mtbc;
+                DataGridViewCell dgvc;
+                int rowCount;
+
+                if (this.mask != value)
+                {
+                    this.mask = value;
+
+
+                    mtbc = (MaskedTextBoxCell)this.CellTemplate;
+                    mtbc.Mask = value;
+
+
+                    if (this.DataGridView != null && this.DataGridView.Rows != null)
+                    {
+                        rowCount = this.DataGridView.Rows.Count;
+                        for (int x = 0; x < rowCount; x++)
+                        {
+                            dgvc = this.DataGridView.Rows.SharedRow(x).Cells[x];
+                            if (dgvc is MaskedTextBoxCell)
+                            {
+                                mtbc = (MaskedTextBoxCell)dgvc;
+                                mtbc.Mask = value;
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+        public virtual char PromptChar
+        {
+            get
+            {
+                return this.promptChar;
+            }
+            set
+            {
+                MaskedTextBoxCell mtbc;
+                DataGridViewCell dgvc;
+                int rowCount;
+
+                if (this.promptChar != value)
+                {
+                    this.promptChar = value;
+
+
+
+
+                    mtbc = (MaskedTextBoxCell)this.CellTemplate;
+                    mtbc.PromptChar = value;
+
+
+
+
+                    if (this.DataGridView != null && this.DataGridView.Rows != null)
+                    {
+                        rowCount = this.DataGridView.Rows.Count;
+                        for (int x = 0; x < rowCount; x++)
+                        {
+                            dgvc = this.DataGridView.Rows.SharedRow(x).Cells[x];
+                            if (dgvc is MaskedTextBoxCell)
+                            {
+                                mtbc = (MaskedTextBoxCell)dgvc;
+                                mtbc.PromptChar = value;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+        public virtual bool IncludePrompt
+        {
+            get
+            {
+                return this.includePrompt;
+            }
+            set
+            {
+                MaskedTextBoxCell mtbc;
+                DataGridViewCell dgvc;
+                int rowCount;
+
+                if (this.includePrompt != value)
+                {
+                    this.includePrompt = value;
+
+
+                    mtbc = (MaskedTextBoxCell)this.CellTemplate;
+                    mtbc.IncludePrompt = TriBool(value);
+
+
+                    if (this.DataGridView != null && this.DataGridView.Rows != null)
+                    {
+                        rowCount = this.DataGridView.Rows.Count;
+                        for (int x = 0; x < rowCount; x++)
+                        {
+                            dgvc = this.DataGridView.Rows.SharedRow(x).Cells[x];
+                            if (dgvc is MaskedTextBoxCell)
+                            {
+                                mtbc = (MaskedTextBoxCell)dgvc;
+                                mtbc.IncludePrompt = TriBool(value);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+        public virtual bool IncludeLiterals
+        {
+            get
+            {
+                return this.includeLiterals;
+            }
+            set
+            {
+                MaskedTextBoxCell mtbc;
+                DataGridViewCell dgvc;
+                int rowCount;
+
+                if (this.includeLiterals != value)
+                {
+                    this.includeLiterals = value;
+
+
+                    mtbc = (MaskedTextBoxCell)this.CellTemplate;
+                    mtbc.IncludeLiterals = TriBool(value);
+
+
+                    if (this.DataGridView != null && this.DataGridView.Rows != null)
+                    {
+
+                        rowCount = this.DataGridView.Rows.Count;
+                        for (int x = 0; x < rowCount; x++)
+                        {
+                            dgvc = this.DataGridView.Rows.SharedRow(x).Cells[x];
+                            if (dgvc is MaskedTextBoxCell)
+                            {
+                                mtbc = (MaskedTextBoxCell)dgvc;
+                                mtbc.IncludeLiterals = TriBool(value);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+        public virtual Type ValidatingType
+        {
+            get
+            {
+                return this.validatingType;
+            }
+            set
+            {
+                MaskedTextBoxCell mtbc;
+                DataGridViewCell dgvc;
+                int rowCount;
+
+                if (this.validatingType != value)
+                {
+                    this.validatingType = value;
+
+
+                    mtbc = (MaskedTextBoxCell)this.CellTemplate;
+                    mtbc.ValidatingType = value;
+
+
+                    if (this.DataGridView != null && this.DataGridView.Rows != null)
+                    {
+                        rowCount = this.DataGridView.Rows.Count;
+                        for (int x = 0; x < rowCount; x++)
+                        {
+                            dgvc = this.DataGridView.Rows.SharedRow(x).Cells[x];
+                            if (dgvc is MaskedTextBoxCell)
+                            {
+                                mtbc = (MaskedTextBoxCell)dgvc;
+                                mtbc.ValidatingType = value;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+
+
+
+    public class MaskedTextBoxEditingControl : MaskedTextBox, IDataGridViewEditingControl
+    {
+
+
+
+        protected int rowIndex;
+
+
+
+
+        protected GridColumnBase gridColumn;
+
+
+
+
+        protected DataGridView dataGridView;
+
+
+
+
+        protected bool valueChanged = false;
+
+
+
+
+        public MaskedTextBoxEditingControl()
+        {
+
+        }
+
+
+
+        public GridColumnBase GridColumn
+        {
+            get
+            {
+                return gridColumn;
+            }
+            set
+            {
+                this.gridColumn = value;
+            }
+        }
+
+
+
+
+
+        protected override void OnTextChanged(EventArgs e)
+        {
+            base.OnTextChanged(e);
+
+            NotifyDataGridViewOfValueChange();
+        }
+
+
+
+
+        protected virtual void NotifyDataGridViewOfValueChange()
+        {
+            this.valueChanged = true;
+            if (this.dataGridView != null)
+            {
+                this.dataGridView.NotifyCurrentCellDirty(true);
+            }
+        }
+
+
+
+        //IDataGridViewEditingControl Members
+
+
+
+
+
+
+        public Cursor EditingPanelCursor
+        {
+            get
+            {
+                return Cursors.IBeam;
+            }
+        }
+
+
+
+
+
+        public DataGridView EditingControlDataGridView
+        {
+            get
+            {
+                return this.dataGridView;
+            }
+
+            set
+            {
+                this.dataGridView = value;
+            }
+        }
+
+
+
+
+
+        public object EditingControlFormattedValue
+        {
+            set
+            {
+                this.Text = value.ToString();
+                NotifyDataGridViewOfValueChange();
+            }
+            get
+            {
+                return this.Text;
+            }
+
+        }
+
+
+
+
+
+
+        public object GetEditingControlFormattedValue(DataGridViewDataErrorContexts context)
+        {
+            return this.Text;
+        }
+
+
+
+
+
+
+
+
+
+        public bool EditingControlWantsInputKey(Keys keyData, bool dataGridViewWantsInputKey)
+        {
+            switch (keyData & Keys.KeyCode)
+            {
+                case Keys.Right:
+
+
+                    if (!(this.SelectionLength == 0
+                          && this.SelectionStart == this.ToString().Length))
+                    {
+                        return true;
+                    }
+                    break;
+
+                case Keys.Left:
+
+
+
+                    if (!(this.SelectionLength == 0
+                          && this.SelectionStart == 0))
+                    {
+                        return true;
+                    }
+                    break;
+
+                case Keys.Home:
+                case Keys.End:
+                    if (this.SelectionLength != this.ToString().Length)
+                    {
+                        return true;
+                    }
+                    break;
+
+                case Keys.Prior:
+                case Keys.Next:
+                    if (this.valueChanged)
+                    {
+                        return true;
+                    }
+                    break;
+
+                case Keys.Delete:
+                    if (this.SelectionLength > 0 || this.SelectionStart < this.ToString().Length)
+                    {
+                        return true;
+                    }
+                    break;
+            }
+
+
+            return !dataGridViewWantsInputKey;
+        }
+
+
+
+
+
+
+        public void PrepareEditingControlForEdit(bool selectAll)
+        {
+            if (selectAll)
+            {
+                SelectAll();
+            }
+            else
+            {
+
+
+                this.SelectionStart = this.ToString().Length;
+            }
+        }
+
+
+
+
+
+
+        public bool RepositionEditingControlOnValueChange
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+
+
+
+
+
+
+        public int EditingControlRowIndex
+        {
+            get
+            {
+                return this.rowIndex;
+            }
+
+            set
+            {
+                this.rowIndex = value;
+            }
+        }
+
+
+
+
+
+
+
+
+
+        public void ApplyCellStyleToEditingControl(DataGridViewCellStyle dataGridViewCellStyle)
+        {
+            this.Font = dataGridViewCellStyle.Font;
+            this.ForeColor = dataGridViewCellStyle.ForeColor;
+            this.BackColor = dataGridViewCellStyle.BackColor;
+            this.TextAlign = translateAlignment(dataGridViewCellStyle.Alignment);
+        }
+
+
+
+
+
+        public bool EditingControlValueChanged
+        {
+            get
+            {
+                return valueChanged;
+            }
+
+            set
+            {
+                this.valueChanged = value;
+            }
+        }
+
+        //
+
+
+
+        private static HorizontalAlignment translateAlignment(DataGridViewContentAlignment align)
+        {
+            switch (align)
+            {
+                case DataGridViewContentAlignment.TopLeft:
+                case DataGridViewContentAlignment.MiddleLeft:
+                case DataGridViewContentAlignment.BottomLeft:
+                    return HorizontalAlignment.Left;
+
+                case DataGridViewContentAlignment.TopCenter:
+                case DataGridViewContentAlignment.MiddleCenter:
+                case DataGridViewContentAlignment.BottomCenter:
+                    return HorizontalAlignment.Center;
+
+                case DataGridViewContentAlignment.TopRight:
+                case DataGridViewContentAlignment.MiddleRight:
+                case DataGridViewContentAlignment.BottomRight:
+                    return HorizontalAlignment.Right;
+            }
+
+            throw new ArgumentException("Error: Invalid Content Alignmentfs");
+        }
+
+
+    }
+}
+
+ 

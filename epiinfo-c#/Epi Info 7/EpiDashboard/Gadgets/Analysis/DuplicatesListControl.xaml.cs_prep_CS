@@ -1,0 +1,1244 @@
+﻿using System;
+using System.Data;
+using System.Diagnostics;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using Epi;
+using Epi.Data;
+using Epi.Fields;
+using EpiDashboard.Rules;
+using EpiDashboard.Controls;
+
+namespace EpiDashboard.Gadgets.Analysis
+{
+
+
+
+
+
+
+
+
+    public         class DuplicatesListControl : GadgetBase
+    {
+        //Private Members
+        private List columnOrder = new List();
+
+
+
+
+        private bool isHostedByEnter;
+
+
+
+
+        private double currentWidth;
+
+        private RequestUpdateStatusDelegate requestUpdateStatus;
+        private CheckForCancellationDelegate checkForCancellation;
+
+        //
+
+        //Events
+        public event Mapping.RecordSelectedHandler RecordSelected;
+        //
+
+        //Constructors
+
+
+
+        public DuplicatesListControl()
+        {
+            InitializeComponent();
+            Construct();
+        }
+
+
+
+
+
+        public DuplicatesListControl(DashboardHelper dashboardHelper)
+        {
+            InitializeComponent();
+            this.DashboardHelper = dashboardHelper;
+            this.IsHostedByEnter = false;
+            Construct();
+        }
+
+
+
+
+
+
+        public DuplicatesListControl(DashboardHelper dashboardHelper, bool hostedByEnter)
+        {
+            InitializeComponent();
+            this.DashboardHelper = dashboardHelper;
+            this.IsHostedByEnter = hostedByEnter;
+            Construct();
+        }
+        //
+
+        //Public Methods
+
+
+
+
+        public override string ToString()
+        {
+            return "Line List Gadget";
+        }
+
+
+
+
+
+        public void SelectPageNumber(int pageNumber)
+        {
+        }
+
+        private DataGrid GetDataGrid()
+        {
+            DataGrid dg = null;
+            foreach (UIElement element in panelMain.Children)
+            {
+                if (element is DataGrid)
+                {
+                    dg = element as DataGrid;
+                }
+            }
+
+            return dg;
+        }
+
+
+
+
+        protected override void CopyToClipboard()
+        {
+            DataGrid dg = GetDataGrid();
+
+            if (dg != null)
+            {
+                if (dg.ItemsSource is DataView)
+                {
+                    Common.CopyDataViewToClipboard(dg.ItemsSource as DataView);
+                }
+                else if (dg.ItemsSource is ListCollectionView)
+                {
+                    ListCollectionView lcv = dg.ItemsSource as ListCollectionView;
+                    if (lcv.SourceCollection is DataView)
+                    {
+                        Common.CopyDataViewToClipboard(lcv.SourceCollection as DataView);
+                    }
+                }
+            }
+        }
+
+        public override void ShowHideConfigPanel()
+        {
+            Popup = new DashboardPopup();
+            Popup.Parent = ((this.Parent as DragCanvas).Parent as ScrollViewer).Parent as Grid;
+            Controls.GadgetProperties.DuplicatesListProperties properties = new Controls.GadgetProperties.DuplicatesListProperties(this.DashboardHelper, this, (DuplicatesListParameters)Parameters, StrataGridList, columnOrder);
+
+            properties.Width = 800;
+            properties.Height = 600;
+
+            if ((System.Windows.SystemParameters.PrimaryScreenWidth / 1.2) > properties.Width)
+            {
+                properties.Width = (System.Windows.SystemParameters.PrimaryScreenWidth / 1.2);
+            }
+
+            if ((System.Windows.SystemParameters.PrimaryScreenHeight / 1.2) > properties.Height)
+            {
+                properties.Height = (System.Windows.SystemParameters.PrimaryScreenHeight / 1.2);
+            }
+
+            properties.Cancelled += new EventHandler(properties_Cancelled);
+            properties.ChangesAccepted += new EventHandler(properties_ChangesAccepted);
+            Popup.Content = properties;
+            Popup.Show();
+        }
+
+        private void properties_ChangesAccepted(object sender, EventArgs e)
+        {
+            Controls.GadgetProperties.DuplicatesListProperties properties = Popup.Content as Controls.GadgetProperties.DuplicatesListProperties;
+            this.Parameters = properties.Parameters;
+            this.DataFilters = properties.DataFilters;
+            this.CustomOutputHeading = Parameters.GadgetTitle;
+            this.CustomOutputDescription = Parameters.GadgetDescription;
+            Popup.Close();
+            if (properties.HasSelectedFields)
+            {
+                RefreshResults();
+            }
+        }
+
+        private void properties_Cancelled(object sender, EventArgs e)
+        {
+            Popup.Close();
+        }
+
+
+
+
+        public void ClearResults()
+        {
+            messagePanel.Visibility = System.Windows.Visibility.Collapsed;
+            messagePanel.Text = string.Empty;
+            descriptionPanel.PanelMode = Controls.GadgetDescriptionPanel.DescriptionPanelMode.Collapsed;
+
+            panelMain.Children.Clear();
+        }
+        //
+
+        private void AddDataGrid(DataView dv, string strataValue)
+        {
+            DataGrid dg = new DataGrid();
+            dg.Style = this.Resources["LineListDataGridStyle"] as Style;
+
+            DuplicatesListParameters ListParameters = (this.Parameters) as DuplicatesListParameters;
+
+            FrameworkElementFactory datagridRowsPresenter = new FrameworkElementFactory(typeof(DataGridRowsPresenter));
+            ItemsPanelTemplate itemsPanelTemplate = new ItemsPanelTemplate();
+            itemsPanelTemplate.VisualTree = datagridRowsPresenter;
+            GroupStyle groupStyle = new GroupStyle();
+            groupStyle.ContainerStyle = this.Resources["DefaultGroupItemStyle"] as Style;
+            groupStyle.Panel = itemsPanelTemplate;
+            dg.GroupStyle.Add(groupStyle);
+
+            GroupStyle groupStyle2 = new GroupStyle();
+            groupStyle2.HeaderTemplate = this.Resources["GroupDataTemplate"] as DataTemplate;
+
+            dg.GroupStyle.Add(groupStyle2);
+
+            string groupVar = String.Empty;
+
+            if (!String.IsNullOrEmpty(ListParameters.PrimaryGroupField.Trim()))
+            {
+                groupVar = ListParameters.PrimaryGroupField.Trim();
+                ListCollectionView lcv = new ListCollectionView(dv);
+                lcv.GroupDescriptions.Add(new PropertyGroupDescription(groupVar));
+                if (!String.IsNullOrEmpty(ListParameters.SecondaryGroupField.Trim()) && !ListParameters.SecondaryGroupField.Trim().Equals(groupVar))
+                {
+                    lcv.GroupDescriptions.Add(new PropertyGroupDescription(ListParameters.SecondaryGroupField.Trim())); 
+                }
+                dg.ItemsSource = lcv;
+            }
+            else
+            {
+                dg.ItemsSource = dv;
+            }
+
+            if (Parameters.Height.HasValue)
+            {
+                dg.MaxHeight = Parameters.Height.Value;
+            }
+            else
+            {
+                dg.MaxHeight = 700;
+            }
+
+            if (Parameters.Width.HasValue)
+            {
+                dg.MaxWidth = Parameters.Width.Value;
+            }
+            else
+            {
+                dg.MaxWidth = 900;
+            }
+
+            if (ListParameters.ShowColumnHeadings == false)
+            {
+                dg.ColumnHeaderHeight = 0;
+            }
+
+
+            if (ListParameters.ShowLineColumn == true)
+            {
+                dg.RowHeaderWidth = 25;
+            }
+            else
+            {
+                dg.RowHeaderWidth = 0;
+            }
+
+            dg.AutoGeneratedColumns += new EventHandler(dg_AutoGeneratedColumns);
+            dg.AutoGeneratingColumn += new EventHandler(dg_AutoGeneratingColumn);
+            dg.LoadingRow += new EventHandler(dg_LoadingRow);
+
+            panelMain.Children.Add(dg);
+        }
+
+        void dg_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            e.Column.IsReadOnly = true;
+
+            DataGridTextColumn dataGridTextColumn = e.Column as DataGridTextColumn;
+            if (dataGridTextColumn != null)
+            {
+                if (e.PropertyType == typeof(DateTime))
+                {
+                    dataGridTextColumn.CellStyle = this.Resources["RightAlignDataGridCellStyle"] as Style;
+                    Field field = DashboardHelper.GetAssociatedField(e.Column.Header.ToString());
+                    if (field != null && field is DateField)
+                    {
+                        dataGridTextColumn.Binding.StringFormat = "{0:d}";
+                    }
+                    else if (field != null && field is TimeField)
+                    {
+                        dataGridTextColumn.Binding.StringFormat = "{0:t}";
+                    }
+                }
+                else if (e.PropertyType == typeof(int) ||
+                    e.PropertyType == typeof(byte) ||
+                    e.PropertyType == typeof(decimal) ||
+                    e.PropertyType == typeof(double) ||
+                    e.PropertyType == typeof(float))
+                {
+                    dataGridTextColumn.CellStyle = this.Resources["RightAlignDataGridCellStyle"] as Style;
+                }
+            }
+        }
+
+        void dg_AutoGeneratedColumns(object sender, EventArgs e)
+        {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+        void dg_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            e.Row.Header = e.Row.GetIndex() + 1;
+        }
+
+
+        //Event Handlers
+
+
+
+
+
+
+        protected override void worker_WorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            Debug.Print("Background worker thread for line list gadget was cancelled or ran to completion.");
+            this.Dispatcher.BeginInvoke(new SimpleCallback(SetGadgetToFinishedState));
+        }
+
+
+
+
+
+
+        protected override void worker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            lock (syncLock)
+            {
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+
+                this.Dispatcher.BeginInvoke(new SimpleCallback(SetGadgetToProcessingState));
+                this.Dispatcher.BeginInvoke(new SimpleCallback(ClearResults));
+                AddDataGridDelegate addDataGrid = new AddDataGridDelegate(AddDataGrid);
+
+                try
+                {
+                    Parameters.GadgetStatusUpdate += new GadgetStatusUpdateHandler(requestUpdateStatus);
+                    Parameters.GadgetCheckForCancellation += new GadgetCheckForCancellationHandler(checkForCancellation);
+                    if (this.DataFilters != null)
+                    {
+                        Parameters.CustomFilter = this.DataFilters.GenerateDataFilterString(false);
+                    }
+                    else
+                    {
+                        Parameters.CustomFilter = string.Empty;
+                    }
+
+                    List lineListTables = new List();
+                    lineListTables.Add(DashboardHelper.GenerateDuplicatesTable(Parameters as DuplicatesListParameters));
+
+                    if (lineListTables == null || lineListTables.Count == 0)
+                    {
+                        this.Dispatcher.BeginInvoke(new RenderFinishWithErrorDelegate(RenderFinishWithError), SharedStrings.NO_RECORDS_SELECTED);
+                        this.Dispatcher.BeginInvoke(new SimpleCallback(SetGadgetToFinishedState));
+                        Debug.Print("Line list thread cancelled");
+                        return;
+                    }
+                    else if (lineListTables.Count == 1 && lineListTables[0].Rows.Count == 0)
+                    {
+                        this.Dispatcher.BeginInvoke(new RenderFinishWithErrorDelegate(RenderFinishWithError), SharedStrings.NO_RECORDS_SELECTED);
+                        this.Dispatcher.BeginInvoke(new SimpleCallback(SetGadgetToFinishedState));
+                        Debug.Print("Line list thread cancelled");
+                        return;
+                    }
+                    else if (worker.CancellationPending)
+                    {
+                        this.Dispatcher.BeginInvoke(new RenderFinishWithErrorDelegate(RenderFinishWithError), SharedStrings.DASHBOARD_GADGET_STATUS_OPERATION_CANCELLED);
+                        this.Dispatcher.BeginInvoke(new SimpleCallback(SetGadgetToFinishedState));
+                        Debug.Print("Line list thread cancelled");
+                        return;
+                    }
+                    else
+                    {
+                        string formatString = string.Empty;
+
+                        foreach (DataTable listTable in lineListTables)
+                        {
+                            string strataValue = listTable.TableName;
+                            if (listTable.Rows.Count == 0)
+                            {
+                                continue;
+                            }
+                        }
+
+                        SetGadgetStatusMessage(SharedStrings.DASHBOARD_GADGET_STATUS_DISPLAYING_OUTPUT);
+
+                        foreach (DataTable listTable in lineListTables)
+                        {
+                            string strataValue = listTable.TableName;
+                            if (listTable.Rows.Count == 0)
+                            {
+                                continue;
+                            }
+                            string tableHeading = listTable.TableName;
+                            SetCustomColumnSort(listTable);
+
+                            if (listTable.Columns.Count == 0)
+                            {
+                                throw new ApplicationException("There are no columns to display in      list. If specifying a group variable, ensure the group variable contains data fields.");
+                            }
+
+                            int[] totals = new int[listTable.Columns.Count - 1];
+
+                            this.Dispatcher.BeginInvoke(addDataGrid, listTable.AsDataView(), listTable.TableName);
+                        }
+
+
+
+
+
+
+                    }
+
+                    this.Dispatcher.BeginInvoke(new SimpleCallback(RenderFinish));
+                }
+                catch (Exception ex)
+                {
+                    this.Dispatcher.BeginInvoke(new RenderFinishWithErrorDelegate(RenderFinishWithError), ex.Message);
+                }
+                finally
+                {
+                    stopwatch.Stop();
+                    Debug.Print("Line list gadget took " + stopwatch.Elapsed.ToString() + " seconds to complete with " + DashboardHelper.RecordCount.ToString() + " records and the following filters:");
+                    Debug.Print(DashboardHelper.DataFilters.GenerateDataFilterString());
+                }
+            }
+        }
+
+        //
+
+        //Private Methods
+
+
+
+
+        protected override void Construct()
+        {
+            currentWidth = borderAll.ActualWidth;
+            this.Parameters = new DuplicatesListParameters();
+
+            if (!string.IsNullOrEmpty(CustomOutputHeading))
+            {
+                headerPanel.Text = CustomOutputHeading;
+            }
+
+            requestUpdateStatus = new RequestUpdateStatusDelegate(RequestUpdateStatusMessage);
+            checkForCancellation = new CheckForCancellationDelegate(IsCancelled);
+
+            mnuCopy.Click += new RoutedEventHandler(mnuCopy_Click);
+            mnuSendDataToHTML.Click += new RoutedEventHandler(mnuSendDataToHTML_Click);
+                 
+            mnuSendDataToExcel.Visibility = Visibility.Collapsed;
+     
+                                                               
+                                                                                                                                                                                                                                                                  
+                                                           
+                                                             
+
+                                
+             
+                                                                     
+             
+                
+             
+                                                                                             
+             
+      
+            if (!IsHostedByEnter)
+            {
+                mnuSendToBack.Click += new RoutedEventHandler(mnuSendToBack_Click);
+                mnuClose.Click += new RoutedEventHandler(mnuClose_Click);
+                mnuCenter.Click += new RoutedEventHandler(mnuCenter_Click);
+                mnuSendDataToHTML.Visibility = System.Windows.Visibility.Visible;
+                mnuClose.Visibility = System.Windows.Visibility.Visible;
+
+            }
+            else
+            {
+                mnuSendDataToHTML.Visibility = System.Windows.Visibility.Collapsed;
+                mnuClose.Visibility = System.Windows.Visibility.Collapsed;
+                mnuCenter.Visibility = System.Windows.Visibility.Collapsed;
+                borderAll.ContextMenu = null;
+                headerPanel.IsCloseButtonAvailable = false;
+                headerPanel.IsDescriptionButtonAvailable = false;
+                headerPanel.IsFilterButtonAvailable = false;
+                headerPanel.IsOutputCollapseButtonAvailable = false;
+            }
+
+            this.IsProcessing = false;
+
+            this.GadgetStatusUpdate += new GadgetStatusUpdateHandler(RequestUpdateStatusMessage);
+            this.GadgetCheckForCancellation += new GadgetCheckForCancellationHandler(IsCancelled);
+
+            base.Construct();
+
+            //Translation
+            mnuCenter.Header = DashboardSharedStrings.GADGET_CENTER;
+            mnuClose.Header = LineListSharedStrings.CMENU_CLOSE;
+            mnuCopy.Header = LineListSharedStrings.CMENU_COPY;
+            mnuRemoveSorts.Header = LineListSharedStrings.CMENU_REMOVE_SORTING;
+            mnuSendDataToExcel.Header = LineListSharedStrings.CMENU_EXCEL;
+            mnuSendDataToHTML.Header = LineListSharedStrings.CMENU_HTML;
+            mnuSendToBack.Header = LineListSharedStrings.CMENU_SEND_TO_BACK;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //
+        }
+
+        void mnuCenter_Click(object sender, RoutedEventArgs e)
+        {
+            CenterGadget();
+        }
+
+
+
+
+        protected override void CloseGadget()
+        {
+            if (worker != null && worker.WorkerSupportsCancellation)
+            {
+                worker.CancelAsync();
+            }
+
+            if (worker != null)
+            {
+                worker.DoWork -= new System.ComponentModel.DoWorkEventHandler(worker_DoWork);
+                worker.RunWorkerCompleted -= new System.ComponentModel.RunWorkerCompletedEventHandler(worker_WorkerCompleted);
+            }
+            if (baseWorker != null)
+            {
+                baseWorker.DoWork -= new System.ComponentModel.DoWorkEventHandler(Execute);
+            }
+
+            if (Parameters != null)
+            {
+                Parameters.GadgetStatusUpdate -= new GadgetStatusUpdateHandler(requestUpdateStatus);
+                Parameters.GadgetCheckForCancellation -= new GadgetCheckForCancellationHandler(checkForCancellation);
+                Parameters = null;
+            }
+
+            this.GadgetStatusUpdate -= new GadgetStatusUpdateHandler(RequestUpdateStatusMessage);
+            this.GadgetCheckForCancellation -= new GadgetCheckForCancellationHandler(IsCancelled);
+
+            panelMain.Children.Clear();
+
+            requestUpdateStatus = null;
+            checkForCancellation = null;
+
+            if (!IsHostedByEnter)
+            {
+                mnuSendToBack.Click -= new RoutedEventHandler(mnuSendToBack_Click);
+                mnuClose.Click -= new RoutedEventHandler(mnuClose_Click);
+            }
+
+            base.CloseGadget();
+
+            Parameters = null;
+        }
+
+        private void SetCustomColumnSort(DataTable table)
+        {
+            //Input Validation
+            if (table == null)
+            {
+                throw new ArgumentNullException("table");
+            }
+            //
+
+            if (columnOrder == null || columnOrder.Count == 0)
+            {
+                return;
+            }
+
+            if (columnOrder.Contains("Line"))
+            {
+                columnOrder.Remove("Line");
+            }
+
+            for (int i = 0; i < columnOrder.Count; i++)
+            {
+                string s = columnOrder[i];
+                if (table.Columns.Contains(s))
+                {
+                    table.Columns[s].SetOrdinal(i);
+                }
+            }
+        }
+
+
+
+
+        protected override void RenderFinish()
+        {
+            waitPanel.Visibility = System.Windows.Visibility.Collapsed;
+
+            messagePanel.MessagePanelType = Controls.MessagePanelType.StatusPanel;
+            messagePanel.Text = string.Empty;
+            messagePanel.Visibility = System.Windows.Visibility.Collapsed;
+
+            HideConfigPanel();
+            CheckAndSetPosition();
+        }
+
+        protected override void RenderFinishWithWarning(string errorMessage)
+        {
+            waitPanel.Visibility = System.Windows.Visibility.Collapsed;
+
+            messagePanel.MessagePanelType = Controls.MessagePanelType.WarningPanel;
+            messagePanel.Text = errorMessage;
+            messagePanel.Visibility = System.Windows.Visibility.Visible;
+
+            HideConfigPanel();
+            CheckAndSetPosition();
+        }
+
+
+
+
+
+        protected override void RenderFinishWithError(string errorMessage)
+        {
+            waitPanel.Visibility = System.Windows.Visibility.Collapsed;
+
+            messagePanel.MessagePanelType = Controls.MessagePanelType.ErrorPanel;
+            messagePanel.Text = errorMessage;
+            messagePanel.Visibility = System.Windows.Visibility.Visible;
+
+            HideConfigPanel();
+            CheckAndSetPosition();
+        }
+        //
+
+        //Private Properties
+        private View View
+        {
+            get
+            {
+                return this.DashboardHelper.View;
+            }
+        }
+
+        private IDbDriver Database
+        {
+            get
+            {
+                return this.DashboardHelper.Database;
+            }
+        }
+        //
+
+        //IGadget Members
+
+        public override void CollapseOutput()
+        {
+            borderAll.MinWidth = currentWidth;
+            panelMain.Visibility = System.Windows.Visibility.Collapsed;
+
+            this.messagePanel.Visibility = System.Windows.Visibility.Collapsed;
+            this.infoPanel.Visibility = System.Windows.Visibility.Collapsed;
+            descriptionPanel.PanelMode = Controls.GadgetDescriptionPanel.DescriptionPanelMode.Collapsed;
+            IsCollapsed = true;
+        }
+
+        public override void ExpandOutput()
+        {
+            if (this.messagePanel.MessagePanelType != Controls.MessagePanelType.StatusPanel)
+            {
+                this.messagePanel.Visibility = System.Windows.Visibility.Visible;
+            }
+
+            if (!string.IsNullOrEmpty(this.infoPanel.Text))
+            {
+                this.infoPanel.Visibility = System.Windows.Visibility.Visible;
+            }
+
+            if (!string.IsNullOrEmpty(this.descriptionPanel.Text))
+            {
+                descriptionPanel.PanelMode = Controls.GadgetDescriptionPanel.DescriptionPanelMode.DisplayMode;
+            }
+
+            panelMain.Visibility = System.Windows.Visibility.Visible;
+
+            IsCollapsed = false;
+        }
+
+        protected override void ShowCustomFilterDialog()
+        {
+            base.ShowCustomFilterDialog();
+        }
+
+        protected override void SetCustomFilterDisplay()
+        {
+            if (this.DataFilters != null && this.DataFilters.Count > 0)
+            {
+                infoPanel.MaxWidth = this.ActualWidth;
+                infoPanel.Text = String.Format(DashboardSharedStrings.GADGET_CUSTOM_FILTER, this.DataFilters.GenerateReadableDataFilterString());
+                infoPanel.Visibility = System.Windows.Visibility.Visible;
+            }
+            else
+            {
+                infoPanel.Text = string.Empty;
+                infoPanel.Visibility = System.Windows.Visibility.Collapsed;
+            }
+        }
+
+
+
+
+        public override void RefreshResults()
+        {
+            if (!LoadingCombos && Parameters != null && Parameters.ColumnNames.Count > 0)
+            {
+                if (IsHostedByEnter)
+                {
+                    HideConfigPanel();
+                }
+                waitPanel.Visibility = System.Windows.Visibility.Visible;
+
+                messagePanel.MessagePanelType = Controls.MessagePanelType.StatusPanel;
+                descriptionPanel.PanelMode = Controls.GadgetDescriptionPanel.DescriptionPanelMode.Collapsed;
+
+                baseWorker = new BackgroundWorker();
+                baseWorker.WorkerSupportsCancellation = true;
+                baseWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(Execute);
+                baseWorker.RunWorkerAsync();
+
+                base.RefreshResults();
+            }
+            else
+            {
+                return;
+            }
+
+            base.RefreshResults();
+        }
+
+
+
+
+        public override void UpdateVariableNames()
+        {
+
+        }
+
+
+
+
+
+
+        public override XmlNode Serialize(XmlDocument doc)
+        {
+            DuplicatesListParameters listParameters = (DuplicatesListParameters)Parameters;
+
+            System.Xml.XmlElement element = doc.CreateElement("duplicatesListGadget");
+            element.AppendChild(SerializeFilters(doc));
+
+            System.Xml.XmlAttribute id = doc.CreateAttribute("id");
+            System.Xml.XmlAttribute locationY = doc.CreateAttribute("top");
+            System.Xml.XmlAttribute locationX = doc.CreateAttribute("left");
+            System.Xml.XmlAttribute collapsed = doc.CreateAttribute("collapsed");
+            System.Xml.XmlAttribute type = doc.CreateAttribute("gadgetType");
+
+            id.Value = this.UniqueIdentifier.ToString();
+            locationY.Value = Canvas.GetTop(this).ToString("F0");
+            locationX.Value = Canvas.GetLeft(this).ToString("F0");
+            collapsed.Value = IsCollapsed.ToString();
+            type.Value = "EpiDashboard.Gadgets.Analysis.DuplicatesListControl";
+
+            element.Attributes.Append(locationY);
+            element.Attributes.Append(locationX);
+            element.Attributes.Append(collapsed);
+            element.Attributes.Append(type);
+            element.Attributes.Append(id);
+
+            string groupVar1 = String.Empty;
+            string groupVar2 = String.Empty;
+
+            if (!String.IsNullOrEmpty(listParameters.PrimaryGroupField))
+            {
+                groupVar1 = listParameters.PrimaryGroupField;
+            }
+            if (!String.IsNullOrEmpty(listParameters.SecondaryGroupField))
+            {
+                groupVar2 = listParameters.SecondaryGroupField;
+            }
+
+            XmlElement groupElement = doc.CreateElement("groupVariable");
+            groupElement.InnerText = groupVar1;
+            element.AppendChild(groupElement);
+
+            XmlElement groupElement2 = doc.CreateElement("groupVariableSecondary");
+            groupElement2.InnerText = groupVar2;
+            element.AppendChild(groupElement2);
+
+            XmlElement tabOrderElement = doc.CreateElement("sortColumnsByTabOrder");
+            tabOrderElement.InnerText = listParameters.SortColumnsByTabOrder.ToString();
+            element.AppendChild(tabOrderElement);
+
+            XmlElement usePromptsElement = doc.CreateElement("usepromptsforcolumnnames");
+            usePromptsElement.InnerText = listParameters.UsePromptsForColumnNames.ToString();
+            element.AppendChild(usePromptsElement);
+
+            XmlElement showListLabelsElement = doc.CreateElement("showListLabels");
+            showListLabelsElement.InnerText = listParameters.ShowCommentLegalLabels.ToString();
+            element.AppendChild(showListLabelsElement);
+
+            XmlElement showLineColumnElement = doc.CreateElement("showLineColumn");
+            showLineColumnElement.InnerText = listParameters.ShowLineColumn.ToString();
+            element.AppendChild(showLineColumnElement);
+
+            XmlElement showColumnHeadersElement = doc.CreateElement("showColumnHeadings");
+            showColumnHeadersElement.InnerText = listParameters.ShowColumnHeadings.ToString();
+            element.AppendChild(showColumnHeadersElement);
+
+            XmlElement showNullLabelsElement = doc.CreateElement("showNullLabels");
+            showNullLabelsElement.InnerText = listParameters.ShowNullLabels.ToString();
+            element.AppendChild(showNullLabelsElement);
+
+            XmlElement customHeadingElement = doc.CreateElement("customHeading");
+            customHeadingElement.InnerText = listParameters.GadgetTitle; // CustomOutputHeading.Replace("<", "&lt;");
+            element.AppendChild(customHeadingElement);
+
+            XmlElement customDescElement = doc.CreateElement("customDescription");
+            customDescElement.InnerText = listParameters.GadgetDescription; // CustomOutputDescription.Replace("<", "&lt;");
+            element.AppendChild(customDescElement);
+
+            SerializeAnchors(element);
+
+            XmlElement listKeyItemElement = doc.CreateElement("listKeyFields");
+              string xmlListKeyItemString = string.Empty;
+
+            foreach (string columnName in listParameters.KeyColumnNames)
+            {
+                xmlListKeyItemString = xmlListKeyItemString + "" + columnName.Replace("<", "&lt;") + "</listField>";
+            }
+
+            listKeyItemElement.InnerXml = xmlListKeyItemString;
+
+            if (!String.IsNullOrEmpty(xmlListKeyItemString))
+            {
+                element.AppendChild(listKeyItemElement);
+            }
+
+            XmlElement listDisplayItemElement = doc.CreateElement("listDisplayFields");
+            string xmlListDisplayItemString = string.Empty;
+
+            foreach (string columnName in listParameters.ColumnNames)
+            {
+                xmlListDisplayItemString = xmlListDisplayItemString + "" + columnName.Replace("<", "&lt;") + "</listField>";
+            }
+
+            listDisplayItemElement.InnerXml = xmlListDisplayItemString;
+
+            if (!String.IsNullOrEmpty(xmlListDisplayItemString))
+            {
+                element.AppendChild(listDisplayItemElement);
+            }
+
+            XmlElement sortItemElement = doc.CreateElement("sortFields");
+
+            string xmlSortItemString = string.Empty;
+
+            foreach (KeyValuePair kvp in Parameters.SortVariables)
+            {
+                if (kvp.Value == SortOrder.Descending)
+                {
+                    xmlSortItemString = xmlSortItemString + "<sortField order=\"DESC\">" + kvp.Key.Replace("<", "&lt;") + "</sortField>";
+                }
+                else
+                {
+                    xmlSortItemString = xmlSortItemString + "<sortField order=\"ASC\">" + kvp.Key.Replace("<", "&lt;") + "</sortField>";
+                }
+            }
+
+            sortItemElement.InnerXml = xmlSortItemString;
+
+            if (!String.IsNullOrEmpty(xmlSortItemString))
+            {
+                element.AppendChild(sortItemElement);
+            }
+
+            return element;
+        }
+
+
+
+
+
+        public override void CreateFromXml(XmlElement element)
+        {
+            this.LoadingCombos = true;
+            this.Parameters = new DuplicatesListParameters();
+
+            HideConfigPanel();
+
+            infoPanel.Visibility = System.Windows.Visibility.Collapsed;
+            messagePanel.Visibility = System.Windows.Visibility.Collapsed;
+
+            foreach (XmlElement child in element.ChildNodes)
+            {
+                switch (child.Name.ToLower())
+                {
+                    case "groupvariable":
+                    case "groupvariableprimary":
+                        if (!String.IsNullOrEmpty(child.InnerText.Trim()))
+                        {
+                            ((DuplicatesListParameters)Parameters).PrimaryGroupField = child.InnerText.Trim();
+                        }
+                        break;
+                    case "groupvariablesecondary":
+                        if (!String.IsNullOrEmpty(child.InnerText.Trim()))
+                        {
+                            ((DuplicatesListParameters)Parameters).SecondaryGroupField = child.InnerText.Trim();
+                        }
+                        break;
+                    case "sortcolumnsbytaborder":
+                        bool sortByTabs = false;
+                        bool.TryParse(child.InnerText, out sortByTabs);
+                        ((DuplicatesListParameters)Parameters).SortColumnsByTabOrder = sortByTabs;
+                        break;
+                    case "usefieldprompts":
+                        bool usePrompts = false;
+                        bool.TryParse(child.InnerText, out usePrompts);
+                        ((DuplicatesListParameters)Parameters).UsePromptsForColumnNames = usePrompts;
+                        break;
+                    case "showlinecolumn":
+                        bool showLineColumn = true;
+                        bool.TryParse(child.InnerText, out showLineColumn);
+                        ((DuplicatesListParameters)Parameters).ShowLineColumn = showLineColumn;
+                        break;
+                    case "showcolumnheadings":
+                        bool showColumnHeadings = true;
+                        bool.TryParse(child.InnerText, out showColumnHeadings);
+                        ((DuplicatesListParameters)Parameters).ShowColumnHeadings = showColumnHeadings;
+                        break;
+                    case "showlistlabels":
+                        bool showLabels = false;
+                        bool.TryParse(child.InnerText, out showLabels);
+                        Parameters.ShowCommentLegalLabels = showLabels;
+                        break;
+                    case "shownulllabels":
+                        bool showNullLabels = true;
+                        bool.TryParse(child.InnerText, out showNullLabels);
+                        ((DuplicatesListParameters)Parameters).ShowNullLabels = showNullLabels;
+                        break;
+                    case "customheading":
+                        if (!string.IsNullOrEmpty(child.InnerText))
+                        {
+                            this.CustomOutputHeading = child.InnerText.Replace("&lt;", "<");
+                            Parameters.GadgetTitle = CustomOutputHeading;
+                        }
+                        break;
+                    case "customdescription":
+                        if (!string.IsNullOrEmpty(child.InnerText))
+                        {
+                            this.CustomOutputDescription = child.InnerText.Replace("&lt;", "<");
+                            Parameters.GadgetDescription = CustomOutputDescription;
+                            if (!string.IsNullOrEmpty(CustomOutputDescription) && !CustomOutputHeading.Equals("(none)"))
+                            {
+                                descriptionPanel.Text = CustomOutputDescription;
+                                descriptionPanel.PanelMode = Controls.GadgetDescriptionPanel.DescriptionPanelMode.DisplayMode;
+                            }
+                            else
+                            {
+                                descriptionPanel.PanelMode = Controls.GadgetDescriptionPanel.DescriptionPanelMode.Collapsed;
+                            }
+                        }
+                        break;
+                    case "customcaption":
+                        this.CustomOutputCaption = child.InnerText;
+                        break;
+                    case "listkeyfields":
+                        foreach (XmlElement field in child.ChildNodes)
+                        {
+                            List fields = new List();
+                            if (field.Name.ToLower().Equals("listfield"))
+                            {
+
+                                ((DuplicatesListParameters)Parameters).KeyColumnNames.Add(field.InnerText.Replace("&lt;", "<"));
+                            }
+                        }
+                        break;
+                    case "listdisplayfields":
+                        foreach (XmlElement field in child.ChildNodes)
+                        {
+                            List fields = new List();
+                            if (field.Name.ToLower().Equals("listfield"))
+                            {
+
+                                Parameters.ColumnNames.Add(field.InnerText.Replace("&lt;", "<"));
+                            }
+                        }
+                        break;
+                    case "sortfields":
+                        foreach (XmlElement field in child.ChildNodes)
+                        {
+                            List fields = new List();
+
+                            SortOrder order = SortOrder.Ascending;
+
+                            if (field.Attributes.Count >= 1 && field.Attributes["order"].Value == "DESC")
+                            {
+                                order = SortOrder.Descending;
+                            }
+
+                            if (field.Name.ToLower().Equals("sortfield"))
+                            {
+                                Parameters.SortVariables.Add(field.InnerText.Replace("&lt;", "<"), order);
+                            }
+                        }
+                        break;
+                    case "customusercolumnsort":
+                        string[] cols = child.InnerText.Split('^');
+                        columnOrder = cols.ToList();
+                        break;
+                    case "datafilters":
+                        this.DataFilters = new DataFilters(this.DashboardHelper);
+                        this.DataFilters.CreateFromXml(child);
+                        break;
+                }
+            }
+
+            base.CreateFromXml(element);
+
+            this.LoadingCombos = false;
+
+            RefreshResults();
+            HideConfigPanel();
+        }
+
+        //
+
+
+
+
+        public override void SetGadgetToProcessingState()
+        {
+            this.IsProcessing = true;
+            base.SetGadgetToProcessingState();
+        }
+
+
+
+
+        public override void SetGadgetToFinishedState()
+        {
+            this.IsProcessing = false;
+            currentWidth = borderAll.ActualWidth;
+            base.SetGadgetToFinishedState();
+        }
+
+
+
+
+
+        public override string ToHTML(string htmlFileName = "", int count = 0)
+        {
+            if (IsCollapsed) return string.Empty;
+
+            StringBuilder htmlBuilder = new StringBuilder();
+            CustomOutputHeading = headerPanel.Text;
+            CustomOutputDescription = descriptionPanel.Text;
+
+            if (CustomOutputHeading == null || (string.IsNullOrEmpty(CustomOutputHeading) && !CustomOutputHeading.Equals("(none)")))
+            {
+                htmlBuilder.AppendLine("<h2 class=\"gadgetHeading\">Line List</h2>");
+            }
+            else if (CustomOutputHeading != "(none)")
+            {
+                htmlBuilder.AppendLine("<h2 class=\"gadgetHeading\">" + CustomOutputHeading + "</h2>");
+            }
+
+            if (!string.IsNullOrEmpty(CustomOutputDescription) && CustomOutputDescription != "(none)")
+            {
+                htmlBuilder.AppendLine("<p class=\"gadgetsummary\">" + CustomOutputDescription + "</p>");
+            }
+
+            if (!string.IsNullOrEmpty(messagePanel.Text) && messagePanel.Visibility == Visibility.Visible)
+            {
+                htmlBuilder.AppendLine("" + messagePanel.Text + "</strong></small></p>");
+            }
+
+            DataGrid dg = GetDataGrid();
+            if (dg != null && dg.ItemsSource != null)
+            {
+                htmlBuilder.AppendLine("<div style=\"height: 7px;\"></div>");
+                htmlBuilder.AppendLine("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
+                if (string.IsNullOrEmpty(CustomOutputCaption) && this.StrataGridList.Count > 1)
+                {
+
+                }
+                else if (!string.IsNullOrEmpty(CustomOutputCaption))
+                {
+                    htmlBuilder.AppendLine("" + CustomOutputCaption + "</caption>");
+                }
+
+                if (dg.ItemsSource is DataView)
+                {
+                    htmlBuilder.AppendLine(Common.ConvertDataViewToHtmlString(dg.ItemsSource as DataView));
+                }
+                else if (dg.ItemsSource is ListCollectionView)
+                {
+                    ListCollectionView lcv = dg.ItemsSource as ListCollectionView;
+                    if (lcv.SourceCollection is DataView)
+                    {
+                        htmlBuilder.AppendLine(Common.ConvertDataViewToHtmlString(lcv.SourceCollection as DataView));
+                    }
+                }
+
+                htmlBuilder.AppendLine("</table>");
+            }
+
+            return htmlBuilder.ToString();
+        }
+
+        private string customOutputHeading;
+        private string customOutputDescription;
+        private string customOutputCaption;
+
+        public override string CustomOutputHeading
+        {
+            get
+            {
+                return this.customOutputHeading;
+            }
+            set
+            {
+                this.customOutputHeading = value;
+                headerPanel.Text = CustomOutputHeading;
+            }
+        }
+
+        public override string CustomOutputDescription
+        {
+            get
+            {
+                return this.customOutputDescription;
+            }
+            set
+            {
+                this.customOutputDescription = value;
+
+                descriptionPanel.Text = CustomOutputDescription;
+            }
+        }
+
+        public override string CustomOutputCaption
+        {
+            get
+            {
+                return this.customOutputCaption;
+            }
+            set
+            {
+                this.customOutputCaption = value;
+            }
+        }
+
+        public bool IsHostedByEnter
+        {
+            get
+            {
+                return isHostedByEnter;
+            }
+            set
+            {
+                isHostedByEnter = value;
+
+
+
+
+
+
+
+
+
+            }
+        }
+    }
+}
+
+ 

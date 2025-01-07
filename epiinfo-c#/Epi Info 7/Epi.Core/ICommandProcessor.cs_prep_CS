@@ -1,0 +1,46 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using Epi.Collections;
+
+namespace Epi
+{
+
+
+
+    public interface ICommandProcessor : IServiceProvider
+    {
+
+
+
+
+        bool SkipExecution { get; set;}
+
+
+
+
+
+
+
+        CommandProcessorResults Results { get; set;}
+
+
+
+
+
+        Stack Stack { get;}
+
+
+
+
+        NamedObjectCollection SubRoutines { get;}
+
+
+
+
+
+
+        void RunCommandBlock(object sender, EventArgs e);
+    }
+}
+ 

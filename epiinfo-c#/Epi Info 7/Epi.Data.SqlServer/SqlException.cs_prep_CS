@@ -1,0 +1,41 @@
+﻿using System;
+
+namespace Epi.Data.SqlServer
+{
+
+
+
+ public class SqlException : System.ApplicationException
+ {
+  //Private data
+  private string sqlStatement;
+  //Private data
+
+  //Constructors
+
+
+
+
+
+  public SqlException(string stmt, System.Exception inner) : base(inner.Message, inner)
+  {
+   sqlStatement = stmt;
+  }
+  //Constructors
+
+  //Public Properties
+
+
+
+  public string SqlStatement
+  {
+   get
+   {
+    return sqlStatement;
+   }
+  }
+  //Public Properties
+ }
+}
+
+ 

@@ -1,0 +1,398 @@
+﻿//Namespaces
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Epi.Fields;
+using Epi;
+using EpiInfo.Plugin;
+using VariableCollection = Epi.Collections.NamedObjectCollection;
+
+//
+namespace Epi.Windows.MakeView.Dialogs.FieldDefinitionDialogs
+{
+
+
+
+    public         class RelateFieldDefinition : CommandButtonFieldDefinition
+    {
+        //Private Members
+        private RelatedViewField field;
+        private EpiInfo.Plugin.IEnterInterpreter  memoryRegion;
+        private bool useExistingView = true;
+        //Private Members
+
+        //Constructors
+
+
+
+        public RelateFieldDefinition()
+        {
+            InitializeComponent();
+        }
+
+
+
+
+
+        public RelateFieldDefinition(Epi.Windows.MakeView.Forms.MakeViewMainForm frm)
+            : base(frm)
+        {
+            InitializeComponent();
+            this.memoryRegion = frm.EpiInterpreter;
+        }
+
+
+
+
+
+
+        public RelateFieldDefinition(Epi.Windows.MakeView.Forms.MakeViewMainForm frm, Page page)
+            : base(frm)
+        {
+            InitializeComponent();
+            this.memoryRegion = frm.EpiInterpreter;
+            this.mode = FormMode.Create;
+            this.page = page;
+        }
+
+
+
+
+
+
+        public RelateFieldDefinition(Epi.Windows.MakeView.Forms.MakeViewMainForm frm, RelatedViewField field)
+            : base(frm)
+        {
+            InitializeComponent();
+            this.mode = FormMode.Edit;
+            this.field = field;
+            this.page = field.Page;
+            this.memoryRegion = frm.EpiInterpreter;
+            LoadFormData();
+        }
+        //
+
+        //Private Methods
+
+
+
+        private void LoadFormData()
+        {
+            Configuration config = Configuration.GetNewInstance();
+            FontStyle style = FontStyle.Regular;
+
+            if (config.Settings.EditorFontBold)
+            {
+                style |= FontStyle.Bold;
+            }
+
+            if (config.Settings.EditorFontItalics)
+            {
+                style |= FontStyle.Italic;
+            }
+
+            if ((field.ControlFont == null) || ((field.ControlFont.Name == "Microsoft Sans Serif") && (field.ControlFont.Size == 8.5)))
+            {
+                field.ControlFont = new Font(config.Settings.EditorFontName, (float)config.Settings.EditorFontSize, style);
+            }
+
+            txtPrompt.Text = field.PromptText;
+            txtPrompt.Font = field.ControlFont;
+            txtFieldName.Text = field.Name;
+
+            List vars = this.memoryRegion.Context.GetVariablesInScope();
+            foreach (EpiInfo.Plugin.IVariable v in vars)
+            {
+                if (v.VariableScope == VariableScope.Standard || v.VariableScope == VariableScope.DataSource)
+                {
+                    cbxVariables.Items.Add(v.Name);
+                    cbxVariables.SelectedIndex = -1;
+                }
+            }
+
+            cbxVariables.Sorted = true;
+            DataTable cbxDs = new DataTable();
+            cbxDs.Columns.Add("RelatedFormId", typeof(int));
+            cbxDs.Columns.Add("FormName", typeof(string));
+            int SelectedIndex = -1;
+            object[] row = new object[2];
+            row[0] = -1;
+            row[1] = "(create new form)";
+            cbxDs.Rows.Add(row);
+
+            Epi.Project project = field.GetView().Project;
+
+            View viewPointer = field.GetView();
+            int currentViewId = viewPointer.Id;
+
+            List lineage = new List();
+
+            lineage.Add(currentViewId);
+
+            while (viewPointer.ParentView != null)
+            {
+                lineage.Add(viewPointer.ParentView.Id);
+                viewPointer = viewPointer.ParentView;
+            }
+
+            foreach (Epi.View view in project.Views)
+            {
+                if (lineage.Contains(view.Id) == false)
+                {
+                    cbxRelatedView.Items.Add(view.Name);
+                    row = new object[2];
+                    row[0] = view.Id;
+                    row[1] = view.Name;
+                    cbxDs.Rows.Add(row);
+
+                    if (view.Id == field.RelatedViewID)
+                    {
+                        SelectedIndex = cbxDs.Rows.Count - 1;
+                    }
+                }
+            }
+
+            cbxRelatedView.DataSource = cbxDs;
+            cbxRelatedView.ValueMember = "RelatedFormId";
+            cbxRelatedView.DisplayMember = "FormName";
+            cbxRelatedView.SelectedIndex = SelectedIndex;
+
+            if (field.ChildView != null)
+            {
+                cbxRelatedView.Text = field.ChildView.Name;
+            }
+
+            if (field.Condition.Length > 0)
+            {
+                rdbAccessibleWithConditions.Checked = true;
+                txtCondition.Text = field.Condition;
+            }
+            else
+            {
+                rdbAccessibleAlways.Checked = true;
+                txtCondition.Text = string.Empty;
+            }
+
+            controlFont = field.ControlFont;
+            chkReturnToParent.Checked = field.ShouldReturnToParent;
+        }
+
+
+
+
+
+
+        private void ClickHandler(object sender, System.EventArgs e)
+        {
+            ToolStripButton btn = (ToolStripButton)sender;
+
+            if ((string)btn.Tag == null)
+            {
+                if (btn.Text.ToString() != "\"")
+                {
+                    txtCondition.Text += StringLiterals.SPACE;
+                    txtCondition.Text += btn.Text;
+                    txtCondition.Text += StringLiterals.SPACE;
+                }
+                else
+                {
+                    txtCondition.Text += btn.Text;
+                }
+            }
+            else
+            {
+                txtCondition.Text += (string)btn.Tag;
+                txtCondition.Text += StringLiterals.SPACE;
+            }
+
+
+        }
+
+
+
+
+
+        private View PromptUserToCreateView()
+        {
+            View newView = null;
+            Project project = field.Page.GetProject();
+            CreateViewDialog viewDialog = new CreateViewDialog(MainForm, project, txtFieldName.Text);
+            viewDialog.ShowDialog();
+            if (viewDialog.DialogResult == DialogResult.OK)
+            {
+                string newViewName = viewDialog.ViewName;
+
+                newView = project.CreateView(newViewName, true);
+                viewDialog.Close();
+            }
+            return newView;
+        }
+        //
+
+        //Protected Methods
+
+
+
+
+        protected override bool ValidateDialogInput()
+        {
+            ErrorMessages.Clear();
+            if (!string.IsNullOrEmpty(txtCondition.Text))
+            {
+                try
+                {
+
+
+
+
+
+                }
+                catch (Exception ex)
+                {
+                    ErrorMessages.Add(ex.Message);
+                }
+            }
+            else
+            {
+                if (rdbAccessibleWithConditions.Checked == true)
+                {
+                    ErrorMessages.Add(SharedStrings.WARNING_ADD_RELATE_CONDITION);
+                }
+            }
+
+            if (cbxRelatedView.Text != field.GetView().Name)
+            {
+                if (cbxRelatedView.SelectedItem == null || ((System.Data.DataRowView)cbxRelatedView.SelectedItem)[0].ToString() == "-1")
+                {
+                    View view = PromptUserToCreateView();
+                    if (view != null)
+                    {
+                        DataTable cbxDs = (DataTable)cbxRelatedView.DataSource;
+                        Page page = view.CreatePage("New Page", 0);
+                        object[] row = new object[2];
+                        row[0] = view.Id;
+                        row[1] = view.Name;
+                        cbxDs.Rows.Add(row);
+                        cbxRelatedView.Text = view.Name;
+                        UseExistingView = false;
+                        view.IsRelatedView = true;
+                    }
+                    else
+                    {
+                        ErrorMessages.Add("The user elected not to create a related form.");
+                    }
+
+                }
+                else
+                {
+                    View v = field.GetView().Project.Views[cbxRelatedView.Text];
+                    v.IsRelatedView = true;
+                }
+            }
+            else
+            {
+                ErrorMessages.Add("Warning. Cannot relate to the current form.");
+            }
+            return (ErrorMessages.Count.Equals(0));
+        }
+
+
+
+
+        protected override void SetFieldProperties()
+        {
+            field.PromptText = txtPrompt.Text;
+            if (field.Id == 0)
+            {
+                field.Name = txtFieldName.Text;
+            }
+
+            if (controlFont != null)
+            {
+                field.ControlFont = controlFont;
+            }
+            if (promptFont != null)
+            {
+                field.PromptFont = promptFont;
+            }
+
+            if (cbxRelatedView.SelectedValue != null)
+            {
+                field.RelatedViewID = Int32.Parse(cbxRelatedView.SelectedValue.ToString());
+            }
+            if (rdbAccessibleAlways.Checked == true)
+            {
+                field.Condition = string.Empty;
+            }
+            else
+            {
+                field.Condition = txtCondition.Text;
+            }
+
+            field.ShouldReturnToParent = chkReturnToParent.Checked;
+        }
+        //
+
+        //Public Methods
+
+
+
+        public override RenderableField Field
+        {
+            get
+            {
+                return field;
+            }
+        }
+
+        public bool UseExistingView
+        {
+            get
+            {
+                return this.useExistingView;
+            }
+            set
+            {
+                this.useExistingView = value;
+            }
+        }
+        //
+
+        //Event Handlers
+
+
+
+
+
+        private void rdbAccessibleWithConditions_CheckedChanged(object sender, EventArgs e)
+        {
+            lblCondition.Enabled = rdbAccessibleWithConditions.Checked;
+            txtCondition.Enabled = rdbAccessibleWithConditions.Checked;
+            lblAvailableVariables.Enabled = rdbAccessibleWithConditions.Checked;
+            cbxVariables.Enabled = rdbAccessibleWithConditions.Checked;
+            grpOperators.Enabled = rdbAccessibleWithConditions.Checked;
+        }
+
+
+
+
+
+
+        private void cbxVariables_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(cbxVariables.Text))
+            {
+                txtCondition.Text += cbxVariables.Text;
+            }
+        }
+
+        //
+    }
+}
+
+
+ 

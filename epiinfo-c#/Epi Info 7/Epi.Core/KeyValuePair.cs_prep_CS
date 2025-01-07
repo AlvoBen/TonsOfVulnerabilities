@@ -1,0 +1,58 @@
+﻿using System;
+using System.Collections;
+
+namespace Epi
+{
+
+
+
+ public class KeyValuePair
+ {
+  //Public Fields
+
+
+
+  public string Key = string.Empty;
+
+
+
+  public string Value = string.Empty;
+  //Public Fields
+
+  //Constructors
+
+
+
+
+
+  public KeyValuePair(string key, string val)
+  {
+   Key = key;
+   Value = val;
+  }
+
+
+
+
+
+  public KeyValuePair(string keyValuePairString)
+  {
+   string[] keyVal = keyValuePairString.Split('=');
+   Key = keyVal[0];
+   Value = keyVal[1];
+  }
+  //Constructors
+
+  //Public Methods
+
+
+
+
+  public override string ToString()
+  {
+   return (Key + StringLiterals.EQUAL + Value);
+  }
+  //Public Methods
+ }
+}
+ 

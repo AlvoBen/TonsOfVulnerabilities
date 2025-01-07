@@ -1,0 +1,270 @@
+﻿//Namespaces
+
+using System;
+using System.Data;
+using System.Windows.Forms;
+using System.Collections.Generic;
+
+using Epi;
+
+using EpiInfo.Plugin;
+using Epi.Collections;
+using Epi.Windows.Dialogs;
+
+// Namespaces
+
+using VariableCollection = Epi.Collections.NamedObjectCollection;
+
+namespace Epi.Windows.MakeView.Dialogs
+{
+
+
+
+    public         class CommandDesignDialog : DialogBase
+ {
+  //private Class members
+
+
+
+
+        public enum CommandProcessingMode
+        {
+            Save_And_Execute,
+            Save_Only
+        }
+
+
+  private CommandProcessingMode  processingMode = CommandProcessingMode.Save_And_Execute;
+        public CommandProcessingMode ProcessingMode
+        {
+            get { return this.processingMode; }
+        }
+
+  private string commandText = string.Empty;
+
+
+  //private Class members
+
+        //Protected Data Members
+
+
+
+
+        protected EpiInfo.Plugin.IEnterInterpreter EpiInterpreter;
+
+
+
+
+
+        protected ICommandProcessor dialogCommandProcessor;
+
+        //
+
+        //Constructors
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+        public CommandDesignDialog()
+        {
+            InitializeComponent();
+        }
+
+
+
+
+
+  public CommandDesignDialog(Epi.Windows.MakeView.Forms.MakeViewMainForm frm)
+            : base(frm)
+        {
+            InitializeComponent();
+            this.EpiInterpreter = frm.EpiInterpreter;
+
+
+
+
+
+
+        }
+  //Constructors
+
+  //Public Properties
+
+
+
+
+        public new IWindowsModule Module
+        {
+            get
+            {
+                return base.Module as IWindowsModule;
+            }
+        }
+
+
+
+
+  public string CommandText
+  {
+   get
+   {
+    return commandText;
+   }
+   set
+   {
+    commandText = value;
+   }
+  }
+  //Public Properties
+
+  //Event Handlers
+
+
+
+
+
+  protected virtual void btnOK_Click(object sender, System.EventArgs e)
+  {
+   processingMode = CommandProcessingMode.Save_And_Execute;
+   OnOK();
+  }
+
+
+
+
+
+  protected void btnSaveOnly_Click(object sender, System.EventArgs e)
+  {
+   processingMode = CommandProcessingMode.Save_Only;
+   OnOK();
+  }
+
+
+
+
+
+  protected void btnCancel_Click(object sender, System.EventArgs e)
+  {
+   this.Close();
+  }
+
+  //Event Handlers
+
+  //Protected Methods
+
+
+
+
+
+
+
+
+
+
+        protected void FillVariableListBox(ListBox lbx, VariableType scopeWord)
+        {
+            lbx.Items.Clear();
+            List vars = this.EpiInterpreter.Context.GetVariablesInScope((VariableScope)scopeWord);
+            lbx.BeginUpdate();
+            foreach (EpiInfo.Plugin.IVariable var in vars)
+            {
+                if (!(var is Epi.Fields.PredefinedDataField))
+                {
+                    lbx.Items.Add(var.Name.ToString());
+                }
+            }
+            lbx.EndUpdate();
+            lbx.Sorted = true;
+            lbx.Refresh();
+        }
+
+
+
+
+
+
+
+        protected void FillVariableCombo(ComboBox cmb, VariableType scopeWord)
+        {
+            cmb.Items.Clear();
+            List vars = this.EpiInterpreter.Context.GetVariablesInScope((VariableScope)scopeWord);
+            cmb.BeginUpdate();
+            foreach (EpiInfo.Plugin.IVariable var in vars)
+            {
+                if (!(var is Epi.Fields.PredefinedDataField))
+                {
+                    cmb.Items.Add(var.Name.ToString());
+                }
+            }
+            cmb.EndUpdate();
+            cmb.Sorted = true;
+            cmb.Refresh();
+        }
+
+
+
+
+
+
+
+        protected void FillVariableCombo(ComboBox cmb, VariableType scopeWord, DataType typ)
+        {
+            cmb.Items.Clear();
+            List vars = this.EpiInterpreter.Context.GetVariablesInScope((VariableScope)scopeWord);
+            cmb.BeginUpdate();
+            foreach (EpiInfo.Plugin.IVariable var in vars)
+            {
+                int VType = (int)var.DataType;
+                int FType = (int)typ;
+                if (!(var is Epi.Fields.PredefinedDataField) && ((VType & FType) == VType))
+                {
+                    cmb.Items.Add(var.Name.ToString());
+                }
+            }
+            cmb.EndUpdate();
+            cmb.Sorted = true;
+            cmb.Refresh();
+        }
+
+
+
+
+
+
+  protected virtual void GenerateCommand()
+  {
+  }
+
+
+
+
+  protected virtual void PreProcess()
+  {
+  }
+
+  //Protected Methods
+
+        //Private Methods
+
+
+
+  protected void OnOK()
+  {
+   if (ValidateInput() == true)
+   {
+    GenerateCommand();
+    PreProcess();
+    this.DialogResult = DialogResult.OK;
+    this.Hide();
+   }
+   else
+   {
+                this.DialogResult = DialogResult.None;
+    ShowErrorMessages();
+   }
+  }
+  //Private Methods
+ } 
+}
+
+ 

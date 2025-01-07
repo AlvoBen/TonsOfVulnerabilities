@@ -1,0 +1,151 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Text;
+
+namespace Epi.Data.SqlServer
+{
+
+
+
+    public class SqlQuery : Query
+    {
+        //Constructor
+
+
+
+
+        public SqlQuery(string queryStatement)
+            : base(queryStatement)
+        {
+            this.Parameters = new List();
+            if (!string.IsNullOrEmpty(this.sqlStatement))
+                this.sqlStatement = this.sqlStatement.Replace('"', '\'');
+        }
+        //
+        //Private Methods
+        //
+        //Public Methods
+
+
+
+
+
+
+
+
+/*
+        public override string GetRecodeCaseSubQuery(IVariable variable, IVariable assignToVariable, List recodeRanges)
+        {
+            StringBuilder queryResult = new StringBuilder();
+            string singlequote = string.Empty;
+            if (variable.DataType == DataType.Text)
+                singlequote = "'";
+
+            queryResult.Append(assignToVariable.Name + " = ");
+            queryResult.Append(" CASE ");
+
+            for (int i = 0; i < recodeRanges.Count; i++)
+            {
+                switch (recodeRanges[i].RecodeType)
+                {
+                    case "RecodeA":
+
+                        queryResult.Append(" WHEN " + variable.Name + " > " + singlequote + recodeRanges[i].Value1 + singlequote + " AND " + variable.Name + " <= " + singlequote + recodeRanges[i].Value2 + singlequote
+                            + " THEN '" + recodeRanges[i].EqualValue + "'");
+                        break;
+                    case "RecodeB":
+
+                        queryResult.Append(" WHEN " + variable.Name + " = " + singlequote + recodeRanges[i].Value1 + singlequote
+                            + " THEN '" + recodeRanges[i].EqualValue.ToString() + "'");
+                        break;
+                    case "RecodeC":
+
+                        queryResult.Append(" WHEN " + variable.Name + GetBooleanExpr(recodeRanges[i].Value1)
+                            + " THEN '" + recodeRanges[i].EqualValue + "'");
+                        break;
+                    case "RecodeD":
+
+                        queryResult.Append(" WHEN " + variable.Name + " <= " + singlequote + recodeRanges[i].Value2 + singlequote
+                            + " THEN '" + recodeRanges[i].EqualValue + "'");
+                        break;
+                    case "RecodeE":
+
+                        queryResult.Append(" WHEN " + variable.Name + " > " + singlequote + recodeRanges[i].Value1 + singlequote
+                            + " THEN '" + recodeRanges[i].EqualValue + "'");
+                        break;
+                    case "RecodeF":
+
+                        queryResult.Append("");
+                        break;
+                    case "RecodeG":
+
+                        queryResult.Append(" ELSE '" + recodeRanges[i] + "'");
+                        break;
+                    case "RecodeH":
+
+                        queryResult.Append(" WHEN " + variable.Name + " > " + singlequote + recodeRanges[i].Value1 + singlequote + " AND " + variable.Name + "<=" + singlequote + recodeRanges[i].Value2 + singlequote
+                            + " THEN " + Boolean.Parse(recodeRanges[i].EqualValue));
+                        break;
+                    case "RecodeI":
+
+                        queryResult.Append(" WHEN " + variable.Name + " = " + singlequote + recodeRanges[i].Value1 + singlequote
+                            + " THEN " + Boolean.Parse(recodeRanges[i].EqualValue));
+                        break;
+                    case "RecodeJ":
+
+                        queryResult.Append(" WHEN " + variable.Name + " = " + Boolean.Parse(recodeRanges[i].Value1)
+                            + " THEN " + Boolean.Parse(recodeRanges[i].EqualValue));
+                        break;
+                    case "RecodeK":
+
+                        queryResult.Append(" WHEN " + variable.Name + " < " + singlequote + recodeRanges[i].Value2 + singlequote
+                            + " THEN " + Boolean.Parse(recodeRanges[i].EqualValue));
+                        break;
+                    case "RecodeL":
+
+                        queryResult.Append(" WHEN " + variable.Name + " > " + singlequote + recodeRanges[i].Value1 + singlequote
+                            + " THEN " + Boolean.Parse(recodeRanges[i].EqualValue));
+                        break;
+                    case "RecodeM":
+
+                        queryResult.Append("");
+                        break;
+                    case "RecodeN":
+
+                        queryResult.Append(" ELSE " + Boolean.Parse(recodeRanges[i].EqualValue));
+                        break;
+                    default:
+
+                        break;
+                }
+            }
+            queryResult.Append(" END ");
+            return queryResult.ToString();
+
+        }*/
+
+
+
+
+
+        public override string GetInsertValue(string pvalues)
+            {
+                StringBuilder qResult = new StringBuilder();
+                string[] ss = pvalues.Split(';');
+                for (int i = 0; i < ss.Length; i++)
+                {
+                    if (!string.IsNullOrEmpty(ss[i]))
+                    {
+                        qResult.Append("SELECT " + ss[i] + " UNION All \n");
+                    }
+                }
+                qResult.Remove(qResult.Length - 11, 11);
+                return qResult.ToString();
+            }
+
+        //
+    }
+}
+
+ 

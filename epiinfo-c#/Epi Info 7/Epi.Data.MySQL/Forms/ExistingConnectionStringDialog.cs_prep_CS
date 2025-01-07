@@ -1,0 +1,37 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Epi.Data;
+using Epi.Data.MySQL;
+using MySql.Data.MySqlClient;
+using MySql.Data;
+
+namespace Epi.Data.MySQL.Forms
+{
+
+
+
+    public         class ExistingConnectionStringDialog : Epi.Data.MySQL.Forms.ConnectionStringDialog
+    {
+
+
+
+        public ExistingConnectionStringDialog()
+        {
+            InitializeComponent();
+        }
+
+        private void ExistingConnectionStringDialog_Load(object sender, EventArgs e)
+        {
+            this.Text = "Connect to a MySQL database";
+            lblInstructions.Text = "Enter information to connect to the MySQL database.";
+        }
+    }
+}
+
+
+ 

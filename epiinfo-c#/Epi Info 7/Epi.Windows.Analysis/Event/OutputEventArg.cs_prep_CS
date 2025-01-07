@@ -1,0 +1,288 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Data;
+
+namespace Epi.Windows.Analysis.Forms
+{
+
+
+
+    public class OutputEventArg: EventArgs
+    {
+        public enum OutputEventArgEnum
+        {
+            DialogSimple, 
+            DialogInputList, 
+            DialogInput, 
+            Display, 
+            DisplayStatusMessage, 
+            TryGetFileDialog,
+            SetOutputFile, 
+            ChangeOutput, 
+            Printout, 
+            RunProgram, 
+            Quit, 
+            ShowWaitDialog,
+            HideWaitDialog, 
+            ReportIndeterminateTaskStarted,
+            ReportIndeterminateTaskEnded, 
+            ShowGridTable
+        }
+
+        OutputEventArgEnum outputEventArgEnum;
+        string pTextPrompt;
+        string pTitleText;
+        public object Variable;
+        string pListType;
+        string text;
+        string caption;
+        string mask;
+        string modifier;
+        public object Input;
+        Dictionary pDisplayArgs;
+        Dictionary pStatusArgs;
+        string filter;
+        bool isReadOnly;
+        public string FilePath;
+        string fileName;
+        bool isReplace;
+        bool useRouteOut;
+        string command;
+        string message;
+        List table;
+        List identifierList;
+        DataTable Datatable;
+        public object FunctionResult;
+        Epi.View epiView;
+
+
+
+        public OutputEventArgEnum OutputEventType
+        {
+            get { return outputEventArgEnum; }
+            set { outputEventArgEnum = value; }
+        }
+
+
+
+
+        public string TextPrompt
+        {
+            get { return pTextPrompt; }
+            set { pTextPrompt = value; }
+        }
+
+
+
+
+        public string TitleText
+        {
+            get { return pTitleText; }
+            set { pTitleText = value; }
+        }
+
+
+
+
+        /*
+        public object Variable
+        {
+            get { return pVariable; }
+            set { pVariable = value; }
+        }*/
+
+
+
+
+        public string ListType
+        {
+            get { return pListType; }
+            set { pListType = value; }
+        }
+
+
+
+
+
+        public string Text
+        {
+            get { return text; }
+            set { text = value; }
+        }
+
+
+
+
+        public string Caption
+        {
+            get { return caption; }
+            set { caption = value; }
+        }
+
+
+
+
+        public string Mask
+        {
+            get { return mask; }
+            set { mask = value; }
+        }
+
+
+
+
+        public string Modifier
+        {
+            get { return modifier; }
+            set { modifier = value; }
+        }
+
+
+
+
+        /*
+        public object Input
+        {
+            get { return input; }
+            set { input = value; }
+        }*/
+
+
+
+
+        public Dictionary DisplayArgs
+        {
+            get { return pDisplayArgs; }
+            set { pDisplayArgs = value; }
+        }
+
+
+
+
+        public Dictionary StatusArgs
+        {
+            get { return pStatusArgs; }
+            set { pStatusArgs = value; }
+        }
+
+
+
+
+        public string Filter
+        {
+            get { return filter; }
+            set { filter = value; }
+        }
+
+
+
+
+        public bool IsReadOnly
+        {
+            get { return isReadOnly; }
+            set { isReadOnly = value; }
+        }
+
+
+
+
+        /*
+        public string FilePath
+        {
+            get { return filePath; }
+            set { filePath = value; }
+        }*/
+
+
+
+
+        public string FileName
+        {
+            get { return fileName; }
+            set { fileName = value; }
+        }
+
+
+
+
+        public bool IsReplace
+        {
+            get { return isReplace; }
+            set { isReplace = value; }
+        }
+
+
+
+
+        public bool UseRouteOut
+        {
+            get { return useRouteOut; }
+            set { useRouteOut = value; }
+        }
+
+
+
+
+        public string Command
+        {
+            get { return command; }
+            set { command = value; }
+        }
+
+
+
+
+        public string Message
+        {
+            get { return message; }
+            set { message = value; }
+        }
+
+
+
+
+        public List Table
+        {
+            get { return table; }
+            set { table = value; }
+        }
+
+
+
+
+        public List IdentifierList
+        {
+            get { return identifierList; }
+            set { identifierList = value; }
+        }
+
+
+
+
+
+        public OutputEventArg()
+        {
+
+        }
+
+
+
+
+        public DataTable dt
+        {
+            get { return Datatable; }
+            set { Datatable = value; }
+        }
+
+        public Epi.View EpiView
+        {
+            get { return epiView; }
+            set { epiView = value;}
+        }
+
+    }
+}
+
+ 

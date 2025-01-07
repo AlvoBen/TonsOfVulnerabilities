@@ -1,0 +1,82 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+using Epi;
+using Epi.Collections;
+
+namespace Epi
+{
+
+
+
+    public class SortCriteria : TaggedList
+    {
+        //Constructor
+
+
+
+        public SortCriteria()
+        {
+        }
+        //Constructor
+
+        //Public methods
+
+
+
+
+
+        public new void Add(IVariable var, SortOrder order)
+        {
+            base.Add(var, order);
+        }
+
+
+
+
+
+        public override string ToString()
+        {
+            WordBuilder builder = new WordBuilder(", ");
+            for (int index = 0; index < this.Count; index++)
+            {
+                string var = string.Empty;
+                if (this[index].IsVarType(VariableType.DataSourceRedefined))
+                {
+                    string s = string.Empty;
+                    var = ((DataSourceVariableRedefined)this[index]).Expression;
+                }
+                else if (this[index].IsVarType(VariableType.Standard ))
+                {
+                        var = ((StandardVariable)this[index]).Expression;
+                }
+                else
+                {
+
+
+                    var = this[index].Name;
+                }
+                if (tags[index] == SortOrder.Descending)
+                {
+                    var += CharLiterals.SPACE + "desc";
+                }
+
+                builder.Add(var);
+            }
+            return builder.ToString();
+        }
+
+
+
+
+
+
+        public SortOrder GetSortOrderForVariable(IVariable var)
+        {
+            return base.GetTag(var);
+        }
+        //Public methods
+    }
+}
+ 

@@ -1,0 +1,196 @@
+﻿//Namespaces
+
+using System;
+using System.Collections;
+using System.Data;
+using System.ComponentModel;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Epi.Data.Services;
+using Epi.Windows.Controls;
+using Epi.Windows.Dialogs;
+using Epi;
+
+// 
+
+namespace Epi.Windows.MakeView.Dialogs.CheckCodeCommandDialogs
+{
+    public         class VariableDefinitionDialog : CheckCodeDesignDialog
+    {
+        //Constructors
+
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+  public VariableDefinitionDialog()
+  {
+   InitializeComponent();
+  }
+
+
+
+
+
+  public VariableDefinitionDialog(MainForm frm) : base(frm)
+        {
+
+            InitializeComponent();
+            LoadVarTypes();
+        }
+
+        // 
+
+        //Private Event Handlers
+
+
+
+
+
+
+        private void btnOK_Click(object sender, System.EventArgs e)
+  {
+            if (ValidateInput() == true)
+            {
+                GenerateCommand();
+                this.DialogResult = DialogResult.OK;
+                this.Hide();
+            }
+            else
+            {
+                ShowErrorMessages();
+            }
+  }
+
+
+
+
+
+
+  private void btnCancel_Click(object sender, System.EventArgs e)
+  {
+   this.Close();
+  }
+
+
+
+
+
+
+        private void txtVariableName_TextChanged(object sender, EventArgs e)
+        {
+
+            CheckForInputSufficiency();
+        }
+
+
+
+
+
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            txtVariableName.Text = string.Empty;
+            cmbVarType.SelectedIndex = -1;
+            cmbVarType.Text = string.Empty;
+            rbStandard.Checked = true;
+        }
+
+
+
+
+
+
+        private void txtVariableName_Leave(object sender, EventArgs e)
+        {
+            CheckForInputSufficiency();
+        }
+
+        // 
+
+        //Private Methods
+
+
+
+
+        private void LoadVarTypes()
+        {
+            LocalizedComboBox cmb = cmbVarType;
+            if (cmb.DataSource == null)
+            {
+                cmb.Items.Clear();
+                cmb.DataSource = AppData.Instance.DataTypesDataTable.DefaultView;
+                cmb.DisplayMember = ColumnNames.NAME;
+                cmb.ValueMember = ColumnNames.DATATYPEID;
+                cmb.SkipTranslation = false;
+                cmb.SelectedIndex = -1;
+            }
+
+        }
+
+
+
+
+        private void GenerateCommand()
+        {
+            StringBuilder sb = new StringBuilder();
+            string variableName = txtVariableName.Text.Trim();
+            string variableScope = (string)WinUtil.GetSelectedRadioButton(gbxScope).Tag;
+
+            if (string.Compare(variableScope, Epi.Defaults.VariableScope.ToString(), true) == 0)
+            {
+                variableScope = string.Empty;
+            }
+            sb.Append(CommandNames.DEFINE);
+            sb.Append(StringLiterals.SPACE).Append(variableName);
+            sb.Append(StringLiterals.SPACE).Append(variableScope);
+            if (!string.IsNullOrEmpty(cmbVarType.Text))
+            {
+                DataRow row = ((DataRowView)cmbVarType.SelectedItem).Row;
+                string expression = row[ColumnNames.EXPRESSION].ToString();
+                if (!string.IsNullOrEmpty(expression))
+                {
+                    sb.Append(StringLiterals.SPACE).Append(expression);
+                }
+            }
+
+            Output = sb.ToString();
+        }
+
+        // 
+
+        //Protected Methods
+
+
+
+
+        public override void CheckForInputSufficiency()
+        {
+            bool inputValid = ValidateInput();
+            btnOK.Enabled = inputValid;
+        }
+
+
+
+
+
+        protected override bool ValidateInput()
+        {
+            base.ValidateInput();
+            if (string.IsNullOrEmpty(txtVariableName.Text.Trim()))
+            {
+                ErrorMessages.Add(SharedStrings.EMPTY_VARNAME);
+            }
+            return (ErrorMessages.Count == 0);
+        }
+
+        // 
+
+        private void gbxScope_Enter(object sender, EventArgs e)
+        {
+
+        }
+     }
+}
+ 

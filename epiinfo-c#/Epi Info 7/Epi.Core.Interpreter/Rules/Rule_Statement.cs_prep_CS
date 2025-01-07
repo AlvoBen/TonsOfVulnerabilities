@@ -1,0 +1,424 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using com.calitha.goldparser;
+
+namespace Epi.Core.AnalysisInterpreter.Rules
+{
+    public         class Rule_Statement : AnalysisRule
+    {
+        private AnalysisRule reduction = null;
+
+        public Rule_Statement(Rule_Context pContext, NonterminalToken pToken) : base(pContext)
+        {
+            if (pToken.Tokens[0] is TerminalToken)
+            {
+                return;
+            }
+            NonterminalToken T = (NonterminalToken) pToken.Tokens[0];
+
+            if (!this.Context.RunOneCommand)
+            {
+                this.Context.ProgramText.Append(pToken.Tokens[0].ToString());
+
+            }
+            else
+            {
+                if (!this.Context.IsFirstStatement)
+                {
+                    this.Context.ProgramText.Length = 0;
+                    this.Context.ProgramText.Append(this.ExtractTokens(pToken.Tokens));
+                    this.Context.IsFirstStatement = true;
+                }
+            }
+
+
+
+            this.reduction = AnalysisRule.BuildStatments(pContext, T);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//                //**these are not yet implemented; move up when completed
+//                //**these are not yet implemented; move up when completed
+//                //**these are not yet implemented; move up when completed
+//                //**these are not yet implemented; move up when completed
+//                //**these are not yet implemented; move up when completed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+        public override object Execute()
+        {
+
+            object result = null;
+            if (this.reduction != null)
+            {
+                result = this.reduction.Execute();
+            }
+            return result;
+        }
+    }
+}
+
+ 

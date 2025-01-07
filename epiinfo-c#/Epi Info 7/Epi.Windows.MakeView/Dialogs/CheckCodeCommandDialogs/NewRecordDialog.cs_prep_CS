@@ -1,0 +1,80 @@
+﻿// Namespaces
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+
+// 
+
+namespace Epi.Windows.MakeView.Dialogs.CheckCodeCommandDialogs
+{
+
+
+
+    public         class NewRecordDialog : Epi.Windows.MakeView.Dialogs.CheckCodeCommandDialogs.CheckCodeDesignDialog
+    {
+        //Constructors
+
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+  public NewRecordDialog()
+  {
+   InitializeComponent();
+  }
+
+
+
+
+        public NewRecordDialog(MainForm frm) : base(frm)
+        {
+            InitializeComponent();
+        }
+
+        // 
+
+        //Private Event Handlers
+
+
+
+
+
+
+  private void btnCancel_Click(object sender, System.EventArgs e)
+  {
+   this.Close();
+  }
+
+
+
+
+
+
+        private void btnOk_Click(object sender, System.EventArgs e)
+        {
+            Output = CommandNames.NEWRECORD;
+            this.DialogResult = DialogResult.OK;
+            this.Hide();
+        }
+
+
+
+
+
+
+        protected override void btnHelp_Click(object sender, System.EventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://wwwn.cdc.gov/epiinfo/user-guide/command-reference/check-commands-newrecord.html");
+        }
+
+        // 
+    }
+}
+
+
+ 

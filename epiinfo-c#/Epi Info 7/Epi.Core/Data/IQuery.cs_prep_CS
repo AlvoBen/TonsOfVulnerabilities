@@ -1,0 +1,20 @@
+﻿using System;
+namespace Epi.Data
+{
+
+
+
+    public interface IQuery
+    {
+
+
+
+        System.Collections.Generic.List Parameters { get; set; }
+
+
+
+        string SqlStatement { get; }
+    }
+}
+
+ 

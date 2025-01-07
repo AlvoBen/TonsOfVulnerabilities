@@ -1,0 +1,30 @@
+﻿//Namespaces
+
+using System;
+
+//
+
+namespace Epi.Windows
+{
+
+
+
+    public interface IWindowsModule : Epi.IModule
+    {
+
+
+
+
+
+
+        void MainForm_Closed(object sender, EventArgs e);
+
+
+
+
+
+
+        void MainForm_Disposed(object sender, EventArgs e);
+     }
+}
+ 

@@ -1,0 +1,180 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using Epi;
+
+namespace EpiDashboard
+{
+    public class GadgetParametersBase : IGadgetParameters
+    {
+
+        //Constructors
+
+
+
+        public GadgetParametersBase()
+        {
+            GadgetTitle = String.Empty;
+            GadgetDescription = String.Empty;
+            InputVariableList = new Dictionary();
+            ColumnNames = new List();
+            StrataVariableNames = new List();
+            ShowCommentLegalLabels = false;
+            CustomFilter = String.Empty;
+            SortVariables = new Dictionary();
+            CustomSortColumnName = String.Empty;
+            IgnoreRowLimits = false;
+        }
+
+
+
+
+        public GadgetParametersBase(GadgetParametersBase parameters)
+        {
+            GadgetTitle = parameters.GadgetTitle;
+            GadgetDescription = parameters.GadgetDescription;
+            InputVariableList = parameters.InputVariableList;
+            ColumnNames = new List();
+            foreach (string columnName in parameters.ColumnNames)
+            {
+                ColumnNames.Add(columnName);
+            }
+            StrataVariableNames = new List();
+            foreach (string strataVar in parameters.StrataVariableNames)
+            {
+                StrataVariableNames.Add(strataVar);
+            }
+            ShowCommentLegalLabels = parameters.ShowCommentLegalLabels;
+            CustomFilter = parameters.CustomFilter;
+            SortVariables = parameters.SortVariables;
+            CustomSortColumnName = parameters.CustomSortColumnName;
+            IgnoreRowLimits = parameters.IgnoreRowLimits;
+        }
+
+        //
+
+        //Events
+        public event GadgetStatusUpdateHandler GadgetStatusUpdate;
+        public event GadgetCheckForCancellationHandler GadgetCheckForCancellation;
+        public event SetGadgetStatusHandler GadgetCheckForProgress;
+        //
+
+        //Properties
+
+
+
+        public BackgroundWorker Worker { get {return _Worker; } set{ _Worker=value; } } BackgroundWorker _Worker;
+
+
+
+
+        public string GadgetTitle { get {return _GadgetTitle; } set{ _GadgetTitle=value; } } string _GadgetTitle;
+
+
+
+
+        public string GadgetDescription { get {return _GadgetDescription; } set{ _GadgetDescription=value; } } string _GadgetDescription;
+
+
+
+
+        public Dictionary InputVariableList { get {return _InputVariableList; } set{ _InputVariableList=value; } } Dictionary _InputVariableList;
+
+
+
+
+        public List ColumnNames { get {return _ColumnNames; } set{ _ColumnNames=value; } } List _ColumnNames;
+
+
+
+
+        public List StrataVariableNames { get {return _StrataVariableNames; } set{ _StrataVariableNames=value; } } List _StrataVariableNames;
+
+
+
+
+        public double Width { get {return _Width; } set{ _Width=value; } } double _Width;
+
+
+
+
+        public double Height { get {return _Height; } set{ _Height=value; } } double _Height;
+
+
+
+
+        public bool ShowCommentLegalLabels { get {return _ShowCommentLegalLabels; } set{ _ShowCommentLegalLabels=value; } } bool _ShowCommentLegalLabels;
+
+
+
+
+
+        public string CustomFilter { get {return _CustomFilter; } set{ _CustomFilter=value; } } string _CustomFilter;
+
+
+
+
+        public Dictionary SortVariables { get {return _SortVariables; } set{ _SortVariables=value; } } Dictionary _SortVariables;
+
+
+
+
+
+        public string CustomSortColumnName { get {return _CustomSortColumnName; } set{ _CustomSortColumnName=value; } } string _CustomSortColumnName;
+
+
+
+
+        public bool IncludeMissing { get {return _IncludeMissing; } set{ _IncludeMissing=value; } } bool _IncludeMissing;
+
+
+
+
+        public bool IgnoreRowLimits { get {return _IgnoreRowLimits; } set{ _IgnoreRowLimits=value; } } bool _IgnoreRowLimits;
+
+        //
+
+        //Internal Methods
+
+
+
+
+        public void UpdateGadgetStatus(string statusMessage)
+        {
+            if (GadgetStatusUpdate != null)
+            {
+                GadgetStatusUpdate(statusMessage);
+            }
+        }
+
+
+
+
+
+        public void UpdateGadgetProgress(double progress)
+        {
+            if (GadgetCheckForProgress != null)
+            {
+                GadgetCheckForProgress("", progress);
+            }
+        }
+
+
+
+
+
+        public bool IsRequestCancelled()
+        {
+            if (GadgetCheckForCancellation != null)
+            {
+                return GadgetCheckForCancellation();
+            }
+            return false;
+        }
+        //
+    }
+}
+
+ 

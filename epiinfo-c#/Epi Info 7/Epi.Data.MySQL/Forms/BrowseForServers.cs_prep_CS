@@ -1,0 +1,176 @@
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using System.Runtime;
+using System.Diagnostics;
+using System.Data.OleDb;
+
+namespace Epi.Data.MySQL.Forms
+{
+    public         class BrowseForServers : Form
+    {
+
+
+
+        public BrowseForServers()
+        {
+            InitializeComponent();
+        }
+
+        private void BrowseForServers_Load(object sender, EventArgs e)
+        {
+            Application.UseWaitCursor = true;
+            Application.DoEvents();
+            BrowseForServers.SendMessage(Form.ActiveForm.Handle, 0x20, Form.ActiveForm.Handle, (IntPtr)1);
+            GetNetworkServerInstances();
+            Application.UseWaitCursor = false;
+        }
+
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
+
+
+
+
+        public void GetNetworkServerInstances()
+        {
+
+
+
+            StringBuilder commandBuilder = new StringBuilder();
+
+            commandBuilder.Append("SHOW DATABASES;");
+
+            OleDbCommand command = new OleDbCommand(commandBuilder.ToString());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+        private static void DirSearch(string sDir, ref List found)
+        {
+
+            foreach (string d in Directory.GetDirectories(sDir))
+            {
+                foreach (string f in Directory.GetFiles(d, "osql.exe"))
+                {
+                    found.Add(f);
+                }
+                DirSearch(d, ref found);
+            }
+        }
+
+        private void listBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.btnOK.Enabled = true;
+        }
+
+
+
+
+
+        public static string BrowseNetworkServers()
+        {
+            BrowseForServers dialog = new BrowseForServers();
+            if (DialogResult.OK == dialog.ShowDialog())
+            {
+
+                return null;
+            }
+
+            return null;
+        }
+
+
+
+
+
+
+
+
+
+
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            if (!(txtFileName.Text.Equals(String.Empty)))
+            {
+                MySQLDatabase mySQLDatabase = new MySQLDatabase();
+                mySQLDatabase.SetDataSourceFilePath(this.txtFileName.Text);
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show("Please choose a server.");
+            }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btnBrowse_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
+ 

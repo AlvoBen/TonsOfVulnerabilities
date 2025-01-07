@@ -1,0 +1,20 @@
+﻿using System;
+namespace Epi.Windows.Globalization
+{
+
+
+
+    public interface ITranslator
+    {
+
+
+
+
+
+
+
+        string Translate(string sourceCultureName, string targetCultureName, string sourceText);
+    }
+}
+
+ 

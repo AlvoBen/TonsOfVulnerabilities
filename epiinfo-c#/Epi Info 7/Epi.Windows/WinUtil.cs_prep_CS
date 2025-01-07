@@ -1,0 +1,266 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Windows.Forms;
+using System.Design;
+using System.Drawing;
+using System.Drawing.Text;
+
+namespace Epi.Windows
+{
+
+
+
+    public        class WinUtil
+    {
+        //Private Data Members
+
+        private static List installedFontFamilies = new List();
+
+        //
+
+        //Public Properties
+
+
+
+
+        public static List InstalledFontFamilies
+        {
+            get
+            {
+                if (installedFontFamilies.Count == 0)
+                {
+                    InstalledFontCollection fonts = new InstalledFontCollection();
+                    try
+                    {
+                        foreach (FontFamily font in fonts.Families)
+                        {
+                            installedFontFamilies.Add(font.Name);
+                        }
+                    }
+                    finally
+                    {
+                        fonts.Dispose();
+                        fonts = null;
+                    }
+                }
+                return installedFontFamilies;
+            }
+        }
+
+        // 
+
+        //Public Methods
+
+
+
+
+
+
+        public static RadioButton GetSelectedRadioButton(GroupBox gbx)
+        {
+            //Input Validation
+            if (gbx == null)
+            {
+                throw new ArgumentNullException("gbx");
+            }
+            //Input Validation
+
+
+            foreach (RadioButton rb in gbx.Controls)
+            {
+                if (rb.Checked)
+                {
+                    return rb;
+                }
+            }
+            throw new ApplicationException(SharedStrings.NO_RADIO_BUTTON_SELECTED);
+        }
+
+
+
+
+
+
+        public static void SetSelectedRadioButton(string radiobuttonTag, GroupBox gbx)
+        {
+            foreach (RadioButton rb in gbx.Controls)
+            {
+                if (rb.Tag != null)
+                {
+                    if (string.Compare((string)rb.Tag, radiobuttonTag, true) == 0)
+                    {
+                        rb.Checked = true;
+                        return;
+                    }
+                }
+            }
+
+        }
+
+
+
+
+
+
+
+
+        public static Form LoadForm(string assemblyFile, string typeName, object[] parameters)
+        {
+            return (Form)Util.LoadObject(assemblyFile, typeName, parameters);
+        }
+
+
+
+
+
+
+
+
+        public static void ShowForm(string assemblyFile, string typeName, object[] parameters)
+        {
+            Form form = LoadForm(assemblyFile, typeName, parameters);
+            form.Show();
+        }
+
+        public static void FillMetadataDriversList(ComboBox cb)
+        {
+            Configuration config = Configuration.GetNewInstance();
+            DataView dv = config.DataDrivers.DefaultView;
+            dv.RowFilter = "MetadataProvider = true";
+            dv.Sort = "DisplayName";
+            cb.DataSource = dv;
+            cb.DisplayMember = "DisplayName";
+            cb.ValueMember = "Type";
+        }
+
+        public static void FillDataDriversList(ComboBox cb)
+        {
+            Configuration config = Configuration.GetNewInstance();
+            DataView dv = config.DataDrivers.DefaultView;
+            dv.Sort = "DisplayName";
+            cb.DataSource = dv;
+            cb.DisplayMember = "DisplayName";
+            cb.ValueMember = "Type";
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public static bool Confirm(string msg)
+        {
+            DialogResult result = MessageBox.Show(msg, SharedStrings.CONFIRMATION, MessageBoxButtons.YesNo);
+            return (result == DialogResult.OK || result == DialogResult.Yes);
+        }
+
+
+
+
+
+        public static void OpenTextFile(string filePath)
+        {
+            FileInfo fileInfo = new FileInfo(filePath);
+   ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo("WordPad.exe");
+            startInfo.WorkingDirectory = fileInfo.Directory.FullName;
+            startInfo.Arguments = Util.InsertInDoubleQuotes(fileInfo.Name);
+            startInfo.Verb = "Open";
+   startInfo.WindowStyle = ProcessWindowStyle.Maximized;
+   System.Diagnostics.Process.Start(startInfo);
+        }
+
+
+
+
+
+
+
+        public static bool FixBrokenFilePath(string brokenFilePath, out string newFilePath)
+        {
+            newFilePath = string.Empty;
+
+            if (File.Exists(brokenFilePath))
+            {
+                return false;
+            }
+            else
+            {
+                string msg = SharedStrings.FILE_NOT_FOUND + " : " + brokenFilePath + Environment.NewLine + Environment.NewLine;
+                msg += SharedStrings.BROWSE_FOR_FILE;
+                DialogResult dialogResult = MsgBox.ShowQuestion(msg, MessageBoxButtons.YesNo);
+
+                if (dialogResult != DialogResult.Yes)
+                {
+                    return false;
+                }
+
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Multiselect = false;
+
+                if (brokenFilePath.Contains("."))
+                {
+                    string fileExtension = "*" + brokenFilePath.Substring(brokenFilePath.LastIndexOf('.'));
+                    openFileDialog.Filter = fileExtension + " | " + fileExtension;
+                }
+
+                dialogResult = openFileDialog.ShowDialog();
+
+                if (dialogResult == DialogResult.OK)
+                {
+                    newFilePath = openFileDialog.FileName;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        public static int GetPromptTop(Epi.Fields.FieldWithSeparatePrompt field, int height)
+        {
+            return (int)Math.Ceiling(field.PromptTopPositionPercentage * height);
+        }
+        public static int GetPromptLeft(Epi.Fields.FieldWithSeparatePrompt field, int width)
+        {
+            return (int)Math.Ceiling(field.PromptLeftPositionPercentage * width);
+        }
+        public static int GetControlHeight(Epi.Fields.RenderableField field, int height)
+        {
+            return (int)Math.Ceiling(field.ControlHeightPercentage * height);
+        }
+        public static int GetControlWidth(Epi.Fields.RenderableField field, int width)
+        {
+            return (int)Math.Ceiling(field.ControlWidthPercentage * width);
+        }
+        public static int GetControlLeft(Epi.Fields.RenderableField field, int width)
+        {
+            return (int)Math.Ceiling(field.ControlLeftPositionPercentage * width);
+        }
+        public static int GetControlTop(Epi.Fields.RenderableField field, int height)
+        {
+            return (int)Math.Ceiling(field.ControlTopPositionPercentage * height);
+        }
+
+        // Public Methods
+    }
+}
+ 

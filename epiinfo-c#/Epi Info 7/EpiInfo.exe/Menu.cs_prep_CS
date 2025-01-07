@@ -1,0 +1,39 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using EpiInfo.Plugin;
+
+namespace Epi
+{
+    public         class Menu : Form, EpiInfo.Plugin.IApplicationPluginHost, EpiInfo.Plugin.ICommandPluginHost
+    {
+        public Menu()
+        {
+            InitializeComponent();
+        }
+
+        //IApplicationPluginHost Members
+
+        public bool Register(IApplicationPlugin applicationPlugin)
+        {
+            throw new NotImplementedException();
+        }
+
+        //
+
+        //ICommandPluginHost Members
+
+        public bool Register(ICommandPlugin commandPlugin)
+        {
+            throw new NotImplementedException();
+        }
+
+        //
+    }
+}
+
+ 

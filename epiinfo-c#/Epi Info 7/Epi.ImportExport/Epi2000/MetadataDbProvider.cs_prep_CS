@@ -1,0 +1,889 @@
+﻿using System;
+using System.Data;
+using System.Data.OleDb;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Collections;
+using System.Collections.Generic;
+
+using Epi;
+using Epi.Collections;
+using Epi.Data;
+using Epi.Fields;
+using Epi.Data.Services;
+using Epi.DataSets;
+
+namespace Epi.Epi2000
+{
+
+
+
+    public class MetadataDbProvider 
+    {
+        //Fields
+
+
+
+
+
+        protected IDbDriver db;
+        //Fields
+
+        //Constructors
+
+
+
+
+
+        public MetadataDbProvider(Project proj)
+        {
+            IDbDriverFactory dbFactory = DbDriverFactoryCreator.GetDbDriverFactory(Configuration.AccessDriver);
+            OleDbConnectionStringBuilder cnnStrBuilder = new OleDbConnectionStringBuilder();
+            cnnStrBuilder.DataSource = proj.FilePath;
+            this.db = dbFactory.CreateDatabaseObject(cnnStrBuilder);
+        }
+
+
+
+
+
+
+
+
+
+        //Constructors
+
+        //Public Methods
+        public List GetTableNames()
+        {
+            List tableNames = db.GetTableNames();
+            return tableNames;
+        }
+
+        private List GetViewNames()
+        {
+            List viewNames = new List();
+            try
+            {
+                DataTable AllTables = db.GetTableSchema();
+                DataRow[] Views = AllTables.Select("TABLE_NAME like 'view%'");
+                foreach (DataRow viewRow in Views)
+                {
+                    string viewName = viewRow["TABLE_NAME"].ToString();
+                    viewNames.Add(viewName);
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            }
+            finally
+            {
+
+            }
+            return viewNames;
+        }
+
+
+
+
+
+
+
+        public DataTable GetCodeTable(string tableName)
+        {
+            Query query = db.CreateQuery("select * from " + tableName);
+            return db.Select(query);
+
+        }
+
+
+
+
+
+
+
+        public DataTable GetViewRelations(string viewTableName)
+        {
+            //**MTG 10/8/2009 - modified query to look at PfontType field instead of Datatable field
+
+            Query query = db.CreateQuery("select v1.[Name] AS FieldName, v1.[FormatString] As RelateCondition, v1.[Lists] As ShouldReturnToParent, v2.[DataTable] AS RelateTable, v2.[Name] AS RelateName from ([" + viewTableName + "] v1 inner join [" + viewTableName + "] v2 on v1.[PfontType] = v2.[Name]) where v2.[Name] like 'RELVIEW%' and v1.[Type] = 'RELATE'");
+            return db.Select(query);
+        }
+
+
+
+
+
+
+        public List GetRelatedViewNames(string viewTableName)
+        {
+            List tableNames = new List();
+
+            Query query = db.CreateQuery("select Datatable from [" + viewTableName + "] where [Name] LIKE 'RELVIEW%'");
+            DataTable relateTable = db.Select(query);
+            foreach (DataRow row in relateTable.Rows)
+            {
+                tableNames.Add(row[0].ToString());
+            }
+            return tableNames;
+        }
+
+
+
+
+
+
+
+        public List GetViewPages(View view)
+        {
+            List pages = new List();
+            Query query = db.CreateQuery("select [PageNumber], [Name], [Checkcode] from " + view.Name + " where [PageNumber] < 0 order by [PageNumber] desc");
+            DataTable pagesTable = db.Select(query);
+            foreach (DataRow pageRow in pagesTable.Rows)
+            {
+                Page page = new Page(pageRow, view);
+                pages.Add(page);
+            }
+            return pages;
+        }
+
+
+
+
+
+
+
+
+        public string GetPageCheckCode(View view, int pageNumber)
+        {
+            pageNumber++;
+            Query query = db.CreateQuery("select [Checkcode] from " + view.Name + " where [PageNumber] = " + (pageNumber * -1).ToString());
+            DataTable pagesTable = db.Select(query);
+            if (pagesTable.Rows.Count > 0)
+            {
+                string checkCode = pagesTable.Rows[0]["Checkcode"].ToString();
+                return checkCode;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+
+
+
+
+
+
+        public DataTable GetCheckCodeVariableDefinitions(string viewName)
+        {
+            Query query = db.CreateQuery("select [Checkcode] from " + viewName + " where [Name] = 'DEFINEDVARIABLES'");
+            return db.Select(query);
+        }
+
+
+
+
+
+
+
+        public DataTable GetViewCheckCode(string viewName)
+        {
+            Query query = db.CreateQuery("select [Checkcode] from " + viewName + " where [Name] = 'VIEW'");
+            return db.Select(query);
+        }
+
+
+
+
+
+
+
+
+        public string GetSourceFieldName(string fieldName, string viewName)
+        {
+            Query query = db.CreateQuery("select [Lists] from " + viewName + " where [Name] = @Name");
+            query.Parameters.Add(new QueryParameter("@Name", DbType.String, fieldName));
+            DataTable results = db.Select(query);
+            if (results.Rows.Count > 0)
+            {
+                return results.Rows[0]["Lists"].ToString();
+            }
+            else
+            {
+                throw new System.ApplicationException("Source field is not specified for field \"" + fieldName + "\" in view \"" + viewName + "\".");
+            }
+        }
+
+
+
+
+
+
+        public DataTable GetViewsAsDataTable()
+        {
+            try
+            {
+                DataTable viewTable = GetDataTableTemplateForViewInfo();
+                foreach (string viewName in this.GetViewNames())
+                {
+                    DataRow viewRow = viewTable.NewRow();
+                    viewTable.Rows.Add(viewRow);
+
+                    string queryText = string.Empty;
+                    Query query;
+                    DataTable tempTable;
+
+
+                    viewRow[ColumnNames.NAME] = viewName;
+
+                    List tableNames = new List();
+                    Query selectQuery = db.CreateQuery("SELECT DISTINCT Datatable FROM " + viewName + "");
+                    IDataReader reader = db.ExecuteReader(selectQuery);
+
+                    reader = db.ExecuteReader(selectQuery);
+
+                    while (reader.Read())
+                    {
+                        string name = reader["DATATABLE"].ToString();
+
+                        if (name.StartsWith("DATA") && !name.Contains(","))
+                        {
+                            tableNames.Add(name);
+                        }
+                    }
+
+                    if (tableNames.Count <= 1)
+                    {
+
+                        queryText = "select [DATATABLE] from " + viewName + " where [Name] = 'DATA1'";
+                        query = db.CreateQuery(queryText);
+                        tempTable = db.Select(query);
+                        if (tempTable.Rows.Count > 0)
+                        {
+                            viewRow[ColumnNames.DATA_TABLE_NAME] = tempTable.Rows[0]["DATATABLE"].ToString();
+                        }
+                    }
+                    else if (tableNames.Count > 1)
+                    {
+                        viewRow[ColumnNames.DATA_TABLE_NAME] = string.Empty;
+                        foreach (string s in tableNames)
+                        {
+
+                            queryText = "select [DATATABLE] from " + viewName + " where [Name] = '" + s + "'";
+                            query = db.CreateQuery(queryText);
+                            tempTable = db.Select(query);
+                            if (tempTable.Rows.Count > 0)
+                            {
+                                viewRow[ColumnNames.DATA_TABLE_NAME] = viewRow[ColumnNames.DATA_TABLE_NAME].ToString() + tempTable.Rows[0]["DATATABLE"].ToString() + ";";
+                            }
+                        }
+                        viewRow[ColumnNames.DATA_TABLE_NAME] = viewRow[ColumnNames.DATA_TABLE_NAME].ToString().TrimEnd(';');
+                    }
+
+
+                    query = db.CreateQuery("select [Checkcode] from " + viewName + " where [Name] = 'DEFINEDVARIABLES'");
+                    tempTable = db.Select(query);
+                    if (tempTable.Rows.Count > 0)
+                    {
+                        viewRow[ColumnNames.CHECK_CODE_VARIABLE_DEFINITIONS] = tempTable.Rows[0][ColumnNames.CHECK_CODE].ToString();
+                    }
+
+
+                    query = db.CreateQuery("select [Checkcode] from " + viewName + " where [Name] = 'VIEW'");
+                    tempTable = db.Select(query);
+                    if (tempTable.Rows.Count > 0)
+                    {
+                        string checkCode = tempTable.Rows[0][ColumnNames.CHECK_CODE].ToString();
+                        string checkCodeBefore = string.Empty;
+                        string checkCodeAfter = string.Empty;
+                        SplitCheckCode(checkCode, ref checkCodeBefore, ref checkCodeAfter);
+                        viewRow[ColumnNames.CHECK_CODE_BEFORE] = checkCodeBefore;
+                        viewRow[ColumnNames.CHECK_CODE_AFTER] = checkCodeAfter;
+                    }
+
+
+                    query = db.CreateQuery("select [Checkcode] from " + viewName + " where [Name] = 'RECORD'");
+                    tempTable = db.Select(query);
+                    if (tempTable.Rows.Count > 0)
+                    {
+                        string recordCheckCode = tempTable.Rows[0][ColumnNames.CHECK_CODE].ToString();
+                        string recordCheckCodeBefore = string.Empty;
+                        string recordCheckCodeAfter = string.Empty;
+                        SplitCheckCode(recordCheckCode, ref recordCheckCodeBefore, ref recordCheckCodeAfter);
+                        viewRow[ColumnNames.RECORD_CHECK_CODE_BEFORE] = recordCheckCodeBefore;
+                        viewRow[ColumnNames.RECORD_CHECK_CODE_AFTER] = recordCheckCodeAfter;
+                    }
+                }
+                return viewTable;
+            }
+            finally
+            {
+
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public DataTable GetFieldsOnPageAsDataTable(string viewName, int pageNumber)
+        {
+            pageNumber++; 
+            Query query = db.CreateQuery("select [Name],[Prompt],[Type],[Index],[Dsize],[Fsize],[Formatstring],[Plocx],[Plocy],[Flocx],[Flocy],[Taborder],[Pfont],[Pfontsize],[Pfonttype],[Ffont],[Ffontsize],[Ffonttype],[Lists],[Checkcode],[Database],[Datafield],[Datatable],[Webcode] from " + viewName + " where [PageNumber] = @PageNumber");
+            query.Parameters.Add(new QueryParameter("@PageNumber", DbType.Int32, pageNumber));
+            return db.Select(query);
+        }
+
+
+
+
+
+
+        public DataTable GetFieldsAsDataTable(string viewName)
+        {
+            Query query = db.CreateQuery("select [Name],[Prompt],[Type],[Index],[Dsize],[Fsize],[Formatstring],[Plocx],[Plocy],[Flocx],[Flocy],[Taborder],[Pfont],[Pfontsize],[Pfonttype],[Ffont],[Ffontsize],[Ffonttype],[Lists],[Checkcode],[Database],[Datafield],[Datatable],[Webcode] from " + viewName + " where [PageNumber] > 0");
+            return db.Select(query);
+        }
+
+
+
+
+
+
+
+        public DataTable GetGridColumns(string gridTableName)
+        {
+            Query query = db.CreateQuery("select [Name], [Prompt], [Type], [Dsize], [Lists] from " + gridTableName + " where [PageNumber] > 0");
+            return db.Select(query);
+        }
+
+
+
+
+
+
+
+
+        public DataTable GetCodeTableName(string viewTableName, string tableVariableName)
+        {
+            Query query = db.CreateQuery("select [Datatable] from " + viewTableName + " where [Name] = @Name");
+            query.Parameters.Add(new QueryParameter("@Name", DbType.String, tableVariableName));
+            return db.Select(query);
+        }
+
+
+
+
+
+        public DataTable GetNonViewTablesAsDataTable()
+        {
+            throw new NotImplementedException("This is broken. Method changed from Get Views and Tables to only Tables excluding Views.");
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+        public DataTable GetPgms()
+        {
+            try
+            {
+                Query query = db.CreateQuery("select  [Name], [Content], [Comment], [DateCreated], [DateModified], [Author] " +
+                "from [Programs]");
+                return db.Select(query);
+            }
+            catch (Exception ex)
+            {
+                throw new System.ApplicationException("Could not retrieve pgms", ex);
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public void InsertPgm(string name, string content, string comment, string author)
+        {
+            try
+            {
+                Query insertQuery = db.CreateQuery("insert into Programs([Name], [Content], [Comment],[DateCreated],[DateModified], [Author]) " +
+                    "values (@Name, @Content, @Comment,@DateCreated,@DateModified,  @Author)");
+                insertQuery.Parameters.Add(new QueryParameter("@Name", DbType.String, name));
+                insertQuery.Parameters.Add(new QueryParameter("@Content", DbType.String, content));
+                insertQuery.Parameters.Add(new QueryParameter("@Comment", DbType.String, comment));
+                insertQuery.Parameters.Add(new QueryParameter("@DateCreated", DbType.String, System.DateTime.Now.ToShortDateString()));
+                insertQuery.Parameters.Add(new QueryParameter("@DateModified", DbType.String, System.DateTime.Now.ToShortDateString()));
+                insertQuery.Parameters.Add(new QueryParameter("@Author", DbType.String, author));
+
+                db.ExecuteNonQuery(insertQuery);
+            }
+            catch (Exception ex)
+            {
+                throw new System.ApplicationException("Could not insert pgm", ex);
+            }
+            finally
+            {
+
+            }
+        }
+
+
+
+
+
+        public void DeletePgm(string pgmName)
+        {
+            try
+            {
+                //Input Validation
+
+                if (string.IsNullOrEmpty(pgmName))
+                {
+                    throw new ArgumentOutOfRangeException("ProgramName");
+                }
+                //
+                Query deleteQuery = db.CreateQuery("delete  from [Programs] where [Name] = @Name");
+                deleteQuery.Parameters.Add(new QueryParameter("@Name", DbType.String, pgmName));
+
+                db.ExecuteNonQuery(deleteQuery);
+            }
+            catch (Exception ex)
+            {
+                throw new System.ApplicationException("Could not delete pgm.", ex);
+            }
+            finally
+            {
+
+            }
+        }
+
+
+
+
+
+
+
+
+        public void UpdatePgm(string name, string content, string comment, string author)
+        {
+            try
+            {
+                //Input Validation
+                if (string.IsNullOrEmpty(name))
+                {
+                    throw new ArgumentOutOfRangeException("Name");
+                }
+                //
+                Query updateQuery = db.CreateQuery("update [Programs] set [Content] = @Content , " +
+                    "[Comment] = @Comment, [Author] = @Author" +
+                    "where [Name] = @Name");
+
+                updateQuery.Parameters.Add(new QueryParameter("@Name", DbType.String, name));
+                updateQuery.Parameters.Add(new QueryParameter("@Content", DbType.String, content));
+                updateQuery.Parameters.Add(new QueryParameter("@Comment", DbType.String, comment));
+                updateQuery.Parameters.Add(new QueryParameter("@DateModified", DbType.String, System.DateTime.Now.ToShortDateString()));
+                updateQuery.Parameters.Add(new QueryParameter("@Author", DbType.String, author));
+
+                db.ExecuteNonQuery(updateQuery);
+            }
+            catch (Exception ex)
+            {
+                throw new System.ApplicationException("Could not update pgm.", ex);
+            }
+            finally
+            {
+
+            }
+        }
+
+        //Public Methods
+
+        //Private Methods
+        private DataTable GetDataTableTemplateForViewInfo()
+        {
+            DataTable viewTableTemplate = new DataTable();
+            viewTableTemplate.Columns.Add(ColumnNames.NAME, typeof(string));
+            viewTableTemplate.Columns.Add(ColumnNames.DATA_TABLE_NAME, typeof(string));
+            viewTableTemplate.Columns.Add(ColumnNames.CHECK_CODE_VARIABLE_DEFINITIONS, typeof(string));
+            viewTableTemplate.Columns.Add(ColumnNames.CHECK_CODE_BEFORE, typeof(string));
+            viewTableTemplate.Columns.Add(ColumnNames.CHECK_CODE_AFTER, typeof(string));
+            viewTableTemplate.Columns.Add(ColumnNames.RECORD_CHECK_CODE_BEFORE, typeof(string));
+            viewTableTemplate.Columns.Add(ColumnNames.RECORD_CHECK_CODE_AFTER, typeof(string));
+            return viewTableTemplate;
+        }
+        //Private Methods
+
+        //Static Methods
+
+
+
+
+
+
+        public static MetaFieldType InferFieldType(DataRow fieldRow)
+        {
+            string fieldType = fieldRow[ColumnNames.TYPE].ToString();
+            string list = fieldRow[ColumnNames.LISTS].ToString();
+
+            switch (fieldType.ToLower())
+            {
+                case "autoidnum":
+                    return MetaFieldType.Number;
+                case "textbox":
+                    return MetaFieldType.Text;
+                case "text":
+                    return MetaFieldType.Text;
+                case "combo":
+                    if (!string.IsNullOrEmpty(list))
+                    {
+                        if (list.ToLower().StartsWith("w"))
+                        {
+                            return MetaFieldType.LegalValues;
+                        }
+                        else if (list.ToLower().StartsWith("c"))
+                        {
+                            return MetaFieldType.Codes;
+                        }
+                        else
+                        {
+                            return MetaFieldType.CommentLegal;
+                        }
+                    }
+                    else
+                    {
+                        throw new System.ApplicationException("Combo field is not one of the three types");
+                    }
+                case "textonly":
+                    return MetaFieldType.LabelTitle;
+                case "uppercase":
+                    return MetaFieldType.TextUppercase;
+                case "multiline":
+                    return MetaFieldType.Multiline;
+                case "number":
+                    return MetaFieldType.Number;
+                case "phonenumber":
+                    return MetaFieldType.PhoneNumber;
+                case "date":
+                    return MetaFieldType.Date;
+                case "time":
+                    return MetaFieldType.Time;
+                case "datetime":
+                    return MetaFieldType.DateTime;
+                case "checkbox":
+                    return MetaFieldType.Checkbox;
+                case "yes/no":
+                    return MetaFieldType.YesNo;
+                case "optframe":
+                    return MetaFieldType.Option;
+                case "commandbutton":
+                    return MetaFieldType.CommandButton;
+                case "image":
+                    return MetaFieldType.Image;
+                case "mirror":
+                    return MetaFieldType.Mirror;
+                case "grid":
+                    return MetaFieldType.Grid;
+                case "relate":
+                    return MetaFieldType.Relate;
+                case "group":
+                    return MetaFieldType.Group;
+                default:
+                    throw new System.ApplicationException("Unknown field found in Epi 2000 database: " + fieldType);
+            }
+        }
+
+
+
+
+
+
+
+        public static void SplitCheckCode(string originalCheckCode, ref string checkCodeBefore, ref string checkCodeAfter)
+        {
+            originalCheckCode = originalCheckCode.Trim();
+            if (!string.IsNullOrEmpty(originalCheckCode))
+            {
+                Regex regex = new Regex("^ENDBEFORE", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                if (regex.IsMatch(originalCheckCode))
+                {
+                    string[] codeBlocks = regex.Split(originalCheckCode);
+                    if (codeBlocks.Length >= 1)
+                    {
+                        checkCodeBefore = codeBlocks[0].Trim();
+                    }
+                    if (codeBlocks.Length == 2)
+                    {
+                        checkCodeAfter = codeBlocks[1].Trim();
+                    }
+                }
+                else
+                {
+                    checkCodeAfter = originalCheckCode;
+                }
+            }
+        }
+        //Static Methods
+
+
+
+
+
+
+        public List GetCodeTableNames()
+        {
+            try
+            {
+                DataTable tables = db.GetTableSchema();
+                List retval = null;
+                int count = tables.Rows.Count;
+                if (count > 0)
+                {
+                    retval = new List();
+                    DataRow[] rowsFiltered = tables.Select("TABLE_NAME like 'code%'");
+                    int index = tables.Columns.IndexOf("TABLE_NAME");
+                    foreach (DataRow row in rowsFiltered)
+                    {
+                        retval.Add(row[index].ToString());
+                    }
+                }
+                return retval;
+            }
+            catch (Exception ex)
+            {
+                throw new System.ApplicationException("Could not retrieve code tables from database", ex);
+            }
+        }
+
+
+
+
+
+        [Obsolete("Use of DataTable in      context is no different than the use of a multidimensional System.Object array (not recommended).", false)]
+        public DataTable GetCodeTableList()
+        {
+            try
+            {
+                DataTable tables = db.GetTableSchema();
+
+                DataRow[] rowsFiltered = tables.Select("TABLE_NAME not like 'code%'");
+                foreach (DataRow rowFiltered in rowsFiltered)
+                {
+                    tables.Rows.Remove(rowFiltered);
+                }
+                return tables;
+            }
+            catch (Exception ex)
+            {
+                throw new System.ApplicationException("Could not retrieve code tables from database", ex);
+            }
+        }
+
+
+
+
+
+
+        public string[] GetCodeTableColumnNames(string tableName)
+        {
+            string[] retval = null;
+            Util.Assert(tableName.StartsWith("meta") == false);
+            DataTable dt = db.GetTableColumnSchema(tableName);
+
+            int count = dt.Rows.Count;
+            if (dt.Rows.Count > 0)
+            {
+                int index = dt.Columns.IndexOf("COLUMN_NAME");
+                retval = new string[count];
+                for (int i = 0; i < count; i++)
+                {
+                    retval[i] = dt.Rows[i][index].ToString();
+                }
+            }
+            return retval;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public DataTable GetCodeTableData(string tableName)
+        {
+            Util.Assert(tableName.StartsWith("meta") == false);
+            return db.GetTableData(tableName);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public int GetMaxViewId()
+        {
+            Query selectQuery = db.CreateQuery("select MAX(ViewId) from metaViews");
+            return (int)db.ExecuteScalar(selectQuery);
+        }
+
+    }
+}
+
+ 

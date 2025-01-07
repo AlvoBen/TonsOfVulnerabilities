@@ -1,0 +1,241 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using EpiDashboard;
+using Epi;
+using Epi.Core;
+using Epi.Fields;
+using Epi.Windows;
+using Epi.Windows.Dialogs;
+using EpiDashboard.Rules;
+
+namespace EpiDashboard.Dialogs
+{
+    public         class DataFilterDialog : DialogBase
+    {
+        //Private Members
+                DashboardHelper dashboardHelper;
+                FilterCondition filterCondition;
+                bool editMode;
+        //
+
+        //Constructors
+
+
+
+
+        public DataFilterDialog(DashboardHelper dashboardHelper)
+        {
+            InEditMode = false;
+            this.dashboardHelper = dashboardHelper;
+            InitializeComponent();
+
+            cbxOperand.SelectedIndex = 0;
+
+            FillSelectionComboBoxes();
+
+
+        }
+
+
+
+
+
+        public DataFilterDialog(DashboardHelper dashboardHelper, FilterCondition filterCondition)
+        {
+            InEditMode = true;
+            this.dashboardHelper = dashboardHelper;
+            this.FilterCondition = filterCondition;
+            InitializeComponent();
+
+            FillSelectionComboBoxes();
+
+
+
+        }
+        //Constructors
+
+        //Public Properties
+
+
+
+        public FilterCondition FilterCondition
+        {
+            get
+            {
+                return this.filterCondition;
+            }
+                    set
+            {
+                this.filterCondition = value;
+            }
+        }
+        //Public Properties
+
+        //Private Properties
+
+
+
+                Epi.View View
+        {
+            get
+            {
+                return this.dashboardHelper.View;
+            }
+        }
+
+
+
+
+                bool InEditMode
+        {
+            get
+            {
+                return this.editMode;
+            }
+            set
+            {
+                this.editMode = value;
+            }
+        }
+        //
+
+        //Private Methods
+
+
+
+                void FillSelectionComboBoxes()
+        {
+
+            cbxParam1.Items.Clear();
+            cbxParam2.Items.Clear();
+
+            if (cbxOperand.SelectedIndex >= 0 && cbxOperand.SelectedIndex <= 3)
+            {
+                ColumnDataType columnDataType = ColumnDataType.DateTime | ColumnDataType.UserDefined;
+
+                List fieldNames1 = dashboardHelper.GetFieldsAsList(columnDataType);
+                List fieldNames2 = dashboardHelper.GetFieldsAsList(columnDataType);
+                cbxParam1.DataSource = fieldNames1;
+                cbxParam2.DataSource = fieldNames2;
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+                void btnOK_Click(object sender, EventArgs e)
+        {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+        //
+    }
+}
+
+ 

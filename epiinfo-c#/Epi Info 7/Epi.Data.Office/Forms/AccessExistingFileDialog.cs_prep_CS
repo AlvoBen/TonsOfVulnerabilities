@@ -1,0 +1,200 @@
+﻿//Namespaces
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.Common;
+using System.Data.OleDb;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using System.IO;
+
+//
+
+namespace Epi.Data.Office.Forms
+{
+
+
+
+
+    public         class AccessExistingFileDialog : System.Windows.Forms.Form, IConnectionStringGui
+    {
+
+        private bool shouldIgnoreNonExistance;
+
+        //Constructors
+
+
+
+
+        public AccessExistingFileDialog()
+        {
+            InitializeComponent();
+        }
+
+        //
+
+        //Protected Methods
+
+
+
+        protected void OnOkClick()
+        {
+            if (!shouldIgnoreNonExistance)
+            {
+                if (!File.Exists(this.txtFileName.Text))
+                {
+                    MessageBox.Show("Invalid file name.");
+                    return;
+                }
+            }
+
+
+
+            if (this.txtFileName.Text.EndsWith(".mdb", true, System.Globalization.CultureInfo.InvariantCulture))
+            {
+                this.dbConnectionStringBuilder.Provider = "Microsoft.Jet.OLEDB.4.0";
+            }
+            this.dbConnectionStringBuilder.DataSource = this.txtFileName.Text;
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+        }
+
+
+
+
+        protected virtual void OnFileNameChanged()
+        {
+            btnOK.Enabled = !string.IsNullOrEmpty(txtFileName.Text);
+        }
+
+
+
+
+        protected virtual void OnCancelClick()
+        {
+            this.dbConnectionStringBuilder.ConnectionString = string.Empty;
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
+
+
+
+
+        protected virtual void OnBrowseClick()
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "Microsoft Access 2002-2003 Files (*.mdb)|*.mdb";
+            if (shouldIgnoreNonExistance)
+            {
+                dialog.CheckFileExists = false;
+            }
+
+            DialogResult result = dialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                txtFileName.Text = dialog.FileName;
+            }
+        }
+        //
+
+        //IConnectionStringBuilder
+
+        public virtual void SetDatabaseName(string databaseName) { }
+        public virtual void SetServerName(string serverName) { }
+        public virtual void SetUserName(string userName) { }
+        public virtual void SetPassword(string password) { }
+
+
+
+
+        public string ConnectionStringDescription
+        {
+            get
+            {
+                return "MS Access File: " + txtFileName.Text;
+            }
+        }
+
+        public bool ShouldIgnoreNonExistance
+        {
+            set
+            {
+                shouldIgnoreNonExistance = value;
+            }
+        }
+
+        private OleDbConnectionStringBuilder dbConnectionStringBuilder = new OleDbConnectionStringBuilder();
+
+
+
+        public DbConnectionStringBuilder DbConnectionStringBuilder
+        {
+            get
+            {
+                return dbConnectionStringBuilder;
+            }
+            set
+            {
+                dbConnectionStringBuilder = (OleDbConnectionStringBuilder)value;
+            }
+        }
+
+
+
+
+
+        public string PreferredDatabaseName
+        {
+            get
+            {
+                return dbConnectionStringBuilder.DataSource;
+            }
+        }
+
+
+
+
+        public bool UsesPassword
+        {
+            get
+            {
+                if (this.txtPassword.Text.Length > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        //
+
+        //Event Handlers
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            this.OnOkClick();
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.OnCancelClick();
+        }
+
+        private void txtFileName_TextChanged(object sender, EventArgs e)
+        {
+            this.OnFileNameChanged();
+        }
+
+        private void btnBrowse_Click(object sender, EventArgs e)
+        {
+            this.OnBrowseClick();
+        }
+        //
+
+    }
+}
+ 

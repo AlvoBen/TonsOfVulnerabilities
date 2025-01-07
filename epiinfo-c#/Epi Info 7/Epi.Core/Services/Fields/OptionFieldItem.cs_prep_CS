@@ -1,0 +1,149 @@
+﻿using System;
+using System.Data;
+
+
+namespace Epi.Fields
+{
+
+
+
+ public class OptionFieldItem
+ {
+
+  //Private Members
+
+  private int id;
+  private string val = string.Empty;
+  private string text = string.Empty;
+  private int position;
+  private OptionField parent;
+
+  //
+
+  //Constructors
+
+
+
+
+  private OptionFieldItem()
+  {
+  }
+
+
+
+
+  public OptionFieldItem(OptionField parent)
+  {
+   this.parent = parent;
+  }
+
+
+
+
+
+
+        public OptionFieldItem(DataRow row, OptionField parent)
+  {
+   this.id = (int)row[ColumnNames.OPTION_ID];
+   this.val = row[ColumnNames.NAME].ToString();
+   this.text = row[ColumnNames.TEXT].ToString();
+   this.position = (short) row[ColumnNames.POSITION];
+   this.parent = parent;
+  }
+
+  //Constructors
+
+  //Public Properties
+
+
+
+
+  public OptionField Parent
+  {
+   get
+   {
+    return this.parent;
+   }
+   set
+   {
+    this.parent = value;
+   }
+  }
+
+
+
+
+  public int Id
+  {
+   get
+   {
+    return id;
+   }
+   set
+   {
+    id = value;
+   }
+  }
+
+
+
+
+  public string Value
+  {
+   get
+   {
+    return val;
+   }
+   set
+   {
+    val = value;
+   }
+  }
+
+
+
+
+  public string Text
+  {
+   get
+   {
+    return text;
+   }
+   set
+   {
+    text = value;
+   }
+  }
+
+
+
+
+  public int Position
+  {
+   get
+   {
+    return position;
+   }
+   set
+   {
+    position = value;
+   }
+  }
+
+  //
+
+  //Public Methods
+
+
+
+
+  public void SaveToDb()
+  {
+
+  }
+
+  //
+
+ }
+}
+ 

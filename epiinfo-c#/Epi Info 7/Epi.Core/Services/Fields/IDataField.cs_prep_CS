@@ -1,0 +1,27 @@
+﻿
+using System.Data;
+using Epi.Data;
+using EpiInfo.Plugin;
+
+namespace Epi.Fields
+{
+
+
+
+ public interface IDataField : IField, IDataSourceVariable, EpiInfo.Plugin.IVariable
+ {
+
+
+
+
+        QueryParameter CurrentRecordValueAsQueryParameter{ get;}
+
+
+
+
+        string CurrentRecordValueString { get;set;}
+
+        void SetNewRecordValue();
+ }
+}
+ 

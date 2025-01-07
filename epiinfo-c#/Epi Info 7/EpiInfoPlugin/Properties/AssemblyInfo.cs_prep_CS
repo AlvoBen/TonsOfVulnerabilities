@@ -1,0 +1,38 @@
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+
+
+
+[assembly: AssemblyTitle("EpiInfoPlugin")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("EpiInfoPlugin")]
+[assembly: AssemblyCopyright("")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+
+
+
+
+[assembly: ComVisible(false)]
+
+
+[assembly: Guid("1ef40e60-daa5-4e47-9bdc-47efbc01b3c6")]
+
+
+
+
+
+
+
+
+
+
+
+[assembly: AssemblyVersion("7.1.3.40")]
+[assembly: AssemblyFileVersion("7.1.3.40")]
+
+ 

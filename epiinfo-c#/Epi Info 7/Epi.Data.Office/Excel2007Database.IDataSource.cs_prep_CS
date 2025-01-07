@@ -1,0 +1,175 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using EpiInfo.Plugin;
+
+namespace Epi.Data.Office
+{
+    public         class Excel2007Workbook : IDataSource
+    {
+
+
+
+
+
+        public System.Data.IDataReader GetDataTableReader(string pSQL)
+        {
+            System.Data.IDataReader result = null;
+            try
+            {
+                result = (System.Data.IDataReader)this.ExecuteReader(this.CreateQuery(pSQL));
+            }
+            catch (Exception e)
+            {
+                Logger.Log("Error ExcelWorkbook.IDataSource.GetDataTableReader:\n" + e.ToString());
+            }
+            return result;
+        }
+
+
+
+
+
+
+        public bool ExecuteSQL(string pSQL)
+        {
+            bool result = false;
+            try
+            {
+                this.ExecuteNonQuery(this.CreateQuery(pSQL));
+                result = true;
+            }
+            catch (Exception e)
+            {
+                Logger.Log("Error ExcelWorkbook.IDataSource.Execute:\n" + e.ToString());
+            }
+            return result;
+        }
+
+
+
+
+
+
+        public object GetScalar(string pSQL)
+        {
+            object result = null;
+
+            try
+            {
+                System.Data.IDataReader ReaderResult = (System.Data.IDataReader)this.ExecuteReader(this.CreateQuery(pSQL));
+                while (ReaderResult.Read())
+                {
+                    result = ReaderResult[0];
+                    break;
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Log("Error MySQLDatabase.IDataSource.GetDataTableReader:\n" + e.ToString());
+            }
+            return result;
+        }
+
+
+
+
+
+
+
+
+        public override bool CheckDatabaseTableExistance(string pFileString, string pTableName, bool pIsConnectionString = false)
+        {
+            System.Data.Common.DbConnection Conn = null;
+
+            System.Data.DataTable DataTable = new System.Data.DataTable();
+            bool result = false;
+
+            string connString = pFileString;
+
+            string[] restrictions =  CxNull;
+
+            if (DataSource != null)
+            {
+                IDbDriver driver = this;
+                driver.ConnectionString = connString;
+                Conn = (System.Data.Common.DbConnection)driver.GetConnection();
+                try
+                {
+                    Conn.Open();
+
+                    DataTable = Conn.GetSchema("Tables", restrictions);
+
+                    if (DataTable.Rows.Count == 0)
+                    {
+
+                        result = false;
+                    }
+
+                    else
+                    {
+
+                        result = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+                finally
+                {
+                    Conn.Close();
+                }
+            }
+
+            return result;
+        }
+
+
+
+
+
+        public override bool CreateDataBase(string pFileString)
+        {
+            throw new Exception("Method NOT implemented");
+        }
+
+
+
+
+
+
+
+        public override bool CheckDatabaseExistance(string pFileString, string pTableName, bool pIsConnectionString = false)
+        {
+            bool result = false;
+            System.Data.IDbConnection Conn = null;
+            string ConnectionString = Epi.Data.DBReadExecute.ParseConnectionString(pFileString);
+            try
+            {
+                Conn = this.GetConnection(ConnectionString);
+                Conn.Open();
+
+                result = true;
+            }
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+                if (Conn != null)
+                {
+                    if (Conn.State == System.Data.ConnectionState.Open)
+                    {
+                        Conn.Close();
+                    }
+                }
+            }
+            return result;
+        }
+    }
+}
+
+ 

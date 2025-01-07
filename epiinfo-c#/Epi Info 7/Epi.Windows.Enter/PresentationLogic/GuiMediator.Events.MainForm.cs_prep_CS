@@ -1,0 +1,45 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using System.Text;
+using System.Drawing;
+using System.Drawing.Printing;
+using System.Data;
+
+
+using Epi.Fields;
+
+namespace Epi.Windows.Enter.PresentationLogic
+{
+    public         class GuiMediator
+    {
+
+
+
+
+
+        private void CloseFormEventHandler(object sender, EventArgs e)
+        {
+            this.EnterCheckCodeEngine.Close();
+            this.viewExplorer.Close();
+            this.canvas.Close();
+            this.UnSubscribe();
+        }
+
+
+
+
+
+
+        private void mediator_DisplayFormat(object sender, EventArgs e)
+        {
+            mainForm.UpdateStatus((string)sender, false);
+
+
+
+
+        }
+    }
+}
+
+ 

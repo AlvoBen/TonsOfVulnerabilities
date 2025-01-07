@@ -1,0 +1,107 @@
+﻿
+using System;
+using System.Drawing;
+using System.Collections;
+using System.ComponentModel;
+using System.Windows.Forms;
+using Epi;
+using Epi.Fields;
+
+
+namespace Epi.Windows.MakeView.Dialogs.FieldDefinitionDialogs
+{
+
+
+
+    public         class YesNoFieldDefinition : TextFieldDefinition
+ {
+  //Fields
+  private YesNoField field;
+  //Fields
+
+  //Constructors
+
+
+
+        public YesNoFieldDefinition()
+        {
+            InitializeComponent();
+        }
+
+
+
+
+
+
+  public YesNoFieldDefinition(MainForm frm, Page page) : base(frm)
+  {
+   InitializeComponent();
+   this.mode = FormMode.Create;
+   this.page = page;
+  }
+
+
+
+
+
+
+  public YesNoFieldDefinition(MainForm frm, YesNoField field) : base(frm)
+  {
+   InitializeComponent();
+   this.mode = FormMode.Edit;
+   this.field = field;
+   this.page = field.Page;
+   LoadFormData();
+  }
+  //Constructors
+
+  //Private Methods
+  private void LoadFormData()
+  {
+            SetFontStyles(field);
+
+   txtPrompt.Text = field.PromptText;
+   txtFieldName.Text = field.Name;
+   chkReadOnly.Checked = field.IsReadOnly;
+   chkRepeatLast.Checked = field.ShouldRepeatLast;
+   chkRequired.Checked = field.IsRequired;
+  }
+  //
+
+  //Public Methods
+
+
+
+
+        protected override void SetFieldProperties()
+        {
+            field.PromptText = txtPrompt.Text;
+            field.Name = txtFieldName.Text;
+            if (promptFont != null)
+            {
+                field.PromptFont = promptFont;
+            }
+            if (controlFont != null)
+            {
+                field.ControlFont = controlFont;
+            }
+            field.IsRequired = chkRequired.Checked;
+            field.IsReadOnly = chkReadOnly.Checked;
+            field.ShouldRepeatLast = chkRepeatLast.Checked;
+        }
+
+
+
+
+  public override RenderableField Field
+  {
+   get
+   {
+    return field;
+   }
+  }
+  //
+ }
+}
+
+ 

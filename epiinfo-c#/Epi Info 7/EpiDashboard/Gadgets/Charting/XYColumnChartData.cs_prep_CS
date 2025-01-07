@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace EpiDashboard.Gadgets.Charting
+{
+    public class XYColumnChartData
+    {
+        public object X { get {return _X; } set{ _X=value; } } object _X;
+        public double Y { get {return _Y; } set{ _Y=value; } } double _Y;
+        public double Y2 { get {return _Y2; } set{ _Y2=value; } } double _Y2;
+        public object S { get {return _S; } set{ _S=value; } } object _S;
+    }
+}
+
+ 

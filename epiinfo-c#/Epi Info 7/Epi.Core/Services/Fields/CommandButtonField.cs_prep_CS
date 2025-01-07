@@ -1,0 +1,259 @@
+﻿//Namespaces
+
+using System;
+using System.ComponentModel;
+using System.Data;
+using System.Xml;
+using Epi;
+
+// 
+
+namespace Epi.Fields
+{
+
+
+
+ public class CommandButtonField : FieldWithoutSeparatePrompt, IFieldWithCheckCodeClick
+ {
+  //Private Members
+  private string checkCodeClick = string.Empty;
+        private string checkCodeAfter = string.Empty;
+        private XmlElement viewElement;
+        private XmlNode fieldNode;
+        private BackgroundWorker _updater;
+        private BackgroundWorker _inserter;
+  //
+
+  //Public Events
+  //
+
+  //Constructors
+
+
+
+
+
+        public CommandButtonField(Page page) : base(page)
+  {
+  }
+
+
+
+
+
+
+        public CommandButtonField(Page page, XmlElement viewElement)
+            : base(page)
+        {
+            this.viewElement = viewElement;
+            this.Page = page;
+        }
+
+
+
+
+
+  public CommandButtonField(View view) : base(view)
+  {
+  }
+
+
+
+
+
+
+        public CommandButtonField(View view, XmlNode fieldNode) : base(view)
+        {
+            this.fieldNode = fieldNode;
+            this.view.Project.Metadata.GetFieldData(this, this.fieldNode);
+        }
+
+
+
+
+
+        public override void LoadFromRow(DataRow row)
+        {
+            base.LoadFromRow(row);
+
+        }
+
+        public CommandButtonField Clone()
+        {
+            CommandButtonField clone = (CommandButtonField)this.MemberwiseClone();
+            base.AssignMembers(clone);
+            return clone;
+        }
+  //
+
+  //Public Properties
+
+
+
+
+        public override MetaFieldType FieldType
+        {
+            get
+            {
+                return MetaFieldType.CommandButton;
+            }
+        }
+
+
+
+
+
+  public string CheckCodeClick
+  {
+   get
+   {
+    return checkCodeClick;
+   }
+   set
+   {
+    checkCodeClick = value;
+   }
+  }
+
+
+
+
+
+        public string CheckCodeAfter
+        {
+            get
+            {
+                return checkCodeClick;
+            }
+            set
+            {
+                checkCodeClick = value;
+            }
+        }
+
+
+
+
+        public XmlElement ViewElement
+        {
+            get
+            {
+                return viewElement;
+            }
+            set
+            {
+                viewElement = value;
+            }
+        }
+
+  //
+
+  //Protected Properties
+
+  //Protected Properties
+
+  //Public Methods
+
+
+
+
+  public override void Delete()
+  {
+   GetMetadata().DeleteField(this);
+            view.MustRefreshFieldCollection = true;
+  }
+
+  //Public Methods
+
+  //Private Methods
+
+
+
+
+        protected override void InsertField()
+        {
+            this.Id = GetMetadata().CreateField(this);
+            base.OnFieldAdded();
+        }
+
+
+
+
+
+        protected override void UpdateField()
+        {
+            GetMetadata().UpdateField(this);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //
+
+  //Event Handlers
+  private void Control_Click(object sender, EventArgs e)
+  {
+   if (!string.IsNullOrEmpty(CheckCodeClick))
+   {
+
+   }
+  }
+  //
+
+
+
+    }
+}
+
+ 

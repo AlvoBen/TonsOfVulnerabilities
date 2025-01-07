@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Windows.Forms;
+
+namespace Epi.Windows.Analysis.Controls
+{
+
+
+
+    public         class ProjectBasedPgmControl : System.Windows.Forms.UserControl
+ {
+
+
+
+  public ProjectBasedPgmControl()
+  {
+
+   InitializeComponent();
+        }
+ }
+}
+
+ 

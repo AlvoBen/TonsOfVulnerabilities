@@ -1,0 +1,112 @@
+﻿//Namespaces
+
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+using Epi;
+
+//Namespaces
+
+namespace Epi.Windows.MakeView.Dialogs
+{
+
+
+
+    public         class QuitDialog : CommandDesignDialog
+ {
+  //Constructors
+
+
+
+
+        [Obsolete("Use of default constructor not allowed", true)]
+  public QuitDialog()
+  {
+   InitializeComponent();
+  }
+
+
+
+
+
+        public QuitDialog(Epi.Windows.MakeView.Forms.MakeViewMainForm frm)
+            : base(frm)
+  {
+   InitializeComponent();
+            Construct();
+  }
+
+
+
+
+
+        public QuitDialog(Epi.Windows.MakeView.Forms.MakeViewMainForm frm, bool showSave)
+            : base(frm)
+        {
+            InitializeComponent();
+            showSaveOnly = showSave;
+            if (showSaveOnly)
+            {
+                this.btnSaveOnly.Click += new System.EventHandler(this.btnSaveOnly_Click);
+            }
+            Construct();
+        }
+
+  //Constructors
+
+        //Private Attributes
+        private bool showSaveOnly = false;
+        //Private Attributes
+
+        //Private Methods
+        private void Construct()
+        {
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+        }
+
+
+
+
+        private void RepositionButtons()
+        {
+            int x = btnCancel.Left;
+            int y = btnCancel.Top;
+            btnCancel.Location = new Point(btnOK.Left, y);
+            btnOK.Location = new Point(btnSaveOnly.Left, y);
+            btnSaveOnly.Location = new Point(x, y);
+        }
+        //Private Methods
+
+        //Protected Methods
+
+
+
+  protected override void GenerateCommand()
+  {
+   CommandText = CommandNames.QUIT;
+  }
+
+  //
+
+        //Event Handlers
+
+
+
+
+
+
+        private void QuitDialog_Load(object sender, EventArgs e)
+        {
+            btnSaveOnly.Visible = showSaveOnly;
+            if (showSaveOnly)
+            {
+                RepositionButtons();
+            }
+        }
+
+        //Event Handlers
+    }
+}
+ 

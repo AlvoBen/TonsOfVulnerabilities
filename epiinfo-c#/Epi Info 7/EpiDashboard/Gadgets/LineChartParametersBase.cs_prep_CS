@@ -1,0 +1,57 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using ComponentArt.Win.DataVisualization.Charting;
+
+namespace EpiDashboard
+{
+    public class LineChartParametersBase : ChartParametersBase
+    {
+        //Events
+
+        //
+
+        //Constructors
+
+
+
+        public LineChartParametersBase()
+            : base()
+        {
+            YAxisLabel = "Count";
+            LineType = string.Empty;
+            LineKind = LineKind.Auto;
+            Y2LineKind = LineKind.Auto;
+        }
+
+
+
+
+        public LineChartParametersBase(LineChartParameters parameters)
+            : base(parameters)
+        {
+            LineType = parameters.LineType;
+            LineKind = parameters.LineKind;
+            Y2LineKind = parameters.Y2LineKind;
+        }
+
+        //
+
+        //Properties
+
+
+
+
+        public string LineType { get {return _LineType; } set{ _LineType=value; } } string _LineType;
+
+        public LineKind LineKind { get {return _LineKind; } set{ _LineKind=value; } } LineKind _LineKind;
+        public LineKind Y2LineKind { get {return _Y2LineKind; } set{ _Y2LineKind=value; } } LineKind _Y2LineKind;
+        public double LineThickness { get {return _LineThickness; } set{ _LineThickness=value; } } double _LineThickness;
+
+        //
+
+    }
+}
+
+ 
