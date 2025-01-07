@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE application-j2ee-engine SYSTEM "application-j2ee-engine.dtd">
-<application-j2ee-engine>
-	<reference reference-type="weak">
-		<reference-target target-type="library" >testingLibrary</reference-target>
-	</reference>
-</application-j2ee-engine>

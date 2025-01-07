@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<container>
-	<unknown>1234</unknown>
-	<unknown><prop1>1</prop1><prop2>2</prop2><prop3>3</prop3></unknown>
-	<unknown><prop4>4</prop4>1234<prop5>5</prop5></unknown>
-</container>

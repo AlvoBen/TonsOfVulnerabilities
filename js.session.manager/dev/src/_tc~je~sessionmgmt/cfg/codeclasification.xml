@@ -1,4 +1,0 @@
-﻿<?xml version="1.0" ?> 
-<codeClassification>
-   <classificationRule baseDirPattern=".*test" filePattern=".*" attributes="test" /> 
-</codeClassification>

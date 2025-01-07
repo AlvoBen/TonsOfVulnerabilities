@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<ns1:container xmlns:ns1="any.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <any xsi:type="xsd:string">hello</any>
-  <any xsi:type="xsd:int">10</any>
-</ns1:container>

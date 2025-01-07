@@ -1,4 +1,0 @@
-﻿<?xml version="1.0" ?> 
-<codeClassification>
-   <classificationRule filePattern="com/sun/el/.*" attributes="suppressed" /> 
-</codeClassification>

@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<!--XML-Beispieldatei von XMLSpy generiert v2006 sp2 U (http://www.altova.com)-->
-<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ComplexSimplePolymorphismMany.xsd">
-	<simpleInt xsi:type="IntExtension" attr="hello">99</simpleInt>
-    <simpleInt xsi:type="IntExtension" attr="foo">42</simpleInt>
-    <simpleInt>8</simpleInt>
-    <simpleInt xsi:type="IntExtension" attr="bar">15</simpleInt>
-</root>

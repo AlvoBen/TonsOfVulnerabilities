@@ -1,9 +1,0 @@
-﻿<template>
-  <div class="slds-p-horizontal_small slds-grid slds-wrap">
-    <template for:each={filterValues} for:item="item" for:index="ind">        
-        <lightning-pill key={item} class="slds-var-m-right_small slds-var-m-bottom_small hc-custom-pill"
-          label={item.value} data-index={ind} name={item.key}
-          onremove={handledRemove}></lightning-pill>
-   </template>
-  </div>
-</template>

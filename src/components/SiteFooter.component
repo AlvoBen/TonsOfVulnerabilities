@@ -1,3 +1,0 @@
-﻿<apex:component id="footerComponent">
-  <c:SitePoweredBy />
-</apex:component>

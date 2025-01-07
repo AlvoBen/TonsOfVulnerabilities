@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<ApexComponent xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>38.0</apiVersion>
-    <description>This visualforce Component is used in RTISummary_VF_HUM page in order to display list of RTI interaction cards</description>
-    <label>RTIInteraction_CMP_HUM</label>
-</ApexComponent>

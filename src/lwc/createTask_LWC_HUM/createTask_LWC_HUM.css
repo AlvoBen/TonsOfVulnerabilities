@@ -1,7 +1,0 @@
-.maxheight{
-    max-height: 523px;
-}
-.mandatory::before {
-    content: "* ";
-    color:red;
-  }

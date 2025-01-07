@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" ?>
-<javadoc >
-  <package-groupings>
-    <group title="Authentication" packages="com.sap.engine.interfaces.security.auth,com.sap.engine.lib.security*" />
-  </package-groupings>
-</javadoc>

@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<v1:property xmlns:v1="com.sap.test" xmlns:sdo="commonj.sdo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="com.sap.test propertyRenaming.xsd">
-  <property>elmentAText</property>
-  <v1:property v1:property="fünf" property="5">
-    <property>more text</property>
-  </v1:property>
-</v1:property>

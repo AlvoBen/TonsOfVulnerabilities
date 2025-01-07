@@ -1,9 +1,0 @@
-.exampleHolder{
-    position: relative;
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-}
-.iconcolor{
-    --lwc-colorTextIconDefault : rgb(1,105,202);
-}

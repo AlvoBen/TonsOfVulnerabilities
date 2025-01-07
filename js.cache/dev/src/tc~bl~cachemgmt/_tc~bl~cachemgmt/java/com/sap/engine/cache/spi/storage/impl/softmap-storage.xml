@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE pluggable-descriptor SYSTEM "../../pluggable.provider.dtd">
-<pluggable-descriptor type = "storage-plugin">
-  <name>SoftStorage</name>
-  <base-class> com.sap.engine.cache.spi.storage.impl.SoftStorage </base-class>
-  <major-version> 7 </major-version>
-  <minor-version> 0 </minor-version>
-</pluggable-descriptor>

@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<ApexComponent xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>36.0</apiVersion>
-    <description>This is used to display Horizontal dynamic custom liks for VF page</description>
-    <label>DynamicCustomLinksHorizontal_CMP_HUM</label>
-</ApexComponent>

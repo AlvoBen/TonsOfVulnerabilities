@@ -1,8 +1,0 @@
-﻿<test>
-   <run type="junit">
-      <jvmArg>-Xmx256m</jvmArg> 
-      <include>com.sap.engine.services.rmi_p4.finalizer.TestAll</include>
-      <exclude></exclude>
-      <code-coverage>com.sap.engine.services.rmi_p4.*</code-coverage> 
-   </run>
-</test>

@@ -1,4 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<tns:externalID xmlns:tns="http://www.example.org/QueryFilter" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-   <valueLow xsi:type="xs:string">2000</valueLow>
-</tns:externalID>

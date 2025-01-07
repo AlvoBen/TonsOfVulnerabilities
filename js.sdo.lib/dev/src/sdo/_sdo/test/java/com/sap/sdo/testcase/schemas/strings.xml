@@ -1,2 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<ns1:NewOperation xmlns:ns1="http://www.example.org/strings/" xmlns:ns2="com.sap.sdo" xsi:type="ns2:OpenType" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"></ns1:NewOperation>

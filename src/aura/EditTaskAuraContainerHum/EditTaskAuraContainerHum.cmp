@@ -1,3 +1,0 @@
-﻿<aura:component implements="force:lightningQuickActionWithoutHeader,flexipage:availableForRecordHome,force:hasRecordId" controller="CreateTask_C_LWC_HUM">    
-    <c:createTask_LWC_HUM  aura:id ="createTask_LWC_HUM"  onclose="{!c.closeQA}" invokedFlowFrom = "Task" action="Edit" recordId="{!v.recordId}"></c:createTask_LWC_HUM>
-</aura:component>

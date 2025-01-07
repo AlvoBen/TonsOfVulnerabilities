@@ -1,9 +1,0 @@
-:host { --sds-c-accordion-summary-color-background: var(--lwc-colorBackground,rgb(243, 242, 242)); }
-.btnIcon{padding-right: 0.3rem;}
-.cancelBtn{margin-right: 0.3rem;}
-.modalBtn{text-align: center}
-.inputNotification{padding-left: 0.25rem;}
-.checkbox{
-    padding-top:0.4rem;
-    padding-bottom:0.625rem;
-}

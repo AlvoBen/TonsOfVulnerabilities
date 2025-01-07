@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<ns1:x xmlns:ns1="x" xmlns:c1="http://www.osoa.org/xmlns/sca/1.0" xsi:type="c1:Service" name="OrderProcessService" promote="OrderProcess/OrderProcessRole" xmlns:sdo="commonj.sdo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <c1:interface.java interface="sample.shop.processes.IOrderProcess"></c1:interface.java>
-  <binding.sca xsi:type="xsd:string" xsi:nil="true"></binding.sca>
-</ns1:x>

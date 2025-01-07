@@ -1,8 +1,0 @@
-.overflowclass .slds-truncate{
-    text-overflow: ellipsis !important;
-    white-space: normal !important;
-    word-wrap: break-word !important;
-}
-.paginationCheckin {
-    padding-top:4em !important;
-}

@@ -1,8 +1,0 @@
-﻿<containers>
-	<containerInfo name="scheduler~container">
-		<isJ2EEContainer>false</isJ2EEContainer>
-		<moduleName>scheduler~container</moduleName>
-		<priority>65</priority>
-		<supportingParallelism>true</supportingParallelism>
-	</containerInfo>
-</containers>

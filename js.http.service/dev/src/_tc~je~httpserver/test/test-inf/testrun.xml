@@ -1,9 +1,0 @@
-﻿<?xml version="1.0"?>
-<test> 
-   <run type="junit"> 
-      <jvmArg>-Xmx512m</jvmArg> 
-      <include>com.sap.engine.services.httpserver.lib.**</include>
-      <exclude></exclude>
-      <code-coverage>com.sap.engine.services.httpserver.**</code-coverage> 
-   </run>
-</test>

@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<container xmlns="qname.xsd" y="test:blah" xmlns:test="another.xsd">
-<x>same</x>
-<x xmlns:test="element">test:blahblah</x>
-</container>

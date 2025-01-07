@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<tns:sameNames xmlns:tns="com.sap.sdo.testcase.anonymous" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" prop="attr" tns:prop="2">
-	<tns:prop>5</tns:prop>
-	<prop>elem</prop>
-</tns:sameNames>

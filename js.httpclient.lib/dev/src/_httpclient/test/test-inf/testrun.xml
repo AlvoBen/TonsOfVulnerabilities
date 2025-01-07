@@ -1,8 +1,0 @@
-﻿<test>
-   <run type="junit">
-	  <jvmArg>-Xmx512m</jvmArg> 
-      <include>com.sap.httpclient.TestAll</include>
-      <exclude></exclude>
-	  <code-coverage>com.sap.httpclient*</code-coverage> 
-   </run>
-</test>

@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE application-service SYSTEM "application-service.dtd">
-<application-service>
-<action type="beforeStart" class-name="com.sap.engine.sessionmgmt.jco.applib.Starter" method-name="start"/>
-<action type="afterStop" class-name="com.sap.engine.sessionmgmt.jco.applib.Starter" method-name="stop"/>
-</application-service>
-

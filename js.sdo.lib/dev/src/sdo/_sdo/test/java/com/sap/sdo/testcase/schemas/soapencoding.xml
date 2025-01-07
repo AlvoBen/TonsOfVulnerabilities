@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<ns:root xmlns:ns="com.sap.sdo.test" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <picture>aG93IG5vDyBicm73biBjb3cNCg==</picture>
-  <simple xsi:type="SOAP-ENC:base64">aG93IG5vDyBicm73biBjb3cNCg==</simple>
-  <picture2 xsi:type="SOAP-ENC:base64">aG93IG5vDyBicm73biBjb3cNCg==</picture2>
-</ns:root>

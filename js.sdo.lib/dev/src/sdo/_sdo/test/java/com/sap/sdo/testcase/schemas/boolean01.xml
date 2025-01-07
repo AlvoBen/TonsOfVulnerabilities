@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<ns1:root xmlns:ns1="sap.com/test" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <bool1>0</bool1>
-  <bool2>1</bool2>
-</ns1:root>

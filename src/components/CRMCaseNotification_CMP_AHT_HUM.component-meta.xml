@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<ApexComponent xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>43.0</apiVersion>
-    <description>This component will display List of case from Case milestone with SLA values.</description>
-    <label>CRMCaseNotification_CMP_AHT_HUM</label>
-</ApexComponent>

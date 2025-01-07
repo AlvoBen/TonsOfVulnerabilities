@@ -1,9 +1,0 @@
-.container {
-    max-height: 260px;
-}
-
-.iconcolor {
-    --lwc-colorTextIconDefault: rgb(1,105,202);
-    cursor: pointer;
-    margin-left: 5px;
-}

@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<simpleContentContainer xmlns="simpleContent.xsd" xmlns:q="http://test.com/xxxx">
-<intSimpleContent>2345</intSimpleContent>
-<qnameSimpleContent>q:test</qnameSimpleContent>
-</simpleContentContainer>

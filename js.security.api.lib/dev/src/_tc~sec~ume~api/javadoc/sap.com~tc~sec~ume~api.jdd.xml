@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" ?>
-<javadoc >
-  <package-groupings>
-    <group title="User Management" packages="com.sap.security.api*" />
-  </package-groupings>
-</javadoc>

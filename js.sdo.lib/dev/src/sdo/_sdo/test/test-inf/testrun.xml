@@ -1,9 +1,0 @@
-﻿<test> 
-  <run type="junit">
-    <code-coverage>com.sap.sdo*</code-coverage>
-    <include>test.suite.BasicInternal</include>
-    <jvmArg>-Djavax.xml.parsers.DocumentBuilderFactory=com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl</jvmArg>
-    <jvmArg>-Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl</jvmArg>
-    <jvmArg>-Djavax.xml.transform.TransformerFactory=com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl</jvmArg>
-  </run>
-</test>
