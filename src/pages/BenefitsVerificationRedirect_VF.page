@@ -1,0 +1,15 @@
+﻿<!--
+Page Name        : BenefitsVerificationRedirect_VF.page
+Version          : 1.0
+Created On       : 2020
+Function         : VF page to redirect to the Benefits Verification (Pilot) link
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Sayali Gavane                            				10/16/2020                   Original Version 
+****************************************************************************************************************************
+-->
+
+<apex:page id="thePage" showHeader="false" sidebar="false" controller="BenefitsVerificationRedirect_C_HUM" action="{!redirectBenefitsVerification}">
+</apex:page>

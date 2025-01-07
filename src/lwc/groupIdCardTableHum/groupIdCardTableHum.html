@@ -1,0 +1,567 @@
+﻿<!--
+LWC Name        : groupIdCardTableHum.html
+Function        : LWC container to display Groupid card detail in Lightning strides app.
+
+Modification Log:
+* Developer Name                  Date                         Description
+
+* Suraj Patil                  12/19/2021                Original Version 
+* Prashant Moghe			   03/22/2022				 DF-4622 Fix
+****************************************************************************************************************************-->
+<template>
+	<template if:true={openFilterPanel}>
+		<div class="demo-only-element slds-p-around_none"
+			style="position:relative;overflow:hidden;display:flex;flex-direction:row-reverse">
+			<div class="slds-panel slds-size_medium slds-panel_docked-right slds-panel_drawer slds-is-open overlap"
+				aria-hidden="false" id="example-unique-id-5">
+				<c-mem-id-cards-filter-hum onfilterapplied={handleFilterApplied} onclosefilter={closeFilter}
+					options={statusArrayForFilter}></c-mem-id-cards-filter-hum>
+			</div>
+			<div class="demo-only-content slds-col slds-card" style="background-color:rgb(22, 21, 21)">
+				<div class="slds-p-top-none">
+					<lightning-layout>
+						<lightning-layout-item size="12" padding="around-small">
+							<!-- top section -->
+							<lightning-layout-item size="12" class={stickyHeaderCss}>
+								<c-group-Id-Card-Highlights-Panels-Hum>
+								</c-group-Id-Card-Highlights-Panels-Hum>
+							</lightning-layout-item>
+							</br>
+							<lightning-layout-item size="12" class={stickyHeaderCss}>
+								<c-dynamic-custom-links-lc-hum record-id={recordId} object-api-name={objectApiName}
+									page-name="groupIdCardManagment"></c-dynamic-custom-links-lc-hum>
+							</lightning-layout-item>
+							</br>
+							<lightning-card class="" title="Group ID Card Status">
+								<lightning-layout-item size="8" style="padding-top: 10px; margin-left:15px">
+									{CurrentlyShowingRecords} items displayed of {totalNumberOfRecords} entries
+								</lightning-layout-item>
+								<template if:true={renderTable}>
+									<lightning-button-icon if:false={openFilterPanel} icon-name="standard:filter"
+										size="x-small" class="slds-p-left_medium" style="margin-right:auto"
+										variant="brand" slot="actions" onclick={handleOpenFilter}>
+									</lightning-button-icon>
+									<!--Table Header-->
+									<lightning-layout aria-describedby="Group-IDCard-Status"
+										class=" slds-table slds-table_bordered slds-text-body_medium slds-p-right_xx-medium table-header-section"
+										size="12" padding="around-medium">
+										<lightning-layout-item size="1">
+											<div class="slds-size_1-of-12 slds-text-align_center"
+												style="width:100%; height:25px " title=""> </div>
+										</lightning-layout-item>
+										<lightning-layout-item size="1" onclick={SortRequestDate}>
+											<div class="slds-size_3-of-12 slds-text-align_center slds-p-left_xxx-small"
+												style="width:120% ; height:25px " title="Request Date"><b>Request Date
+													<lightning-icon icon-name="utility:arrowup" size="xx-small" if:true={isDecending} ></lightning-icon>
+												<lightning-icon icon-name="utility:arrowdown" size="xx-small" if:false={isDecending}></lightning-icon>
+												</b>
+											</div>
+										</lightning-layout-item>
+										<lightning-layout-item size="5">
+											<div class="slds-size_3-of-12 slds-text-align_center"
+												style="width:100% ; height:25px " title="Group ID"><b>Group ID</b></div>
+										</lightning-layout-item>
+										<lightning-layout-item size="2">
+											<div class="slds-size_3-of-12 slds-text-align_center"
+												style="width:100% ; height:25px " title="Originating System">
+												<b>Originating
+													System</b>
+											</div>
+										</lightning-layout-item>
+										<lightning-layout-item size="2">
+											<div class="slds-size_2-of-12 slds-text-align_center"
+												style="width:100% ; height:25px " title="No. of Cards Requested"><b>No.
+													of
+													Cards
+													Requested</b></div>
+										</lightning-layout-item>
+									</lightning-layout>
+
+									<!--Table Body-->
+									<lightning-layout multiple-rows="true" for:each={finalResponse} for:item="item"
+										for:index="indexVar" key={item.CardRequestDate} padding="around-medium"
+										class="slds-table_bordered slds-text-body_medium slds-p-right_xx-medium"
+										size="12">
+										<lightning-layout-item class="slds-hint-parent" size="1">
+											<div class="accordionMenu slds-size_1-of-12 slds-text-align_center"
+												style="width:100%">
+												<lightning-button-icon data-att={indexVar} size="small"
+													data-actionname={item.iconName} icon-name={item.iconName}
+													onclick={navigateToIdCardDetails} onblur={navigatefromIdCardDetails}
+													class="accordianPass">
+												</lightning-button-icon>
+											</div>
+										</lightning-layout-item>
+										<lightning-layout-item size="1">
+											<div class="slds-size_3-of-12 slds-text-align_center slds-p-left_xxx-small"
+												style="width:100%">{item.CardRequestDate}</div>
+										</lightning-layout-item>
+										<lightning-layout-item size="5">
+											<div class="slds-size_3-of-12 slds-text-align_center" style="width:100%">
+												{item.GroupNbr}</div>
+										</lightning-layout-item>
+										<lightning-layout-item size="2">
+											<div class="slds-size_3-of-12 slds-text-align_center " style="width:100%">
+												{item.Platform}</div>
+										</lightning-layout-item>
+										<lightning-layout-item alignment-bump="bottom" size="2">
+											<div class="slds-size_2-of-12 slds-text-align_center " style="width:100%">
+												{item.CardCount}</div>
+										</lightning-layout-item>
+										</br>
+										<lightning-layout-item if:true={item.Accordion} alignment-bump="top" size="12">
+											<template if:true={item.selected}>
+												<div class="tableDiv">
+													<div class={tableStyle}>
+														<table aria-describedby="Group-IDCard-Status-Details"
+															class="slds-table slds-table_bordered custom-hover-border">
+															<!--Table Header-->
+															<thead>
+																<tr class="slds-line-height_reset">
+																	<th class="slds-size_1-of-11" scope="col">
+																		<div class="slds-truncate" title="Member ID">
+																			Member
+																			ID
+																		</div>
+																	</th>
+																	<th class="slds-size_1-of-11" scope="col">
+																		<div class="slds-truncate" title="First Name">
+																			First
+																			Name
+																		</div>
+																	</th>
+																	<th class="slds-size_1-of-11" scope="col">
+																		<div class="slds-truncate" title="Last Name">
+																			Last
+																			Name
+																		</div>
+																	</th>
+																	<th class="slds-size_1-of-11" scope="col">
+																		<div class="slds-truncate" title="Dep Code">Dep
+																			Code
+																		</div>
+																	</th>
+																	<th class="slds-size_1-of-11" scope="col">
+																		<div class="slds-truncate" title="Business Seg">
+																			Business
+																			Seg</div>
+																	</th>
+																	<th class="slds-size_1-of-11" scope="col">
+																		<div class="slds-truncate" title="Request Date">
+																			Request
+																			Date</div>
+																	</th>
+																	<th class="slds-size_1-of-11" scope="col">
+																		<div class="slds-truncate" title="Status Date">
+																			Status
+																			Date</div>
+																	</th>
+																	<th class="slds-size_1-of-11" scope="col">
+																		<div class="slds-truncate" title="Status">Status
+																		</div>
+																	</th>
+																	<th class="slds-size_1-of-11" scope="col">
+																		<div class="slds-truncate" title="Reason">Reason
+																		</div>
+																	</th>
+																	<th class="slds-size_2-of-11" scope="col">
+																		<div class="slds-truncate" title="Card Type">
+																			Card
+																			Type
+																			<lightning-helptext
+                                                                                content="Hover over the card type value for additional information.">
+                                                                            </lightning-helptext>
+																		</div>
+																	</th>
+																</tr>
+															</thead>
+															<!--Table Body-->
+															<tbody if:true={item.bGroupMemLvlSearch}>
+																<tr if:false={item.bGrpFilter} for:each={item.groupMemLvlSearch}
+																	for:item="gmem" for:index="indexVar"
+																	key={gmem.CardRequestDate} class="slds-hint-parent">
+
+																	<td class="slds-size_1-of-11">
+																		<div>{gmem.MemberId}</div>
+																	</td>
+																	<td class="slds-size_1-of-11">
+																		<div>{gmem.FirstName}</div>
+																	</td>
+																	<td class="slds-size_1-of-11">
+																		<div>{gmem.LastName}</div>
+																	</td>
+																	<td class="slds-size_1-of-11">
+																		<div>{gmem.DependentCode}</div>
+																	</td>
+																	<td class="slds-size_1-of-11">
+																		<div>{gmem.BusinessSegment}</div>
+																	</td>
+																	<td class="slds-size_1-of-11">
+																		<div>{gmem.CardRequestDate}</div>
+																	</td>
+																	<td class="slds-size_1-of-11">
+																		<div>{gmem.StatusDate}</div>
+																	</td>
+																	<td class="slds-size_1-of-11">
+																		<div>{gmem.Status}</div>
+																	</td>
+																	<td class="slds-size_1-of-11" style="white-space: break-spaces">
+																		<div>{gmem.Reason}</div>
+																	</td>
+																	<td class="slds-size_2-of-11">
+																		<div title={gmem.CardTypeDesc}>{gmem.CardType}</div>
+																	</td>
+
+																</tr>
+																<tr if:true={item.bGrpFilter} for:each={item.groupMemLvlSearchFilter}
+																	for:item="gmem" for:index="indexVar"
+																	key={gmem.CardRequestDate} class="slds-hint-parent">
+
+																	<td class="slds-size_1-of-11">
+																		<div>{gmem.MemberId}</div>
+																	</td>
+																	<td class="slds-size_1-of-11">
+																		<div>{gmem.FirstName}</div>
+																	</td>
+																	<td class="slds-size_1-of-11">
+																		<div>{gmem.LastName}</div>
+																	</td>
+																	<td class="slds-size_1-of-11">
+																		<div>{gmem.DependentCode}</div>
+																	</td>
+																	<td class="slds-size_1-of-11">
+																		<div>{gmem.BusinessSegment}</div>
+																	</td>
+																	<td class="slds-size_1-of-11">
+																		<div>{gmem.CardRequestDate}</div>
+																	</td>
+																	<td class="slds-size_1-of-11">
+																		<div>{gmem.StatusDate}</div>
+																	</td>
+																	<td class="slds-size_1-of-11">
+																		<div>{gmem.Status}</div>
+																	</td>
+																	<td class="slds-size_1-of-11" style="white-space: break-spaces">
+																		<div>{gmem.Reason}</div>
+																	</td>
+																	<td class="slds-size_2-of-11">
+																		<div title={gmem.CardTypeDesc}>{gmem.CardType}</div>
+																	</td>
+
+																</tr>
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</template>
+										</lightning-layout-item>
+									</lightning-layout>
+									<div if:true={noRecordFlag}>
+										<lightning-layout>
+											<lightning-layout-item size="12">
+												<div class="slds-size_12-of-12 slds-text-align_center slds-p-center_xxx-small"
+													style="width:100%">No Records to display</div>
+											</lightning-layout-item>
+										</lightning-layout>
+									</div>
+								</template>
+								<br>
+								<template if:true={isShowMoreVisible}>
+									<div class="slds-grid">
+										<div class="slds-col ">
+											<div class="slds-m-left_x-small" style="margin-top: 17px;">
+												<div class="slds-border_top"></div>
+											</div>
+										</div>
+										<div>
+											<lightning-button  class = "slds-button" name='showmore' variant="neutral" 
+											label="Show More" onclick={handleShowMoreClick}></lightning-button> 
+										</div>
+										<div class="slds-col">
+											<div class="slds-m-left_x-small" style="margin-top: 17px;">
+												<div class="slds-border_top"></div>
+											</div>
+										</div>
+									  </div>
+								</template>
+							</lightning-card>
+						</lightning-layout-item>
+					</lightning-layout>
+				</div>
+			</div>
+		</div>
+	</template>
+	<template if:false={openFilterPanel}>
+		<div class="demo-only-content slds-col slds-card" style="background-color:rgb(22, 21, 21)">
+			<div class="slds-p-top-none">
+				<lightning-layout>
+					<lightning-layout-item size="12" padding="around-small">
+						<div if:true={idetailcountmax} class="toastContainer slds-notify_container slds-toast-pos" data-aura-rendered-by="5430:0" style="top: 90px">
+							<div role="alert" data-key="warning" class="slds-theme--warning slds-notify--toast slds-notify slds-notify--toast forceToastMessage" data-aura-rendered-by="5433:0" data-aura-class="forceToastMessage" data-id="toastId">
+		
+								<lightning-icon icon-name="utility:warning" class="slds-icon-utility-warning toastIcon slds-m-right--small slds-no-flex slds-align-top slds-icon_container" data-data-rendering-service-uid="1103" data-aura-rendered-by="5435:0">
+									<span class="slds-assistive-text">warning</span>
+								</lightning-icon>
+		
+								<div class="toastContent slds-notify__content" data-aura-rendered-by="5436:0">
+									<div class="slds-align-middle slds-hyphenate" data-aura-rendered-by="5437:0">
+										<!--render facet: 5438:0-->
+										<span class="toastMessage slds-text-heading--small forceActionsText" data-aura-rendered-by="5443:0" data-aura-class="forceActionsText">
+											The ID Card request date contains more than 100 entries.Use the "Filter" to refine results.
+											Search/Filter by Member Id, First and/or Last Name                   
+											<!--render facet: 5450:0-->
+								
+											<a href="#" title="Update Filter" onclick={handleOpenFilter} data-aura-rendered-by="5464:0" class="forceActionLink" data-aura-class="forceActionLink">
+												
+												<div title="Update Filter" data-aura-rendered-by="5465:0">Update Filter</div>
+											</a>
+										</span>
+									</div>
+								</div>
+														
+								<button type="button" data-id="toastCloseId" title="Close" class="slds-button slds-button_icon toastClose slds-notify__close slds-button--icon-inverse slds-button_icon-bare" data-aura-rendered-by="5458:0">
+									<lightning-icon icon-name="utility:close" alternative-text="Close!" size="small" onclick={handleToastClose}></lightning-icon> 
+									<span class="slds-assistive-text" data-aura-rendered-by="5461:0">Close</span>
+								</button>
+							</div>
+						</div>
+							</br>
+
+						<!-- top section -->
+						<lightning-layout-item size="12" class={stickyHeaderCss}>
+							<c-group-Id-Card-Highlights-Panels-Hum>
+							</c-group-Id-Card-Highlights-Panels-Hum>
+						</lightning-layout-item>
+						</br>
+						<lightning-layout-item size="12">
+							<c-dynamic-custom-links-lc-hum record-id={recordId} object-api-name={objectApiName}
+								page-name="groupIdCardManagment"></c-dynamic-custom-links-lc-hum>
+						</lightning-layout-item>
+						</br>
+						<lightning-card class="" title="Group ID Card Status">
+							<lightning-layout-item size="8" style="padding-top: 10px; margin-left:15px">
+								{CurrentlyShowingRecords} items displayed of {totalNumberOfRecords} entries
+							</lightning-layout-item>
+							<template if:true={renderTable}>
+								<span slot="actions" if:true={statusFilter}>
+									<lightning-pill label={statusFilter} onremove={removeStatusFilter}></lightning-pill>
+								</span>
+								<lightning-button-icon if:false={openFilterPanel} icon-name="standard:filter"
+									size="x-small" class="slds-p-left_medium" style="margin-right:auto" variant="brand"
+									slot="actions" onclick={handleOpenFilter}>
+								</lightning-button-icon>
+								<!--Table Header-->
+								<lightning-layout aria-describedby="Group-IDCard-Status"
+									class=" slds-table slds-table_bordered slds-text-body_medium slds-p-right_xx-medium table-header-section"
+									size="12" padding="around-medium">
+									<lightning-layout-item size="1">
+										<div class="slds-size_1-of-12 slds-text-align_center"
+											style="width:100%; height:25px " title=""> </div>
+									</lightning-layout-item>
+									<lightning-layout-item size="1" onclick={SortRequestDate} >
+										<div class="slds-size_3-of-12 slds-text-align_center slds-p-left_xxx-small"
+											style="width:100% ; height:25px " title="Request Date"><b>Request
+												Date 
+												<lightning-icon icon-name="utility:arrowup" size="xx-small" if:true={isDecending} ></lightning-icon>
+												<lightning-icon icon-name="utility:arrowdown" size="xx-small" if:false={isDecending}></lightning-icon>
+											</b>
+												
+										</div>
+									</lightning-layout-item>
+									<lightning-layout-item size="5">
+										<div class="slds-size_3-of-12 slds-text-align_center"
+											style="width:100% ; height:25px " title="Group ID"><b>Group ID</b></div>
+									</lightning-layout-item>
+									<lightning-layout-item size="2">
+										<div class="slds-size_3-of-12 slds-text-align_center"
+											style="width:100% ; height:25px " title="Originating System">
+											<b>Originating
+												System</b>
+										</div>
+									</lightning-layout-item>
+									<lightning-layout-item size="2">
+										<div class="slds-size_2-of-12 slds-text-align_center"
+											style="width:100% ; height:25px " title="No. of Cards Requested"><b>No.
+												of
+												Cards
+												Requested</b></div>
+									</lightning-layout-item>
+								</lightning-layout>
+
+								<!--Table Body-->
+								<lightning-layout multiple-rows="true" for:each={finalResponse} for:item="item"
+									for:index="indexVar" key={item.CardRequestDate} padding="around-medium"
+									class="slds-table_bordered slds-text-body_medium slds-p-right_xx-medium" size="12">
+									<lightning-layout-item class="slds-hint-parent" size="1">
+										<div class="accordionMenu slds-size_1-of-12 slds-text-align_center"
+											style="width:100%">
+											<lightning-button-icon data-att={indexVar} size="small"
+												data-actionname={item.iconName} icon-name={item.iconName}
+												onclick={navigateToIdCardDetails} onblur={navigatefromIdCardDetails}
+												class="accordianPass">
+											</lightning-button-icon>
+										</div>
+									</lightning-layout-item>
+									<lightning-layout-item size="1">
+										<div class="slds-size_3-of-12 slds-text-align_center slds-p-left_xxx-small"
+											style="width:100%">{item.CardRequestDate}</div>
+									</lightning-layout-item>
+									<lightning-layout-item size="5">
+										<div class="slds-size_3-of-12 slds-text-align_center" style="width:100%">
+											{item.GroupNbr}</div>
+									</lightning-layout-item>
+									<lightning-layout-item size="2">
+										<div class="slds-size_3-of-12 slds-text-align_center " style="width:100%">
+											{item.Platform}</div>
+									</lightning-layout-item>
+									<lightning-layout-item alignment-bump="bottom" size="2">
+										<div class="slds-size_2-of-12 slds-text-align_center " style="width:100%">
+											{item.CardCount}</div>
+									</lightning-layout-item>
+									</br>
+									<lightning-layout-item if:true={item.Accordion} alignment-bump="top" size="12">
+										<template if:true={item.selected}>
+											<div class="tableDiv">
+												<div class={tableStyle}>
+													<table aria-describedby="Group-IDCard-Status-Details"
+														class="slds-table slds-table_bordered custom-hover-border">
+														<!--Table Header-->
+														<thead>
+															<tr class="slds-line-height_reset">
+																<th class="slds-size_1-of-11" scope="col">
+																	<div class="slds-truncate" title="Member ID">
+																		Member
+																		ID
+																	</div>
+																</th>
+																<th class="slds-size_1-of-11" scope="col">
+																	<div class="slds-truncate" title="First Name">
+																		First
+																		Name
+																	</div>
+																</th>
+																<th class="slds-size_1-of-11" scope="col">
+																	<div class="slds-truncate" title="Last Name">
+																		Last
+																		Name
+																	</div>
+																</th>
+																<th class="slds-size_1-of-11" scope="col">
+																	<div class="slds-truncate" title="Dep Code">Dep
+																		Code
+																	</div>
+																</th>
+																<th class="slds-size_1-of-11" scope="col">
+																	<div class="slds-truncate" title="Business Seg">
+																		Business
+																		Seg</div>
+																</th>
+																<th class="slds-size_1-of-11" scope="col">
+																	<div class="slds-truncate" title="Request Date">
+																		Request
+																		Date</div>
+																</th>
+																<th class="slds-size_1-of-11" scope="col">
+																	<div class="slds-truncate" title="Status Date">
+																		Status
+																		Date</div>
+																</th>
+																<th class="slds-size_1-of-11" scope="col">
+																	<div class="slds-truncate" title="Status">Status
+																	</div>
+																</th>
+																<th class="slds-size_1-of-11" scope="col">
+																	<div class="slds-truncate" title="Reason">Reason
+																	</div>
+																</th>
+																<th class="slds-size_2-of-11" scope="col">
+																	<div class="slds-truncate" title="Card Type">
+																		Card
+																		Type
+																		<lightning-helptext
+																			content="Hover over the card type value for additional information.">
+																		</lightning-helptext>
+																	</div>
+																</th>
+															</tr>
+														</thead>
+														<!--Table Body-->
+														<tbody if:true={item.bGroupMemLvlSearch}>
+															<tr for:each={item.groupMemLvlSearch} for:item="gmem"
+																for:index="indexVar" key={gmem.CardRequestDate}
+																class="slds-hint-parent">
+
+																<td class="slds-size_1-of-11">
+																	<div>{gmem.MemberId}</div>
+																</td>
+																<td class="slds-size_1-of-11">
+																	<div>{gmem.FirstName}</div>
+																</td>
+																<td class="slds-size_1-of-11">
+																	<div>{gmem.LastName}</div>
+																</td>
+																<td class="slds-size_1-of-11">
+																	<div>{gmem.DependentCode}</div>
+																</td>
+																<td class="slds-size_1-of-11">
+																	<div>{gmem.BusinessSegment}</div>
+																</td>
+																<td class="slds-size_1-of-11">
+																	<div>{gmem.CardRequestDate}</div>
+																</td>
+																<td class="slds-size_1-of-11">
+																	<div>{gmem.StatusDate}</div>
+																</td>
+																<td class="slds-size_1-of-11">
+																	<div>{gmem.Status}</div>
+																</td>
+																<td class="slds-size_1-of-11">
+																	<div>{gmem.Reason}</div>
+																</td>
+																<td class="slds-size_2-of-11">
+																	<div title={gmem.CardTypeDesc}>{gmem.CardType}</div>
+																</td>
+
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</template>
+									</lightning-layout-item>
+								</lightning-layout>
+								<div if:true={noRecordFlag}>
+									<lightning-layout>
+										<lightning-layout-item size="12">
+											<div class="slds-size_12-of-12 slds-text-align_center slds-p-center_xxx-small"
+												style="width:100%">No Records to display</div>
+										</lightning-layout-item>
+									</lightning-layout>
+								</div>
+							</template>
+							<br>
+							<template if:true={isShowMoreVisible}>
+								<div class="slds-grid">
+									<div class="slds-col ">
+										<div class="slds-m-left_x-small" style="margin-top: 17px;">
+											<div class="slds-border_top"></div>
+										</div>
+									</div>
+									<div>
+										<lightning-button  class = "slds-button" name='showmore' variant="neutral" 
+										label="Show More" onclick={handleShowMoreClick}></lightning-button> 
+									</div>
+									<div class="slds-col">
+										<div class="slds-m-right_x-small" style="margin-top: 17px;">
+											<div class="slds-border_top"></div>
+										</div>
+									</div>
+								  </div>
+							</template>
+						</lightning-card>
+					</lightning-layout-item>
+				</lightning-layout>
+			</div>
+		</div>
+	</template>
+</template>

@@ -1,0 +1,44 @@
+﻿<!--
+Component Name   : LiveChat_CMP_HUM.component
+Version          : 1.0
+Created On       : 10/12/2017
+Function         : VF Component to display Live chat Transcript table from the controller LiveChatTranscript_C_HUM
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Sumit Pharande             148798                10/12/2017                    Original version
+ * Pradeepkumar Dani		  148798				11/17/2017				      re-factoring
+ * Prafull Verma	                    			04/07/2019					  REQ - 1915621: Security vulnerability
+ ****************************************************************************************************************************
+ -->
+<apex:component controller="LiveChatTranscript_C_HUM" id="cmpId" allowDML="true">
+	<apex:attribute name="caseRecordId" type="string" description="The Case Record ID"/>
+	<script src="{!URLFOR($Resource.CaseDetailResources_SR_HUM,'/LiveChatTranscript/LiveChatTranscript_JS_HUM.js')}"/>
+    <div class="container-fluid" id="ScreenshotArea" style="background:white;">
+        <div class="row no-gutter">
+            <c:BaseDataTable_CMP_HUM jqueryvariable="jQuery" 
+            tableid="caseLivechatDatatable" 
+            tablecontainerid="caseLivechatContainer"  
+            enablesearch="f"                 
+            columnname="{!columnName}" 
+            htmlColumnName="Owner,Name"
+            objname="LiveChatTranscript" 
+            keyword="false" 
+            col1_accordian="false"  
+            col1_editDelete="false" 
+            col1_orderable="true"
+            columnHeader="{!columnHeader}" 
+            orderColumn="1"
+            orderDirection="desc"
+            orderingBool="true"
+            />
+        </div>
+     </div>
+	<script>
+        var sGetCaseJSONData = '{!$RemoteAction.LiveChatTranscript_C_HUM.getTranscript}';
+        var sCaseRecordId = '{!JSENCODE(caseRecordId)}'; 
+        Visualforce.remoting.timeout = '{!$Label.HUMMemWebActivityTimeout}'; // Set timeout at page level
+   </script>
+   
+</apex:component>

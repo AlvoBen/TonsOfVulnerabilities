@@ -1,0 +1,19 @@
+﻿<!--
+Component        : ProviderCorrespondanceDisputeContainer
+Version          : 1.0
+Created On       : 10/12/2022
+Function         : Component to display to Provider Disputes tab Container.
+* Developer Name                       Date                         Description
+* Aishwarya Pawar                      10/12/2022                   US-3825306
+*------------------------------------------------------------------------------------------------------------------------------
+-->
+<template>
+    <div class="slds-grid slds-grid_vertical">
+        <div class="slds-col">
+            <c-generic-component-header iconname="utility:identity" subheaderline={memberPlanName} headerline='Medical Provider Correspondence Dispute Cases'></c-generic-component-header>
+        </div>
+        <div class="slds-col slds-m-top_medium">
+            <c-provider-disputes-summary-hum record-id={enterpriseId}></c-provider-disputes-summary-hum>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,173 @@
+﻿<!--
+Page Name        : ArchivedCaseDetail_VF_HUM.page
+Version          : 1.0 
+Created Date     : 09/10/2022 
+Function         : VF page for archived case detail in Classic
+Modification Log :
+*  Developer          Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+Kajal/Ashish                            09/10/2022             Original version
+-------------------------------------------------------------------------------------------------------------------------------->
+<apex:page >
+    <!-- This is used to include the JS files that makes embedding a Lightning App in  VF page possible -->
+    <apex:includeLightning />
+    <apex:includeScript value="/support/console/35.0/integration.js" /> 
+     <style>
+        
+       .slds-popover__body,
+.slds-popover__footer,
+.slds-popover__header {
+    position: relative;
+    padding: .5rem .75rem;
+    word-wrap: break-word
+}
+
+.slds-popover {
+    position: relative;
+    border-radius: .25rem;
+    width: 20rem;
+    min-height: 2rem;
+    z-index: 6000;
+    background-color: #fff;
+    display: inline-block;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .16);
+    border: 1px solid #d9dbdd
+}
+
+.slds-popover--tooltip,
+.slds-popover_tooltip {
+    width: auto;
+    max-width: 20rem;
+    background: #16325c;
+    border: 0
+}
+.slds-popover--tooltip .slds-popover__body,
+.slds-popover_tooltip .slds-popover__body {
+    font-size: .75rem;
+    color: #fff
+}
+
+.slds-fall-into-ground {
+    visibility: hidden;
+    opacity: 0;
+    transform: translate(0, 0);
+    transition: opacity .1s linear, visibility .1s linear, transform .1s linear;
+    will-change: transform
+}
+
+.slds-nubbin--bottom-left:before,
+.slds-nubbin_bottom-left-corner:before,
+.slds-nubbin_bottom-left:before {
+    width: 1rem;
+    height: 1rem;
+    position: absolute;
+    transform: rotate(45deg);
+    content: '';
+    background-color: inherit;
+    bottom: -.5rem;
+    margin-left: -.5rem
+}
+
+.slds-nubbin--bottom-left:after,
+.slds-nubbin--bottom-left:before,
+.slds-nubbin_bottom-left-corner:after,
+.slds-nubbin_bottom-left-corner:before,
+.slds-nubbin_bottom-left:after,
+.slds-nubbin_bottom-left:before {
+    left: 1.5rem;
+    top: 100%;
+    margin-top: -.5rem
+}
+
+.slds-nubbin--bottom-left:after,
+.slds-nubbin_bottom-left-corner:after,
+.slds-nubbin_bottom-left:after {
+    box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, .16);
+    z-index: -1
+}
+
+.slds-popover :last-child {
+    margin-bottom: 0
+}
+
+.slds-scope .slds-tabs_default__item.slds-is-active .slds-tabs_default__link {
+
+    font-weight: 700;
+
+ }
+
+
+    </style>
+        <!-- This is where the component gets embeded -->
+    <div id="lightning" />
+    <script>
+        
+   let caseDetailData = '{!$CurrentPage.parameters.Params}';
+   let parseedData =  JSON.parse(caseDetailData);
+                //1. Specify the Lightning App
+        $Lightning.use("c:CaseDetailAuraApp", function () {
+                        //2. Specify the Aura Component that has LWC in it
+            $Lightning.createComponent("c:archivedCaseDetailContainerHum",
+                {
+                    encodedData: parseedData.recordId,
+                    isClassic:true
+                },
+                "lightning",
+                function (cmp) {
+                   
+                }
+            );
+        });
+        document.addEventListener("opencasecomments", function(event){
+         if (sforce.console.isInConsole()) {
+            sforce.console.getEnclosingTabId(function(enclosingResult) {
+                sforce.console.getEnclosingPrimaryTabId(function(primaryResult) {
+                    sforce.console.openSubtab(primaryResult.id, '/apex/ArchivedCaseComments_VF_HUM?Params='+ JSON.stringify(event.detail), true, event.detail.tabName, null, null, 'salesforceSubtab'+event.detail.tabName);
+                });
+            });
+   		 }
+          
+	});
+    
+        document.addEventListener("openuserdetailclassic", function(event){
+		if (sforce.console.isInConsole()) {
+            sforce.console.getEnclosingTabId(function(enclosingResult) {
+                sforce.console.getEnclosingPrimaryTabId(function(primaryResult) {
+                    sforce.console.openSubtab(primaryResult.id, '/'+event.detail, true, '', null);
+                });
+            });
+        }
+
+	});
+    document.addEventListener("dosearch", function(event){
+        if (sforce.console.isInConsole()) {
+            
+            sforce.console.getEnclosingTabId(function(enclosingResult) {
+                sforce.console.getEnclosingPrimaryTabId(function(primaryResult) { 
+                	sforce.console.openSubtab(primaryResult.id, '/apex/ArchivedCaseViewAll_VF_HUM?Params='+JSON.stringify(event.detail), true, event.detail.nameOfScreen, null, null, 'salesforceSubtab'+event.detail.nameOfScreen);
+                });
+            });
+        }
+        
+    });
+    
+    document.addEventListener("openRecordDetailsPage", function(event){
+       console.log(' account id in VF ==> ',JSON.stringify(event.detail));
+        if (sforce.console.isInConsole()) {
+            
+            sforce.console.getEnclosingTabId(function(enclosingResult) {
+                sforce.console.getEnclosingPrimaryTabId(function(primaryResult) {
+                    sforce.console.openSubtab(primaryResult.id, '/'+event.detail, true, '', null);
+                });
+            });
+        }
+        
+    });
+    
+    document.addEventListener("dcnLinkevent", function(event){
+		window.open(event.detail, '_blank');
+        
+    });
+    
+    </script>
+</apex:page>

@@ -1,0 +1,24 @@
+﻿<!--
+Page Name        : HUMCloseFlow
+Version          : 1.0 
+Created Date     : 06/11/2015 
+Function         : This Page gets referneced in the HUMAddressVerificationProcess
+Modification Log :
+*   Developer                      Code Review      Date                       Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Santhi Mandava                  17353         08/11/2014                    Original
+*   Moshitha Gunasekaran            218172        04/22/2018                    REQ - 359158 Populate Creditable Coverage subtype on completion of ATTVF template 
+*   Amar Gadewar                                  05/21/2021                    User Story 1874589: T1PRJ0001827 - MF 1 - AHT - "Medicaid PAR Provider Not Accepting" template auto routing (CRM)
+*	Mithra Bharadwaj															US#2089572 Sonar Qube Changes
+* ------------------------------------------------------------------------------------------------------------------------------
+-->
+
+<apex:page standardController="Case" extensions="CloseFlow_C_HUM">
+    <apex:includeScript value="/support/console/31.0/integration.js" />
+    <apex:includeScript value="{!$Resource.HUMUnSavedChangesJS}"/>
+    <script>
+	    var sProcessTypeValue = '{!JSENCODE(sProcessType)}';
+        var selectedCaseId = '{!JSENCODE(sSelectedCaseId)}';
+        window.onload = closeTemplatetabs();
+    </script>
+</apex:page>

@@ -1,0 +1,419 @@
+﻿<!--
+LWC Name        : BenefitsSummaryCommercial.html
+Function        : LWC to display Benefit Summary Details
+
+Modification Log:
+* Developer Name                  Date                         Description
+* Swapnali Sonawane               03/17/2022                   US-3017787_3191923 - Benefit Summary
+* Swapnali Sonawane               06/27/2022                   Defct 5222 Network Description does not match Classic to Lightning
+* Swapnali Sonawane               08/23/2022                   US#3631288 Use purchaser plan object
+* Divya Bhamre                    10/28/2022                   US - 3833519
+* Vishal Shinde                   06/29/2023                   US - 4755856-Medical Plan - Update Headers
+*************************************************************************************************************************** -->
+<template>
+    <div class="slds-box slds-p-around_none">
+        <div class="slds-page-header slds-page-header_record-home slds-page-header--object-home slds-page-header_joined  slds-shrink-none test-headerRegion forceListViewManagerHeader">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <lightning-icon icon-name='standard:record' size='medium'></lightning-icon>
+                        </div>
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1><span class="slds-page-header__title slds-truncate slds-text-align_center slds-p-top_xx-small">Benefits Summary</span></h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <template if:true={serviceerror}>
+        <div class="slds-p-around_small">
+            <c-generic-scoped-notification-hum type="error" iconname="utility:error"
+                message={message}></c-generic-scoped-notification-hum>
+        </div>
+    </template>
+    <div class="slds-grid slds-gutters slds-wrap slds-m-top_x-small slds-var-m-left_x-small slds-p-right_small slds-p-bottom_medium" onclick={handleLogging}>
+        <div class="slds-col slds-size_4-of-12">
+            <div class="slds-grid slds-gutters slds-grid_align-spread">
+                <div class="slds-col slds-size_6-of-12 logthis" data-logid={generateLogId} data-label="Member Id"
+                    data-id="Member Id" data-value={memberPlanData.Name}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">Member Id</span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <strong class="copyable slds-m-right_small slds-text-link"
+                                style="font-weight: normal;cursor:pointer;" onclick={navigateToPlanPage}>
+                                {memberPlanData.Name}</strong>
+                            <a role="button">
+                                <c-generic-copy-icon-hum copycontent={memberPlanData.Name}></c-generic-copy-icon-hum>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_6-of-12 logthis" data-logid={generateLogId} data-label="Benefits Period"
+                    data-id="Benefits Period" data-value={PBEData.packageinfo}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">Benefits Period
+                            <c-generic-help-text-hum helptext={labels.BenefitsPeriod}></c-generic-help-text-hum>
+                        </span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <div style="font-weight: normal;" class="slds-form-element__static ">
+                                {PBEData.packageinfo}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_3-of-12">
+            <div class="slds-grid slds-gutters slds-grid_align-space">
+                <div class="slds-col slds-size_10-of-12 logthis" data-logid={generateLogId} data-label="Coverage Type"
+                    data-id="Coverage Type" data-value={MBEData.CoverageType}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">Coverage Type</span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <template if:true={isMBELoading}>
+                                <div class="exampleHolder">
+                                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                                </div>
+                            </template>
+                            <div style="font-weight: normal;" class="slds-form-element__static">{MBEData.CoverageType}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_5-of-12">
+            <div class="slds-grid slds-gutters slds-grid_align-spread">
+                <div class="slds-col slds-size_6-of-12 logthis" data-logid={generateLogId} data-label="Benefits Package"
+                    data-id="Benefits Package" data-value={memberPlanData.Plan.Benefit_Coverage__c}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">Benefit Package ID</span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <div style="font-weight: normal;" class="slds-form-element__static">
+                                {memberPlanData.Plan.Benefit_Coverage__c}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_6-of-12 logthis" data-logid={generateLogId} data-label="Plan Options"
+                    data-id="Plan Options" data-value={PBEData.planOption}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">Plan Options</span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <div style="font-weight: normal;" class="slds-form-element__static">{PBEData.planOption}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_4-of-12">
+            <div class="slds-grid slds-gutters slds-grid_align-spread">
+                <div class="slds-col slds-size_6-of-12 logthis" data-logid={generateLogId} data-label="HDHP"
+                    data-id="HDHP" data-value={PBEData.hdhp}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">HDHP
+                            <c-generic-help-text-hum helptext={labels.HDHP}></c-generic-help-text-hum>
+                        </span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <div style="font-weight: normal;" class="slds-form-element__static">{PBEData.hdhp} </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_6-of-12 logthis" data-logid={generateLogId} data-label="Deductible Type"
+                    data-id="Deductible Type" data-value={PBEData.DeductibleType}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">Deductible Type
+                            <c-generic-help-text-hum helptext={labels.Deductible_Type}></c-generic-help-text-hum>
+                        </span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <div style="font-weight:normal;" class="slds-form-element__static">{PBEData.DeductibleType}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_3-of-12">
+            <div class="slds-grid slds-gutters slds-grid_align-space">
+                <div class="slds-col slds-size_10-of-12 logthis" data-logid={generateLogId}
+                    data-label="Out of Area Indicator" data-id="Out of Area Indicator"
+                    data-value={MBEData.OutOfAreaIndicator}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small"> Out of Area Indicator</span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <template if:true={isMBELoading}>
+                                <div class="exampleHolder">
+                                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                                </div>
+                            </template>
+                            <div style="font-weight: normal;" class="slds-form-element__static">
+                                {MBEData.OutOfAreaIndicator}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_5-of-12">
+            <div class="slds-grid slds-gutters slds-grid_align-spread">
+                <div class="slds-col slds-size_6-of-12 logthis" data-logid={generateLogId} data-label="Paid Thru Date"
+                    data-id="Paid Thru Date" data-value={BillingData.PaidThroughDate}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">Paid Thru Date</span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <div style="font-weight: normal;" class="slds-form-element__static">
+                                {BillingData.PaidThroughDate}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_6-of-12 logthis" data-logid={generateLogId} data-label="Certificate"
+                    data-id="Certificate" data-value={GBEData.Certificate}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">Certificate</span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <template if:true={isGBELoading}>
+                                <div class="exampleHolder">
+                                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                                </div>
+                            </template>
+                            <div style="font-weight: normal;" class="slds-form-element__static">{GBEData.Certificate}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_4-of-12">
+            <div class="slds-grid slds-gutters slds-grid_align-spread">
+                <div class="slds-col slds-size_6-of-12 logthis" data-logid={generateLogId} data-label="COBRA"
+                    data-id="COBRA" data-value={MBEData.Cobra}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">COBRA</span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <div style="font-weight: normal;" class="slds-form-element__static">{MBEData.Cobra}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_6-of-12 logthis" data-logid={generateLogId} data-label="MH Vendor Code"
+                    data-id="MH Vendor Code" data-value={GBEData.MHVenderCode}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">MH Vendor Code
+                            <c-generic-help-text-hum helptext={labels.MHVenderCode}></c-generic-help-text-hum></span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <template if:true={isGBELoading}>
+                                <div class="exampleHolder">
+                                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                                </div>
+                            </template>
+                            <div style="font-weight: normal;" class="slds-form-element__static">{GBEData.MHVenderCode}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_3-of-12">
+            <div class="slds-grid slds-gutters slds-grid_align-space">
+                <div class="slds-col slds-size_10-of-12 logthis" data-logid={generateLogId} data-label="Retired"
+                    data-id="Retired" data-value={MBEData.Retire}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">Retired</span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <div style="font-weight: normal;" class="slds-form-element__static">{MBEData.Retire}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_5-of-12">
+            <div class="slds-grid slds-gutters slds-grid_align-spread">
+                <div class="slds-col slds-size_6-of-12 logthis" data-logid={generateLogId}
+                    data-label="Max Dependent Age" data-id="Max Dependent Age" data-value={GBEData.MaxDependentAge}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">Max Dependent Age</span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <template if:true={isGBELoading}>
+                                <div class="exampleHolder">
+                                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                                </div>
+                            </template>
+                            <div style="font-weight: normal;" class="slds-form-element__static">
+                                {GBEData.MaxDependentAge}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_6-of-12 logthis" data-logid={generateLogId} data-label="Max Student Age"
+                    data-id="Max Student Age" data-value={GBEData.MaxStudentAge}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">Max Student Age</span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <template if:true={isGBELoading}>
+                                <div class="exampleHolder">
+                                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                                </div>
+                            </template>
+                            <div style="font-weight: normal;" class="slds-form-element__static">{GBEData.MaxStudentAge}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_4-of-12">
+            <div class="slds-grid slds-gutters slds-grid_align-spread">
+                <div class="slds-col slds-size_6-of-12 logthis" data-logid={generateLogId} data-label="Market"
+                    data-id="Market" data-value={GBEData.Market}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">Market</span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <template if:true={isGBELoading}>
+                                <div class="exampleHolder">
+                                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                                </div>
+                            </template>
+                            <div style="font-weight: normal;" class="slds-form-element__static">{GBEData.Market}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_6-of-12 logthis" data-logid={generateLogId}
+                    data-label="Selling Ledger Number" data-id="Selling Ledger Number"
+                    data-value={GBEData.SellingLedgerNumber}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">Selling Ledger Number</span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <template if:true={isGBELoading}>
+                                <div class="exampleHolder">
+                                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                                </div>
+                            </template>
+                            <div style="font-weight: normal;" class="slds-form-element__static">
+                                {GBEData.SellingLedgerNumber}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_3-of-12">
+            <div class="slds-grid slds-gutters slds-grid_align-space">
+                <div class="slds-col slds-size_10-of-12 logthis" data-logid={generateLogId}
+                    data-label="Selling Ledger Description" data-id="Selling Ledger Description"
+                    data-value={GBEData.SellingLedgerDescription}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">Selling Ledger Description</span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <template if:true={isGBELoading}>
+                                <div class="exampleHolder">
+                                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                                </div>
+                            </template>
+                            <div style="font-weight: normal;" class="slds-form-element__static">
+                                {GBEData.SellingLedgerDescription}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_5-of-12">
+            <div class="slds-grid slds-gutters slds-grid_align-spread">
+                <div class="slds-col slds-size_6-of-12 logthis" data-logid={generateLogId}
+                    data-label="Last Renewal Date" data-id="Last Renewal Date" data-value={GBEData.LastRenewalDate}>
+                    <div class="slds-form-element slds-form-element_readonly">
+                        <span class="slds-form-element__label slds-m-top_x-small">Last Renewal Date</span>
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <template if:true={isGBELoading}>
+                                <div class="exampleHolder">
+                                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                                </div>
+                            </template>
+                            <div style="font-weight: normal;" class="slds-form-element__static">
+                                {GBEData.LastRenewalDate}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_6-of-12 logthis" data-logid={generateLogId}
+                data-label="Network Description" data-id="Network Description" data-value={GBEData.GBENetworkDesc}>
+                <div class="slds-form-element ">
+                    <span class="slds-form-element__label slds-m-top_x-small">Network Description</span>
+                    <div class="slds-form-element__control slds-m-top_x-small">
+                        <template if:true={isGBELoading}>
+                            <div class="exampleHolder">
+                                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                            </div>
+                        </template>
+                        <div style="font-weight: normal;" class="slds-form-element__static">
+                            {GBEData.GBENetworkDesc}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_7-of-12"></div>
+        <div class="slds-col slds-size_5-of-12">
+            <div class="slds-grid slds-gutters slds-grid_align-spread">
+                <div class="slds-col slds-size_6-of-12"></div>
+                <div class="slds-col slds-size_6-of-12">
+                    <div class="slds-show" data-key="NetworkShow">
+                        <div>
+                            <template if:true={isMBELoading}>
+                                <div class="exampleHolder">
+                                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                                </div>
+                            </template>
+                            <ul>
+                                <template iterator:it={MBEData.NetworkDesc}>
+                                    <li key={it.value.Id}>
+                                        <div class="slds-var-m-top_x-small">
+                                            <span data-val={it.value.value} class="logthis" data-logid={generateLogId}
+                                                data-label={it.value.label} data-id={it.value.label} 
+                                                data-value={it.value.value}>
+                                                {it.value.label} - </span>
+                                            <a data-val={it.value.value} onclick={onNetworkClick}>{it.value.value}</a>
+                                        </div>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+                        <div style="border-top: 1px solid rgba(236, 233, 233, 0.973)"
+                            class="slds-align_absolute-center slds-form-element_readonly">
+                            <a class="slds-text-heading_small slds-text-align_center"
+                                onclick={onHideClick}>{hideShowLink}</a>
+                        </div>
+                    </div>
+                    <div class="slds-hide" data-key="NetworkHide">
+                        <div class="slds-form-element__control slds-m-top_x-small">
+                            <ul>
+                                <template iterator:it={MBEData.NetworkDesc}>
+                                    <li key={it.value.Id}>
+                                        <div if:true={it.first}>
+                                            <span data-val={it.value.value} class="logthis" data-logid={generateLogId}
+                                                data-label={it.value.label} data-id={it.value.label}
+                                                data-value={it.value.value}>
+                                                {it.value.label} - </span>
+                                            <a data-val={it.value.value} onclick={onNetworkClick}>{it.value.value}</a>
+                                        </div>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+                        <div style="border-top: 1px solid rgba(236, 233, 233, 0.973)"
+                            class="slds-align_absolute-center slds-form-element_readonly">
+                            <a class="slds-text-heading_small slds-text-align_left "
+                                onclick={onShowClick}>{hideShowLink}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ </div>
+</template>

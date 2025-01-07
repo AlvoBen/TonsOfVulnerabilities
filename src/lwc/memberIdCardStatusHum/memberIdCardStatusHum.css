@@ -1,0 +1,56 @@
+.THIS.c-container {border: 1px solid #d8dde6;margin: 10px 0 20px 0;}
+
+.THIS.verline {
+    
+    border-left: 3px solid lightgrey;
+    height: 100px;
+  }
+
+.custom-hover-border:hover{
+    border: 2px solid;
+    border-color:#008ae6;
+  }
+
+.custom-hover-border{
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    border-radius: 5px;
+    width: 100%;
+  }
+
+.THIS .slds-modal__close {
+    top: 1rem !important;
+    right: 1.0rem !important;
+}
+.popoverid{
+  display:block;
+}
+.popout{
+  display:none;
+}
+
+.tooltipinfo:hover + .slds-popover.slds-popover_tooltip.slds-hide {
+  display : inline-block!important;
+ 
+}
+
+.THIS.tooltipinfo{
+  fill: var(--slds-c-icon-color-foreground, rgb(3,67,169));
+}
+.THIS.slds-button__icon{
+  fill: var(--slds-c-icon-color-foreground, rgb(3,67,169));
+
+}
+
+.solid {
+    border-top: 0.5px solid rgb(252, 251, 251);
+    width: 100%;
+    }
+
+.THIS.child-section {
+        background-color: #03436d !important;
+        Fill:#03436d;
+        }
+
+.template-full-width {
+        width: 100%;      
+        }

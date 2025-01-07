@@ -1,0 +1,8 @@
+:host {
+    --sds-c-card-color-background: #154877;
+	--sds-c-card-text-color: white;
+}
+.no-hover tr:hover{
+    background:  #154877;
+    color: white;
+}

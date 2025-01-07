@@ -1,0 +1,724 @@
+﻿<!--
+Component Name   : Quickstart_RXRF_CMP_HUM.component
+Version          : 1.0
+Created On       : 02/20/2020
+Function         : VF Component to display Quickstart for Pharmacy
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description 
+***********************************************************************************************************************************************
+* Kiran Kumar                                       02/20/2020                   Original version REQ 702843
+* AshokKumar Nutalapati	                   		    04/30/2020            	     REQ - 933476 PR00093944 - MF 1 - Humana Pharmacy Quick Start+ Page - Demographic and Guidance Alert Icons (CRMS)
+* Kiran Bhuvanagiri									01/17/2021					 User Story: 1600241: Humana Pharmacy Quick Start+ - Display Informational Message When Case in History with Same Classification (CRMS)
+* Pallavi Shewale								    02/10/2021	    	         User Story 1669828 - PR00094226 - CR AEP readiness -Research - Critical Security Issues
+* Himalay Patel			                            04/13/2021 			         User Story 2051142: T1PRJ0002517 - MF 1 - Auto-Select G&A Rights Given and Complaint Based on Service Model Type - Quick Start (CRMS) (ID# 137)
+* Himalay Patel									    04/28/2021			          DF - 2947 Fix
+* Himalay Patel			                            06/07/2021 			         User Story 2140529: T1PRJ0002517 - MF 1 - TECH - Switch Clean Up - Auto-Select G&A Rights Given and Complaint Based on Service Model Type - Quick Start (CRMS) (ID# 137)
+* Himalay Patel                                     06/18/2021                   User Story 2360500: T1PRJ0002517 - MF 2 - Display Balance Due Icon on the Humana Pharmacy Quick Start+ Page (CRMS) (ID# 131)
+* AshokKumar Nutalapati                         	07/12/2021                   REQ - 2206208 T1PRJ0002517 - MF 1 - Update Humana Pharmacy Quick Start for HSP Users (CRMS) (ID# 143)
+* Tharun Kumar M                                    05/10/2022                   US-3370321 : T1PRJ0010888 - MF [1] - Rebranding- Update text references from "Humana Pharmacy" to "Mail Order Pharmacy" - HP Quick Start
+* Bhavani Tati                                      05/20/2022                   User Story 2413145: T1PRJ0002517 - MF 5 - TECH - Switch Clean Up - Update Humana Pharmacy Quick Start for HSP Users (CRMS) (ID# 143)
+* Vivek												07/09/2022		             Updated the JS query to new Datatables to version to 1.12.1
+* Tharun Madishetti                                    08/03/2023                 US-4647290:T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Quick Start (Group 2)
+***********************************************************************************************************************************************
+---->
+   
+<apex:component controller="QuickStart_RXRF_C_HUM" allowDML="true"> 
+    
+    <meta content="maximum-scale=1.0, initial-scale=1.0, width=device-width" name="viewport" />
+    <apex:includescript value="/support/console/36.0/integration.js" /> 
+    <apex:includescript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" /> 
+    <apex:includescript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}" />
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.Quickstart_RXRF_SR_HUM, 'QuickStart_SR_HUM/styles/QuickStart_VF_Style.css')}"/>
+    
+
+    <apex:stylesheet value="{!URLFOR($Resource.Quickstart_RXRF_SR_HUM, 'QuickStart_SR_HUM/styles/QuickStart_CMP_Style.css')}"/>
+    <apex:includescript value="{!URLFOR($Resource.Quickstart_RXRF_SR_HUM,'QuickStart_SR_HUM/scripts/QuickStart_VF_Script_RXRF.js')}"/>
+    <apex:includescript value="{!URLFOR($Resource.Quickstart_RXRF_SR_HUM,'QuickStart_SR_HUM/scripts/QuickStart_CMP_Script_RXRF.js')}"/>
+    <apex:includescript value="{!URLFOR($Resource.Quickstart_RXRF_SR_HUM,'QuickStart_SR_HUM/scripts/QuickStart_CMP_Pretext_Script_RXRF.js')}"/>
+    
+    <apex:form >
+        <apex:actionFunction name="createCaseAndOpenAF" action="{!assignCaseValues}" onComplete="openNewCaseInSubtab(); return false;" rerender="outCaseJs,errorMessageid">
+            <apex:param id="sFocusedObjectIdValue" name="focusedObj" assignTo="{!sFocusedObjId}" value=""></apex:param>
+            <apex:param id="sinteractionIdValue" name="interactionId" assignTo="{!sInteractionId}" value=""></apex:param>
+        </apex:actionFunction>
+		
+		<!--Changes for REQ 1600241 14days warning -->
+        <apex:actionFunction name="show14daysWarningAF"  action="{!check14daysCase}" onComplete="show14daysWarning(); return false;" rerender="outCaseJs,duplicatecaseError,errorMessageid,duplicateCaseWrapper">
+            <apex:param id="sfocusedAccObjValue" name="focusedAccObj" assignTo="{!sFocusedAccountId}" value=""></apex:param>            
+            <apex:param id="sfocusedClasValue" name="focusedClas" assignTo="{!sSelectedClassiifcationId}" value=""></apex:param>
+        </apex:actionFunction>
+          <apex:actionFunction name="callFunAF" reRender="commentsBox" oncomplete="getPopupForCaseHistory('{!$CurrentPage.parameters.caseIdValues}','{!$CurrentPage.parameters.elemID}');">
+            <apex:param name="caseIdValues" value=""/>
+            <apex:param name="elemID" value=""/>
+        </apex:actionFunction>
+	<!--end Changes for REQ 1600241 14days warning -->
+	
+        <apex:actionFunction name="resetAF" action="{!reset}"/> 
+        <apex:actionFunction name="resetIntentAF" rerender="inDropIntent"/>
+        <apex:actionFunction name="complaintFieldDependenciesAF" rerender="Complaintreason,inDropComplainttype,inDropComplaintreason"/>
+        <apex:actionFunction name="gaFieldDependenciesAF" rerender="inDropGareason"/>
+        
+        <apex:actionFunction name="setClassificationAF" rerender="inDropIntent" oncomplete="activateIntent();showPreviousComments();setComplaint();setGhostCallIntent();">
+            <apex:param id="classificationGCId" name="classificationGCName" assignTo="{!sClassificationSelect}" value=""></apex:param>
+        </apex:actionFunction>
+        <!--RXRF - REQ-414545 by Aaron -  Added logpanel to rerender-->
+        <apex:actionFunction name="IntentAF" action="{!populateDocumentLinks}" rerender="outPanelDocLinks, caseCommentPanel, logpanel" oncomplete="setComplaint();checkclasAndIntent();"/>
+        <div id="div-panel-cmp" class="panel panel-default">
+            <div id="div-panel-body" class="panel-body">
+                <div id="div-row-info" class="row">
+                    <div id="div-alert-container">
+                        <div id="div-sizealert-qs" class="alert alert-warning" style="display: none;" role="alert">
+                               <div class="div-alert-iconcontainer" style="vertical-align:top">
+                                <apex:image id="qs-SizeError" value="/img/msg_icons/error24.png"/>
+                            </div>
+                           <div id="qs-sizeErrormsg" class="div-alert-messagecontainer"></div>
+                        </div> 
+
+                        <div id="div-alert-qs" class="alert alert-warning" style="display: none;" role="alert">
+                            <div class="div-alert-iconcontainer" style="vertical-align:top">
+                                <apex:image id="qs-Error" value="/img/msg_icons/error24.png"/>
+                            </div>
+                            <div id="qs-Error-messagecontainer" class="div-alert-messagecontainer"></div>
+                        </div>
+						<!-- changes for REQ 1600241 14days warning-->
+                           <div id="div-alert-existing-14classification" class="alertGuidance alert-warning" style="display: none;" role="alert">
+	                            	<div class="div-alert-iconcontainer" style="vertical-align:top">
+	                                	<apex:image id="Warning-existing-classification" value="/img/msg_icons/info24.png" />
+	                              	</div>
+	                              	<div class="div-alert-inputmessagecontainer">
+	                                	<b>Info: </b><br/>{!$Label.QuickStart_RXRF_Case_14days}<br/>
+                                        <apex:outputPanel id="duplicateCaseWrapper">
+                            				<apex:repeat id="rptDocLinknum" value="{!listOfClassObj}" var="oLink" >
+                                                <a href="#" class="linkDocuments" id="case-link-{!oLink.Id}" style="margin-left: 0px; !important" onclick="openduplicateCase('{!oLink.Id}','{!oLink.Title}'); return false;" onmouseover="showCaseComment('{!oLink.Id}',this.id);" onmouseout="hidecasecomment();">{!oLink.Title}
+                                                    </a>  
+											</apex:repeat>
+                        				</apex:outputPanel>	                       	                              	
+	                              </div>  
+								</div>
+                        <apex:outputPanel layout="block" id="commentsBox" >
+                            <div id="PopUp3" class="arrow_box" style="display: none;">
+                            <c:HUMPopUPForCaseComments id="CustomComponent" CaseId="{!$CurrentPage.parameters.caseIdValues}"/>
+                            </div>
+    					</apex:outputPanel>
+                        <!--End - changes for REQ 1600241 14days warning-->
+						
+                        <div id="div-alert-multipolmem" class="alert alert-warning" style="display: none;" role="alert">
+                          <div class="div-alert-iconcontainer" style="vertical-align:top">
+                            <apex:image id="Warning" value="/img/msg_icons/warning24.png"/>
+                            </div> 
+                            <div class="div-alert-inputmessagecontainer">
+                                <b>Warning: </b><br/>{!$Label.QUICKSTART_MULTIPOLMEM_HUM}
+                                   <a href="#" class="btn btn-default btn-xs alert-link btnstyle" onclick="createCaseAndOpen()">Yes</a>
+                                   <a href="#" class="btn btn-default btn-xs alert-link btnstyle" onclick="hideAlerts()">No</a>
+                            </div>                              
+                        </div>
+                        <!-- REQ-404669: User does not have access to edit the case in focus error message | M3 -->
+                        <!--<div id="div-alert-case-permission" class="alert alert-warning" style="display: none;" role="alert">
+                          <div class="div-alert-iconcontainer" style="vertical-align:top">
+                            <apex:image id="Warning" value="/img/msg_icons/error24.png"/>
+                            </div> 
+                            <div class="div-alert-inputmessagecontainer">
+                                <b>Error: </b><br/>{!$Label.QUICKSTART_RXRF_CASEPERMISSIONMSG}
+                            </div>                              
+                        </div>-->
+                        <!-- END REQ-404669 -->
+                        <!--Kiran Changes for multiple HP page open Warming message-->
+                        <div id="div-alert-multiHP" class="alert alert-warning" style="display: none;" role="alert">
+                          <div class="div-alert-iconcontainer" style="vertical-align:top">
+                            <apex:image id="HPWarning" value="/img/msg_icons/warning24.png"/>
+                            </div> 
+                            <div class="div-alert-inputmessagecontainer">
+                                <b>Warning: </b><br/>{!$Label.MultipleHP_Error_QS_RX_HUM}
+                                   <a href="#" class="btn btn-default btn-xs alert-link btnstyle" onclick="createCaseAndOpen()">Yes</a>
+                                   <a href="#" class="btn btn-default btn-xs alert-link btnstyle" onclick="hideAlerts()">No</a>
+                            </div>                              
+                        </div>
+
+
+                        <!-- Multiple Case open warning message -->
+                        
+                        <div id="div-alert-multiCase" class="alert alert-warning" style="display: none;" role="alert">
+                          <div class="div-alert-iconcontainer" style="vertical-align:top">
+                            <apex:image id="Warning2" value="/img/msg_icons/warning24.png"/>
+                            </div> 
+                            <div class="div-alert-inputmessagecontainer">
+                                <b>Warning: </b><br/> {!$Label.QUICKSTART_MULTICASE_HUM}
+                                   <a href="#" class="btn btn-default btn-xs alert-link btnstyle" onclick="updatecommentsToCase()">Yes</a>
+                                   <a href="#" class="btn btn-default btn-xs alert-link btnstyle" onclick="hideAlerts()">No</a>
+                            </div>                              
+                        </div>
+                        <!-- Classification and Intent Combination Warning -->
+                        <div id="div-alert-classiIntent" class="alert alert-warning" style="display: none;" role="alert">
+                            <div class="div-alert-iconcontainer" style="vertical-align:top; display:inline">
+                                <apex:image id="Warning-classiIntent" value="/img/msg_icons/warning24.png"/>
+                            </div> 
+                            <div class="div-alert-inputmessagecontainer">
+                                <b>Warning: </b><br/>{!$Label.ClassifIntentWarning_RXRF}
+                                <a href="#" class="btn btn-default btn-xs alert-link btnstyle" onclick="hideAlerts();enableScreen();">Yes</a>
+                                <a href="#" class="btn btn-default btn-xs alert-link btnstyle" onclick="hideAlerts();resetClasfiIntent();">No</a>
+                            </div>                              
+                        </div>                            
+                        <div id="div-alert-pretexttemplate" class="alert alert-warning" style="display: none;" role="alert">
+                          <div class="div-alert-iconcontainer" style="vertical-align:top">
+                            <apex:image id="Warning-pretext" value="/img/msg_icons/warning24.png"/>
+                            </div> 
+                            <div class="div-alert-inputmessagecontainer">
+                                <b>Warning: </b><br/>{!$Label.QUICKSTART_PRETEXTTEMPLATE_HUM}
+                                   <a href="#" class="btn btn-default btn-xs alert-link btnstyle" onclick="resetPretextTemplate()">Yes</a>
+                                   <a href="#" class="btn btn-default btn-xs alert-link btnstyle" onclick="hideAlerts();defaultPretextTemplate();">No</a>
+                            </div>                              
+                        </div>
+                        <apex:pageMessages id="errorMessageid"/>       
+                    </div>
+                    <!-- REQ-405917: Hide the following “Outstanding Item” informational messages in Quick Start until a later date | M3 -->
+                    <!-- <div id="div-alert-outstandingitem" class="alertGuidance alert-warning" style="display: none;" role="alert"> 
+                        <div class="div-alert-iconcontainer" style="vertical-align:top"> 
+                            <apex:image id="outstandingitem-Error" value="/img/msg_icons/info24.png" /> 
+                        </div> 
+                        <div id="verify-outstandingitem" class="div-alert-messagecontainer"></div> 
+                    </div> -->
+                    <!-- END REQ-405917-->
+                    <div>
+                        <button type="button" id="btnReset" class="btn btn-primary btn-xs pull-right" onClick="resetAll()">Reset</button>                           
+                    </div>
+					<div id="alertsSection" class="alertsStyle">
+						<div id="guidanceAlert" class="guidanceAlertStyle">
+							<apex:image id="guidanceAlertIcon" styleClass="" url="{!URLFOR($Resource.Quickstart_RXRF_AHT_SR_HUM, 'QuickStart_SR_HUM/icons/GuidanceAlertIcon.png')}" height="43" width="60"></apex:image>
+							<span style="display: block;">Guidance <br/>Alert</span>
+						</div>
+						<div id="verifyDemographics" class="demographicsStyle">
+							<apex:image id="verifyDemographicsIcon" styleClass="" url="{!URLFOR($Resource.Quickstart_RXRF_AHT_SR_HUM, 'QuickStart_SR_HUM/icons/VerifyDemographics.png')}" height="50" width="50"></apex:image>
+							<span style="display: block;">Verify <br/>Demographics</span>
+                        </div>
+                        <div id="balanceDue" class="balanceDueStyle">
+							<apex:image id="balanceDueIcon" styleClass="" url="{!URLFOR($Resource.Quickstart_RXRF_AHT_SR_HUM, 'QuickStart_SR_HUM/icons/BalanceDueIcon.png')}" height="43" width="60"></apex:image>
+							<span style="display: block;">Balance <br/>Due</span>
+						</div>                       
+					</div>
+                </div>
+                <!-- End of errpr message section-->
+                <!-- now rxrf filed added in QS started-->
+                <div class="row">                           
+                    <div id="div-col-left" class="col-sm-4 col-xs-4"> 
+                        <div class="div-padding">
+                            <div class="row">
+                             <apex:outputpanel > 
+                                <div id="panel-Callbacknumber" class="panel panel-default">
+                                    <div class="panel-heading">Callback Number </div>
+                                    <div class="panel-body">
+                                        <div class="col-xs-12 div-fieldgroup">
+                                            <div class="form-group" style="margin-bottom: 8.2px; margin-top: 8.2px;">
+                                                <input type="text" id="inTxtCallback" class="form-control" onfocus="hideupdteComntsSuccessMsg()" oninput ="return validateEnterKey(event.keyCode);"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> 
+                                </apex:outputpanel>
+                                <div class="panel panel-default">                                             
+                                    <div class="panel-heading">Case Information</div>
+                                    <div class="panel-body">                                                
+                                        <div class="col-xs-12 div-fieldgroup"> 
+                                            <div class="form-group">
+                                                <label id="lblClassification" for="inDropClassification">Classification</label>
+                                                <apex:actionRegion >
+                                                <apex:selectList id="inDropClassification" styleClass="form-control input-required" value="{!sClassificationSelect}" size="1" required="false">
+                                                    <apex:selectOptions id="outDropOptnClassification" value="{!lstClassificationOptions}"/>
+                                                    <!--RXRF - REQ-414545 by Aaron -  Added setFRequentlyUsedCI  to set CI & present pretext-->
+                                                    <apex:actionSupport event="onchange" rerender="inDropIntent" oncomplete="show14dayscasenumber();setFrequentlyUsedCI();activateIntent();showPreviousComments();setComplaint();"/>
+                                                </apex:selectList>
+                                                </apex:actionRegion>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 div-fieldgroup"> 
+                                            <div class="form-group"> 
+                                                <label id="lblIntent" for="inDropClassification">Intent</label>
+                                                <apex:actionRegion >
+                                                <apex:selectList id="inDropIntent" styleClass="form-control input-required" value="{!sIntentSelect}" disabled="false" size="1" required="false">
+                                                    <apex:selectOptions id="outDropOptnIntent" value="{!lstIntentOptions}"/>
+                                                    <apex:actionSupport event="onchange" action="{!populateDocumentLinks}" rerender="outPanelDocLinks, caseCommentPanel,logpanel" oncomplete="setComplaint();checkclasAndIntent();"/>
+                                                </apex:selectList>
+                                                </apex:actionRegion>
+                                            </div>
+                                        </div>
+                                        <!-- Adeed for log code value for RXRF-->
+                                        <apex:outputpanel id="logpanel" styleClass="{! if(bHideLogPanel,'hideLogPanel', '')}"> 
+                                        <div class="col-xs-12 div-fieldgroup"> 
+                                            <div class="form-group"> 
+                                                <label id="lblHPcode" for="inDropClassification">Mail Order Pharmacy Log Code</label>
+                                                <apex:actionRegion >
+                                                <apex:selectList id="inDropHPcode" styleClass="form-control"  disabled="false" size="1" required="false" value="{!sLogCode}">
+                                                    <apex:selectOptions id="outDropOptnHPcode" value="{!CaseCommentOptions}" />                                                            
+
+                                                </apex:selectList>
+                                                </apex:actionRegion>
+                                            </div>
+                                        </div> 
+                                        </apex:outputpanel>
+                                        <!-- End Added for log code value for RXRF-->
+                                    </div> 
+                                </div>                                
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">G&amp;A / Complaints</div>
+                                    <div class="panel-body">
+                                                                           
+                                        <div class="col-xs-12 div-fieldgroup" >
+                                                    <div class="form-group">
+                                                        <input id="inChkOnGARGC" name="CheckedOnGARGC" type="checkbox" onclick="setGARGCFields();"/>&nbsp;Set G&amp;A Rights Given AND Complaint to No </div>
+                                                </div>
+                                        <div class="col-xs-12 div-fieldgroup">
+                                            <div class="form-group">
+                                                <label id="lblGarights" for="inDropGarights">G&amp;A Rights Given</label>
+                                                <apex:inputField id="inDropGarights" styleClass="form-control" onchange="verifyDisplay(this.value, this.id);resetGARGCFields();" value="{!oNewCase.G_A_Rights_Given__c}"/>
+                                            </div>      
+                                        </div>
+                                        <div id="divGroupGareason" class="col-xs-12 div-fieldgroup" style="display:none">
+                                            <div class="form-group">
+                                                <label id="lblGareason" for="inDropGareason">G&amp;A Reason</label>
+                                                <apex:inputField id="inDropGareason" styleClass="form-control input-required" value="{!oNewCase.G_A_Reason__c}"/>
+                                            </div>      
+                                        </div>                                      
+                                        <div class="col-xs-12 div-fieldgroup">
+                                            <div class="form-group">
+                                                <label id="lblComplaint" for="inDropComplaint">Complaint</label>
+                                                <apex:inputField id="inDropComplaint" styleClass="form-control" onchange="verifyDisplay(this.value, this.id);resetGARGCFields();" value="{!oNewCase.Complaint__c}" />
+                                            </div>                  
+                                        </div>
+                                        <div id="divGroupComplaintreason" class="col-xs-12 div-fieldgroup" style="display:none">
+                                                    <div class="form-group">
+                                                        <label id="lblComplaintreason" for="inDropComplaintreason">Complaint Reason</label>
+                                                        <apex:inputField id="inDropComplaintreason" styleClass="form-control input-required" value="{!oNewCase.Complaint_Reason__c}"/>
+                                                    </div>                      
+                                                </div>      
+                                                <div id="divGroupComplainttype" class="col-xs-12 div-fieldgroup" style="display:none">
+                                                    <div class="form-group">
+                                                        <label id="lblComplainttype" for="inDropComplainttype">Complaint Type</label>
+                                                        <apex:inputField id="inDropComplainttype" styleClass="form-control input-required" value="{!oNewCase.Complaint_Type__c}"/>
+                                                    </div>                      
+                                                </div>
+                                                <div id="divGroupLanguagepref" class="col-xs-12 div-fieldgroup" style="display:none">
+                                                    <div class="form-group">
+                                                        <label id="lblLanguagepref" for="inDropLanguagepref">TX Complaint Letter: Language Preference</label>
+                                                        <apex:inputField id="inDropLanguagepref" styleClass="form-control" value="{!oNewCase.Language_Preference__c}"/>
+                                                    </div>                      
+                                                </div>
+                                    </div> 
+                                </div>
+                                <!-- Start Mentor & Reference Documents Sections -->
+                            
+                                <apex:outputPanel id="outPanelDocLinks"> 
+                                    <div id="panel-documentlink" class="panel panel-default">
+                                        <div class="panel-heading">Mentor Documents</div>
+                                        <div class="panel-body">
+                                            <div class="col-xs-12 div-fieldgroup">
+                                                <div class="form-group" style="margin-left: 10px;">
+                                                    <apex:repeat id="rptDocLink" value="{!lstDocumentLink}" var="oLink">
+                                                        <apex:commandLink value="{!oLink.Name}" styleclass="linkDocuments" onclick="openLinkDocument('{!oLink.Id}'); return false;"></apex:commandLink><br/>
+                                                    </apex:repeat>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>  
+                                    <script>
+                                     var bShowDocumentPanel = {!bShowDocumentPanel};
+                                     checkDocumentPanel(bShowDocumentPanel);
+                                    </script>                                       
+                               </apex:outputPanel>
+
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">Reference Documents</div>
+                                    <div class="panel-body">
+                                        <div class="col-xs-12 div-fieldgroup">
+                                            <div class="form-group" style="margin-left: 10px;">
+                                                <apex:repeat id="rptRFDocLink" var="oLink" value="{!lstRFDocumentLink}">
+                                                    <apex:commandLink id="linkReferenceDocs" styleclass="linkDocuments" value="{!oLink.Name}" onClick="openLinkDocument('{!oLink.Id}'); return false;"/><br/>
+                                                </apex:repeat>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End Mentor & Reference Documents Sections -->
+                            </div>
+                        </div> 
+                    </div> 
+                    <!-- Right side of qs--started-->
+                    <div id="div-col-right" class="col-sm-8 col-xs-8">         
+                        <div class="div-padding">
+                            <div class="row">
+                                <div id="panel-PreviousComment" class="panel panel-default"> 
+                                    <div class="panel-heading">Previous Notes</div>
+                                        <div class="panel-body" id="panel-body">        
+                                            <div class="col-xs-12 div-fieldgroup">
+                                                <div class="form-group">
+                                                <textarea id="inTxtaPreviousNotes" class="form-control" rows="6" readonly="true"></textarea>
+                                                </div>
+                                        </div>
+                                    </div>                                        
+                                </div>                          
+                                 <div id="panel-caseDefault" class="panel panel-default" style="margin-bottom: 0px !important;"> 
+                                    <div class="panel-heading">Case Comments</div>
+                                    <div id="casecomments_body" class="col-xs-12 div-fieldgroup" style="padding-left: 0px; padding-right: 0px; margin-bottom: -18px !important;">
+                                        <div class="form-group" style="margin-bottom:19px;">
+                                            <!--RXRF - REQ-411319 by Aaron -  Added character limit of 1900-->                                                    
+                                            <textarea id="inTxtCaseComments" class="form-control" rows="21" onfocus="hideupdteComntsSuccessMsg()" maxlength="1900" placeholder="Enter Case Comments"></textarea>
+                                            <div id="dy_CaseComments" ></div >
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="panel-body" id="panel_body">
+                                        <div class="col-xs-12 div-fieldgroup"> 
+                                            <div class="form-group">
+                                                <label id="lblActions" for="inTxtaActions"></label>
+                                                <textarea id="inTxtaActions" class="form-control" style ="border:none" rows="3" onfocus="hideupdteComntsSuccessMsg()"></textarea>
+                                                <div id="dy_at" class="panel panel-default panel-body"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-12 div-fieldgroup"> 
+                                            <div class="form-group">
+                                                <label id="lblExpected" for="inTxtaExpected"></label>
+                                                <textarea id="inTxtaExpected" class="form-control" style ="border:none" rows="3"  onfocus="hideupdteComntsSuccessMsg()"></textarea>
+                                                <div id="dy_ceo" class="panel panel-default panel-body"></div>
+                                            </div>
+                                        </div>
+                                       
+                                        <div class="col-xs-12 div-fieldgroup">
+                                            <div class="form-group">
+                                                <label id="lblResolution" for="inTxtaResolution"></label>
+                                                <textarea id="inTxtaResolution" class="form-control" style ="border:none" rows="9" onfocus="hideupdteComntsSuccessMsg()"></textarea>
+                                                <div id="dy_ar" class="panel panel-default panel-body"></div>
+                                            </div>
+                                        </div>
+                                    </div>                                
+                                </div>
+                                <div id="limit" style="margin-bottom: 10px !important;">Limit: 1900 Characters </div>
+                                <div class="row">                               
+                                    <div id="div-col-left" class="col-sm-6 col-xs-6" style= "padding-right: 5px;">
+                                        <div class="panel panel-default">                                             
+                                            <div class="panel-heading">Create Case</div>
+                                            <div class="panel-body">                                                
+                                                <div class="col-xs-12 div-fieldgroup"> 
+                                                    <div class="form-group">
+                                                        <button type="button" id="btnAssociate" style="margin-left:0px; margin-top:10px;marigin-right:5px !important;" class="btn btn-primary btn-block" onClick="callAssociateCase()">Associate to Policy</button>
+                                                        
+                                                                <span>
+                                                                    <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea1">
+                                                                        <a onclick="javascript:return false;" html-log_this="false">
+                                                                            <apex:image id="lnkImg1" style="margin-top: 18px;margin-left: -6px;" height="12" width="12" styleClass="imgMargin hoverimagesize" value="{!$Resource.HUMHoverOverQuestionMark}"/>
+                                                                            <span styleClass="hoverfontstyle" style="height:10em !important; border:1px solid orange; background-color:#FEFDB9; text-align:left; margin-left:-20px;" id="AssoPolicHelptext">
+                                                                               {!$Label.Asso_Policy_HelpText_RX_HUM}
+                                                                            </span>
+
+                                                                        </a>
+                                                                    </apex:outputPanel>
+                                                                </span>
+                                                                <span id="div-loading" class="loading-hide new-case-inprogress">
+                                                                    <apex:image id="imgLoading" value="/img/loading.gif" />
+                                                                    <span id="spanLoading">New case creation in progress</span>
+                                                                </span>
+                                                        </div>
+                                                </div> 
+                                                <div class="col-xs-12 div-fieldgroup" >
+                                                <div class="form-group" style="margin-bottom: 0px;">
+                                                    <div id="divChkOnaccount" class="checkbox">
+                                                        <input id="inChkOnaccount" name="CheckedOnAccount" type="checkbox" onchange="changeAssociateText()">  
+                                                            <label id="lblOnaccount" style="padding-bottom: 3.5px;">
+                                                                {!$Label.QUICKSTART_LBLONACCOUNT_HUM}
+                                                                <span>
+                                                                    <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea">
+                                                                        <a onclick="javascript:return false;" html-log_this="false">
+                                                                            <apex:image id="lnkImg" style="margin-top: -10px;margin-left: 0px;" height="12" width="12" styleClass="imgMargin hoverimagesize" value="{!$Resource.HUMHoverOverQuestionMark}"/>
+                                                                            <span styleClass="hoverfontstyle" style="height:20em !important; border:1px solid orange; background-color:#FEFDB9; text-align:left;margin-left:-10px;">
+                                                                                <!-- {!$Label.QUICKSTART_CASEONACCINFO_HUM}--> 
+                                                                                "Cases should be created from the Policy Member page when the issue pertains to a policy. Check this box and create a case from the Person Account page only when there is 
+                                                                                 no applicable policy available. Example: Unknown member, prospective member, etc."
+                                                                            </span>
+                                                                        </a>
+                                                                    </apex:outputPanel>
+                                                                </span>
+                                                            </label>
+                                                        </input>                                                
+                                                    </div>
+                                                </div>
+                                            </div>  
+                                            </div> 
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="div-col-right" class="col-sm-6 col-xs-6" style= "padding-left: 8px;"> 
+                                        <div class="panel panel-default">                                             
+                                            <div class="panel-heading">Update Existing Case</div>
+                                            <div class="panel-body" style="padding-bottom: 0px;"> 
+                                                <div class="col-xs-12 div-fieldgroup" style="margin-bottom: 9px;"> 
+                                                    <div class="form-group">
+
+                                                        <!--RXRF - REQ-411232 by Aaron - Added setCI() to onClick-->
+                                                        <button type="button" id="btnUpdateCase" class="btn btn-primary btn-block" style="margin-bottom: 43px; margin-top:10px" onClick="setCI(); updateComments(); setLogCodeValue();">Add/Update Comment</button>
+                                                        
+                                                        <span>
+                                                                    <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea2">
+                                                                        <a onclick="javascript:return false;" html-log_this="false">
+                                                                            <apex:image id="lnkImg2" style="margin-top: 18px;margin-left: -6px;" height="12" width="12" styleClass="imgMargin hoverimagesize" value="{!$Resource.HUMHoverOverQuestionMark}"/>
+                                                                            <span styleClass="hoverfontstyle" style="height:13.3em; border:1px solid orange; background-color:#FEFDB9; text-align:left; margin-left:-120px;">
+                                                                               {!$Label.AddUpdate_HelpText_RX_HUM}  
+                                                                             </span>
+                                                                        </a>
+                                                                    </apex:outputPanel>
+                                                                </span>
+                                                                
+                                                                <div class="row">
+                                                                <span id="div-commentsUpdate-successful" style="margin-top: -14px;margin-left: 10px;" class="loading-hide update-comment">
+                                                                    <span id="spanLoading_com" class = "color-green"><b>Comments updated successfully</b></span>
+                                                                </span>
+                                                                </div> 
+                                                                
+                                                       </div>
+                                                </div>                                     
+                                            </div> 
+                                        </div>
+                                    </div>
+                                    
+                                </div>   
+                                <div class="row">
+                                   <!-- <span id="div-loading" class="loading-hide new-case-inprogress">
+                                        <apex:image id="imgLoading" value="/img/loading.gif" />
+                                        <span id="spanLoading">New case creation in progress</span>
+                                    </span>  -->
+                                    <!--<span id="div-commentsUpdate-successful" class="loading-hide update-comment">
+                                        <span id="spanLoading" class = "color-green"><b>Comments updated successfully</b></span>
+                                    </span>-->              
+                                </div>                                    
+                            </div>  
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </apex:form>
+    <div id="div-row-space" class="row"></div>  
+    <script>
+var logCodeElement = jQuery("select[id*='inDropHPcode']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropHPcode}');
+//var logCodeElement =  document.getElementById('{!$Component.j_id0:j_id26:j_id27:j_id39:inDropHPcode}');
+        var bRFRXuser = {!bPharmacyuser};
+        var classificationIdRXRF;
+
+
+        var intentId;
+        var sMedicareCallPartCOrPartD;
+        var idGaRights;
+        var idComplaint;
+        var idChkOnGARGC = document.getElementById('inChkOnGARGC');
+        var idChkOnGhostCall;   
+        var bPreTextConfigured;
+        var div_precomment = document.getElementById('panel-PreviousComment');
+        var blegacyDelete = {!blegacyDelete};
+        var ObjID;
+		var bHideLogPanel = {!JSENCODE(IF( bHideLogPanel, 'true', 'false'))};
+		var sHumPharmacyLabel = "{!$Label.Community_HFooterLabel_HumanaPharmacy}";
+		
+
+        function getFocusedSubtabObjectId(){
+            sforce.console.getFocusedSubtabObjectId(showObjId);
+        }
+
+        function checkclasAndIntent() {
+            var RXRFclassificationId = jQuery("select[id*='inDropClassification']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropClassification}');
+            
+            var intentRxrfId = jQuery("select[id*='inDropIntent']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropIntent}');
+             
+            var selectedClassification = RXRFclassificationId.options[RXRFclassificationId.selectedIndex].text;
+             
+            var selectedIntent = intentRxrfId.options[intentRxrfId.selectedIndex].text;
+            
+ 
+            if (selectedClassification = 'Refill Request (CT & TM)' && (selectedIntent === 'Refill and Renew/Expired' || selectedIntent ==='Refilled' || selectedIntent == 'Renew/Expired')) {
+                showAlert('div-alert-classiIntent');
+                jQuery("#div-col-left :input").attr("disabled", true);
+                jQuery("#div-col-right :input").attr("disabled", true);
+                jQuery("#btnReset").attr("disabled", true);
+            }
+        }
+
+        function resetClasfiIntent(){
+            var RXRFclassificationId = jQuery("select[id*='inDropClassification']")[0];//ocument.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropClassification}');
+            var intentRxrfId = jQuery("select[id*='inDropIntent']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropIntent}');
+            RXRFclassificationId.value = 'None';
+            intentRxrfId.value = 'None';
+            jQuery("#div-col-left :input").attr("disabled", false);
+            jQuery("#div-col-right :input").attr("disabled", false);
+            jQuery("#btnReset").attr("disabled", false);
+			document.getElementById('div-alert-existing-14classification').style.display = 'none';
+        }
+
+        function enableScreen(){
+            jQuery("#div-col-left :input").attr("disabled", false);
+            jQuery("#div-col-right :input").attr("disabled", false);
+            jQuery("#btnReset").attr("disabled", false);
+        }
+        
+        function setCI(){ 
+            classificationIdRXRF = jQuery("select[id*='inDropClassification']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropClassification}');
+            intentIdRXRF = jQuery("select[id*='inDropIntent']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropIntent}');
+         
+        }
+        /*RXRF - REQ-411232 by Aaron - End */
+
+        function setLogCodeValue(){
+            logCodeElement = jQuery("select[id*='inDropHPcode']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropHPcode}');
+            logCodeValue = logCodeElement.value;
+            //alert(logCodeValue);
+        }
+
+        var showObjId = function showObjId(result){
+            ObjID = result.id;
+            //getLegacyDelete();
+        };
+
+        // variables for pharamacy specific by kiran
+        var div_CaseComments;
+        var ta_caseComments;
+        
+            div_CaseComments = document.getElementById("dy_CaseComments");
+            ta_caseComments = document.getElementById('inTxtCaseComments');
+            
+            classificationIdRXRF = jQuery("select[id*='inDropClassification']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropClassification}');
+            intentIdRXRF = jQuery("select[id*='inDropIntent']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropIntent}');
+    
+			idGaRightsRXRF = jQuery("select[id*='inDropGarights']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropGarights}');
+            idComplaintRXRF = jQuery("select[id*='inDropComplaint']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropComplaint}');
+            idLanguagePref = jQuery("select[id*='inDropLanguagepref']")[0]; 
+
+            var bProviderUser = {!bProviderUser};
+            var classificationId = jQuery("select[id*='inDropClassification']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropClassification}');
+            var intentId = jQuery("select[id*='inDropIntent']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropIntent}');
+            var sMedicareCallPartCOrPartD = jQuery("select[id*='inpMedicareCallPartCOrPartD']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inpMedicareCallPartCOrPartD}');
+            var idGaRights = jQuery("select[id*='inDropGarights']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropGarights}');
+            var idComplaint = jQuery("select[id*='inDropComplaint']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropComplaint}');
+            var idChkOnGARGC = document.getElementById('inChkOnGARGC');
+            var idChkOnGhostCall = document.getElementById('inChkOnGhostCall');
+            var idChkOnVerbalConsent = document.getElementById('inChkOnVerbalConsent');
+
+            var div_ceo = document.getElementById("dy_ceo");
+            var div_at = document.getElementById("dy_at");
+            var div_ar = document.getElementById("dy_ar");
+            var div_precomment = document.getElementById('panel-PreviousComment');
+
+            var ta_ceo = document.getElementById('inTxtaExpected');
+            var ta_at = document.getElementById('inTxtaActions');
+            var ta_ar = document.getElementById('inTxtaResolution');
+            
+        window.$Label = window.$Label || {};
+		// $Label.QUICKSTART_DUPLICATECLASSINT_HUM = '{!JSENCODE($Label.QUICKSTART_DUPLICATECLASSINT_HUM)}';
+        $Label.QUICKSTART_NOCLASSIFICATION_HUM = '{!JSENCODE($Label.QUICKSTART_NOCLASSIFICATION_HUM)}';
+        $Label.QUICKSTART_NOINTENT_HUM = '{!JSENCODE($Label.QUICKSTART_NOINTENT_HUM)}';
+        $Label.QUICKSTART_NOINTERACTION_HUM = '{!JSENCODE($Label.QUICKSTART_NOINTERACTION_HUM)}';
+        $Label.QUICKSTART_NOQUEUE_HUM = '{!JSENCODE($Label.QUICKSTART_NOQUEUE_HUM)}';
+        $Label.QUICKSTART_NOSAVE_HUM = '{!JSENCODE($Label.QUICKSTART_NOSAVE_HUM)}';
+        $Label.QUICKSTART_NOTACCT_HUM = '{!JSENCODE($Label.QUICKSTART_NOTACCT_HUM)}';
+        $Label.QUICKSTART_NOTCURRENTCASE_HUM = '{!JSENCODE($Label.QUICKSTART_NOTCURRENTCASE_HUM)}';
+        $Label.QUICKSTART_NOTCURRENTCASE_RXRF_HUM = '{!JSENCODE($Label.QUICKSTART_NOTCURRENTCASE_RXRF_HUM)}';
+        $Label.QUICKSTART_NOTPOLMEM_HUM = '{!JSENCODE($Label.QUICKSTART_NOTPOLMEM_HUM)}';
+        $Label.QUICKSTART_PCPERROR_HUM = '{!JSENCODE($Label.QUICKSTART_PCPERROR_HUM)}';
+        $Label.QUICKSTART_RESIZE_HUM = '{!JSENCODE($Label.QUICKSTART_RESIZE_HUM)}';
+        $Label.QUICKSTART_CICERROR_HUM = '{!JSENCODE($Label.QUICKSTART_CICERROR_HUM)}'; 
+        $Label.QUICKSTART_PERMISSIONMSG_HUM = '{!JSENCODE($Label.QUICKSTART_PERMISSIONMSG_HUM)}';  
+        $Label.Asso_Account_HelpText_RX_HUM = '{!JSENCODE($Label.Asso_Account_HelpText_RX_HUM)}';  
+        $Label.Asso_Policy_HelpText_RX_HUM = '{!JSENCODE($Label.Asso_Policy_HelpText_RX_HUM)}';  
+        $Label.CreateCase_Error_QS_RX_HUM = '{!JSENCODE($Label.CreateCase_Error_QS_RX_HUM)}';  
+        $Label.MultipleHP_Error_QS_RX_HUM = '{!JSENCODE($Label.MultipleHP_Error_QS_RX_HUM)}';
+        $Label.QUICKSTART_NOTACCT_RXRF_HUM = '{!JSENCODE($Label.QUICKSTART_NOTACCT_RXRF_HUM)}';
+        $Label.AddUpdate_HelpText_RX_HUM = '{!JSENCODE($Label.AddUpdate_HelpText_RX_HUM)}';
+// added for REQ 400170 for legacy delete functioanlity
+        var getAccountRXRF = '{!$RemoteAction.QuickStart_RXRF_C_HUM.getAccountRXRF}';
+        var checkServiceModelType = '{!$RemoteAction.QuickStart_RXRF_C_HUM.checkServiceModelType}';
+    </script>
+    <apex:outputPanel id="outCaseJs">
+        <script>
+            var sUserQueue = '{!JSENCODE($User.Current_Queue__c)}';
+            var sNewCaseId = '{!JSENCODE(sSavedCaseId)}';
+        
+            var bErrNoSave = {!bErrorNoSave};
+            var bErrDuplicCi = {!bErrorDuplicClassIntent};
+            var sErrMsg = '{!JSENCODE(sErrorMessage)}';
+            var bRecordAccess = {!bRecordAccess};
+			
+			var bShow14DaysClassificationWaring = '{!bShow14DaysClassificationWaring}';
+			
+            function callAssociateCase() {
+                
+                intentIdRXRF = jQuery("select[id*='inDropIntent']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropIntent}');
+                
+                logCodeElement = jQuery("select[id*='inDropHPcode']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropHPcode}');
+                
+                associateCase();
+            }
+        </script>   
+    </apex:outputPanel>
+	
+	<apex:outputPanel id="duplicatecaseError">
+    <script>
+            
+	var bShow14DaysClassificationWaring = '{!bShow14DaysClassificationWaring}';
+   
+  
+	  var dupCaseRecordid;
+	  var focusedPrimaryId;
+	  var dupCaseNumber;
+	  var hoverOverOpen = false;
+	   function openduplicateCase(caseRecordId,dupcasenumber){
+		   dupCaseRecordid = caseRecordId;
+		   dupCaseNumber = dupcasenumber.slice(0,dupcasenumber.length-1);	   
+		   sforce.console.getFocusedPrimaryTabId(getPrimaryTab);
+	   }
+	   function getPrimaryTab(result){
+		   focusedPrimaryId = result.id;
+		   
+		   var sOpenUrl = '/' + dupCaseRecordid;
+			 
+			sforce.console.openSubtab(focusedPrimaryId, sOpenUrl, true, dupCaseNumber, null);
+	   }
+		
+		function showCaseComment(caseRecordId, elemID){
+			if(!hoverOverOpen){
+				
+				callFunAF(caseRecordId, elemID);
+				
+			}
+		}
+    
+    
+    function getPopupForCaseHistory(caseIdForPopup, elemID) {
+        console.log('getPopupForCaseHistory-1-called');
+        
+        var x = jQuery('#' + elemID).offset();
+        var xPosition = x.left;
+        var yPosition = x.top;
+
+        document.getElementById('PopUp3').style.left = xPosition +95 + "px";
+        document.getElementById('PopUp3').style.top = yPosition -40 + "px";
+        document.getElementById('PopUp3').style.display = 'block';
+        hoverOverOpen = true;
+	}
+    function hidecasecomment() {
+        if(hoverOverOpen){
+            console.log('hinde-1-called');
+            document.getElementById('PopUp3').style.display = 'none';
+            hoverOverOpen = false;
+        }
+		
+	}
+    </script>
+ </apex:outputPanel> 
+ 
+    <apex:outputPanel id="caseCommentPanel">
+        <script>
+            intentIdRXRF = jQuery("select[id*='inDropIntent']")[0];//document.getElementById('{!$Component.j_id0:j_id21:j_id22:j_id34:inDropIntent}');
+        
+            var isShowPretext = {!bShowCaseCommentPanel};
+            var sJSONPretext = '{!sPreTextdata}';            
+        callCreatePretextLayout(isShowPretext);
+        </script>
+    </apex:outputPanel>
+</apex:component>

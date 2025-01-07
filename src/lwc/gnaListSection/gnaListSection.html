@@ -1,0 +1,103 @@
+﻿<!--
+Component        : gnaListSection.html
+Version          : 1.0
+Created On       : 09/05/2022
+Function         : Component to display to gna summary list.
+
+
+* Developer Name                       Date                         Description
+* Abhishek Mangutkar                   09/05/2022                   US-3668207
+*------------------------------------------------------------------------------------------------------------------------------
+-->
+
+<template>
+    <lightning-card>
+        <template if:false={recordsLoadComplete}>
+            <div class="exampleHolder slds-align_absolute-center">
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </div>
+        </template>
+        <div class="slds-var-p-left_medium slds-text-heading_medium">Grievance & Appeal Cases</div>
+        <template if:true={recordsLoadComplete}>
+          <template if:false={noRecordsAvailble}>
+            <div class="slds-var-p-left_medium slds-text-body_regular slds-m-bottom_medium">{filteredCount} of {totalCount} items</div>
+
+            <!--slds table-->
+            <div data-id="result" class="slds-table--header-fixed_container container">
+                <div class="slds-scrollable_y " style="max-height: 500px; " onscroll={handleScroll}>
+                    <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered slds-table--header-fixed">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <template for:each={columns} for:item="col">
+                                    <th class="slds-is-resizable slds-is-sortable slds-cell-fixed" scope="col"
+                                        key={col.label} data-label={col.label} style={col.style}>
+                                        <div class="slds-p-top_x-small slds-wrap slds-cell-fixed slds-m-left_x-small"
+                                             style="width: 100%;">
+                                            {col.label}
+                                        </div>
+                                    </th>
+                                </template>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template if:true={noRecordsAvailble}>
+                                <td colspan="8">
+                                    <c-generic-scoped-notification-hum iconname="utility:info"
+                                                                       message={labels.HUMNoRecords}></c-generic-scoped-notification-hum>
+                                </td>
+                            </template>
+                            <template for:each={filteredGNARecords} for:item="item" for:index="index">
+                                <tr key={item.sCase} class="slds-hint-parent">
+                                    <td>
+                                        <lightning-icon style="cursor: pointer;" icon-name="utility:chevronright"
+                                                        size="x-small" onclick={handleRowClick} data-rowid={item.Index}>
+                                        </lightning-icon>
+                                    </td>
+                                    <td data-label="Case Number/Type">
+                                        <div class="slds-truncate">
+                                            <b>Case Number: </b>{item.sCase} <c-generic-copy-icon-hum copycontent={item.sCase}></c-generic-copy-icon-hum> <br /> <b>Type: </b>{item.sType}
+                                        </div>
+                                    </td>
+                                    <td data-label="Humana Received Date">
+                                        <div class="slds-truncate">{item.sManualReceivedDate}</div>
+                                    </td>
+                                    <td data-label="Provider Name">
+                                        <div class="slds-cell-wrap">{item.sProviderDisplayName}</div>
+                                    </td>
+                                    <td data-label="Category">
+                                        <div class="slds-cell-wrap">{item.sCategory}</div>
+                                    </td>
+                                    <td data-label="Status">
+                                        <div class="slds-cell-wrap">{item.sStatus}</div>
+                                    </td>
+                                    <td data-label="Priority">
+                                        <div class="slds-cell-wrap">{item.sPriority}</div>
+                                    </td>
+                                    <td data-label="Product">
+                                        <lightning-formatted-rich-text value={item.Group}>
+                                        </lightning-formatted-rich-text>
+                                    </td>
+                                </tr>
+                                <tr key={item.sCase} data-key={item.Index} class="slds-hide">
+                                    <!--G&A detail section-->
+                                    <td colspan="8">
+                                        <c-grievance-and-appeals-details-hum item-detail={item}>
+                                        </c-grievance-and-appeals-details-hum>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+          </template>
+          <template if:true={noRecordsAvailble}>
+            <div class="slds-var-p-left_medium">
+                    <c-generic-scoped-notification-hum iconname="utility:info" message="No records to display.">
+                    </c-generic-scoped-notification-hum>
+              </div>
+          </template>
+        </template>
+
+    </lightning-card>
+</template>

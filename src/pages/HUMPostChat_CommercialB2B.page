@@ -1,0 +1,125 @@
+﻿<!--
+Page Name        : HUMPostChat_CommercialB2B
+Version          : 1.0 
+Created Date     : AUGUST 20 2020
+Function         : Custom window for Post Chat form on Live agent
+Modification Log :
+*   Modification ID     Developer                     Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   1.0                 Akshay Pai                                      08/20/2020             Original 
+*   1.1                 Vishnu Pilli                                    11/02/2020             Updated th elogic to make Close Window visible and added PostMessage
+-->
+<apex:page showheader="false" controller="HUMPreChatController_CommercialB2B" action="{!postchatinit}" standardStyleSheets="false" >
+    <apex:stylesheet value="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/base.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/framework.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/global.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/global1.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/humanacom.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/humanacom1.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/lib.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/styles.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/tools.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.HUMPostWebChatPageCSS,'HUMPostWebChatPage/library/Postchatstyleclass.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+    <script type='text/javascript'>
+          
+		  var sChatDetails2 = '{!JSENCODE($CurrentPage.parameters.chatDetails)}';
+		  var pageParams = '{!JSENCODE(pageParams)}';                   
+		  var sInteractionName ='{!sInteractionName}';
+		 
+		 function saveChatConfirmation()
+		  {
+			var webChatDownloadConfirmResponse = confirm('{!$Label.Web_Chat_Download_Confirmation_Message}');      
+			if (webChatDownloadConfirmResponse)
+			{               
+				callGoToHUMSaveChatTranscriptPageMethod();
+			}
+			return false;
+		  }
+	</script>
+    <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <title>Post Chat</title> 
+       <apex:includeScript value="{!URLFOR($Resource.HUMLiveAgent_CommercialB2B,'/library/HUMPostWebChatPage.js')}"/> 
+    </head>
+    <body>
+        <apex:form id="theForm">
+            <div id="test" class="row">
+                <div class="small-glass-container">
+                    <div class=" columns x2 eighteen">
+                        <div class="row">
+                            <div class="eighteen columns x2">
+                                <div class="lifeblock-heading">
+                                    <h1 class="link-list-heading lifeblock core-green bl-tail tl-br-curve">
+                                    <span class="content">Humana Chat</span>
+                                </h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="small-glass-container">
+                                <div class="row">
+                                    <div class="seventeen columns x2-left">
+                                        <apex:outputPanel rendered="{!IF($CurrentPage.parameters.transcript!='',true,false)}">
+                                            <h1>Thank you&#33;</h1>
+                                            <p class="x0">Thank you for your time, we hope your experience with Humana chat was helpful.</p>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!IF($CurrentPage.parameters.transcript=='',true,false)}">
+                                            <h1>Chat is not available</h1>
+                                            <p class="x0">
+                                                <span>{!$Label.HUMCommercialB2BLabel_5}</span><br/>
+                                                <span>{!$Label.HUMCommercialB2BLabel_2}</span><br/>
+                                                <span>{!$Label.HUMCommercialB2BLabel_3}</span>
+                                            </p>
+                                        </apex:outputPanel>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="seventeen columns x1 x2-left">
+                                        <p class="x2 ">
+                                        <apex:outputPanel rendered="{!IF($CurrentPage.parameters.transcript!='',true,false)}">
+                                          <apex:outputLink styleClass=" module-sharing-utility link-tertiary save x1-top" onclick="return saveChatConfirmation();">
+                                            <span>Save Chat</span>
+                                          </apex:outputLink>
+                                          </apex:outputPanel> 
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="eighteen columns x1-top x2-left">
+                                        <p class="x1">
+                                            <apex:outputPanel rendered="{!IF($CurrentPage.parameters.transcript!='',true,false)}">
+                                                Please take a moment to complete a brief survey about your chat experience.
+                                            </apex:outputPanel>
+                                        </p>
+                                        <div id="opPan" class="row x2">
+                                            <div class="eighteen columns">
+                                                <apex:outputPanel rendered="{!IF($CurrentPage.parameters.transcript!='',true,false)}">
+                                                  <apex:outputPanel >
+                                                    <button class="link-primary x1-right" onclick="openSurvey('{!sWebChatVarMap['SurveyURLCommercialB2B'].value__c}');return false;" type="submit">
+                                                        <span>OK</span>
+                                                    </button>
+                                                  </apex:outputPanel>    
+
+                                                  <br/><br/>
+                                                  <!-- <span>{!$Label.HUMCommercialB2BLabel_6}</span> -->
+                                                </apex:outputPanel>
+                                                
+                                                <apex:outputPanel rendered="{!IF($CurrentPage.parameters.transcript!='',true,false)}"> <!-- Changed the IF logic to above so that the close window shows -->
+                                                    <button class="link-primary x1-right" onclick="window.parent.postMessage('Close Window', '*'); javascript:window.close();" type="button">
+                                                        <span>Close Window</span>
+                                                    </button>
+                                                </apex:outputPanel>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          <apex:actionFunction name="callGoToHUMSaveChatTranscriptPageMethod" action="{!goToHUMSaveChatTranscriptPage}"/>
+        </apex:form>
+    </body>
+</apex:page>

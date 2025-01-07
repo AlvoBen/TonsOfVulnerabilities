@@ -1,0 +1,23 @@
+﻿<!--
+Page Name        : OpenMentorDocument_VF_HUM
+Version          : 1.0 
+Created Date     : August 01 2017
+Function         : Opening the Mentor URL
+Modification Log: 
+* Developer Name             Date                 Description
+*---------------------------------------------------------------------------------------------------------------------
+* Siddharth Mehta			   08/01/2017			  Original Version
+* Sai Ayyagari	    164945	   01/19/2018		      REQ - 328929 Fix for HUMExceptionHelper, store the list of exceptions captured
+***********************************************************************************************************************/
+-->
+
+<apex:page id="OpenMentorDocument_VF_HUM" showHeader="false" sidebar="false" controller="OpenMentorDocument_C_HUM" action="{!redirectMentorDocument}">
+	<br></br><br></br>
+	<div style="display: block; margin: auto; width: 40%;text-align: center;">
+		<h4>Mentor Document Not Available.</h4><br></br><br></br>
+		<a href="#" onclick="window.close();">Close Window</a>
+	</div>
+	<apex:form id="frm"> 
+    <c:HUMConstructorExceptionComponent errorLogs="{!listErrorLogs}" />
+    </apex:form>
+</apex:page>

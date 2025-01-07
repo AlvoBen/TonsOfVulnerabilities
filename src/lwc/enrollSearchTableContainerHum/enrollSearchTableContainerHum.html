@@ -1,0 +1,23 @@
+﻿<!--
+LWC Name        : enrollSearchTableContainerHum.html
+Function        : Enrollment Search Results Table Container
+
+Modification Log:
+* Developer Name                     Date                         Description
+* Mohan Kumar N                      11/21/2020                Original Version 
+* Mohan Kumar N                      08/09/2021                US: 2363825 - standardizing icons
+* Supriya Shastri                    09/06/2021                Added grey headers to member detail table
+* Mohan Kumar N                      09/27/2021                  Allignment issues
+*-->
+<template>
+    <div class="slds-m-left_small">
+        <c-standard-table-component-hum if:true={isDataLoaded}
+        name-of-screen={selectedSystem} response={aSearchResults} templatemodal={tableModel}
+        no-data-message={labels.AM_No_Results_Found_Error} default-header-icon="standard:outcome">
+    </c-standard-table-component-hum>
+    </div>
+    <div class="slds-m-left_small">
+        <c-search-no-result-hum if:true={bSystemFailure} no-result-message={bSystemFailureMessage}>
+        </c-search-no-result-hum>
+    </div>
+</template>

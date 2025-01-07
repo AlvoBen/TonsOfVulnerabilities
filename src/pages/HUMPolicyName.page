@@ -1,0 +1,46 @@
+﻿<!-- *****************************************************************************************
+Page Name          : HUMPolicyName
+Version            : 1.0
+Function           : Page to display all Policies related to that particular Account as a sub tab
+Created On         : 06/02/2014
+
+Modification Log:
+*   Developer                   Code Review          Date                Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Kritika Popat                17076                 06/02/2014          Original Version
+* Asha Deepika Koyyana         17674                 09/08/2014          As a part of defect fix #153891,modified the static resource
+                                                                         to display the page as a subtab instead of popup. 
+* Asha Deepika Koyyana         18256                 09/29/2014          As a part of defect fix(#156038) added a new warning message through <apex:pagemessages> tag.
+* Asha Deepika Koyyana         18447                 10/09/2014          As a part of defect fix(#157315) displaying Policy Member Id instead of Policy Name.
+* Prudhvi Pamarthi             165023                01/19/2018          REQ - 328929 Fix for HUMExceptionHelper: DML 
+****************************************************************************************** -->
+
+<apex:page controller="HUMPolicyNameController" showHeader="false" id="pageId">
+    <apex:includeScript value="/support/console/22.0/integration.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.HUMVerifyFamily, 'HUMVerifyFamily/HumVerifyFamily.js')}" />  
+    
+    <apex:form id="formId">
+        <!-- For Constructor Related exception -->
+        <c:HUMConstructorExceptionComponent errorLogs="{!listErrorLogs}" />    
+        <apex:pagemessages id="error" escape="false"></apex:pagemessages>
+        <apex:pageBlock id="pageBlockId" mode="edit" title="" >
+            <apex:outputLabel style="font-weight:bold" > Policy Details</apex:outputLabel>
+            <apex:pageBlockTable value="{!lstPolicyName}" var="item">            
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:inputCheckbox />
+                    </apex:facet>
+                    <apex:inputCheckbox value="{!item.bSelected}" />
+                </apex:column>
+                <apex:column value="{!item.oPolicyMember.Name}" headerValue="Policy Member ID" />                
+                <apex:column value="{!item.oPolicyMember.Product_Type__c}" headerValue="Product Type" />
+                <apex:column value="{!item.oPolicyMember.Product_Description__c}" headerValue="Product Description" />
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+            <apex:outputPanel id="panelId">
+            <apex:commandButton value="Ok"  action="{!verifyFamily}"  />
+            <apex:commandButton value="Cancel" status="closer" reRender="panelId" />
+            <apex:actionStatus startText="" onStop="ClsSubTabandRefPriTab();" id="closer"/>
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

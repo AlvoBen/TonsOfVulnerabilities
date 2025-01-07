@@ -1,0 +1,39 @@
+﻿<!--
+Page Name        : METEnrollment_VF_HUM
+Version          : 1.0 
+Created Date     : May 10 2017
+Function         : Page is used display MET Enrollment section on Case page for Medicare RecordType
+
+Modification Log :
+*  Developer Name                    Code Review               Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Prasad Jandhyala             114623                  07/10/2017                  REQ 308348 : MET Enrollment Section
+* Mohammed Noor                149089                  09/29/2017                  REQ - 329043 : Remove Sorting from MET table on Case Edit Page.
+* Pradeepkumar Dani            149089                  11/17/2017                  Updated with corrections to consume in Case detail custom page.
+* Pooja Kumbhar										   05/05/2021				   REQ - 2254207 - case management checkkmarx remediation
+* Vivek												   07/09/2022		           Updated the JS query to new Datatables to version to 1.12.1
+* Pinky Vijur                                          08/05/2023                  User Story 4647299: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Miscellaneous (Group 2)
+-------------------------------------------------------------------------------------------------------------------------------->
+
+<apex:page standardController="Case" extensions="METEnrollmentControllerExtension" docType="html-5.0" showheader="false">
+    <apex:includeScript value="/support/console/36.0/integration.js" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+   <apex:includescript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}" /> <!--DT upgrade-->
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}" /><!--DT upgrade-->
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CaseEdit_SR_HUM, 'CaseEdit_SR_HUM/CaseEdit_SR_JS_HUM.js')}" />
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CaseEdit_SR_HUM, 'CaseEdit_SR_HUM/CaseEdit_SR_CSS_HUM.css')}"/>
+    <apex:outputpanel id="refreshDataScript">    
+        <script>
+            var sCompletedStatus = "{!$Label.HUMCompleted}";
+            var sCancelledStatus = "{!$Label.HUMCancelled}";
+            var sJsonMetTaskList = '{!JSENCODE(jsonMetTaskList)}';
+        </script>
+    </apex:outputpanel>
+    <div id="metEnrollmentTableContainer" class="width100" >
+        <table id="MetTaskTable" class="table table-striped table-bordered  dataTable no-footer width100"/>
+    </div>
+    <apex:form id="formId">
+        <apex:actionFunction name="fetchMetTaskList" action="{!fetchMetTaskList}" rerender="refreshDataScript" oncomplete="drawTable(sJsonMetTaskList,false);"> </apex:actionFunction>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,15 @@
+.hc-align-header {
+    justify-content: space-between;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.min-height-400{
+    min-height: 400px;
+    margin-bottom: 20px;
+}
+.hc-cursor{
+    cursor: pointer;
+}

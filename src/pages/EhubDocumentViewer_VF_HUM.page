@@ -1,0 +1,21 @@
+﻿<!--
+Page Name        : EhubDocumentViewer_VF_HUM
+Version          : 1.0 
+Created Date     : Aug 29, 2018
+Function         : This Page is used to invoke eHub GetDocument service and preview document.
+Modification Log :
+* Developer               Code Review                     Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Srinivas Damera         293796                          08/29/2018          Original Version
+----------------------------------------------------------------------------------------------------------------------------->
+
+<apex:page controller="EHubDocumentViewer_C_HUM" sidebar="false" showheader="false">
+<apex:includeScript value="{!URLFOR($Resource.EHUB_SR_HUM, 'EHUB_SR_HUM/EHUB_SR_JS_HUM.js')}" />
+
+<script type="text/javascript">
+    var EhubURL = "{!sEhubUrl}";
+    var docId = "{!sDocId}";
+    var VersionId = "{!sVersionId}";
+    var appKey = "{!sAppKey}";
+    </script>
+</apex:page>

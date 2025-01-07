@@ -1,0 +1,303 @@
+﻿<!-- **
+Page Name          : HUMTaskListView
+Version            : 1.0
+Function           : Page to display list of Case/Task
+Created Date       : 05/09/2014
+
+Modification Log:
+*   Developer                   Code Review          Date                Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   SuryaKumari Medicherla      17093                05/09/2014          Original Version
+*   Manish Kumar                17093                06/22/2014          Added TAT and Dragable functionality in PageBlockTable
+*   Mrudula Jaddu               17492                08/21/2014          commented Date/Time Closed Column  as per the changed requirement 1137
+*   Manish Kumar                17521                08/28/2014          Modified acording to code review : 17521
+*   Manuel Johnson              17521                09/26/2014          Removed columns per REQ-01700
+*   Manish Kumar                18331                10/03/2014          Code fix for defect#156552
+*   Manish Kumar                18386                10/08/2014          Code fix for defect#156552
+*   SuryaKumari Medicherla      18811                10/28/2014          Modified new tab functionality of interacting with
+*   Manish Kumar                18933                11/04/2014          Code fix for defect#159932,#159931
+*   Manish Kumar                19218                11/12/2014          Code fix for defect#160822, #160818
+*   Manish Kumar                19935                12/16/2014          Added Refresh button for REQ - 94081
+*   Apoorv Jain                 22486                2/24/2014           Code fix for defect#216978 , #216993
+*	Pradeepkumar Dani			42551				 10/05/2016			 REQ-00669, REQ-244446, REQ-244447, REQ-244449 Changes
+** -->
+
+<apex:page controller="HUMTaskListViewController" id="thePage" action="{!initializeWorkQueue}" showChat="false" sidebar="false">
+  <div id="mainPanel">
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMJQueryDragNDrop, 'dragtable-default.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CSS/HoverOver.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMTaskListViewSR, '/CSS/TaskListView_CSS_HUM.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.HUMTaskListViewSR, '/JS/ColorPageBlockFunction.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery-ui.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.HUMJQueryDragNDrop, 'jquery.dragtable.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.HUMTaskListViewSR, '/JS/TaskListView_JS_HUM.js')}"/>
+    <apex:includeScript value="/support/console/36.0/integration.js"/>
+
+    <!--The Main Form Tag begins from here-->
+    <apex:form id="addCriteria1">
+      <apex:pageBlock id="pgBlock" mode="detail" rendered="{!(!bShowData)}">
+        <!--The Page Block Tag begins from here-->
+        <apex:outputPanel id="pnlError">
+          <apex:pagemessages id="error" />
+          <c:HUMConstructorExceptionComponent errorLogs="{!lstLogErrors}" />
+        </apex:outputPanel>
+
+        <apex:pageBlocksection columns="2" rendered="{!$Profile.Name == $Label.HUMAgencyCCS}">
+          <apex:pageBlocksection collapsible="false" title="View My Assigned Work" id="ViewMyAssignedWork" columns="1">
+            <apex:actionRegion >
+              <apex:panelGrid columns="2" styleClass="gridWidth">
+                <apex:outputLabel value="{!$Label.HumWorkQueues}" styleClass="ddSectionLabel"/>
+                <apex:selectList value="{!sViewCategorydd1}" size="1" styleClass="ddWidth">
+                  <apex:selectOptions value="{!categoriesdd1}" />
+                  <apex:actionsupport event="onchange" action="{!populateUnassigndd2}" rerender="Unassigndd2,thePageBlockSection3,displayTAT,pnlError" status="pleaseWait"/>
+                </apex:selectList>
+
+                <apex:outputLabel value="{!$Label.HumViews}" styleClass="ddSectionLabel"/>
+                <apex:selectList id="Unassigndd2" value="{!sViewCategorydd2}" size="1" styleClass="ddWidth">
+                  <apex:selectOptions value="{!categoriesdd2}" />
+                  <apex:actionsupport event="onchange" rerender="thePageBlockSection3,displayTAT,pnlError" status="pleaseWait"/>
+                </apex:selectList>
+
+                <apex:outputLabel value="{!$Label.FilterBy_TaskListView_HUM}" styleClass="ddSectionLabel"/>
+                <apex:selectList id="assignedFilterBy" value="{!sSelectedView}" size="1" styleClass="ddWidth">
+                  <apex:selectOptions value="{!selectedView}" />
+                  <apex:actionSupport event="onchange" reRender="thePageBlockSection3,pnlError,displayTAT" status="pleaseWait"/>
+                </apex:selectList>
+              </apex:panelGrid>
+            </apex:actionRegion>
+          </apex:pageBlocksection>
+
+          <apex:pageBlocksection collapsible="false" title="{!$Label.PullWork_TaskListView_HUM}" id="PullWork" columns="1">
+            <apex:actionRegion >
+              <apex:panelGrid columns="2" styleClass="gridWidth">
+                <apex:outputLabel value="{!$Label.HumWorkQueues}" styleClass="ddSectionLabel"/>
+                <apex:selectList id="pullWorkQueue" value="{!sSelPullWorkQueue}" size="1" styleClass="ddWidth">
+                  <apex:selectOptions value="{!PullWorkQueueOptions}" />
+                </apex:selectList>
+
+                <apex:outputLabel value="{!$Label.HumViews}" styleClass="ddSectionLabel"/>
+                <apex:selectList id="pullWorkView" value="{!sSelPullWorkView}" size="1" styleClass="ddWidth">
+                  <apex:selectOptions value="{!PullWorkViewOptions}" />
+                </apex:selectList>
+
+                <apex:outputLabel value="{!$Label.FilterBy_TaskListView_HUM}" styleClass="ddSectionLabel"/>
+                <apex:selectList id="pullWorkFilterBy" value="{!sSelPullWorkFilterBy}" size="1" styleClass="ddWidth">
+                  <apex:selectOptions value="{!pullWorkFilterByOptions}" />
+                </apex:selectList>
+
+                <apex:outputPanel />
+                <apex:outputPanel />
+
+                <apex:outputLabel value="" styleClass="ddSectionLabel"/>
+                <apex:outputPanel >
+                  <apex:commandButton value="{!$Label.PullWorkItems_TaskListView_HUM}" action="{!pullWorkItem}" reRender="thePageBlockSection3,pnlError" status="pleaseWait" style="padding-left: 5%; padding-right: 5%;" oncomplete="pullWorkDML_AF();"/>
+                  <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea">
+                    <apex:commandLink onclick="javascript:void(O);" html-log_this="false">
+                      <apex:image id="lnkImg" styleClass="imgMargin hoverQuestionMark" value="{!$Resource.HUMHoverOverQuestionMark}"/>
+                      <apex:outputPanel styleClass="hoverfontstyle" >
+                        {!$Label.PullWorkToolTip_HUM}
+                      </apex:outputPanel>
+                    </apex:commandLink>
+                  </apex:outputPanel>
+                </apex:outputPanel>
+                <apex:actionFunction name="pullWorkDML_AF" action="{!pullWorkDML}" rerender="pnlError1" status="pleaseWait"/>
+              </apex:panelGrid>
+            </apex:actionRegion>
+          </apex:pageBlocksection>
+        </apex:pageBlocksection>
+
+        <apex:pageBlocksection title="{!$Label.ViewItems_TaskListView_HUM}" id="ViewItems" columns="2" rendered="{!$Profile.Name == $Label.HUMAgencyCCSupervisor}" collapsible="false">
+          <apex:pageBlocksection collapsible="false" columns="1">
+            <apex:actionRegion >
+              <apex:panelGrid columns="2" styleClass="gridWidth">
+                <apex:outputLabel value="{!$Label.HumWorkQueues}" styleClass="ddSectionLabel"/>
+                <apex:selectList value="{!sViewCategorydd1}" size="1" styleClass="ddWidth">
+                  <apex:selectOptions value="{!categoriesdd1}" />
+                  <apex:actionsupport event="onchange" action="{!populateUnassigndd2}" rerender="Unassigndd2,thePageBlockSection3,displayTAT,pnlError" status="pleaseWait"/>
+                </apex:selectList>
+
+                <apex:outputLabel value="{!$Label.HumViews}" styleClass="ddSectionLabel"/>
+                <apex:selectList id="Unassigndd2" value="{!sViewCategorydd2}" size="1" styleClass="ddWidth">
+                  <apex:selectOptions value="{!categoriesdd2}" />
+                  <apex:actionsupport event="onchange" rerender="thePageBlockSection3,displayTAT,pnlError" status="pleaseWait"/>
+                </apex:selectList>
+              </apex:panelGrid>
+            </apex:actionRegion>
+          </apex:pageBlocksection>
+
+          <apex:pageBlocksection collapsible="false" columns="1">
+            <apex:actionRegion >
+              <apex:panelGrid columns="2" styleClass="gridWidth">
+                <apex:outputLabel value="{!$Label.WorkItems_TaskListView_HUM}" styleClass="ddSectionLabel"/>
+                <apex:selectList id="supWorkItems" value="{!sSelectedAssign}" size="1" styleClass="ddWidth">
+                  <apex:selectOptions value="{!selectedAssign}" />
+                  <apex:actionSupport event="onchange" action="{!populateUnassigndd2Initially}" reRender="thePageBlockSection3, pnlError" status="pleaseWait"/>
+                </apex:selectList>
+
+                <apex:outputLabel value="{!$Label.FilterBy_TaskListView_HUM}" styleClass="ddSectionLabel"/>
+                <apex:selectList id="supFilterBy" value="{!sSelectedView}" size="1" styleClass="ddWidth">
+                  <apex:selectOptions value="{!selectedView}" />
+                  <apex:actionSupport event="onchange" reRender="thePageBlockSection3,pnlError,displayTAT" status="pleaseWait"/>
+                </apex:selectList>
+              </apex:panelGrid>
+            </apex:actionRegion>
+          </apex:pageBlocksection>
+        </apex:pageBlocksection>
+
+        <apex:actionStatus id="pleaseWait">
+          <apex:facet name="start">
+            <div class="waitingSearchDiv waitingSearchDivOpacity outerDIVStyle"/>
+            <div id="searchingStatus" class="waitingSearchDiv innerDIVStyle" >
+              <div class="waitingHolder innermostDIVStyle" >
+                <img class="waitingImage" src="/img/loading.gif"/>
+                <span class="waitingDescription">{!$Label.HUMPleaseWait}</span>
+              </div>
+            </div>
+          </apex:facet>
+          <apex:facet name="stop"/>
+        </apex:actionStatus>
+        <apex:pageBlockSection collapsible="true" columns="1" id="thePageBlockSection3" title="Result - ({!iResCounter})">
+
+          <apex:outputPanel id="showBtnPnl" styleClass="btnPanelStyle">
+            <center >
+              <apex:outputPanel >
+                <apex:commandButton value="Refresh" id="refresh" reRender="thePageBlockSection3,pnlError" status="pleaseWait" />
+                <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea">
+                  <apex:commandLink onclick="javascript:void(O);" html-log_this="false">
+                    <apex:image id="lnkImg" styleClass="imgMargin hoverQuestionMark" value="{!$Resource.HUMHoverOverQuestionMark}"/>
+                    <apex:outputPanel styleClass="hoverfontstyle" >
+                      {!$Label.TaskListViewRefreshToolTip_HUM}
+                    </apex:outputPanel>
+                  </apex:commandLink>
+                </apex:outputPanel>
+              </apex:outputPanel>
+            </center>
+          </apex:outputPanel>
+
+          <apex:PageBlockTable value="{!CaseTask}" var="task" id="theTable" styleClass="one">
+            <apex:column headerClass="notdraggable dragtable-drag-boundary">
+              <apex:facet name="header">
+                <apex:inputCheckbox onclick="selectAllCheckboxes(this,'inputId')" id="masterCheck" styleClass="masterCheck"/>
+              </apex:facet>
+              <apex:inputCheckbox onclick="onclickCheckBox(this,'{!$Component.acceptAll}','{!$Component.masterCheck}');" id="inputId" value="{!task.bIsSelected}" styleClass="normalCheckBox"/>
+            </apex:column>
+            <apex:column >
+              <apex:facet name="header"><center>Case/Task ID</center></apex:facet>
+              <div id="td_{!task.sCaseTaskNumber}"></div>
+              <center>
+                <script>
+                  if({!task.bIsMerged && !task.bIsRead})updateRowStyle(document.getElementById("td_{!task.sCaseTaskNumber}"));
+                </script>
+                <apex:outputLink value="javascript:void(0);" onclick="updateWrapperJS('{!task.scasetaskId}', '{!task.sCaseTaskNumber}', 'false', {!task.bIsRead}, {!task.bIsMerged}); return false;">
+                  {!task.sCaseTaskNumber}
+                </apex:outputLink>
+              </center>
+            </apex:column>
+            <apex:column >
+               <apex:facet name="header"><center>Status</center></apex:facet>
+			  <center><apex:outputText value="{!task.sStatus}" /></center>
+            </apex:column>
+            <apex:column >
+              <apex:facet name="header"><center>Priority</center></apex:facet>
+              <center><apex:outputText value="{!task.sPriority}" /></center>
+            </apex:column>
+            <apex:column >
+       <apex:facet name="header"><center>Interacting With</center></apex:facet>
+              <center>
+                <a href="javascript:void(0);" onclick="openInNewTabCaseOrTask('{!task.sInteractingWithId}','{!task.sInteractingWith}', 'false'); return false;">{!task.sInteractingWith}</a>
+              </center>
+            </apex:column>
+            <apex:column >
+               <apex:facet name="header"><center>Interacting About</center></apex:facet>
+              <center><apex:outputText value="{!task.sInteractingAbout}" /></center>
+            </apex:column>
+            <apex:column >
+              <apex:facet name="header"><center>Classification</center></apex:facet>
+              <center><apex:outputText value="{!task.sCategory}" /></center>
+            </apex:column>
+            <apex:column >
+              <center>
+                <apex:facet name="header"><center>Intent</center></apex:facet>
+                <apex:outputText value="{!task.sReason}" />
+              </center>
+            </apex:column>
+            <apex:column >
+              <apex:facet name="header"><center>Case/Task Queue</center></apex:facet>
+              <center><apex:outputText value="{!task.sQueueUserName}" /></center>
+            </apex:column>
+            <apex:column >
+              <apex:facet name="header"><center>Case/Task Owner</center></apex:facet>
+			  <center><apex:outputText value="{!task.sOwnerId}" /></center>
+            </apex:column>
+            <apex:column >
+              <apex:facet name="header"><center>Due Date</center></apex:facet>
+              <center>
+                <apex:outputText value="{0,date,MM/dd/yyyy}">
+                  <apex:param value="{!task.dtDueDate}" />
+                </apex:outputText>
+              </center>
+            </apex:column>
+            <apex:column >
+               <apex:facet name="header"><center>Age</center></apex:facet>
+              <center><apex:outputText value="{!task.decAge}" /></center>
+            </apex:column>
+            <apex:column >
+              <apex:facet name="header"><center>Reopen Case Age</center></apex:facet>
+              <center><apex:outputText value="{!task.decCaseOrAge}"/></center>
+            </apex:column>
+            <apex:column >
+              <apex:facet name="header"><center>Follow Up Date</center></apex:facet>
+              <center>
+                <apex:outputText value="{0,date,MM/dd/yyyy}">
+                  <apex:param value="{!task.dtFollow_up_Date}" />
+                </apex:outputText>
+              </center>
+            </apex:column>
+            <apex:column >
+              <apex:facet name="header"><center>Date/Time Opened</center></apex:facet>
+              <center>
+                <apex:outputText value="{0,date,MM/dd/yyyy hh:mm a}">
+                  <apex:param value="{!task.dtCreatedDate}" />
+                </apex:outputText>
+              </center>
+            </apex:column>
+          </apex:PageBlockTable>
+
+          <apex:outputPanel id="PagenationId" rendered="{!bPagenationFlag}">
+            <apex:outputLabel value="{!PageFirstRecord }"/>&nbsp;-&nbsp;
+            <apex:outputLabel value="{!PageLastRecord }"/>&nbsp;out of&nbsp;
+            <apex:outputLabel value="{!Total_size}"/>
+            <center>
+              <apex:commandButton action="{!getPrevious}" title="Previous" value="{!$Label.HUMPrevious}" disabled="{!disablePrevious}" reRender="theTable,thePageBlockSection3,pnlError" status="pleaseWait"/>
+              <apex:commandButton action="{!getNext}" title="Next" value="{!$Label.HUMNext}" disabled="{!disableNext}" reRender="theTable,thePageBlockSection3,pnlError" style="margin-left:10px" status="pleaseWait"/>
+            </center>
+          </apex:outputPanel>
+
+          <script type="text/javascript">
+            colorThirdPageBlock();
+
+            jQuery(document).ready(function(){
+            jQuery('table').each(function(){
+            jQuery(this).dragtable({
+            placeholder: 'dragtable-col-placeholder test3',
+            items: 'thead th:not( .notdraggable ):not( :has( .dragtable-drag-handle ) ), .dragtable-drag-handle',
+            appendTarget: jQuery(this).parent(),
+            scroll: true
+            });
+            });
+            var outerDIVStyle = document.getElementsByClassName("outerDIVStyle")[0];
+            outerDIVStyle.style.height = document.querySelector("[id$='mainPanel']").offsetHeight + 'px';
+            });
+          </script>
+        </apex:pageBlockSection>
+
+        <apex:actionRegion >
+          <apex:actionFunction name="updateWrapperAF" action="{!updateWrapper}"  rerender="displayTAT,pnlError" status="pleaseWait" oncomplete="openInNewTabOnComplete();">
+            <apex:param name="CaseTaskId" value=""/>
+          </apex:actionFunction>
+        </apex:actionRegion>
+      </apex:pageBlock>
+    </apex:form>
+  </div>
+</apex:page>

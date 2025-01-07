@@ -1,0 +1,23 @@
+﻿<!--
+LWC Component Name : AuthFlowSummary
+Function    : LWC component to display Auth Summary template 
+
+Modification Log: 
+Developer Name           Code Review                      Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Aishwarya Pawar                                         12/26/2022                 initial version(REQ 4028814)
+                                              
+********************************************************************************************************************************
+-->
+<template>
+    <lightning-card>
+       
+		<!--body-->
+        <template if:false={error}>
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                <lightning-formatted-rich-text value={templateData}></lightning-formatted-rich-text>
+            </div>
+        </template>
+    </lightning-card>
+
+</template>

@@ -1,0 +1,63 @@
+﻿<!--
+Page Name        : HUMAttachmentEdit
+Version          : 1.0 
+Created Date     : MAY 26 2014
+Function         : Page used to Edit / Create new Custom Attachment record
+Modification Log :
+*   Modification ID     Developer           Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*           1.0        Chaitanya Kumar      17248             05/26/2014            Original Version
+*           1.1        Shruthi Karanth      18229             09/29/2014            Defect -155404 Replaced Task ID with Task Number
+*           1.2        Tanushree Hazari     21906             03/24/2015            Modified line 22-25 as part of REQ-82518
+*			1.3		   Pradeepkumar Dani											Added JS code to store attCurrentSubTabIdParam
+*           1.4        Samridh Manucha		49959             12/05/2016            Defect Fix - 247593 To set Tab Name on Load on page
+*			1.5		   Joel George			15414			  15/12/2017		    Defect Fix 320308.0001
+------------------------------------------------------------------------------------------------------------------------------------->
+<apex:page extensions="HUMAttachmentEditExtension" standardController="Attachment__c">
+    <apex:includeScript value="/support/console/35.0/integration.js"/>
+    <!--  Current page specific business logic is incorporated into the Javascript file -->
+    <apex:includeScript value="{!$Resource.HUMAttachmentEdit}"/>
+    <apex:form >
+        <!-- Output panel will be re rendered to get latest data from server -->
+        <apex:outputpanel id="attachId">
+            <script>
+                //Get the Latest Data from the Objects
+                //Store case ID
+                var caseID = '{!JSENCODE(attachment.Related_To_Case__c)}';
+                
+                //Store the created custom Attachment ID
+                var attachmentID = '{!JSENCODE(attachment.Id)}';
+                
+                //Store the create Custom Attachment Name
+                var attachmentName = '{!JSENCODE(attachment.Name)}';
+				if(!attachmentName)
+					attachmentName ='New Attachment';
+                // Set the Tab Title on Page Load
+                onLoadSetTitle(attachmentName);
+                //Store the Case sub tab id
+                var attCurrentSubTabIdParam = '{!JSENCODE($CurrentPage.parameters.attCurrentSubTabIdParam)}' ;
+            </script>
+        </apex:outputpanel>
+        <script>
+            //Following data will be referred by Javascript file in static resource
+            //Store primary Tab ID & current Tab id     
+			var primaryAttID,currentAttTabID;
+        </script> 
+        <!-- For Constructor Related exception -->
+        <c:HUMConstructorExceptionComponent errorLogs="{!listErrorLogs}" />  
+        <apex:pageblock mode="Edit">
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton action="{!saveAttachment}" onComplete="triggerPostSaveActivites();" rerender="attachId" value="{!$Label.HUMSaveBtn}"  rendered="{!!bIsVisible}"/>
+                <apex:commandButton value="{!$Label.HUMCancelBtn}" action="{!onCancel}" rendered="{!bIsVisible}"/>
+            </apex:pageBlockButtons>
+            <apex:pageblocksection >
+                <apex:inputField value="{!attachment.Name}"/>
+                <apex:pageblocksectionItem rendered="{!!ISBLANK(attachment.Related_To_Task__c)}">
+                <apex:outputtext value="{!$ObjectType.Attachment__c.fields.Related_To_Task__c.Label}"/>
+                <apex:outputText value="{!sTaskNumber}"/>
+                </apex:pageblocksectionItem>
+                <apex:outputField rendered="{!!ISNULL(attachment.Related_To_Case__c) && ISBLANK(attachment.Related_To_Task__c)}" value="{!attachment.Related_To_Case__c}"/>
+            </apex:pageblocksection>
+        </apex:pageblock>
+    </apex:form>
+</apex:page>

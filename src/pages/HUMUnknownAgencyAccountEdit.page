@@ -1,0 +1,119 @@
+﻿<!--
+Page Name        : HUMUnknownAgencyAccountEdit
+Version          : 1.0 
+Created Date     : July 25 2014
+Function         : This VF page is used to capture unknown Agency account details
+Modification Log :
+*   Developer         Code Review       Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Shruthi Karanth        17172       07/25/2014            Original Version
+*   Shruthi Karanth        17532       08/18/2014            Updates based on changes to Agent Type values
+*   Chaitanya Kumar        17765       09/08/2014            Included 31 version Integration toolkit related to Opening of page in new tab
+*   Manish Kumar           18362       10/07/2014            Updated code for defect#155398
+*   Ranjeeth Nagishetty    18841       10/29/2014            Changed in the Field Length as per REQ - 63682
+*   Ranjeeth Nagishetty    18956       11/04/2014            Changed the Zipcode Length to 5 characters REQ - 63682
+*   Shruthi Karanth        19151       11/11/2014            Fixed Defect 160839.0001 
+*   Vishal Verma           19277       11/14/2014            Fixed Defect 160988.0001
+*   Reena Rajan            20204       01/05/2015            Fix for defect 166978.0001 : Changed Agent Id max length to 10
+*   Reena Rajan            20432       01/21/2015            Per User Story update changing Agent Id max length to 9
+*   Ranjeeth Nagishetty    23424       05/28/2015            Changed the Field length  for account name ,Individual firstname ,Individual Lastname.
+*   Praveen Kumar Parimi   48880       11/21/2016            Added setTimeout to Save Button to prevent from multiple clicks and submissions.
+*   Firoja Begam           1946387     02/24/2021            T1PRJ0002736/PR00094232 - 2021 - MF6 - Security - Checkmarx High Defects in Release_2021_02_21 - SF - TECH - Type: "inputText Ignoring FLS" - Remediation
+
+-->
+<apex:page standardcontroller="Account" extensions="HUMUnknownAccountController" sidebar="false" showheader="false" id="AgentPage">
+    <apex:includeScript value="{!$Resource.HUMUnknownAccountUtility}" />
+    <apex:includeScript value="/support/console/31.0/integration.js"/>
+    <apex:form id="frm">
+        <c:HUMConstructorExceptionComponent errorLogs="{!listErrorLogs}" />
+        <apex:actionRegion >
+            <apex:pageMessages id="errorMessage" />
+            <apex:outputpanel id="updatedInfo">
+                <script>
+                    var accountID='{!JSENCODE(account.Id)}';
+                    var bIsErrorOnPage= {!bIsErrorOnPage};
+                	var sAccountType ='{!JSENCODE(sAccountType)}';  
+                    window.onload = onLoadEvents;         
+                </script>
+            </apex:outputpanel>
+            <apex:Pageblock id="AgentPageBlock" mode="maindetail">
+                <apex:pageblockbuttons location="both">
+                    <apex:commandbutton value="Save" action="{!Save}" rerender="frm" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;');" onComplete="populateUknownDetail();" />
+                    <apex:commandbutton value="Cancel" onclick="cancelTab();return false;" />
+                </apex:pageblockbuttons>
+                <apex:pageBlockSection showHeader="true" title="Account Information" id="PBS" columns="2">
+                    <apex:pageblockSectionItem id="PBSAgType">
+                        <apex:outputlabel >{!$Label.HUMAgencySearchLabelType}</apex:outputlabel>
+                        <apex:outputPanel styleClass="requiredInput" layout="block">
+                            <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                            <apex:actionRegion >
+                                <apex:inputField id="AgentType" value="{!Account.Agent_Type__c}" required="true">
+                                    <apex:actionSupport event="onchange" action="{!resetValuesOnAgentTypeChange}" rerender="fnamepanel,lnamepanel,agnamepanel" />
+                                </apex:inputField>
+                            </apex:actionRegion>
+                        </apex:outputPanel>
+                    </apex:pageblockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$Label.HUMLabelRecordType}" />
+                        <apex:outputText value="{!sRecordTypeName}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel >{!$Label.HUMLabelFirstName}</apex:outputlabel>
+                        <apex:outputpanel id="fnamepanel">
+                            <apex:outputpanel id="fnamesub" rendered="{!IF(Account.Agent_Type__c != $Label.HUMAgencySearchAgentTypeValue2,true,false)}" styleClass="requiredBlock" layout="block">
+                                <div class = "requiredInput">
+                                     <div class = "requiredBlock"></div>
+                                    <apex:inputField id="FName" value="{!Account.Individual_First_Name__c}" required="true" html-Maxlength="63"/> <!--Checkmarx inputText ignoring FLS Fixed-->
+                                </div>
+                            </apex:outputpanel>
+                        </apex:outputpanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:inputField value="{!Account.BillingCountryCode}" label="Billing Country" />
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel >{!$Label.HUMAgencySearchLabelLastName}</apex:outputlabel>
+                        <apex:outputpanel id="lnamepanel">
+                            <apex:outputpanel rendered="{!IF(Account.Agent_Type__c != $Label.HUMAgencySearchAgentTypeValue2,true,false)}" styleClass="requiredBlock" layout="block">
+                                 <div class = "requiredInput">
+                                 <div class = "requiredBlock"></div>
+                                 <apex:inputField id="LName" value="{!Account.Individual_Last_Name__c}" required="true" html-Maxlength="63" /> <!--Checkmarx inputText ignoring FLS Fixed-->
+                                  </div>
+                              </apex:outputpanel>
+                          </apex:outputpanel>
+                      </apex:pageBlockSectionItem>
+                      <apex:inputtext value="{!Account.BillingStreet}"  maxlength="150" rendered="{!$ObjectType.Account.fields.BillingStreet.Accessible}"/> <!--Checkmarx inputText ignoring FLS Fixed-->
+                      <apex:pageBlockSectionItem >
+                          <apex:outputlabel >{!$Label.HUMLabelAccountName}</apex:outputlabel>
+                          <apex:outputpanel id="agnamepanel">
+                              <apex:outputpanel rendered="{!IF((Account.Agent_Type__c == $Label.HUMAgencySearchAgentTypeValue2),true,false)}" styleClass="requiredInput" layout="block">
+                                  <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                                  <apex:inputField id="accName" value="{!Account.Name}" html-Maxlength="63"  required="true" /> <!--Checkmarx inputText ignoring FLS Fixed-->
+                              </apex:outputpanel>
+                          </apex:outputpanel>
+                      </apex:pageBlockSectionItem>
+                      <apex:inputField value="{!Account.BillingCity}" html-Maxlength="40" /> <!--Checkmarx inputText ignoring FLS Fixed-->
+                      <apex:inputField value="{!Account.ParentId}" />
+                      <apex:pageBlockSectionItem >
+                          <apex:outputlabel >Billing State/Province</apex:outputlabel>
+                          <apex:outputPanel styleClass="requiredInput" layout="block">
+                              <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                              <apex:inputField value="{!Account.BillingStateCode}" required="true" />
+                          </apex:outputPanel>
+                      </apex:pageBlockSectionItem>
+                      <apex:pageBlockSectionItem />
+                      <apex:inputField value="{!Account.BillingPostalCode}" html-Maxlength="5" /> <!--Checkmarx inputText ignoring FLS Fixed-->
+                      <apex:pageBlockSectionItem />
+                      <apex:inputField id="UAPhone" value="{!Account.Phone}" onblur="phoneFormating('{!$Component.UAPhone}'); return true;" html-Maxlength="10" /> <!--Checkmarx inputText ignoring FLS Fixed-->
+                      <apex:pageBlockSectionItem />
+                      <apex:inputField value="{!Account.Work_Email__c}" html-Maxlength="80" /> <!--Checkmarx inputText ignoring FLS Fixed-->
+                      <apex:pageBlockSectionItem />
+                  </apex:pageBlockSection>
+                  <apex:pageBlockSection showHeader="true" title="Additional Information" columns="1">
+                      <apex:inputField value="{!Account.Agent_ID__c}" html-Maxlength="9" /> <!--Checkmarx inputText ignoring FLS Fixed-->
+                      <apex:inputText label="{!$Label.HUMAgencySearchTaxId}" value="{!sTaxID}" maxlength="9" rendered="{!$ObjectType.ConsumerID__c.fields.Consumer_ID__c.Accessible}"/> <!--Checkmarx inputText ignoring FLS Fixed-->
+                  </apex:pageBlockSection>
+                  <apex:pageBlockSection showHeader="false" columns="1">
+                  </apex:pageBlockSection>
+             </apex:pageBlock>
+        </apex:actionRegion>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,59 @@
+.sfront-information_section
+{
+    border: 1px solid #bebebe;
+    border-radius: 10px;
+    margin: 1%;
+    box-sizing: content-box;
+    box-shadow: 0 10px 6px -6px #777;
+}
+.sfront-info_header
+{
+    font-size: 1rem;
+    color: #ffffff;
+    background: linear-gradient(to right, #1b5297 0%, #669999 100%);
+    font-weight: bold;
+    border-radius: 9px 9px 0 0;
+    padding: 0.5rem;
+}
+.sfront-info_content
+{
+    padding: 1rem 1rem 2rem 1rem;
+}
+.sfront-lightning_card
+{
+    padding:1rem;
+}
+.sfront-custom_grid
+{
+    display:grid;
+    padding-right: var(--lwc-spacingSmall,0.75rem);
+    padding-left: var(--lwc-spacingSmall,0.75rem);
+    grid-template-columns:1fr 1fr;
+    row-gap: 1rem;
+}
+.sfront-custom_grid .sfront-grid_member
+{
+    width:60%;
+}
+.sfront-page_header
+{
+    font-size: 1.25rem;
+}
+.sfront-ltng_card{
+    overflow:hidden;
+}
+.sfront-ltng_spinner{
+    position: fixed;
+}
+
+@media screen and (max-width: 480px) {
+    .sfront-custom_grid
+    {
+        grid-template-columns:1fr;
+        row-gap: 1em;
+    }
+    .sfront-custom_grid .sfront-grid_member
+    {
+        width:auto;
+    }
+}

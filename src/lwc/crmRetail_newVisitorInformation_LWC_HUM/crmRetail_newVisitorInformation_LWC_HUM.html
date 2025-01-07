@@ -1,0 +1,124 @@
+﻿<!--
+*******************************************************************************************************************************
+Page Name        : crmRetail_newVisitorInformation_LWC_HUM
+Version          : 1.0 
+Created Date     : 06/29/2022
+Function         : Lightning web component used for the New visitor creation.
+Modification Log :
+* Developer                 Code review         Date                  Description
+*******************************************************************************************************************************
+*  Mohamed Thameem	                           06/29/2022            Original Version - Home Page Modernization
+*  Mohamed Thameem	                           03/03/2023            Request 4231928 - Mobile Scanner Phase 2
+*  Vinoth L	                                   09/12/2023            User Story 5084370 T1PRJ0154546 / SF / MF9 Storefront - Add preferred name on New Visitor Page
+*  Mohamed Thameem      	            	   09/22/2023            User Story 5132829: T1PRJ0154546 / SF / MF9 Storefront - Include Preferred Name in Search
+-->
+<template>
+    <template if:true={loadSpinner}>
+    <lightning-spinner class="sfront-ltng_spinner" alternative-text="Loading" size="medium"></lightning-spinner>
+    </template>
+    <lightning-card class={ltngCardClass}>
+        <div align="center" class="sfront-page_header">{visitorPageHeader}</div>
+        <div class="sfront-lightning_card">            
+            <div class="sfront-information_section" id="VisitorInformation">
+                <div class="sfront-info_header">{visitorInformationSection}</div>
+                <div class="sfront-info_content">
+                    <div class="sfront-custom_grid">
+                        <div class="sfront-grid_member">
+                            <lightning-input disabled={fieldDisabled} class="validationRequired" value={account.FirstName} onchange={handleFirstName} message-when-value-missing="First Name is required" required="true"
+                                placeholder="Enter First Name..." type="text" label="First Name"></lightning-input>
+                        </div>
+                        <div class="sfront-grid_member">
+                            <lightning-input disabled={fieldDisabled} class="validationRequired formatValidationReq bdayfield" value={birthDate} onchange={handleBirthdate} date-style="short" max={maxBirthDate} message-when-bad-input={birthDateOverFlowError} message-when-range-overflow={birthDateOverFlowError} message-when-value-missing={birthDateRequiredError}
+                                required="true" type="date" label="Birthdate" ></lightning-input>
+                        </div>
+                        <div class="sfront-grid_member">
+                            <lightning-input disabled={fieldDisabled} class="validationRequired" value={account.LastName} onchange={handleLastName} message-when-value-missing="Last Name is required" required="true"
+                                placeholder="Enter Last Name..." type="text" label="Last Name"></lightning-input>
+                        </div>
+                        <div class="sfront-grid_member">
+                            <lightning-combobox disabled={fieldDisabled} class="validationRequired" value={account.Gender__c} onchange={handleGender} message-when-value-missing="Gender is required" required="true"
+                                name="Gender" label="Gender" placeholder="" options={genderOptions}>
+                            </lightning-combobox>
+                        </div>
+						<div class="sfront-grid_member">
+							<template if:true={switchMap.Switch_5084370}>
+								<lightning-input disabled={fieldDisabled} class="validationRequired" value={account.CRMRetail_PreferredName__c} onchange={handlePrefName}
+									placeholder="Enter Preferred First Name..." type="text" label="Preferred First Name"></lightning-input>
+							</template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sfront-information_section" id="AddressInformation">
+                <div class="sfront-info_header">{addressInformationSection}</div>
+                <div class="sfront-info_content">
+                    <div class="sfront-custom_grid">
+                        <div class="sfront-grid_member">
+                            <lightning-input disabled={fieldDisabled} class="validationRequired" value={account.PersonMailingStreet} onchange={handleStreet} message-when-value-missing="Street is required" required="true"
+                                placeholder="Enter Street Name..." type="text" label="Street"></lightning-input>
+                        </div>
+                        <div class="sfront-grid_member">
+                            <lightning-input disabled={fieldDisabled} class="validationRequired" value={account.PersonMailingCity} onchange={handleCity} message-when-value-missing="City is required" required="true"
+                                placeholder="Enter City Name..." type="text" label="City">
+                            </lightning-input>
+                        </div>
+                        <div class="sfront-grid_member">
+                            <lightning-combobox disabled={fieldDisabled} class="validationRequired" value={account.PersonMailingState} onchange={handleState} message-when-value-missing="State is required" required="true"
+                                name="State" label="State" placeholder="" options={stateOptions}>
+                            </lightning-combobox>
+                        </div>
+                        <div class="sfront-grid_member">
+                            <lightning-input disabled={fieldDisabled} class="validationRequired formatValidationReq" value={account.PersonMailingPostalCode} onchange={handleZip} pattern="\d{5}|\d{9}" message-when-pattern-mismatch={zipPatternMismatchError} message-when-value-missing="Zip is required" required="true"
+                                placeholder="Enter Zip Code..." type="text" label="Zip Code"></lightning-input>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sfront-information_section" id="AdditionalInformation">
+                <div class="sfront-info_header">{additionalInformationSection}</div>
+                <div class="sfront-info_content">
+                    <div class="sfront-custom_grid">
+                        <div class="sfront-grid_member">
+                            <lightning-input disabled={fieldDisabled} class="validationRequired formatValidationReq" value={homePhone} pattern="^[0-9]{10,10}$" message-when-pattern-mismatch={phonePatternError} onchange={handleHomePhone} placeholder="Enter Home Phone Number..." type="tel" label="Home Phone">
+                            </lightning-input>
+                        </div>
+                        <div class="sfront-grid_member">
+                            <lightning-input disabled={fieldDisabled} class="validationRequired formatValidationReq" value={workPhone} pattern="^[0-9]{10,10}$" message-when-pattern-mismatch={phonePatternError} onchange={handleWorkPhone} placeholder="Enter Work Phone Number..." type="tel" label="Work Phone">
+                            </lightning-input>
+                        </div>
+                        <div class="sfront-grid_member">
+                            <lightning-input disabled={fieldDisabled} class="validationRequired formatValidationReq" value={account.PersonEmail} pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" message-when-pattern-mismatch="Not a valid Email Address" onchange={handleEmail} placeholder="Enter Email..." type="email" label="Email"></lightning-input>
+                        </div>
+                        <div class="sfront-grid_member">
+                            <template if:false={switchMap.Switch_3782843}>
+                                <lightning-input disabled={fieldDisabled} class="validationRequired formatValidationReq" min={minWaiverDate} onchange={handleWaiverDate} max={maxWaiverDate} message-when-bad-input={Valid_Waiver_Date} 
+                                    message-when-range-overflow={waiverDateOverFlowError} message-when-range-underflow={waiverDateUnderFlowError} value={waiverDate} field-level-help={Help_Text_For_Waiver_Date} date-style="short" type="Date" label="Waiver Date">
+                                </lightning-input>
+                            </template>
+                        </div>
+                        <div style="display:grid">
+                            <lightning-dual-listbox disabled={fieldDisabled} onchange={handleNotification} size="small" name="languages" label="Notification Opt Out"
+                                source-label="Available" selected-label="Chosen" options={notificationOption}>
+                            </lightning-dual-listbox>
+                        </div>						
+                        <div class="sfront-grid_member">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div align="center">
+            <lightning-button variant="brand" label="Cancel" title="Cancel" onclick={onCancel}
+                class="slds-m-left_x-small"></lightning-button>
+            <template if:true={showVirtualVisitor}>
+            <lightning-button  disabled={isVirtualDisabled} variant="brand" label="Virtual Visitor" onclick={onVirtualVisitor} title="Virtual Visitor"
+                class="slds-m-left_x-small"></lightning-button>
+            </template>
+            <lightning-button variant="brand" label={continueLabel} onclick={onContinue} title={continueLabel} 
+                class="slds-m-left_x-small"></lightning-button>
+        </div>
+        <template if:true={isModalActive}>
+            <c-crm-retail_-scancard_-l-w-c_-h-u-m view-mode={pageName} is-active={isModalActive} new-account={account} onclosescancardmodal={handleScanCardModalClose} ></c-crm-retail_-scancard_-l-w-c_-h-u-m>
+        </template>
+    </lightning-card>
+</template>

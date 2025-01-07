@@ -1,0 +1,54 @@
+﻿<!--
+LWC Name        : pcpExistingPopover.html
+Function        : LWC to display existing case data for pcp;
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Nirmal Garg                     08/25/2022                   initial version - US - 3602368
+* Kalyani Pachpol                 03/09/2022                   US-4305931
+* Jonathan Dickinson              06/14/2023                  User Story 4705843: T1PRJ0891339 2023 Arch Remediation-SF-Tech-Filter cases having template attached from existing case history logging for process logging
+*****************************************************************************************************************************-->
+<template>
+    <section aria-describedby="dialog-body-id-107" aria-labelledby="dialog-heading-id-6"
+        class="slds-popover slds-popover_prompt slds-popover_prompt_top-left existingLoggingBox" role="dialog">
+        <lightning-button-icon icon-name="utility:close" variant="bare"
+            class="slds-button slds-button_icon slds-button_icon-small slds-float_right slds-popover__close"
+            title="close" style="margin-top:6px;" onclick={handleExistingCasePanelClose} label="Close">
+        </lightning-button-icon>
+
+        <header class="slds-popover__header" style="border: 1px solid #f3f2f2 ;background-color: white;">
+            <h1 id="dialog-heading-id-4" class="slds-text-heading_small"><b>Existing Case</b></h1>
+        </header>
+        <div>
+            <div class="slds-scrollable_y" style="height: 500px;">
+                <c-logging-existing-case-history record-id={recordId} onselectedcasedata={handleCaseCheckBoxSelect}
+                    sel-case-id={existingCaseId} filter-cases-having-template={filterCasesHavingTemplate}>
+                </c-logging-existing-case-history>
+            </div>
+        </div>
+        <div class="slds-grid slds-gutters slds-p-around_small slds-grid_align-end">
+          <div class="slds-col slds-size_1-of-2">
+            <div class="slds-grid slds-gutters slds-grid_align-end">
+                      <div class="slds-col">
+                   <i>{attachCaseNote}</i>
+                   </div>
+                   </div>
+               </div>
+            <div class="slds-col slds-size_1-of-2">
+              <div class="slds-grid slds-gutters slds-grid_align-end">
+                        <div class="slds-col">
+                            <lightning-input label="Log To" type="toggle" checked={toggleValue} message-toggle-active="Existing Case"
+                                message-toggle-inactive="New Case" onchange={handleToggle}></lightning-input>
+                        </div>
+                        <div class="slds-col">
+                          <lightning-button variant="brand" label="Log & Finish" title="Finish" onclick={handleLogFinish}
+                          disabled={isFinishDisabled}>
+                          </lightning-button>
+                        </div>
+                    </div>
+
+            </div>
+        </div>
+    </section>
+</template>

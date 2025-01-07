@@ -1,0 +1,29 @@
+﻿<!--
+LWC Name        : rtiIconHum
+Function        : LWC to display print rtiIcon
+
+Modification Log:
+* Developer Name                  Date                          Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Aishwarya Pawar                07/14/2022                    Original Version
+* Nirmal Garg                   12/06/2022                     US-3975339 Changes - RTI only for Member Account
+* Nirmal Garg                		01/04/2023                 DF-6907
+****************************************************************************************************************************-->
+<template>
+    <template if:true={checkMemberAccount}>
+        <button class="slds-button slds-float_right rtiContainer" onclick={handleRTIEnabled}
+            onmouseenter={handleRtiIconMouseEnter} onmouseleave={handleRtiIconMouseLeave}>
+            <lightning-icon icon-name="standard:action_list_component" alternative-text="RTI Communication"
+                class="my-icon">
+            </lightning-icon>
+        </button>
+        <template if:true={showRtiTooltip}>
+            <c-generic-tool-tip-popover-hum tooltipbody={toolTipBody} tooltipclass={toolTipClass}
+                tooptipstyle={toolTipStyle}></c-generic-tool-tip-popover-hum>
+        </template>
+        <template if:true={isRTIOpen}>
+            <c-rti-details-hum record-id={recordId} object-api-name={objectApiName} onclose={handleRTIEnabled}>
+            </c-rti-details-hum>
+        </template>
+    </template>
+</template>

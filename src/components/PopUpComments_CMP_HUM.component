@@ -1,0 +1,25 @@
+﻿<!--
+Component Name   : PopUpComments_CMP_HUM
+Version          : 1.0
+Created On       : August 1 2017
+Function         : This Component is used as pop up to Comments on Cases and Tasks
+
+Modification Log :
+*  Developer           Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*  Siddharth Mehta	   08/01/2017			Original Version
+********************************************************************************************************************************
+-->
+<apex:component controller="PopUpComments_C_HUM" allowDML="true">
+
+    <apex:attribute name="objectId" type="String" assignTo="{!sObjectId}" required="true" description="" />
+
+    <apex:stylesheet value="{!URLFOR($Resource.HUMCaseHistoryComponent,'/HUMCaseHistoryComponent/main.css')}"/>
+    
+    <apex:outputPanel id="caseCommentComponent" styleClass="componentRef"> 
+        <apex:outputText rendered="{!bDateDisplay}" value="">                       
+        <font class="commentStyle">{!sLastModifiedDate}<br/></font>
+        </apex:outputText>
+        <apex:outputText id="CaseComment" value="{!JSENCODE(sComments)}" styleClass="wordWrap"> </apex:outputText>
+    </apex:outputPanel> 
+</apex:component>

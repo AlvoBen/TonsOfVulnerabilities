@@ -1,0 +1,200 @@
+﻿<!--
+LWC Name        : SearchCodeSetHum.html
+Function        : LWC to display Search Code set Screen.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Aishwarya Pawar                 01/05/2023                  initial version REQ- 4080893
+* Aishwarya Pawar                 01/13/2023                  Defect Fix - 6963 and 6961
+* Nirmal Garg                     01/13/2023                  Fixing alignment issues.
+* Swapnali Sonawane               07/27/2023                  US-4802828  Update UI Medical Network ID Search Screen
+*------------------------------------------------------------------------------------------------------------------
+
+-->
+<template>
+    <div class="slds-m-around_medium">
+        <template if:true={displayToastMessage}>
+            <div class="slds-notify_container slds-is-relative">
+                <div class="slds-notify slds-notify_toast slds-theme_error" role="status">
+                    <lightning-icon icon-name="utility:error" class='slds-m-right_small' size='x-small' alternative-text="Error!" variant="inverse"></lightning-icon>
+                    <div class="slds-notify__content">
+                        <h2 class="slds-text-heading_small ">Please Enter Search Criteria. At least two alpha-numeric characters are required to execute a search.</h2>
+                    </div>
+                    <div class="slds-notify__close">
+                        <button class=" slds-button slds-button_icon slds-button_icon-small slds-float_right slds-popover__close slds-button_icon-inverse "
+                                onclick={hideToastMessage}>
+                            <lightning-icon icon-name="utility:close" size="x-small" variant="bare" class="slds-m-bottom_x-small" title="close">
+                            </lightning-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <div class="slds-grid slds-grid_align-spread slds-m-left_small">
+            <div class="slds-col slds-size_1-of-1">
+                <span class="slds-text-heading_small"><b>Procedure Code Search</b></span>
+            </div>
+        </div>
+        <div class="slds-form-element slds-p-left_small slds-p-right_small">
+            <div class="slds-grid slds-gutters">
+                <div class="slds-size_4-of-12 ">
+                    <div class="slds-form-element slds-p-left_small slds-p-right_large">
+                        <label class="slds-form-element__label" for="text-input-id-47">
+                            Enter Code or Description
+                        </label>
+                        <div class="slds-form-element__icon" style="position:relative">
+                            <c-generic-help-text-hum helptext={labels.SearchInfo}></c-generic-help-text-hum>
+                        </div>
+                        <div class="slds-form-element__control ">
+                            <input type="text" id="searchCiteria" name="searchCiteria" required="" value={SearchKeyword}
+                                   oninput={handleChange} class=" search-input slds-input" minlength=2 onkeyup={handleEnter} />
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-form-element  slds-p-top_large">
+                    <label class="slds-checkbox_toggle slds-grid">
+                        <span class="slds-form-element__label slds-m-bottom_none">
+                            Restrict Search to
+                            Code Only
+                        </span>
+                        
+                        <lightning-input type="toggle" label="" name="searchCode" onchange={handleChange}
+                            checked={codeOnlySearch} message-toggle-active="" message-toggle-inactive=""
+                            variant="label-hidden"></lightning-input>
+                       
+                        <c-generic-help-text-hum helptext={labels.CodesOnlyInfo}></c-generic-help-text-hum>
+                        
+                    </label>
+                </div>
+            </div>
+            <div class="slds-m-top_medium">
+                <lightning-button variant="brand" label="Search" title="Search" onclick={handleSearch} class="">
+                </lightning-button>
+                <lightning-button variant="Neutral" label="Reset" title="Reset" onclick={handleReset}
+                    class="slds-m-left_x-small">
+                </lightning-button>
+            </div>
+        </div>
+        <template if:false={initialScreen}>
+            <div class=" slds-grid slds-gutters ">
+                <template if:false={noRecordsAvailble}>
+                    <div class="slds-m-left_small slds-col slds-size_6-of-12" style="margin-top: 2.5rem;">
+                        <b>
+                            Showing
+                            {filteredCount} of
+                            {totalCount} Entries
+                        </b>
+                    </div>
+                </template>
+                <template if:true={noRecordsAvailble}>
+                    <div class="slds-m-left_small slds-m-top_large slds-col slds-size_6-of-12"></div>
+                </template>
+                <template if:true={displayFilters}>
+                    <div class="slds-m-bottom_medium slds-size_6-of-12 slds-col">
+                        <div class="slds-grid slds-grid_align-end ">
+                            <div class="slds-col slds-size_2-of-5">
+                                <c-generic-multiselect-picklist-hum keyname="sCodeset" title='Search Results by'
+                                    selected-picklist-values={selectedValues} onmultiselectfilter={handlePicklistFilter}
+                                    options={CodeSetValues} placeholdermessage='Code Set'>
+                                </c-generic-multiselect-picklist-hum>
+                            </div>
+                            <div class="slds-col slds-m-right_medium slds-size_3-of-5">
+                                <div class="slds-form-element">
+                                    <label class="slds-form-element__label" for="text-input-id-46">Keyword</label>
+                                    <div
+                                        class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                        <template lwc:if={searchEntered}>
+                                            <button
+                                                class="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
+                                                title="Clear" onclick={clearSearchData} style="cursor: pointer;">
+                                                <lightning-icon icon-name="utility:clear" size="x-small"
+                                                    class="slds-button__icon slds-icon-text-light"></lightning-icon>
+                                                <span class="slds-assistive-text">Clear</span>
+                                            </button>
+                                        </template>
+                                        <template lwc:else>
+                                            <lightning-icon
+                                                class="slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default"
+                                                icon-name="utility:search" size="x-small"></lightning-icon>
+                                        </template>
+                                        <input type="text" id="text-input-id-6" placeholder=''
+                                            class="slds-input keyword-input" oninput={findByWord} name='Keyword'
+                                            value={keyword} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            <template if:false={noRecordsAvailble}>
+                <!--slds table-->
+                <div data-id="result" class="slds-m-horizontal_small slds-table--header-fixed_container ">
+                    <div class="slds-scrollable_y " style="max-height: 240px;" onscroll={handleScroll}>
+                        <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered slds-table--header-fixed">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <template for:each={columns} for:item="col">
+                                        <th class="slds-is-resizable slds-is-sortable slds-cell-fixed" scope="col"
+                                            key={col.label} data-label={col.label} style={col.style} data-id={col.id}
+                                            data-sortable=true onmouseenter={handleMouseEnter}
+                                            onmouseleave={handleMouseLeave} onclick={onHandleSort}
+                                            data-iconname={col.iconname}>
+                                            <div class="slds-p-top_x-small slds-wrap slds-cell-fixed slds-m-left_x-small"
+                                                 style="width: 100%;">
+                                                {col.label}
+                                                <span>
+                                                    <template if:false={col.mousehover}>
+                                                        <template if:true={col.sorting}>
+                                                            <lightning-icon class="slds-var-m-left_small remove-display-sort-icon"
+                                                                            icon-name={col.iconname} size="xx-small">
+                                                            </lightning-icon>
+                                                        </template>
+                                                    </template>
+                                                    <template if:true={col.mousehover}>
+                                                        <lightning-icon class="slds-var-m-left_small remove-display-sort-icon"
+                                                                        icon-name={col.mousehovericon} size="xx-small">
+                                                        </lightning-icon>
+                                                    </template>
+                                                </span>
+                                            </div>
+                                        </th>
+                                    </template>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template if:true={filteredSCRecords}>
+                                    <template for:each={filteredSCRecords} for:item="item" for:index="index">
+                                        <tr key={item.id} class="slds-hint-parent">
+                                            <td data-label="Type">
+                                                <div class="slds-cell-wrap">{item.sCode}</div>
+                                            </td>
+                                            <td data-label="Category">
+                                                <div class="slds-cell-wrap">{item.sCodeset}</div>
+                                            </td>
+                                            <td data-label="Status">
+                                                <div class="slds-cell-wrap">{item.sDescription}</div>
+                                            </td>
+                                            <td data-label="Priority">
+                                                <div class="slds-cell-wrap">{item.sStatus}</div>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </template>
+            <template if:true={noRecordsAvailble}>
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-m-top_medium slds-size_1-of-1 ">
+                        <c-generic-scoped-notification-hum iconname="utility:info" message={labels.HUMNoRecords}>
+                        </c-generic-scoped-notification-hum>
+                    </div>
+                </div>
+            </template>
+        </template>
+    </div>
+</template>

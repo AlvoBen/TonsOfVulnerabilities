@@ -1,0 +1,338 @@
+﻿<!-- *****************************************************************************************
+Page Name          : HUMH1MarketPlaceSearchPageV2
+Version            : 2.0
+Function           : Page to display H1 Market Place Details
+Created On         : 08/14/2015
+
+Modification Log:
+*   Developer                   Code Review           Date               Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Shreya CHoodamani                          08/14/2015          Original Version
+*   Manish Kumar                          	   08/14/2015          Implemented AutoClickbutton to trigger H1Service
+																   Removed error caused by Continuation ViewState
+******************************************************************************************************************************* -->
+
+<apex:page controller="HUMMemberSearchEnrollmentControllerV2" sidebar="false" id="thePage">
+    
+    <!-- <script src="https://code.jQuery.com/jQuery-1.10.2.js"></script>-->
+	<apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+    <script>
+//dont enable P9 Critical Fix        var jQ = jQuery.noConflict();
+        jQuery(document).ready(function(){
+            jQuery('#autoClickBtn').trigger('click');
+        });
+    </script>
+    <apex:form id="addCriteria1">
+        <apex:pagemessages id="errormsg" escape="false" />
+        <apex:pageBlock id="pgBlock">
+            
+            <button id="autoClickBtn" onClick="callSearchH1ServiceAF(); return false;" hidden="true"/>
+            
+            <apex:pageBlockSection showHeader="true" title="Member Demographics" columns="2" id="ViewAssignment">
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputlabel value="" >{!$Label.HUMLabelFirstName}</apex:outputlabel>
+                    <apex:outputPanel layout="block" >
+                        <apex:outputText value="" rendered="{!IF(lstLegacyService.size > 0,true, false)}">{!lstLegacyService[0].sFirstName}</apex:outputText>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputlabel value="" >{!$Label.HUMSearchEnrollmentSocSecurity}</apex:outputlabel>
+                    <apex:outputPanel layout="block" >
+                        {!$Label.HUMSearchEnrollmentMaskSSN}
+                        <apex:outputText value="" rendered="{!IF(lstLegacyService.size > 0,true, false)}">{!TRIM(Right(lstLegacyService[0].sSolSecurity, 4))}</apex:outputText>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMemberSearchLabelLastName}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                  <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sLastName}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentDOB}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sDOB}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem />
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentGender}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sGender}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem />
+             <apex:pageBlockSectionItem />
+            
+             <apex:pageBlockSectionItem >
+                <apex:outputlabel value=""> {!$Label.HUMSearchEnrollmentPerAddress} </apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sPermanentAddress}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchMemberCountyName}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sCountyName}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchMemberCity}  </apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sCity}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem />
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value=""> {!$Label.HUMSearchEnrollmentStates}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sState}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageblocksectionitem />
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value=""> {!$Label.HUMSearchMemberZip} </apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sZip}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem />
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">  {!$Label.HUMSearchEnrollmentMailAddress}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sMailaddr}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentHomePh}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sHomePh}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentMailCity}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sMailCity}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentWorkPh}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sworkPh}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentMailSt}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sMailSt}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+               
+            <apex:pageBlockSectionItem >
+            <apex:outputlabel value=""> Smoking Indicator</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sSmokingIndicator}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageblocksectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentMailZip}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sMailZip}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem />
+            
+            <script>colorFirstPageBlock();</script>
+		</apex:pageBlockSection>
+ 		<apex:pageBlockSection showHeader="true" title="Billing" columns="2" id="PBS2">
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentPaymentOpt}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sPymtOpt}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentCSRLevel}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].scsrLevel}</apex:outputText>
+				</apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentCSEffDate}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].scsrEffDate}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentCSEndDate}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sCsrEndDate}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentAPTCAmt}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].saptcAmount}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem />
+            
+             <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentAPTCEffDate} </apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].saptcEffDate}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentAPTCEndDate}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].saptcEndDate}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <script>colorSecondPageBlock();</script>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection showHeader="true" title="Benefit Information" columns="2" id="thePageBlockSection3">
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentGID}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sGroupID}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentBSN}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sStrBsn}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentEffDate}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].scovEffDt}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">Received Date</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sMktRcptDate}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem />
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentSigDate}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sSignDATE}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <script>colorThirdPageBlock();</script>
+          </apex:pageBlockSection>
+            
+           <apex:pageBlockSection showHeader="true" title="Agent Information" columns="2" id="PBS4">
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentMemPlanRep}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].ssalesRepName}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentAgentSSN}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sSalesType}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentAgentBrokerType}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].ssalesType}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            <script>colorfourthPageBlock();</script>
+             </apex:pageBlockSection>
+             
+             
+             <apex:pageBlockSection showHeader="true" title="Application Misc" columns="2" id="PBS5">
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentFileDate}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sFileDt}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentProDate}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sProcDt}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentTimeStamp}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sCreationTs}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentApplChannel}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+               <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sApplnChnl}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentOECconfig}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+                <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sOecConfId}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputlabel value="">{!$Label.HUMSearchEnrollmentBarCode}</apex:outputlabel>
+                <apex:outputPanel layout="block" >
+               <apex:outputText rendered="{!IF(lstLegacyService.size > 0,true, false)}" value="">{!lstLegacyService[0].sBarCodeBase}</apex:outputText>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+            
+            <script>colorfifthPageBlock();</script>
+            
+                
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:actionFunction name="callSearchH1ServiceAF" action="{!searchH1Service}" reRender="errormsg,ViewAssignment"/> 
+    </apex:form>
+</apex:page>

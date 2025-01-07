@@ -1,0 +1,84 @@
+﻿<!--
+LWC Name        : accountDetailPOAHum.html
+Function        : POA search Html 
+
+Modification Log:
+* Developer Name                  Date                         Description
+*
+* Ashish                          11/20/2020                   Original Version 
+* Supriya                         04/13/2021                   US-2080049 
+* Pallavi Shewale	         	  29/07/2021		    	   US-2501707 Reusing this component to hide the header section in the humana pharamcy page.
+* Supriya Shastri                09/06/2021                    Added grey headers to member detail table
+* Mohan Kumar N               10/27/2021                    US- 2440592
+* Muthu kumar                     06/17/2022                    DF-5050
+* Muthu kumar                     06/17/2022                    DF-5050 v2
+* Bhakti Vispute                  07/15/2022                US# 3445817 Account Management - Implementations Missing (Part2)-Squads
+****************************************************************************************************************************-->
+<template>
+  <div id="ExpandablePowerSection" class="slds-section slds-is-open hc-standard-table-styles">
+      <article class="slds-card">   
+        <template if:false={displayheader}>
+        <div class="slds-card__header slds-grid">
+          <header class="slds-media slds-media_center slds-has-flexi-truncate">
+            <div class="slds-media__figure">
+              <span class="slds-icon_container slds-icon-standard-account" title="account">
+                <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account" size="small"></lightning-icon>
+                <span class="slds-assistive-text">account</span>
+              </span>
+            </div>
+            <div class="slds-media__body">
+              <h2 class="slds-card__header-title">
+                  <span class="slds-text-title_bold">Power of Attorney {sCount}</span>
+              </h2>
+            </div>
+          </header>
+        </div>
+      </template>
+      <template if:true={displayheader}>
+        <div class="slds-p-bottom_large  slds-m-top_x-small slds-m-left_small slds-m-right_small" style="background-color:#F3F2F2; cursor: pointer;" onclick={handledisplaysection}>
+          <div style="float:left" class="slds-p-left_x-small">
+              <div class="slds-text-title_bold">Power of Attorney</div> 
+          </div>                        
+          <div style="float:right;width:15%">
+              <span class="slds-badge">{poaCount}</span>
+          </div>                        
+        </div>
+         
+      </template>
+      <template if:false={displayheader}>
+        <div class="slds-card__body slds-section__content" aria-hidden="false"  id="expandPowerSection" style='padding-top:0;'>
+            <div class="slds-tile__detail slds-text-body_small slds-card__body_inner">
+              <template if:true={isDeceased}>
+                <div class="slds-align_absolute-center slds-p-around_medium">{labels.deceasedPowerAttorneyHum}</div>
+              </template>
+              <template if:false={isDeceased}>
+                <template if:true={noResults}>
+                  <div class="slds-align_absolute-center slds-p-around_medium">{labels.Hum_NoResultsFound}</div>
+                </template>
+                <template for:each={result} for:item="acc">
+                  <dl class="slds-list_horizontal slds-p-bottom_medium slds-wrap" key={acc.PhoneNumber}>
+                    <dt class="slds-item_label slds-p-right_none slds-line-clamp" title="Name"><b>Name:</b></dt>
+                    <dd class="slds-item_detail slds-line-clamp">
+                      <span>{acc.FirstName}</span>&nbsp;<span>{acc.LastName}</span>
+					  <c-custom-tooltip-hum class="slds-show_inline-block" onclick={copyToBoard} 
+                      data-field1={acc.FirstName} data-field2={acc.LastName} icon-type=true help-text={labels.HUM_Copy_Clipboard} align="right"></c-custom-tooltip-hum>
+                    </dd>
+                    <dt class="slds-item_label slds-p-right_none slds-line-clamp" title="Action"><b>POA Type:</b></dt>
+                    <dd class="slds-item_detail slds-grid slds-grid_vertical-align-center">
+                      <span>{acc.Type}</span>
+                      <c-custom-tooltip-hum class="slds-m-left_xs-small" if:true={labels.poaTypeHelpText} help-text={labels.poaTypeHelpText}></c-custom-tooltip-hum>
+                    </dd>
+					<dt class="slds-item_label slds-p-right_none slds-line-clamp" title="Phone"><b>Phone:</b></dt>
+                    <dd class="slds-item_detail slds-grid slds-grid_vertical-align-center">
+                      <span>{acc.PhoneNumber}</span>
+                    </dd>
+                  </dl>
+                </template>
+              </template>
+              
+            </div>
+        </div>
+      </template>
+      </article>
+  </div>
+</template>

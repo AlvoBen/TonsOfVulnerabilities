@@ -1,0 +1,89 @@
+﻿<!--
+Page Name        : CaseRecommendationAction_VF_HUM
+Version          : 1.0
+Created Date     : Jun 29 2020
+Function         : This page is used to for providing Case Recommendation for OGO Cases.
+*********************************************************************************************************************************************************************************
+Modification Log:
+
+* Modification Id           Developer Name                       Date                       Description
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* 1.0                       Vinay Lingegowda                     06/29/2020                 Original Version
+* 1.1                       Vinay Lingegowda                     07/13/2020                 focus defect-1061 fix.
+* 1.2                       Subhamay Mandal                      07/24/2020                 US-1275896 - PR00091574-IR-50-50 OGO - Open Edit case tab of cloned case
+* 1.3                       Vijaykumar                           08/24/2020                 US-1293644 -PR00091574- IR 5050-OGO -Actions and routing associated on the recommendation page (Accept, Defer - re-opened cases)- (CRM)  
+* 1.4                       Vinay Lingegowda                     09/21/2020                 US-1514257 - PR00091574 - IR 5050- OGO - Update "Reject: Grievance" for Recommended Oral Grievance REJECT Action (CRM) 
+* 1.5			            Vinay Lingegowda			         09/21/2020		            US-1569379 - IR 5050- OGO - Disable Defer button for cases in Recommended Oral Grievance queue views (CRM)
+* 1.5                       Vinay Lingegowda                     11/13/2020                 USER STORY 1628353 PR00091574 - IR 5050 - OGO - Add a new View "Clarabridge Recommendations" for Re-opened cases (CRM)
+* 1.6                       Vinay Lingegowda                     03/08/2021                 USER STORY 2044469 IR 5050 - OGO - Optimize Accept recommendation actions for queues with clone & link feature (CRM)
+********************************************************************************************************************************************************************************-->
+
+<apex:page controller="CaseRecommendationAction_C_HUM" id="thePage" docType="html-5.0">
+    
+    <apex:includeScript value="/support/console/38.0/integration.js" id="integrationID"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />    
+    <apex:stylesheet value="{!URLFOR($Resource.CaseRecommendationAction_SR_HUM, 'styles/CaseRecommendationAction_VF_Style.css')}"/>
+    <apex:includescript value="{!URLFOR($Resource.CaseRecommendationAction_SR_HUM,'scripts/CaseRecommendationAction_VF_Script.js')}"/>  
+    
+    <script>
+        function setFocusOnLoad() {}
+    </script>
+    <apex:sectionHeader title="{!$Label.RecommendationHeader}" />
+    <apex:form id="addFeedback">
+        <apex:actionFunction action="{!createRecommendation}" name="createCaseTaskAF"  reRender="popupPanel" status="caseSaveStatus">
+            <apex:param name="sFeedbackType" value="" assignTo="{!oNewTask.Type}"/>           
+        </apex:actionFunction>  
+        <apex:actionFunction name="cloneCaseAF" action="{!referEdit}"  reRender="none"/>
+
+        <apex:pageBlock id="pgBlock" > 
+            <apex:outputPanel id="feedBackComment" style="display: none;">
+                <apex:PageMessage summary="{!$Label.RecommendationError}" severity="Error" strength="2" />
+            </apex:outputPanel>
+            <apex:pageMessage id="msg" escape="0" summary="{!$Label.RecommendationInfo}" severity="info" strength="2" />
+            
+            <apex:pageBlockButtons location="Top">
+                <apex:commandButton Value="{!$Label.AcceptRecommendation}" onclick="checkFeedback('Feedback Accepted');return false;" id="acceptButton" />&nbsp;
+                <apex:commandButton value="{!IF((oCaseRec.Topic__c == $Label.OGODTopic || oCaseRec.Topic__c == $Label.OGOClaraBridgeTopic), $Label.Reject, $Label.RejectRecommendation)}" onclick="checkFeedback('Feedback Rejected');return false;" id="rejectButton" />&nbsp;
+                <apex:commandButton value="{!$Label.DeferredRecommendation}" onclick="checkFeedback('Feedback Deferred');return false;" id="deferredButton" disabled="{!(oCaseRec.Topic__c == $Label.OGODTopic || oCaseRec.Topic__c == $Label.OGOClaraBridgeTopic)}" />&nbsp;   
+                <apex:commandButton value="{!$Label.HUMCancelBtn}" action="/{!oCaseRec.Id}" immediate="true" id="cancel" status="caseSaveStatus"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="2" collapsible="false" title="{!$Label.Case_Detail}">
+                <apex:outputField label="{!$ObjectType.Case.Fields.CaseNumber.Label}" value="{!oCaseRec.CaseNumber}"/>
+                <apex:outputField value="{!oNewTask.RecordTypeId}"/>
+                <apex:outputField value="{!oCaseRec.Owner_Queue__c}"/>
+                <apex:outputField value="{!oCaseRec.Work_Queue_View_Name__c}"/>         
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="{!$Label.RecommendationHeader}" columns="1" collapsible="false">
+                <apex:inputField value="{!oNewTask.Description}" id="ccID" styleClass="ccStyle" label="{!$Label.CaseRecommendation}" style="width:80%;height:100px;" 
+                                 html-maxlength="1000" html-placeholder="{!$Label.RecommendationError}" onkeydown="showUnSavedErrorMed(this);" onkeyup="showUnSavedErrorMed(this);"/>
+            </apex:pageBlockSection>
+
+            <apex:actionStatus id="caseSaveStatus">
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv waitingSearchDivOpacity" style="width: 100%; height: 300%; display: block; opacity: 0.59;"></div>
+                    <div id="00B80000007AEEH_searching" class="waitingSearchDiv" style="width: 100%; height: 300%; display: block;">
+                        <div class="waitingHolder" style="top: 150px; width: 110px;">
+                            <img class="waitingImage" src="/img/loading.gif" />
+                            <span class="waitingDescription" style="font-weight:bold; color:Black;">{!$Label.HUMLoadingStatus}</span>
+                        </div>
+                    </div>
+                </apex:facet>
+                <apex:facet name="stop" />
+            </apex:actionStatus>
+            <apex:outputPanel id="popupPanel" >
+                <apex:outputPanel rendered="{!bShowPopUp}" > 
+                <apex:outputPanel styleClass="popupBackgroundNew" layout="block" /> 
+                <apex:outputPanel styleClass="custPopupNew" layout="block" >
+                    <apex:pageBlock >
+                        <apex:outputText value="{!sPopupMsg}" style="font-size:14px;"/>
+                        <apex:pageBlockButtons location="bottom"> 
+                            <input id="btn" type="button" value="{!IF(bCloneCaseScenario == true,'Continue','OK')}" Class="popUpOkButton" style="font-size:14px; width:75px" onClick="callActFun();"/> 
+                        </apex:pageBlockButtons>
+                    </apex:pageBlock>
+                </apex:outputPanel>
+                </apex:outputPanel>
+            </apex:outputPanel>   
+        </apex:pageBlock> 
+    </apex:form>
+</apex:page>

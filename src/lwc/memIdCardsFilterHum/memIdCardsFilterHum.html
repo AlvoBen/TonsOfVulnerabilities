@@ -1,0 +1,56 @@
+﻿<template>
+    <lightning-card title="Filter"   class="slds-p-top-none">
+       
+        <div  if:true={showButtons} class="slds-grid slds-grid_pull-padded-medium">
+            <div class="slds-col slds-p-horizontal_medium">
+                <span>
+                    <lightning-button label="Clear" title="Non-primary action" onclick={handleCancel}
+                        class="slds-m-left_x-small"></lightning-button>
+                </span>
+            </div>
+            <div class="slds-col slds-p-horizontal_large slds-text-align_right ">
+                <span>
+                    <lightning-button variant="brand" label="Apply" title="Primary action" onclick={handleApply}
+                        class="slds-m-left_x-small"></lightning-button>
+                </span>
+            </div>
+
+            </div>
+            <div slot="actions" class="slds-col slds-p-horizontal_medium slds-text-align_right">
+                <span>
+                    <lightning-button variant="base" label="X"  onclick={handleCloseFilter}></lightning-button>
+                </span>
+            </div>
+    </lightning-card>
+    
+
+    <div class="slds-box slds-card slds-p-around-small">
+        <div class="slds-box slds-box_small slds-p-around-small">
+            <lightning-input type="text" placeholder="Member ID" label="Member ID" value={filterJson.memberId}
+                field-level-help="The member ID field can search by Humana ID number or Humana ID number+ suffix with other ID types will execute a search"
+                onchange={handleMemberIdChange}>
+            </lightning-input>
+        </div>
+        <div class="slds-box slds-box_small slds-p-around-small">
+            <lightning-input type="text" placeholder="First Name" label="First Name"  value={filterJson.firstName} onchange={handleFirstNameChange}>
+            </lightning-input>
+        </div>
+        <div class="slds-box slds-box_small slds-p-around-small">
+            <lightning-input type="text" placeholder="Last Name" label="Last Name"  value={filterJson.lastName} onchange={handleLastNameChange}>
+            </lightning-input>
+        </div>
+        <div class="slds-card slds-p-around-medium">
+            Matching all of these filters
+        </div>
+        <div class="slds-box slds-box_small slds-p-around-small">
+            <div class="slds-col slds-p-horizontal_medium slds-text-align_right " style="position: absolute;
+            right: 18px;
+            z-index: 2;">
+
+            <lightning-button variant="base" label="X"  onclick={handleClearStatus}></lightning-button>
+            </div>
+            <lightning-combobox dropdown-alignment="bottom-left" name="status" label="Status" placeholder="Select Status"  value={filterJson.status} options={options}
+                onchange={handleStatusChange}></lightning-combobox>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,116 @@
+﻿<!--/*******************************************************************************************************************************
+LWC JS Name : Authsummary_medical_authorization_filter_lwc_hum.js
+Function    : This HTML serves as UI to Authsummary_medical_authorization_filter_lwc_hum
+
+Modification Log: 
+Developer Name           Code Review                      Date                         Description
+*--------------------------------------------------------------------------------------------------------------------------------
+Rajesh Narode                                           14/07/2022                    User story 3362701 Authorization Summary table filter.
+*********************************************************************************************************************************/ -->
+<template>
+    <section
+        role="dialog"
+        tabindex="0"
+        aria-labelledby="modal-heading-01"
+        aria-modal="true"
+        aria-describedby="modal-content-id-1"
+        class="slds-modal slds-fade-in-open container"
+    >
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <lightning-layout>
+                    <lightning-layout-item size="3">
+                        <template if:false={isFilterAdded}>
+                            <h2
+                                id="modal-heading-01"
+                                class="slds-text-heading_medium slds-hyphenate"
+                            >
+                                Filters
+                            </h2>
+                        </template>
+                        <template if:true={isFilterAdded}>
+                            <lightning-button
+                                label="Clear"
+                                onclick={handleClearFilter}
+                            ></lightning-button>
+                        </template>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="9">
+                        <template if:false={isFilterAdded}>
+                            <lightning-icon
+                                icon-name="utility:close"
+                                class="slds-float_right"
+                                alternative-text="close"
+                                size="small"
+                                onclick={handleClose}
+                            >
+                            </lightning-icon>
+                        </template>
+                        <template if:true={isFilterAdded}>
+                            <lightning-button
+                                label="Apply"
+                                onclick={applyFilter}
+                                variant="Brand"
+                                class="slds-float_right"
+                            ></lightning-button>
+                        </template>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </header>
+
+            <div
+                class="slds-modal__content slds-p-left_medium slds-p-top_medium slds-p-bottom_medium slds-p-right_large contentDiv"
+                id="modal-content-id-1"
+            >
+                <lightning-layout>
+                    <lightning-layout-item size="12">
+                        <div
+                            class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right"
+                        >
+                            <lightning-icon
+                                size="x-small"
+                                class="slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default"
+                                icon-name="utility:search"
+                            ></lightning-icon>
+                            <input
+                                type="text"
+                                id="text-input-id-1"
+                                onchange={handleChange}
+                                value={filterValue}
+                                placeholder="Search"
+                                class="slds-input"
+                            />
+                        </div>
+
+                        <c-auth-summary-picklist-filter-card_-lwc_-hum
+                            selected-value={atPlaceholder}
+                            options-to-display={authTypes}
+                            title="Auth Type"
+                            class="slds-m-around_small"
+                            onselectvalue={handleSelectedValue}
+                        >
+                        </c-auth-summary-picklist-filter-card_-lwc_-hum>
+
+                        <c-auth-summary-picklist-filter-card_-lwc_-hum
+                            selected-value={osPlaceholder}
+                            options-to-display={overallStatus}
+                            title="Overall Status"
+                            class="slds-m-around_small"
+                            onselectvalue={handleSelectedValue}
+                        >
+                        </c-auth-summary-picklist-filter-card_-lwc_-hum>
+
+                        <c-auth-summary-picklist-filter-card_-lwc_-hum
+                            selected-value={adPlaceholder}
+                            options-to-display={admissionServiceType}
+                            title="Admission/Service Type"
+                            class="slds-m-around_small"
+                            onselectvalue={handleSelectedValue}
+                        >
+                        </c-auth-summary-picklist-filter-card_-lwc_-hum>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+        </div>
+    </section>
+</template>

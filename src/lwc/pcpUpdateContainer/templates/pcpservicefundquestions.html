@@ -1,0 +1,172 @@
+﻿<!--
+LWC Name        : pcpquestions.html
+Function        : LWC to display pcp questions.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Nirmal Garg                     08/12/2022                  initial version US3410898
+* Swapnali Sonawane               08/16/2023                  US-4938422 PCP Change Template
+****************************************************************************************************************************-->
+<template>
+	<lightning-card variant="narrow">
+		<div class="slds-p-around_x-small">
+			<h2 class="slds-text-heading_medium slds-m-bottom_medium slds-p-left_small">PCP Assignment Research
+				Documentation</h2>
+			<div class="slds-p-horizontal_small">
+				<b>Disclaimer:<i> Only complete the section below when
+						you receive a frozen panel edit when completing the PCP</i>
+				</b>
+				<div class="slds-grid slds-gutters">
+					<div class="slds-col slds-size_1-of-2">
+						<div class="lgc-bg slds-p-around_xx-small">
+							<lightning-input class="sfvalidate" data-required="Yes" onchange={handleDisableSubmitButton}
+								type="text" required data-question="PCP number or Center number"
+								label="PCP number or Center number (Florida or Nevada Market)" value ={PCPFundData.pcpNumber}>
+							</lightning-input>
+						</div>
+					</div>
+					<div class="slds-col slds-size_1-of-2">
+						<div class="lgc-bg slds-p-around_xx-small">
+							<lightning-input class="sfvalidate" data-required="Yes" onchange={handleDisableSubmitButton}
+								type="text" required data-question="Group name, if applicable"
+								label="Group name, if applicable" value ={PCPFundData.groupName}>
+							</lightning-input>
+						</div>
+					</div>
+				</div>
+				<div class="slds-grid slds-gutters">
+					<div class="slds-col slds-size_1-of-2">
+						<div class="lgc-bg slds-p-around_xx-small">
+							<lightning-input data-required="Yes" class="sfvalidate" onchange={handleDisableSubmitButton}
+								type="text" required data-question="CAS ID from PAAG, application"
+								label="CAS ID from PAAG, application" value ={PCPFundData.caseId}>
+							</lightning-input>
+						</div>
+					</div>
+					<div class="slds-col slds-size_1-of-2">
+						<div class="lgc-bg slds-p-around_xx-small">
+							<template if:true={serviceFundQuestions}>
+								<template for:each={serviceFundQuestions} for:item="element">
+									<template if:true={element.Required}>
+										<lightning-radio-group key={element.Id} label={element.Question}
+											options={element.Options} class="sfvalidate" type="radio"
+											onchange={handleAnswerChange} required disabled={element.disabled}
+											data-id={element.Id} value={element.Answer} data-name="PCP ServiceFund">
+										</lightning-radio-group>
+									</template>
+									<template if:false={element.Required}>
+										<lightning-radio-group key={element.Id} label={element.Question}
+											options={element.Options} type="radio" onchange={handleAnswerChange}
+											data-id={element.Id} value={element.Answer} data-name="PCP ServiceFund">
+										</lightning-radio-group>
+									</template>
+								</template>
+							</template>
+						</div>
+					</div>
+				</div>
+				<div class="slds-grid slds-gutters">
+					<div class="slds-col slds-size_1-of-2">
+						<div class="lgc-bg slds-p-around_xx-small">
+							<lightning-input data-required="Yes" class="sfvalidate"
+								data-question="Name of the individual doctor?" onchange={handleDisableSubmitButton}
+								type="text" required label="Name of the individual doctor" value={PCPFundData.doctor}>
+							</lightning-input>
+						</div>
+					</div>
+					<div class="slds-col slds-size_1-of-2">
+
+					</div>
+				</div>
+				<br />
+				<b>Note:<i> Established patient means that they are already a patient and/or have a
+						scheduled appointment with a required request physician</i>
+				</b>
+				<div class="slds-grid slds-gutters">
+					<div class="slds-col slds-size_1-of-2">
+						<div class="lgc-bg slds-p-around_xx-small">
+							<lightning-input type="text"
+								data-question="Frozen panel only: name of the office personel who confirmed established patient/appointment scheduled, as applicable"
+								onchange={handleDisableSubmitButton}
+								label="Frozen panel only: name of the office personel who confirmed established patient/appointment scheduled, as applicable"
+								value={PCPFundData.text5}>
+							</lightning-input>
+						</div>
+					</div>
+					<div class="slds-col slds-size_1-of-2">
+						<div class="lgc-bg slds-p-around_xx-small">
+							<lightning-textarea class="textAreaBody" style="height: 100px;"
+								data-question="Who you spoke with that advised the patient is established. Included any additional details provided."
+								onchange={handleDisableSubmitButton}
+								label="Who you spoke with that advised the patient is established. Included any additional details provided."
+								value ={PCPFundData.text6}>
+							</lightning-textarea>
+						</div>
+					</div>
+				</div>
+				<div class="slds-grid slds-gutters">
+					<div class="slds-col slds-size_1-of-2">
+						<div class="lgc-bg slds-p-around_xx-small">
+							<lightning-input required onchange={handleRequestEffectiveDateChange} type="date"
+										date-style="short" max={maxdate} min={mindate} class="sfvalidate"
+										data-question="Requested effective date?" label="Request effective Date"
+										value={requestEffectiveDate} message-when-range-overflow={overflowmessage}
+										message-when-range-underflow={underflowmessage}>
+							</lightning-input>
+						</div>
+					</div>
+				</div>				
+				<b>Note:<i> Copy and Paste the edit from CI in the below text box</i>
+				</b>
+				<div class="slds-grid slds-gutters">
+					<div class="slds-col slds-size_4-of-12">
+						<div class="lgc-bg slds-p-around_xx-small">
+							<lightning-textarea data-required="Yes" onchange={handleDisableSubmitButton}
+								class="textAreaBody sfvalidate" required data-question="The error received in CI"
+								label="The error received in CI" value={PCPFundData.error}>
+							</lightning-textarea>
+						</div>
+					</div>
+					<div class="slds-col slds-size_4-of-12">
+						<div class="lgc-bg slds-p-around_xx-small">
+							<lightning-textarea data-required="Yes" onchange={handleDisableSubmitButton}
+								class="textAreaBody sfvalidate" required data-question="Request Details"
+								label="Request details" value={PCPFundData.requestDetail}>
+							</lightning-textarea>
+						</div>
+					</div>
+					<div class="slds-col slds-size_4-of-12">
+						<div class="lgc-bg slds-p-around_xx-small">
+							<lightning-input type="text"
+								data-question="Callback number, if different than the number in the system"
+								onchange={handleDisableSubmitButton}
+								label="Callback number, if different than the number in the system" value={PCPFundData.callBackNo}>
+							</lightning-input>
+						</div>
+					</div>
+				</div>
+			</div>
+			<template if:true={loaded}>
+				<div style="height: 60px;" class="slds-p-around_small">
+					<template if:true={displayFinishButton}>
+						<div class="slds-grid slds-gutters slds-wrap slds-grid_align-end">
+							<div class="slds-col">
+								<lightning-button label="Submit" disabled={disableSubmitButton} variant="brand"
+									name="Submit" onclick={handleFinish}>
+								</lightning-button>
+							</div>
+							<div class="slds-col">
+								<lightning-button label="Previous" onclick={handlePrevious} data-name="PCP Fund">
+								</lightning-button>
+							</div>
+						</div>
+					</template>
+				</div>
+			</template>
+		</div>
+		<template if:false={loaded}>
+			<lightning-spinner alternative-text="Loading"></lightning-spinner>
+		</template>
+	</lightning-card>
+</template>

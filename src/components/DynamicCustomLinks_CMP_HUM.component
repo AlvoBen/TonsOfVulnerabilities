@@ -1,0 +1,146 @@
+﻿<!--
+Page Name        : DynamicCustomLinks_CMP_HUM 
+Version          : 1.0 
+Created Date     : Oct 09 2015
+Function         : Component use to display dynamic links
+Modification Log :
+    * Developer                 Code review         Date                  Description
+    * ------------------------------------------------------------------------------------------------------------------------------                
+    * Sruthi Adivikolanu        27372               05/22/2014            Original Version
+    * Santhi Mandava            28356               11/04/2015            Fixed link issue for CCS profile users
+    * Manish Kumar              20725               01/15/2016            Fixed jQuery and error rendring issue
+    * Manish Kumar              21231               01/27/2016            Added ability for Links to read content from Visualforce
+    * Manish Kumar              21680               02/07/2016            Added ability for Links to display hoverover helptext
+    * Manish Kumar                                  04/27/2016            Fixed issue related to ViewState and access permission
+    * Kritika Popat             38698               09/08/2016            REQ for Enable/Disable URL encoding
+    * Anupama Tavva             78689               03/22/2016            Added isRequired field for Link paramter for the REQ-304159
+    * Anupama Tavva             85516               04/18/2017            Added DefaultUrl field for Link Object for the REQ-304996.	
+    * Praveen Kumar Parimi		355173			    05/08/2019	      	  REQ - 397908 AND REQ - 397909 - CAS WEB UI update to have no blank windows open and the application open in the same window per client.	
+    * Santhi Mandava                                09/25/2019            REQ - 409729 Added Custom search with in links
+    * Santhi Mandava                                02/10/2020            Removed rapidforce permission check on custom search textbox.
+	* Kapil Arora                                   03/30/2020            US - 967881 Quality - PR00091574 - MF 1 - AHT - Automatically launch PCP/PCD tab on clicking ID Card Management link for HMO plans (RF)
+	* Kapil Arora									03/30/2020			  US 976383 - PR00091574 - MF 1 - AHT - Ability to launch multiple links together from left hand panel on any page (RF)
+    * Ranjeeth Nagishetty							04/23/2020			  US 1010518 SF - Tech - Fix CA Ticket 8968090 side panel getting bold
+    * Suresh Kokkeragadda                           05/25/2020            User Story 1110902: PR00091574 - MF 1 - AHT - Ability to launch multiple links together from left hand panel on any page (CRM)
+    * Suresh Kokkeragadda                           06/24/2020            User Story 1203671: PR00091574 - MF 1 - SF - TECH - On/Off Switch Cleanup 07/07 and 07/17 releases (CRM)
+    * Lakshmi Madduri                               02/26/2021            SonarQube Fixes
+    * Luke P. Cecil                                 12/03/2021            User Story 2869975: T1PRJ0002736 - 2021 MF6 - Update impacted JQuery files for Karma
+    * Vinay Lingegowda				                02/07/2022		      User Story 2977662 T1PRJ0314829 - MF 1 - AHT - Ability to navigate to most commonly used pages in CRM (RF)
+    -------------------------------------------------------------------------------------------------------------------------------->
+
+  <apex:component id="DynamicCustomLinks_CMP_HUM" controller="DynamicCustomLinks_C_HUM" allowDML="true">
+    <apex:includeScript value="/support/console/35.0/integration.js" />        
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Base64_Encode_Decode.v.1.js')}"/>
+    <script type="text/javascript">
+        var jqLocation = "{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}";
+    </script>
+    <apex:includeScript value="{!URLFOR($Resource.DynamicCustomLinks_JS_HUM,'/CustomLink.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CSS/HoverOver.css')}"/>
+    <apex:attribute name="DynamicLinkController" 
+        type="SObjectDescriptorImpl_H_HUM" 
+        assignTo="{!pageController}" 
+        required="true" 
+        description="The controller for the page." />
+  <script>
+    var NetworkUserid = '{!JSENCODE($User.Network_User_Id__c)}';
+    var sobj = '{!sObjname}';
+    var mapDropDown = '{!mapLinksDropDown}';
+    var DropDownOption = '{!lstDropDownOption}';
+    var bSwitch = {!bSwitch};
+  </script>
+    <style>
+        input#txtSearch:-ms-input-placeholder {  
+            text-align: center; 
+        }
+ 
+        input#txtSearch::-webkit-input-placeholder {
+            text-align: center;
+        }
+        input#txtSearch::-ms-clear {
+            display: none;
+        }
+    </style>
+    <apex:form id="frm">
+        <apex:pageBlock id="pb">
+            <apex:outputPanel id="errMsg" html-log_this="false">
+                <apex:pageMessages id="pgMsg"/>
+            </apex:outputPanel>
+        
+            <apex:inputHidden id="recid" value="{!recID}"/>
+            <apex:inputHidden id="sobj" value="{!sObjname}"/>
+            <apex:inputHidden id="lnkMap" value="{!mapLinks}"/>
+                <apex:outputPanel id="idCommonLink" rendered="{!sObjname =='Policy_Member__c' && bSwitch && $Permission.RapidForceUser_AHT_HUM}" >
+                    <apex:inputHidden id="lnkMapDropDown" value="{!mapLinksDropDown}"  />
+                    <apex:inputHidden id="linkIdDropDownUI"/>
+                    <apex:selectList id="idCommonLinkList" multiselect="false" size="1"  onchange="selectedCommonLink(this,'{!$Component.recid}','{!$Component.sobj}','{!$Component.lnkMapDropDown}');return false;" style="height :25px;width: 100%;border-radius:5px;color:#4a4a56;">
+                        <apex:selectOptions value="{!lstDropDownOption}" />
+                    </apex:selectList>
+                    <br/> <br/>
+                </apex:outputPanel> 
+            <apex:outputPanel >
+                <input type="text" id="txtSearch" onkeyup="filterLinks();" autocomplete="off" placeholder="Quick Find" style="height :25px;width: 100%;border-radius:5px;color:#4a4a56;"/>
+                <apex:outputLabel styleClass="idSearchNoResults" value="No matching results" style="padding-top: 10px;display:none;color:#4a4a56;font-weight:normal !important;"></apex:outputLabel>
+                <br/> <br/>
+            </apex:outputPanel> 
+           <apex:repeat value="{!lstFinalCustomLinks}" var="item">
+                <apex:pageBlockTable styleClass="linkSubSection" value="{!item.lstCustomLinks}" var="lnk" id="pbt1" html-log_this="false">
+                    <apex:column >
+                        <apex:facet name="header" >{!item.sSectionName}</apex:facet>
+                        <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea">
+                            
+                            <apex:commandLink value="{!lnk.LinkLabel}" onclick="calljsremoteactionwithEvent('{!JSENCODE(lnk.Link.Id)}','{!$Component.recid}','{!$Component.sobj}','{!$Component.lnkMap}', event); return false;" reRender="errMsg" html-log_this="false">
+                                <apex:image id="lnkImg1" styleClass="helpOrb imgMargin" value="{!IF(NOT(ISBLANK(lnk.Link.Icon_Path__c)), $Resource[lnk.Link.Icon_Path__c], $Resource['HUMHoverOverQuestionMark'])}" rendered="{!lnk.Link.Display_Hover_Over__c}"/>
+                                <apex:outputPanel rendered="{!lnk.Link.Display_Hover_Over__c}">{!lnk.Link.Hover_Over_Text__c}</apex:outputPanel>
+                            </apex:commandLink>
+                        </apex:outputPanel>
+                    </apex:column>
+                </apex:pageBlockTable>
+                <br/>
+            </apex:repeat>
+        
+            <apex:actionFunction name="urlpreparation" action="{!prepareLinkUrl}" 
+                oncomplete="return htmlUnescape('{!JSENCODE(sVFJSON)}','LinkParam','{!JSENCODE(objLnk.Url__c)}','{!JSENCODE(objLnk.DefaultUrl__c)}','{!JSENCODE(objLnk.Target_Type__c)}','{!JSENCODE(objLnk.Link_Label__c)}','{!JSENCODE(objLnk.Link_Action__c)}','{!JSINHTMLENCODE(jsonMap)}','{!JSENCODE(IF(objLnk.RequireSSO__c,'true','false'))}','{!JSENCODE(HSS_ONECLICK_URL)}','{!JSENCODE(HSS_ONECLICK_TARGET)}','{!JSENCODE(TEXT(MAP_URL_LENGTH))}',{!JSENCODE(If(isRequiredLinkparam_error,'true','false'))});" 
+                reRender="errMsg" 
+                status="pleaseWait">
+                <apex:param name="slinkId" value=""/>
+                <apex:param name="sRecId" value=""/>
+                <apex:param name="sobjname" value=""/>
+                <apex:param name="lnkMap" value=""/>
+            </apex:actionFunction>
+        
+            <apex:actionFunction name="callRemoteActionForParameters" action="{!populateVFVariables}" 
+                oncomplete="return htmlUnescape('{!JSENCODE(sVFJSON)}','LinkParam','{!JSENCODE(objLnk.Url__c)}','{!JSENCODE(objLnk.DefaultUrl__c)}','{!JSENCODE(objLnk.Target_Type__c)}','{!JSENCODE(objLnk.Link_Label__c)}','{!JSENCODE(objLnk.Link_Action__c)}','{!JSINHTMLENCODE(jsonMap)}','{!JSENCODE(IF(objLnk.RequireSSO__c,'true','false'))}','{!JSENCODE(HSS_ONECLICK_URL)}','{!JSENCODE(HSS_ONECLICK_TARGET)}','{!JSENCODE(TEXT(MAP_URL_LENGTH))}',{!JSENCODE(If(isRequiredLinkparam_error,'true','false'))});" 
+                reRender="errMsg" 
+                status="pleaseWait">
+                <apex:param name="linksJSONMap" value=""/>
+                <apex:param name="actionType" value=""/>
+                <apex:param name="lnkMap" value=""/>
+            </apex:actionFunction>
+        
+            <apex:actionFunction name="initializeLoggingRecords" action="{!initiate}" 
+                onComplete="return checkVFLink('{!JSENCODE(sVFJSON)}','LinkCriteria','','','','','','','','','','');" 
+                reRender="pb" status="pleaseWait"/>
+        
+            <apex:actionFunction name="logError" action="{!logError}" onComplete="return false;" reRender="errMsg" status="pleaseWait"/>
+        
+            <apex:actionFunction name="callRemoteAction" action="{!populateVFVariables}" onComplete="return false;" reRender="pb" status="pleaseWait">
+                <apex:param name="linksJSONMap" value=""/>
+                <apex:param name="actionType" value=""/>
+            </apex:actionFunction>
+        </apex:pageBlock>
+    
+        <apex:actionStatus id="pleaseWait">
+            <apex:facet name="start">
+                <div class="waitingSearchDiv waitingSearchDivOpacity" style="width: 100%; height: 130%; display: block; opacity: 0.70" />
+                <div id="searchingStatus" class="waitingSearchDiv" style="width: 100%; height: 100%; display: block;">
+                    <div class="waitingHolder" style="top: 300px; width: 110px;">
+                        <img class="waitingImage" src="/img/loading.gif" /> <span class="waitingDescription">Loading...</span>
+                    </div>
+                </div>
+            </apex:facet>
+            <apex:facet name="stop" />
+        </apex:actionStatus>
+
+    </apex:form>
+</apex:component>

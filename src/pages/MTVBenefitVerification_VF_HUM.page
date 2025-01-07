@@ -1,0 +1,44 @@
+﻿<!--
+Component Name   : MTVBenefitVerification_VF_HUM
+Version          : 1.0
+Created On       : 11/07/2019
+Function         : VF Page to display Benefits information on click of MTV Benefit Verification link from account page side panel
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Prasanthi Kandula                                  11/07/2019                    Original version
+ * Prasanthi Kandula                                  11/29/2019                    REQ - 382748 changed width for logging component
+ * Pinky Vijur                                        4/28/2022                     User Story 3213645: T1PRJ0272548 - SF Legacy API Retirement Upgrade API Version for Integrationjs Benefits
+ * Pinky Vijur                                        07/14/2023                    User Story 4647183: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Billing, Health Resource, Grievance & Appeals, & MTV (Group 1)
+  *********************************************************************************************************************************-->
+
+<apex:page id="thePage" controller="MTVBenefitVerification_CE_HUM"  sidebar="false" >
+    <script src="/support/console/54.0/integration.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+    
+    <script src="{!URLFOR($Resource.CRM_JQUERY, 'jquery-ui.min.js')}" /> 
+    <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}"/>
+
+    <apex:includeScript value="{!URLFOR($Resource.html2canvas, '/html2canvas.min.js')}" />
+    
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CSS/HoverOver.css')}" /> 
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Logging/css/LoggingCompCSS.css')}" /> 
+    
+    <apex:StyleSheet value="{!URLFOR($Resource.HUMCustomSearch, 'HUMCustomSearch/main.css')}" />
+    
+    <div id="loggingStickyHeader" class="LoggingCompCSS" style="position:fixed;float:left;width:100%;">
+        <apex:outputPanel id="displayTheLogging" rendered="true">
+            <c:Logging_CMP_HUM DisplayMessage="false" Logging_Color="red" Logged_Item_Color="blue" Screenshot_Area_Id="pageContent" AttachmentKey="{!sEnterpriseId}" AttachmentDesc="Enterprise id" RecordId="{!sAccId}" disableButton="false" />  
+        </apex:outputPanel>
+    </div>
+    <div id="pageContent" class="pgcon">
+        <apex:form id="formID" style="font-size:11px;">
+            <div >
+                <apex:outputpanel id="forReRender">
+                    <c:MTVBenefitVerification_CMP_HUM id="benefitVerification"></c:MTVBenefitVerification_CMP_HUM>
+                </apex:outputpanel>
+            </div>
+        </apex:form>
+    </div>
+</apex:page>

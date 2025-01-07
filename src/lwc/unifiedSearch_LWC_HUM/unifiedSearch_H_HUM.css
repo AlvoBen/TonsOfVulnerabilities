@@ -1,0 +1,17 @@
+/*******************************************************************************************************************************
+File Name : unifiedSearch_LWC_HUM.css 
+Version : 1.0
+Created On : 01/18/2021
+Function : This file contains css for unifiedSearch_LWC_HUM component
+
+Modification Log: 
+* Modification ID		Date				Developer Name           	Description                                         
+*------------------------------------------------------------------------------------------------------------------------------
+* 1.0       			01/18/2021			Akshay Pai					Orginal Version	
+****************************************************************************************************************************/
+.coveo-dynamic-facet-search {
+    display: block !important;
+  }
+  .coveo-combobox-values .coveo-dynamic-facet-value {
+    display: block;
+  }

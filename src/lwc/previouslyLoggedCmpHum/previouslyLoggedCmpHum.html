@@ -1,0 +1,36 @@
+﻿<!-- /*******************************************************************************************************************************
+LWC Name    : previouslyLoggedCmpHum.html
+Function    : this checks for previously logged items and display a notification
+
+Modification Log:
+Developer Name           Code Review                      Date                         Description
+*--------------------------------------------------------------------------------------------------------------------------------
+*Ceasar Sabarre                                          02/20/2023                   US#4268275 T1PRJ0865978 - MF 23891-   Lightning- Design& Implementation- "Previously Logged" items message on the Non pharmacy views
+*Aishwarya Pawar                                          03/16/2023                  Defect Fix - DF-7410 & 7409 
+*********************************************************************************************************************************/  -->
+<template>
+    <template if:true={isExisting}>
+        <div class="slds-scoped-notification slds-media slds-media_center slds-theme_info" role="status">
+            <div class="slds-media__figure">
+                <lightning-icon icon-name="utility:info" alternative-text="Info" title="info"  variant="inverse" size="small"></lightning-icon>
+            </div>
+            <div class="slds-media__body">
+                <span class="slds-text-body_small slds-m-right_large">{customMessage}</span>
+                <template iterator:it={cases}>
+                    <span key={it.value.Id}>
+                        <a onclick={openCaseSubTab} data-caseid={it.value.Id}>
+                            {it.value.CaseNumber}
+                        </a>
+                        <template if:false={it.last}>, </template>
+
+                    </span>
+                </template>
+            </div>
+            <div class="slds-media__figure slds-media__figure_reverse" >
+                <span style="cursor:pointer">
+                    <lightning-icon icon-name="utility:close" alternative-text="close" size="small" variant="inverse"  onclick={closeAlert}></lightning-icon>
+                </span>
+            </div>
+        </div>
+    </template>
+</template>

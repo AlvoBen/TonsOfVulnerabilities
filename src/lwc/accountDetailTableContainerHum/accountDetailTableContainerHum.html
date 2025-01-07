@@ -1,0 +1,75 @@
+﻿<!--*******************************************************************************************************************************
+LWC Name    : accountDetailTableContainerHum.html.
+Modification Log:
+Developer Name             Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Mohan Kumar N          03/22/2021                    US:1892975
+* Supriya Shastri        04/23/2021                    US-2133530
+* Ritik Agarwal          10/22/2021                    fixed viewAll for interaction table
+* Supriya Shastri        10/28/2021                    US- 2440592 Account Detail Page Redesign
+* Pooja Kumbhar          11/02/2022                    US- 3863263 : T1PRJ0170850 - Lightning - RCC/Medicare (MET) Enrollment sections Case Details Page
+* Ashish/Kajal Namdev    07/18/2022                    Added archived components logic for view all functionality
+* Gowthami Thota         12/07/2022                    US - 3827038 : T1PRJ0170850 - Related Information Section on Case Details Page
+* Gowthami Thota         02/28/2023                    User Story 4279664: T1PRJ0865978 - C06, Lightning- Implementation- Add Interaction Section on Case Detail Page
+* Deepak khandelwal       09/27/2023                   US _5050647 -- chat transcript view all button 
+*********************************************************************************************************************************-->
+<template>
+    <div class="container-height">
+        <c-account-detail-policy-hum if:true={bShowPolicyList} record-id={oParams.sRecordId} policies-to-fetch={sRecordTypeName}
+                                     s-record-type-name={oParams.sRecordTypeName} b-infinite-scroll
+                                     o-applied-filters={oParams.filters} bread-crumb-items={breadCrumbItems}>
+        </c-account-detail-policy-hum>
+        <c-account-detail-accordian-policy-hum if:true={bShowAccordianPolicy} record-id={oParams.sRecordId}
+                                               s-record-type-name={oParams.sRecordTypeName} o-user-group={oParams.oUserGroup} b-infinite-scroll
+                                               o-applied-filters={oParams.filters} bread-crumb-items={breadCrumbItems} calledfrom={oParams.calledfrom}>
+        </c-account-detail-accordian-policy-hum>
+        <c-account-detail-interactions-hum if:true={bShowInteractions} record-id={oParams.sRecordId}
+                                           s-record-type-name={oParams.sRecordTypeName} b-infinite-scroll o-applied-filters={oParams.filters}
+                                           bread-crumb-items={breadCrumbItems}>
+        </c-account-detail-interactions-hum>
+        <c-account-detail-case-history-hum if:true={bShowCasehistory} record-id={oParams.sRecordId}
+                                           s-record-type-name={oParams.sRecordTypeName} o-user-group={oParams.oUserGroup} b-infinite-scroll
+                                           o-applied-filters={oParams.filters} bread-crumb-items={breadCrumbItems}>
+        </c-account-detail-case-history-hum>
+        <c-inquiry-task-table-container-hum if:true={bShowInquiryTaskDetails} o-params={oParams}
+                                            name-of-screen={nameOfScreen} title={subtabTitle} b-infinite-scroll>
+        </c-inquiry-task-table-container-hum>
+        <c-account-legacy-contact-history-hum if:true={bShowLegacyHistoryTable} name-of-screen={nameOfScreen}
+                                              o-applied-filters={oParams.filters} s-record-type-name={oParams.sRecordTypeName} record-id={oParams.sRecordId} b-infinite-scroll>
+        </c-account-legacy-contact-history-hum>
+        <c-health-resource-container-hum if:true={bEnrollProgram} record-id={oParams.sRecordId}
+                                         show-enrolled-view-all=false show-avail=true b-infinite-scroll>
+        </c-health-resource-container-hum>
+        <c-health-resource-container-hum if:true={bAvailProgram} show-enroll=true record-id={oParams.sRecordId}
+                                         o-applied-filters={oParams.filters} show-avail-view-all=false b-infinite-scroll>
+        </c-health-resource-container-hum>
+        <c-met-enrollment-detail-hum if:true={bshowMetEnroll} record-id={oParams.sRecordId} b-infinite-scroll
+                                     name-of-screen={nameOfScreen} recordslength={oParams.sRecordsLength} min-col-width="100">
+        </c-met-enrollment-detail-hum>
+        <c-archived-case-search-hum if:true={bShowArchievedCases} record-id={oParams.sRecordId}
+                                    b-infinite-scroll is-classic={oParams.isClassic}
+                                    o-applied-filters={oParams.filters} bread-crumb-items={breadCrumbItems} view-all-archived-data={oParams.viewAllData}
+                                    s-start-count={oParams.sStartCount} s-end-count={oParams.sEndCount}>
+        </c-archived-case-search-hum>
+        <c-archived-case-history-table-hum if:true={bArchivedCaseHistory} record-id={oParams.sRecordId}
+                                           is-classic={oParams.isClassic} view-all-case-history b-infinite-scroll>
+        </c-archived-case-history-table-hum>
+        <c-archived-case-tasks-table-hum if:true={bArchivedCaseTasks} record-id={oParams.sRecordId}
+                                         is-classic={oParams.isClassic} view-all-tasks b-infinite-scroll>
+        </c-archived-case-tasks-table-hum>
+        <c-archived-case-comments-table-hum if:true={bArchivedCaseComment} case-comment-response={oParams.caseComments}
+                                            view-all-comments b-infinite-scroll>
+        </c-archived-case-comments-table-hum>
+        <c-case-related-information-hum if:true={bshowRelatedInfo} record-id={oParams.sRecordId} b-infinite-scroll
+                                        name-of-screen={nameOfScreen} recordslength={oParams.sRecordsLength} bread-crumb-items={breadCrumbItems} issubtab=true min-col-width="100">
+        </c-case-related-information-hum>
+        <c-case-attach-hum if:true={bshowAttachmentInfo} record-id={oParams.sRecordId} b-infinite-scroll
+                           name-of-screen={nameOfScreen} recordslength={oParams.sRecordsLength} min-col-width="100" issubtab=true>
+        </c-case-attach-hum>
+        <c-case-interactions-hum if:true={bshowCaseInteractions} record-id={oParams.sRecordId} b-infinite-scroll
+                           name-of-screen={nameOfScreen} recordslength={oParams.sRecordsLength} min-col-width="100" issubtab=true>
+        </c-case-interactions-hum>
+        <c-account-detail-transcripts-hum if:true={bshowTranscripts} record-id={oParams.sRecordId} 
+        showview-all="false"></c-account-detail-transcripts-hum>
+    </div>
+</template>

@@ -1,0 +1,421 @@
+﻿<!--
+Function        : LWC to callout HPIE Integration methods from apex .
+
+Modification Log:
+* Developer Name                  Date                         Description
+****************************************************************************************************************************
+* Nirmal Garg                    08/25/2023                    Initial Version
+* Akshay Gulve                   09/05/2023                    DF-8073 Fix
+* Swapnali Sonawane              10/23/2023                    US - 5058187 Pharmacy Edit Order
+* Jonathan Dickinson             02/28/2024                    User Story 5394128: T1PRJ1295995 - (T1PRJ0870026) - MF 29256 - Mail Order Pharmacy- Order summary : HPIE updates for split order
+* Jonathan Dickinson             02/29/2024                    User Story 4835317: T1PRJ0865978 - MF 27481 - C12; Mail Order Management; Pharmacy - Mail Order Pharmacy page gap- Member Consent (Lightning)
+* Jonathan Dickinson             03/01/2024                    User Story 5058187: T1PRJ1295995 - (T1PRJ0870026)- MF 27409 HPIE/CRM SF - Tech - C12 Mail Order Management - Pharmacy - "Prescriptions & Order summary" tab - "Edit Order'
+*****************************************************************************************************************************-->
+<template>
+    <template if:true={loaded}>
+        <template if:true={orderDetailsData.orderId}>
+            <div class="slds-grid">
+                <c-previously-logged-cmp-hum s-member-id={recordId} s-order-number={orderDetailsData.orderId}>
+                </c-previously-logged-cmp-hum>
+            </div>
+        </template>
+        <template if:true={loaded}>
+            <div class="slds-p-around_medium">
+                <div class="slds-scrollable_y" style="max-height: 400px;" onscroll={handleScroll}>
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_6-of-12">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-12">
+                                    <lightning-icon icon-name="utility:back" style="cursor: pointer" size="small"
+                                        title="Back" onclick={backToOrderSummaryPage}>
+                                    </lightning-icon>
+                                </div>
+                                <div class="slds-col">
+                                    <div class="slds-grid slds-wrap">
+                                        <div class="slds-col slds-size_12-of-12">
+                                            <span class="slds-page-header__title slds-truncate"
+                                                title="Order Number">Order #
+                                                {orderDetailsData.orderId}</span>
+                                        </div>
+                                        <div class="slds-col slds-size_12-of-12">
+                                            <div>Web # {webOrder}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_6-of-12">
+                            <div class="slds-grid slds-grid_align-end">
+                                <div class="slds-col">
+                                    <template if:true={showCurrentQueueButtons}>
+                                        <lightning-button-group class="slds-float_right slds-m-right_medium">
+                                            <template for:each={oButtonModel} for:item="item">
+                                                <lightning-button if:true={item.visible}
+                                                    onclick={handleCurrentQueueButtonClick} data-id={item.label}
+                                                    label={item.label} title={item.label} key={item.label}>
+                                                </lightning-button>
+                                            </template>
+                                        </lightning-button-group>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-wrap slds-m-top_x-small">
+                        <div class="slds-col slds-size_2-of-12">
+                            <div class="slds-grid">
+                                <div class="slds-col">
+                                    <div class="slds-grid slds-wrap">
+                                        <div class="slds-col slds-size_12-of-12">
+                                            <p class="authlabel">Shipping Method</p>
+                                        </div>
+                                        <div class="slds-col slds-size_12-of-12">
+                                            <p class="authvalue slds-wrap">
+                                                {orderDetailsData.shippingMethod}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_12-of-12">
+                                    <p class="authlabel">Payer</p>
+                                </div>
+                                <div class="slds-col slds-size_12-of-12">
+                                    <p class="authvalue slds-wrap">{payer}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_12-of-12">
+                                    <p class="authlabel">Status</p>
+                                </div>
+                                <div class="slds-col slds-size_12-of-12">
+                                    <p class="authvalue slds-wrap">
+                                        {orderDetailsData.status}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="slds-col slds-size_2-of-12">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_12-of-12">
+                                    <p class="authlabel">Carrier</p>
+                                </div>
+                                <div class="slds-col slds-size_12-of-12">
+                                    <p class="authvalue slds-wrap">
+                                        {orderDetailsData.carrier}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_12-of-12">
+                                    <p class="authlabel">Tracking Number</p>
+                                </div>
+                                <div class="slds-col slds-size_12-of-12">
+                                    <p class="slds-text-link slds-truncate " style=" font-size: 12px;cursor:pointer;"
+                                        onclick={trackingNumberPopUp} title={orderDetailsData.trackingNumber}>
+                                        {orderDetailsData.trackingNumber}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_12-of-12 slds-m-right_x-small">
+                                    <p class="authlabel">Cancel Reason</p>
+                                </div>
+                                <div class="slds-col slds-size_12-of-12">
+                                    <p class="authvalue slds-wrap">
+                                        {orderDetailsData.cancelReason}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_2-of-12">
+                            <div class="slds-grid">
+                                <div class="slds-col">
+                                    <div class="slds-grid slds-wrap">
+                                        <div class="slds-col slds-size_12-of-12">
+                                            <p class="authlabel">Shipping Address</p>
+                                        </div>
+                                        <div class="slds-col slds-size_12-of-12">
+                                            <p class="authvalue slds-wrap">
+                                                <template if:true={shippingAddress}>
+                                                    <lightning-formatted-address street={shippingHomeStreet}
+                                                        city={shippingAddress.city} country="US"
+                                                        province={shippingAddress.stateCode}
+                                                        postal-code={shippingAddress.zipCode} disabled>
+                                                    </lightning-formatted-address>
+                                                </template>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_12-of-12">
+                                    <div class="slds-grid slds-wrap">
+                                        <div class="slds-col slds-size_12-of-12">
+                                            <p class="authlabel">Current Order
+                                                Queue<lightning-button-icon icon-name="utility:refresh" size="small"
+                                                    alternative-text="Refresh" class="iconcolor" title="Refresh"
+                                                    onclick={handleCurrentQueueRefresh}>
+                                                </lightning-button-icon>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-size_12-of-12">
+                                    <p class="authvalue slds-wrap">{orderDetailsData.currentQueue}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <template if:true={checkCode}>
+                            <div class="slds-col slds-size_2-of-12">
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-col slds-size_12-of-12">
+                                        <p class="authlabel">Finance Code</p>
+                                    </div>
+                                    <div class="slds-col slds-size_12-of-12">
+                                        <p class="authvalue slds-wrap">
+                                            {orderDetailsData.financeCode}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <div class="slds-col slds-size_2-of-12">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_12-of-12">
+                                    <p class="authlabel">Creation</p>
+                                </div>
+                                <div class="slds-col slds-size_12-of-12">
+                                    <p class="authvalue slds-wrap">
+                                        {orderDetailsData.createdDate}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_12-of-12">
+                                    <p class="authlabel">Release</p>
+                                </div>
+                                <div class="slds-col slds-size_12-of-12">
+                                    <p class="authvalue slds-wrap">
+                                        {orderDetailsData.releaseDate}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_12-of-12">
+                                    <p class="authlabel">Finished</p>
+                                </div>
+                                <div class="slds-col slds-size_12-of-12">
+                                    <p class="authvalue slds-wrap">
+                                        {orderDetailsData.finishedDate}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-p-around_small">
+                        <div class="custom-box slds-box slds-p-around_medium" style="min-height:300px;">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_6-of-12">
+                                    <div class="slds-grid">
+                                        <div class="slds-col">
+                                            <div class="slds-grid slds-wrap">
+                                                <div class="slds-col slds-size_12-of-12">
+                                                    <p class="authlabel">Payment Method</p>
+                                                </div>
+                                                <div class="slds-col slds-size_12-of-12">
+                                                    <p class="authvalue slds-wrap">
+                                                        {orderDetailsData.paymentMethod}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-col">
+                                            <div class="slds-grid slds-wrap">
+                                                <div class="slds-col slds-size_12-of-12">
+                                                    <p class="authlabel">OTC</p>
+                                                </div>
+                                                <div class="slds-col slds-size_12-of-12">
+                                                    <p class="authvalue slds-wrap">{orderDetailsData.otc}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-col">
+                                            <div class="slds-grid slds-wrap">
+                                                <div class="slds-col slds-size_12-of-12">
+                                                    <p class="authlabel">Source</p>
+                                                </div>
+                                                <div class="slds-col slds-size_12-of-12">
+                                                    <p class="authvalue slds-wrap">
+                                                        {orderDetailsData.source}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-col">
+                                            <div class="slds-grid slds-wrap">
+                                                <div class="slds-col slds-size_12-of-12">
+                                                    <p class="authlabel">CAP Type</p>
+                                                </div>
+                                                <div class="slds-col slds-size_12-of-12">
+                                                    <p class="authvalue slds-wrap">
+                                                        {capType}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-size_6-of-12">
+                                    <div class="slds-grid slds-grid_align-spread">
+                                        <div class="slds-col">
+                                            <div class="slds-grid slds-wrap">
+                                                <div class="slds-col slds-size_12-of-12">
+                                                    <p class="authlabel">Order Total</p>
+                                                </div>
+                                                <div class="slds-col slds-size_12-of-12">
+                                                    <p>
+                                                        <lightning-formatted-number value={orderDetailsData.orderTotal}
+                                                            format-style="currency" currency-code="USD"
+                                                            maximum-fraction-digits="2" class="authvalue">
+                                                        </lightning-formatted-number>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-col">
+                                            <div class="slds-grid slds-wrap">
+                                                <div class="slds-col slds-size_12-of-12">
+                                                    <p class="authlabel">Order Copay</p>
+                                                </div>
+                                                <div class="slds-col slds-size_12-of-12">
+                                                    <p>
+                                                        <lightning-formatted-number value={orderDetailsData.copayAmount}
+                                                            format-style="currency" currency-code="USD"
+                                                            maximum-fraction-digits="2" class="authvalue">
+                                                        </lightning-formatted-number>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-col">
+                                            <div class="slds-grid slds-wrap">
+                                                <div class="slds-col slds-size_12-of-12">
+                                                    <p class="authlabel">Order Tax</p>
+                                                </div>
+                                                <div class="slds-col slds-size_12-of-12">
+                                                    <p>
+                                                        <lightning-formatted-number value={orderDetailsData.taxAmount}
+                                                            format-style="currency" currency-code="USD"
+                                                            maximum-fraction-digits="2" class="authvalue">
+                                                        </lightning-formatted-number>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_12-of-12">
+                                    <div class="slds-border_top slds-var-p-top_large"></div>
+                                </div>
+                            </div>
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_12-of-12">
+                                    <h3>
+                                        <span class="slds-page-header__title slds-truncate" title="Order Items">Order
+                                            Items</span>
+                                    </h3>
+                                </div>
+                                <div class="slds-col slds-size_12-of-12">
+                                    <template if:true={orderDetailsData}>
+                                        <c-pharmacy-hpie-order-lines-hum onsplitorderclick={getSplitOrderDetails}
+                                            payer={payer} orderparentnode={orderDetailsData}
+                                            orderprescription={prescriptions}>
+                                        </c-pharmacy-hpie-order-lines-hum>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <div>
+            <c-pharmacy-hpie-order-queue-details-hum enterprise-id={enterpriseId} user-id={userId}
+                organization={organization} order-id={orderDetailsData.orderId}>
+            </c-pharmacy-hpie-order-queue-details-hum>
+        </div>
+        <div>
+            <c-pharmacy-combined-history-data-hum record-id={recordId} account-id={accountId} acc-data={accData}
+                enterprise-id={enterpriseId} user-id={userId} order-id={orderDetailsData.orderId}
+                order-created-date={orderDetailsData.createdDate} displayorder>
+            </c-pharmacy-combined-history-data-hum>
+        </div>
+    </template>
+    <template if:false={loaded}>
+        <div class="slds-align_absolute-center slds-m-vertical_xx-large">
+            <lightning-spinner alternative-text="Loading"></lightning-spinner>
+        </div>
+    </template>
+    <c-generic-modal-hum if:true={showReleasePopUpModal} b-show-modal={showReleasePopUpModal}
+        onclose={closeCancelReleasePopUpModal} title={modalTitle} onyes={handleCancelReleaseOrder}
+        onno={closeCancelReleasePopUpModal} buttons-config={buttonsConfig}>
+        <div slot="content" class="slds-modal__content slds-var-p-around_medium">
+            <P class="slds-text-align_center slds-var-m-top_xx-large slds-var-m-bottom_xx-large">{alertBoxMessage}</P>
+        </div>
+    </c-generic-modal-hum>
+    <template if:true={showEditPopUpModal}>
+        <div class="slds-modal slds-fade-in-open slds-backdrop">
+            <div class="slds-modal__container">
+                <!------HEADER Section-->
+                <div class="slds-modal__header">
+                    <lightning-button-icon icon-name="utility:close" alternative-text="Close this window" size="large"
+                        variant="bare-inverse" onclick={closeEditOrderModal} class="slds-modal__close">
+                    </lightning-button-icon>
+                    <h3 class="slds-text-heading_large">{modalTitle}</h3>
+                </div>
+                <!------Body Section-->
+
+                <div class="slds-modal__content slds-var-p-around_medium">
+                    <c-pharmacy-hpie-order-details-edit-hum pharmacydemodetails={pharmacyDemoDetails} spayer={payer} order-details-data={orderDetailsData}
+                        order-details-response={orderDetailsResponse} cap-type={capType} member-consent={memberConsent} enterprise-id={enterpriseId}
+                        record-id={recordId} network-id={networkid} orderparentnode={orderDetailsData}
+                        prescriptions={prescriptions} finance-details={financeDetails} is-member-consent-required={isMemberConsentRequired}
+                        onordereditsuccess={handleOrderEditSuccess} onordercreditcardsave={handleCreditCardSave}
+                        oncalldemographics={handleCallDemographics} user-id={userId} acc-data={accData} onlognoteadded={handleLogNoteAdded}>
+                    </c-pharmacy-hpie-order-details-edit-hum>
+                </div>
+
+                <!------Footer Section-->
+                <div class="slds-modal__footer">
+                    <lightning-button label="Cancel" onclick={cancelEditOrderModal} class="slds-var-m-right_small">
+                    </lightning-button>
+                    <lightning-button label="Save" variant="brand" onclick={handleSaveEditOrder}
+                        class="slds-var-m-right_small"></lightning-button>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>

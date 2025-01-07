@@ -1,0 +1,194 @@
+﻿<!--
+Page Name        : WorkQueueCreation_VF_HUM
+Version          : 1.0
+Created Date     : March 8 2016
+Function         : This Page is used to create Work Queue Setup & its related objects
+***********************************************************************************************************************************
+Modification Log:    
+   
+* Developer Name               Review Number                 Date                       Description
+*----------------------------------------------------------------------------------------------------------------------------------
+* Harshith Mandya                74579                    03/08/2016                   Original Version
+* Sharan Shanmugam				 74579       			  20/10/2016				   Defect Fix # 245745.0001 - Adding PGV Name into the page
+* Pradeepkumar Dani              74579                    03/09/2017                   Modified for the Classification_Type__c reference
+* Subhamay Mandal                74579                    04/29/2021                   User Story 2230059: T1PRJ0001827- IR 5050 - Add SLA fields in New - Work Queue Setup (CRM)
+* Bhumika Dodiya								  07/22/2021					T1PRJ0001827 - IR 5050 - Tech Debt - Clean up switch for past releases(CRM) - clean up of US2230059
+* Tummala Vijaya Lakshmi					08/27/2021				  USER STORY 2578061  -T1PRJ0002980/PR00095219 - MF 5 - Contracted Protected Data for Q/V App	 	
+***********************************************************************************************************************************-->
+<apex:page standardController="Work_Queue_Setup__c" extensions="WorkQueueCreation_C_HUM"  doctype="HTML-5.0" id="thePage">
+    <apex:form id="formId">
+        <apex:pageMessages id="pbsMessages"/>
+        <apex:pageMessages id="pbsMessagesWorkQueue"/> 
+        <apex:pageMessages id="pbsMessagesDelete"/>    
+        <apex:pageMessages id="pbsMessagesQueueView"/> 
+        <apex:pageBlock title="{!$Label.NEWWORKQUEUE_WORKQUEUE_HUM}" mode="edit" id="pbId">
+        <apex:actionFunction id="AFcreatePGQ" name="createWorkQueueGroupPGQ" action="{!createWorkQueueGroupPGQ}" oncomplete="createWorkQueue();" rerender="pbsMessages" />
+        <apex:actionFunction id="AFcreateWQS" name="createWorkQueue" action="{!createWorkQueue}" oncomplete="deletePreviouslyCreatedGroupObjects();" rerender="pbsMessagesWorkQueue" rendered="{!!publicGroupCreationError}" />
+        <apex:actionFunction id="AFdeleteGroups" name="deletePreviouslyCreatedGroupObjects" action="{!deletePreviouslyCreatedGroupObjects}"  rerender="pbsMessagesDelete" rendered="{!!workQueueCreationError}" />
+            
+            <apex:pageBlockButtons >
+                <apex:commandButton value="{!$Label.SAVE_WORKQUEUE_HUM}" action="{!createWorkQueueGroupPGQ}"  onclick="createWorkQueueGroupPGQ(); return false;" id="saveButtonId"/>
+                <apex:commandButton action="{!cancel}" value="{!$Label.CANCEL_WORKQUEUE_HUM}" id="cancelButtonId"/>
+            </apex:pageBlockButtons>
+            
+            <apex:pageBlockSection title="{!$Label.WQANDQV_WORKQUEUE_HUM}" columns="2" id="detailsId">
+                <apex:pageBlockSectionItem id="pbsiServiceCenter">
+                    <apex:outputLabel value="{!$Label.SERVICECENTER_WORKQUEUE_HUM}" for="reasonsId" id="labelServiceCenter"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" >
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:selectList id="reasonsId" value="{!selectedSC}" multiselect="false" size="1" >
+                            <apex:actionSupport event="onchange" action="{!updateWorkQueueName}" rerender="detailsId,pbsQueueView"/>
+                            <apex:selectOptions value="{!lstWQSC}"/>
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="pbsiNewServiceCenter">
+                    <apex:outputLabel value="{!$Label.NEWSERVICECENTER_WORKQUEUE_HUM}" for="ipServiceCenter" rendered="{!displaySCInput}" id="labelNewServiceCenter"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" >
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputText value="{!newServiceCenterValue}" id="ipServiceCenter" rendered="{!displaySCInput}">
+                            <apex:actionSupport event="onchange" action="{!updateWorkQueueName}" rerender="detailsId,pbsQueueView"/>
+                        </apex:inputText>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem> 
+                <apex:pageBlockSectionItem id="pbsiDepartment">
+                    <apex:outputLabel value="{!$Label.DEPARTMENT_WORKQUEUE_HUM}" for="slDept" id="labelDepartment"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" >
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:selectList id="slDept" value="{!selectedDept}" multiselect="false" size="1">
+                            <apex:actionSupport event="onchange" action="{!updateWorkQueueName}" rerender="detailsId,pbsQueueView"/>
+                            <apex:selectOptions value="{!lstWQDept}" />
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="pbsiNewDepartment">
+                    <apex:outputLabel value="{!$Label.NEWDEPARTMENT_WORKQUEUE_HUM}" for="ipDept" rendered="{!displayDeptInput}" id="labelNewDepartment"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" >
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputText value="{!newDepartmentValue}" id="ipDept" rendered="{!displayDeptInput}">
+                            <apex:actionSupport event="onchange" action="{!updateWorkQueueName}" rerender="detailsId,pbsQueueView"/>
+                        </apex:inputText>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem> 
+                 
+                <apex:pageBlockSectionItem id="pbsiWQName">
+                    <apex:outputLabel value="{!$Label.WORKQUEUENAME_WORKQUEUE_HUM}" id="labelWQName"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" >
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputField value="{!workQueueSetup.Name}" id="ipWQName"/>                         	
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <br/>
+                <apex:pageBlockSectionItem id="pbsiPGQName">
+                    <apex:outputLabel value="{!$Label.PGQNAME_WORKQUEUE_HUM}" id="labelPGQName"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" >
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputField value="{!publicGroupRecord.Name}" required="false" id="ipPGQName"/>                          	         
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <br/>                
+                <apex:pageBlockSectionItem id="pbsiClassification">
+                    <apex:outputLabel value="{!$Label.CLASSIFICATIONTYPE_WORKQUEUE_HUM}" id="labelClassification"/>
+                    <apex:outputPanel styleClass="requiredInput" layout="block" >
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:inputField value="{!workQueueSetup.Classification_Type__c}" id="ipClassification"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:outputText ></apex:outputText>
+                <apex:inputField value="{!workQueueSetup.Queue_Manager__c}" id="ipQueueManager"/>
+                <apex:outputText ></apex:outputText>
+                <apex:inputField value="{!workQueueSetup.Queue_Description__c}" id="ipQueueDescription"/>
+                <apex:outputText ></apex:outputText>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="SLA Definition" id="SLAFields">
+                <apex:pageBlockSectionItem helpText="{!$ObjectType.Work_Queue_Setup__c.fields.SLA_In_Days__c.InlineHelpText}">
+                    <apex:outputLabel value="{!$ObjectType.Work_Queue_Setup__c.fields.SLA_In_Days__c.Label}"/>
+                    <apex:inputField id="idSLADays" type="text" value="{!workQueueSetup.SLA_In_Days__c}" html-maxlength="3" onkeypress="return event.charCode >= 48 && event.charCode <= 57"/>
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!workQueueSetup.SLA_Email_Alert__c}"/>
+                <apex:pageBlockSectionItem helpText="{!$ObjectType.Work_Queue_Setup__c.fields.SLA_On_Case_Transfer__c.InlineHelpText}">
+                    <apex:outputLabel value="{!$ObjectType.Work_Queue_Setup__c.fields.SLA_On_Case_Transfer__c.Label}"/>
+                    <apex:inputCheckbox id="idSLATransfer" value="{!workQueueSetup.SLA_On_Case_Transfer__c}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="{!$Label.WQSECURITYINDICATOR_WORKQUEUE_HUM}" columns="2" id="pbsSecurityIndicator">
+                <apex:pageBlockSectionItem id="pbsiSecurityIndicator"> 
+                    <apex:outputLabel value="{!$Label.SECURITYGROUP_WORKQUEUE_HUM}" for="SLSecurityGrp" id="labelSecurityGroup"/>                
+                    <apex:outputPanel styleClass="requiredInput" layout="block" >
+                        <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                        <apex:selectList id="SLSecurityGrp" value="{!securityGroupSelected}" multiselect="false" size="1"  required="true">
+                            <apex:actionSupport event="onchange" action="{!enableIndicators}" rerender="pbsSecurityIndicator"/>
+                            <apex:selectOptions value="{!lstSecurityGroups}" >
+                            </apex:selectOptions>
+                        </apex:selectList>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:outputText value="{!workQueueSetup.TenantID__c}" id="ipTenantId"/>
+                <apex:inputField value="{!workQueueSetup.General__c}" rendered="{!enableGeneralIndicator}" id="ipGeneral"/>
+                <apex:inputField value="{!workQueueSetup.HO_Medical__c}" rendered="{!enableHOMedicalIndicator}" id="ipMedical"/>
+                <apex:inputField value="{!workQueueSetup.HO_Dental__c}" rendered="{!enableHODentalIndicator}" id="ipDental"/>
+              <apex:inputField value="{!workQueueSetup.Contract_Protected_Data__c}" rendered="{!enableContractProtectedDataIndicator}" id="ipContractProtected"/>
+            </apex:pageBlockSection>
+            
+            <apex:actionRegion id="actionRegionId">
+            <apex:pageBlockSection title="{!$Label.TOPIC_WORKQUEUE_HUM}" columns="1" id="pbsAddTopic" >
+                <apex:pageBlockSectionItem id="pbsTopics">
+                    <apex:outputPanel >   
+                        <apex:inputField value="{!workQueueTopic.Name}" id="ipWQTName"/>
+                        <apex:commandButton action="{!addTopic}" value="{!$Label.ADD_WORKQUEUE_HUM}" rerender="pbsAddTopic, pbsMessages,pbsTopicDetails" id="addTopicButton"/>
+                    </apex:outputPanel>
+               </apex:pageBlockSectionItem>
+               </apex:pageBlockSection>
+               <br/>
+               <apex:outputPanel style="width:40%;">
+               <apex:pageblock id="pbsTopicDetails" >
+                    <apex:pageBlockTable id="topicNameId" value="{!topicNames}" var="eachTopic" rendered="{!topicNames.size > 0}" columns="2" style="width:40%;">         
+                        <apex:column headerValue="{!$Label.TOPICNAME_WORKQUEUE_HUM}" width="85%" id="labelTopicName">
+                            <apex:outputText value="{!eachTopic}" id="opTopicName"/>
+                        </apex:column> 
+                        <apex:column headervalue="{!$Label.ACTION_WORKQUEUE_HUM}" width="15%" id="labelTopicAction">
+                            <apex:commandLink action="{!removeTopicFromList}" value="{!$Label.REMOVE_WORKQUEUE_HUM}" rerender="pbsTopicDetails" id="linkTopicRemove">
+                                <apex:param value="{!eachTopic}" assignTo="{!removedTopic}" name="remove"/>
+                            </apex:commandLink>
+                        </apex:column>
+                    </apex:pageBlockTable>
+                  
+                </apex:pageBlock>
+               </apex:outputPanel>
+            </apex:actionRegion>
+        
+        <apex:pageblocksection title="{!$Label.FILTERPRIORITY_WORKQUEUE_HUM}" columns="10" id="pbsWQP">           	
+           	<apex:repeat value="{!priorityIntegers}" var="priorityNumber" id="repeatWQP">
+           	<apex:outputLabel value="{!wqFP['Criteria_'+priorityNumber+'__c']}"  rendered="{!!ISBLANK(wqFP['Criteria_'+priorityNumber+'__c'])}" id="labelWQP"/>
+	            <apex:outputPanel styleClass="requiredInput" layout="block" >
+	        		<apex:outputPanel styleClass="requiredBlock" layout="block"/>
+	            	<apex:inputfield value="{!wqFP['Priority_'+priorityNumber+'__c']}"  rendered="{!!ISBLANK(wqFP['Criteria_'+priorityNumber+'__c'])}" id="ipWQP"/>
+	            </apex:outputPanel>
+           	</apex:repeat>
+           </apex:pageblocksection>
+           
+           
+           <apex:pageBlockSection title="Queue View(s)" columns="4" id="pbsQueueView">
+                <apex:inputField value="{!queueView.Name}" id="QVName">
+                	<apex:actionSupport event="onchange" action="{!updateQueueView}" rerender="pbsQueueView"/>
+                </apex:inputField>
+                <apex:inputField value="{!queueView.View_Manager__c}" id="QVManager"/>
+                <apex:inputText value="{!sPGVName}" id="groupName" label="PGV Name" maxlength="40"/>
+                <apex:commandButton action="{!addQueueView}" value="Add" rerender="pbsQueueView,pbsMessages" id="addQueueViewButton"/>   
+                <apex:pageBlockTable id="pbtQueueView" value="{!qvNameToManager}" var="eachView" rendered="{!queueViewTable}">         
+                    <apex:column headerValue="View Name" id="labelViewName">
+                        <apex:outputText value="{!eachView}" id="opViewName"/>
+                    </apex:column>
+                    <apex:column headerValue="View Manager" id="labelViewManager">
+                        <apex:outputText value="{!qvNameToManagerName[eachView]}" id="opViewManager"/>
+                    </apex:column>
+                    <apex:column headerValue="PGV Name" id="PgvName">
+                    	<apex:outputText value="{!mapQueueViewNameToPGVName[eachView]}" id="pgVNameOutput"/>
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>  
+           
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

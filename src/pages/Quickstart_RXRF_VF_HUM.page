@@ -1,0 +1,58 @@
+﻿<!--
+Page Name        : QuickStart_RXRF_VF_HUM.page
+Created On       : 02/24/2020
+Function         : Quick Start container page for use as a Footer Service Console Component
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Kiran Kumar                                         02/24/2020                  Original Version REQ: 702843 
+* Vivek												  07/09/2022		          Updated the JS query to new Datatables to version to 1.12.1
+* Thaurn Madishetti             08/03/2023              US-4647290:T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Quick Start (Group 2)
+****************************************************************************************************************************
+-->
+<apex:page controller="QuickStart_RXRF_C_HUM" showheader="false" sidebar="false" standardstylesheets="false"> 
+    <meta content="maximum-scale=1.0, initial-scale=1.0, width=device-width" name="viewport" />
+    <apex:includescript value="/support/console/36.0/integration.js" /> 
+    <apex:includescript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" /> 
+    <apex:includescript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}" />
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.Quickstart_RXRF_SR_HUM, 'QuickStart_SR_HUM/styles/QuickStart_VF_Style.css')}"/>
+    <apex:includescript value="{!URLFOR($Resource.Quickstart_RXRF_SR_HUM,'QuickStart_SR_HUM/scripts/QuickStart_VF_Script.js')}"/>
+
+    <div class="row">
+        <div id="div-container-page">
+            <div id="div-col-header" class="col-xs-12">
+                <div id="div-panel-header" class="panel panel-default"> 
+                    <div class="panel-heading">
+                    	<table align="center" width="100%" border="0">
+                        	<tr>
+                                <td align="left"><h3 class="panel-title">{!sQSLabel}</h3></td>
+                        	<td align="right">
+                                 <apex:outputPanel id="pretextdisabledPanel" rendered="{!NOT(bPreTextConfigured)}">
+                                        <h3 class="panel-title" style="margin-right: 15px;">Pretext: Disabled</h3>
+                                        <apex:image title="{!$Label.QUICKSTART_PRETEXTCONFIGURE_HUM}" id="lnkImgcom" style="margin-top: -15.5px;margin-left: 0px;" height="12" width="12"  url="{!$Resource.HUMHoverOverQuestionMark}"/>
+                                  </apex:outputPanel>
+								</td>
+                        	</tr>
+                        </table>   
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+    </div>
+    <div id="div-row-split" class="row">
+    </div>
+    <div id="div-state-popin" style="display:none;">
+        <div id="div-popin-content" class="row" style= "margin-top: 100px; !important">
+           	<apex:image id="img-popin-icon_rxrf" styleClass="popin-icon" url="{!URLFOR($Resource.Quickstart_RXRF_SR_HUM, 'QuickStart_SR_HUM/icons/RXImage.jpg')}" height="340" width="800"/>
+        </div>
+    </div>
+    <div id="div-state-popout" style="display:none;">
+        <div id="div-container-cmp">
+			<c:Quickstart_RXRF_CMP_HUM />
+	    </div>  
+	</div>
+</apex:page>

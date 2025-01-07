@@ -1,0 +1,181 @@
+﻿<!--
+Component Name   : GroupSearchVOBV1_CMP_HUM.component
+Version          : 1.0
+Created On       : 07/01/2018 
+Function         : VF Component to display VOB Benefit Search
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Joel George                                 		07/01/2018                    Original version
+* Lakshmi Madduri 									08/07/2018					  REQ - 363357 Added the cause code option
+* Rakesh Patni             284378                 09/11/2018                  REQ - 374840. .
+* Riya Agarwal										02/08/2021					  REQ - 1939309 - PR00094226 - CA Tickets - TECH - SF-INC0876690-Benefit Logging Issue
+****************************************************************************************************************************
+-->
+<apex:component controller="GroupBenefits_X_HUM" id="GroupSearchVOBV1_CMP_HUM">
+	<apex:attribute id="ProdCode" name="ProdCode" description="This is product code" type="String" required="true"></apex:attribute>
+	<apex:attribute id="platformCodeValue" name="platformCodeValue" description="This is platform code" type="String" required="true"></apex:attribute>
+    <apex:includeScript value="{!URLFOR($Resource.GroupSearchVOB_SR_HUM, 'GroupSearchVOB_JS_HUM.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.AddCaptionTag_JS_HUM)}" />
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.GroupSearchVOB_SR_HUM, 'GroupSearchVOB_CSS_HUM.css')}" />
+
+    <style>
+        div.col-xs-12 {
+            padding-left: 0px !IMPORTANT;
+        }
+
+        td.details-controlBenefitSearch {
+            background: url({!URLFOR($Resource.GroupSearchVOB_SR_HUM,'/PlusImage.png')
+        }
+
+        ) no-repeat center center; background-size: 30px 30px; padding-left: 30px; cursor: pointer;
+        }
+
+        tr.detailsBenefitSearch td.details-controlBenefitSearch {
+            background: url({!URLFOR($Resource.GroupSearchVOB_SR_HUM,'/MinusImage.png')
+        }
+
+        ) no-repeat center center; background-size: 30px 30px; padding-left: 30px; cursor: pointer;
+        }
+    </style>
+
+    <div id="BenefitSearchLoadingImageId" class="loadingImageDivCon">
+        <img src="/img/loading.gif" />
+        <span class="waitingDescription">{!$Label.LOADING_HUM}</span>
+    </div>
+
+    <div id="Benefitssearchbody">
+
+        <table width="100%">
+            <tr>
+                <td>
+                    <div id="container">
+
+                        <apex:outputLabel value="{!$Label.SearchCriteria_BenefitSearchVOB_HUM}" />
+
+						<apex:outputpanel rendered="{!IF(platformCodeValue == 'LV', TRUE, FALSE)}">
+                            <select id="causeCodeId" class="dropdown requiredBS benSearchResultTable_disable_while_logging" style="width: 14%;height: 26px;" onchange="updateFormEnabled(this.id,this.value)">
+                                <option value="Cause Code" selected="true" hidden="true">{!$Label.CauseCode_BenefitsSearchVOB_HUM}</option>
+                            </select>
+                        </apex:outputpanel>
+						
+                        <apex:outputpanel rendered="{!IF(ProdCode == 'DEN', TRUE, FALSE)}">
+                            <select id="categoryCodeId" class="dropdown requiredBS benSearchResultTable_disable_while_logging" style="width: 14%;height: 26px;" onchange="updateFormEnabled(this.id,this.value)">
+                                <option value="categoryCode" selected="true" hidden="true">{!$Label.CategoryCode_BenefitSearchVOB_HUM}</option>
+                            </select>
+                            <apex:actionStatus id="categoryStatus">
+                                <apex:facet name="start">
+                                    <div style="display: inline;">
+                                        <img src="/img/loading.gif" />
+                                    </div>
+                                </apex:facet>
+                            </apex:actionStatus>
+                        </apex:outputpanel>
+
+                        <apex:outputpanel rendered="{!IF(ProdCode == 'MED', TRUE, FALSE)}">
+                            <select id="serviceCategoryId" class="dropdown requiredBS benSearchResultTable_disable_while_logging" style="width: 14%;height: 26px;" onchange="updateFormEnabled(this.id,this.value)">
+                                <option value="serviceCategory" selected="true" hidden="true">{!$Label.ServiceCategory_BenefitSearchVOB_HUM}</option>
+                            </select>
+                        </apex:outputpanel>
+
+                        <apex:outputpanel id="serviceTypeSection">
+                            <select id="typeOfServiceId" class="dropdown requiredBS benSearchResultTable_disable_while_logging" style="width: 14%;height: 26px;" onchange="updateFormEnabled(this.id,this.value); populateParData();">
+                                <option value="typeOfService" selected="true" hidden="true">{!$Label.TypeOfService_BenefitSearchVOB_HUM}</option>
+
+                            </select>
+                        </apex:outputpanel>
+                        <!--   adding ADA Code -->
+                        <apex:outputpanel rendered="{!IF(ProdCode == 'DEN', TRUE, FALSE)}">
+                            <select id="ADACodeId" class="dropdown benSearchResultTable_disable_while_logging" style="width: 8%;height: 26px;" onchange="updateFormEnabled(this.id,this.value); populateParData();" disabled="true">
+                                <option value="ADACodeValue" selected="true" hidden="true">{!$Label.ADACODE_BenefitSearchVOB_HUM}</option>
+
+                            </select>
+                        </apex:outputpanel>
+
+
+                        <select id="placeOfServiceId" class="dropdown benSearchResultTable_disable_while_logging" style="width: 8%;height: 26px;">
+                            <option selected="true" hidden="true">{!$Label.PlaceofService_BenefitSearchVOB_HUM}</option>
+                        </select>
+
+                        <select id="parId" class="dropdown benSearchResultTable_disable_while_logging" style="width: 8%; height: 26px;"></select>
+
+                        <input type="button" class="benSearchResultTable_disable_while_logging" name="Search" value="Search" id="submitorder" onclick="invokeRemoteActionBenefitSearch();return false;" />
+                        <input type="button" class="benSearchResultTable_disable_while_logging" name="Clear Filters" value="Clear Filters" id="resetorder" onclick="resetAll()" />
+
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div class="col-xs-12" style="border: 1px solid #FFF; Padding: 0.5%; height:5%;">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <apex:outputPanel id="idextfilterbyop" style="display:none;">
+                    	<div id="filterbyIDSearch">
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                                        <span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <span style="font-size: 12px; color:Black; font-weight:bold" class="navbar-brand ">Filter By:</span>
+                                </div>
+
+                                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                                    <form class="navbar-form navbar-left" role="search" id="ddFilters" style="font-size:12px;">
+                                        <div class="form-group">
+                                            <input type="text" style="width: 20%!IMPORTANT;margin-top: 10px!IMPORTANT;" class="form-control benSearchResultTable_disable_while_logging" placeholder="Keyword" id="keyword" onkeydown="if (event.keyCode==13){ return false;}" onkeyup="filterbytable(this.value)" />
+
+                                        </div>
+                                    </form>
+                                </div>
+                            </nav>
+                        </div> 
+                    </apex:outputPanel>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="col-xs-12" style="border: 1px solid #FFF; Padding: 0.5%; height:10px;"> </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="BenefitResultsLoadingImageId" class="loadingImageDivCon" style="display : none;text-align: center;">
+        <img src="/img/loading.gif" />
+        <span class="waitingDescription">{!$Label.LOADING_HUM}</span>
+    </div>
+
+    <div id="benefitsSearchErrorMsgId" ></div>
+
+    <div class="col-xs-12">
+        <div id="BenefitResultsDivId" style="width:100% !important;">
+            <table id="benSearchResultTable" class="table table-striped table-bordered enable_logging benefitsStyling table-hover nowrap width100BS" cellspacing="0" width="100%">
+                <caption style="display:none;padding:0;margin:0;">Benefits Search</caption>
+            </table>
+        </div>
+    </div>
+
+    <script>
+   		var benefitsScrollBody;
+        var benefitSearchRemote = '{!$RemoteAction.GroupBenefits_X_HUM.getBenefitSearch}';
+        var sCoverageApplicationURL = "{!sCoverageAppURL}";
+        var sBenefitSearchError = "{!$Label.BENEFITSEARCH_ERROR}";
+        var sBenefitFilterError = "{!$Label.BENEFITSEARCH_FILTER_ERROR}";
+        var sBenefitServiceCategoryError = "{!$Label.BENEFITSERVICECATEGORY_ERROR}";
+        var filterBy = '{!$Component.GroupSearchVOBV1_CMP_HUM.idextfilterbyop}';
+        
+        benefitsScrollBody = jQuery('div.dataTables_scrollBody:has(#benSearchResultTable)');
+        AddcaptionTag();
+   
+    </script>
+
+</apex:component>

@@ -1,0 +1,161 @@
+﻿<!--
+Modification Log:
+* Developer Name                       	Date                        Description
+* Jonathan Dickinson                   	04/04/2022                  US-3196414
+Abhishek Mangutkar						05/13/2022					US-3312839
+* Jonathan Dickinson                    05/25/2022                  Defect Fix 4945 - added helptext next to Provider ID
+* Abhishek Mangutkar			        06/14/2022		            Defect Fix 5058
+* Divya Bhamre                          10/28/2022                   US - 3833519
+* Divya Bhamre                          11/24/2022                  DF - 6677
+* Nirmal Garg                           04/12/2023                  US4460894
+* Aishwarya Pawar                     05/19/2023                   US - 4516245
+*------------------------------------------------------------------------------------------------------------------------------
+-->
+<template>
+    <lightning-card>
+        <div class="slds-box">
+            <div class="slds-grid slds-wrap" onclick={handleLogging}>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-border_right">
+                        <div class="slds-grid slds-grid_vertical">
+                            <div class="slds-col">
+                                <div class="slds-grid">
+                                    <div>
+                                        <div class="logthis slds-col" data-id="PCP Name" data-value={pcppcddata.Name} data-logid={generateLogId}>
+                                            <template if:true={pcppcddata.Name}>
+                                                <!--hidden div-->
+                                                <div style="display:none;">PCP Name</div>
+                                                <strong class="slds-text-heading_small slds-wrap">{pcppcddata.Name}</strong>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <c-generic-copy-icon-hum copycontent={pcppcddata.Name}>
+                                        </c-generic-copy-icon-hum>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col">
+                                <div class="slds-grid">
+                                    <div class="logthis slds-col" data-logid={generateLogId}>
+                                        <div class="data-section">
+                                            <div>Phone Number</div>
+                                            <template if:true={retrievedAllPhoneNumbersInParent}>
+                                                <template if:true={pcppcddata.phoneNumber}>
+                                                    <!--hidden div-->
+                                                    <strong class="slds-text-heading_small slds-wrap">{pcppcddata.phoneNumber}</strong>
+                                                    <span>
+                                                        <c-generic-copy-icon-hum copycontent={pcppcddata.phoneNumber}>
+                                                        </c-generic-copy-icon-hum>
+                                                    </span>
+                                                </template>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_9-of-12 slds-m-top_small">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_6-of-12">
+                            <div class="slds-grid slds-wrap slds-m-left_x-small">
+                                <div class="slds-col slds-size_4-of-12">
+                                    <div class="slds-grid slds-grid_align-spread">
+                                        <div class="slds-col logthis" data-logid={generateLogId}>
+                                            <div class="data-section">
+                                                <div>{pcppcdtype} Number</div>
+                                                <template if:true={pcppcddata.Npi}>
+                                                    <strong>{pcppcddata.Npi} </strong>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-size_4-of-12">
+                                    <div class="slds-grid slds-grid_align-center">
+                                        <div class="slds-col logthis" data-logid={generateLogId}>
+                                            <div class="data-section">
+                                                <div>Provider ID</div>
+                                                <strong>{pcppcddata.SourceProviderKey} </strong>
+                                            </div>
+                                        </div>
+                                        <div class="slds-col">
+                                            <c-generic-help-text-hum helptext="Identification number on the provider"></c-generic-help-text-hum>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-size_4-of-12">
+                                    <div class="slds-grid">
+                                        <template if:false={bpracticelocation}>
+                                            <div class="slds-col logthis" data-logid={generateLogId}>
+                                                <div class="copyable-data data-section">
+                                                    <div>Grouper Number</div>
+                                                    <template if:true={pcppcddata.SourceGrouperNumber}>
+                                                        <strong class="slds-text-heading_small slds-wrap">{pcppcddata.SourceGrouperNumber}</strong>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <div class="slds-col">
+                                                <div></div>
+                                                <span style="position: relative; top: 15px; right: 2.5rem;">
+                                                    <c-generic-copy-icon-hum copycontent={pcppcddata.SourceGrouperNumber}>
+                                                    </c-generic-copy-icon-hum>
+                                                </span>
+                                            </div>
+                                        </template>
+                                        <template if:true={bpracticelocation}>
+                                            <div class="slds-col logthis" data-logid={generateLogId}>
+                                                <div class="data-section">
+                                                    <div>Practice Location</div>
+                                                    <template if:true={pcppcddata.PracticeLocationNumber}>
+                                                        <strong>{pcppcddata.PracticeLocationNumber} </strong>
+                                                    </template>      
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_6-of-12">
+                            <div class="slds-grid slds-wrap">
+                                <template if:false={bpracticelocation}>
+                                    <div class="slds-col slds-size_6-of-12">
+                                        <div class="slds-grid slds-grid_align-spread">
+                                            <div class="slds-col logthis" data-logid={generateLogId}>
+                                                <div class="data-section">
+                                                    <div>Grouper Name</div>
+                                                    <strong class="slds-wrap">{pcppcddata.GrouperName} </strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                                <div class="slds-col slds-size_4-of-12">
+                                    <div class="slds-grid slds-grid_align-spread">
+                                        <div class="slds-col logthis" data-logid={generateLogId}>
+                                            <div class="data-section">
+                                                <div>Effective Date</div>
+                                                <strong>{changeEffDateFormat} </strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-size_2-of-12">
+                                    <div class="slds-grid slds-grid_align-spread">
+                                        <div class="data-section logthis" data-logid={generateLogId}>
+                                            <div>End Date</div>
+                                            <strong>{changeEndDateFormat} </strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </lightning-card>
+</template>

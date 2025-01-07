@@ -1,0 +1,48 @@
+﻿<!--
+LWC Name        : CaseLinkViewAllHum.html
+Function        : LWC to display all the linked cases in the list view.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Dinesh Subramaniyan           11/08/2022                   initial version
+****************************************************************************************************************************-->
+<template>
+   
+        <template if:false={loaded}>
+            <lightning-spinner alternative-text="Loading"></lightning-spinner>
+        </template>
+       <lightning-card >
+            <header class="slds-grid slds-media slds-media_center slds-has-flexi-truncate hc-align-header">
+                <div class="slds-grid slds-grid_vertical-align-center">
+                    <div class="slds-media__body slds-p-left--medium">
+                        <h1 style="font-size: 1rem;">
+                            <lightning-formatted-url class="slds-align--absolute-center" value="/my/path"  target="_blank" label={goTOCaseLabel} onclick={goBackToCase}></lightning-formatted-url>
+                        </h1>
+                        <h1 style="font-size: large" class="slds-card__header-title">Linked Cases</h1>
+                    </div>
+                </div>
+            </header>
+        </lightning-card>
+        <article  style="height: 80%;overflow: auto;" if:false={noDataFound}>
+                    <lightning-datatable
+                        column-widths-mode = "auto"
+                        key-field="id"
+                        data={caseData}
+                        columns={columns}
+                        onrowaction={handleRowAction}
+                        show-row-number-column
+                        row-number-offset={rowOffset}
+                        hide-checkbox-column = true        
+                        default-sort-direction="desc"
+                        sorted-by={sortBy}
+                        sorted-direction={sortDirection}
+                        onsort={updateColumnSorting}>
+                        column-widths-mode="auto"
+                    </lightning-datatable>    
+    </article>
+    <template if:true={noDataFound}>
+        <div class="slds-p-around_small"><p style="text-align:center">No Records to Display</p></div>
+    </template>
+    </br> 
+    </template>

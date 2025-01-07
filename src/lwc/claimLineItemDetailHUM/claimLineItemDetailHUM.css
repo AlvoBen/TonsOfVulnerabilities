@@ -1,0 +1,9 @@
+.full-container {
+    height: 100%;
+    width: 100%;
+}
+
+.ch-filter-keyword {
+    width: 20%;
+    min-width: 124px;
+}

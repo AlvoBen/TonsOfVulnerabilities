@@ -1,0 +1,58 @@
+﻿<!--
+LWC Name        : PharmacyVerifyDemographics.js
+Function        : LWC to display Verify Demography
+
+Modification Log:
+* Developer Name                  Date                         Description
+*---------------------------------------------------------------------------------------------------------------------------------------------------------------
+* Pallavi Shewale                 11/09/2021                   US-2531890-Mail Order Management - Pharmacy - �Accounts� tab � Verify Demographics - Lightning
+*****************************************************************************************************************************************************************/-->
+<template>
+    <template if:true={bDisplayBox}>
+        <div class="slds-p-around_xxx-small">
+            <div class="slds-box" style="height:340px">
+                <article>
+                    <h3><strong>Demographics</strong></h3><br />
+                    <div class="slds-var-p-left_medium slds-text-align_left slds-text-body_medium">
+                        <ul class="slds-has-dividers_bottom-space">
+                            <li class="slds-item">
+                                <div class="slds-var-p-top_small">Last Verified By </div>
+                                <div>{lastVerifiedBy}</div>
+                            </li>
+                            <li class="slds-item">
+                                <div class="slds-var-p-top_small">Days Since Last Verified</div>
+                                <div>{daysSinceVerified}</div>
+                            </li>
+                            <li class="slds-item">
+                                <div class="slds-var-p-top_small">Last Verified On</div>
+                                <div>{lastVerifiedDate}</div>
+                            </li>
+                        </ul>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </template>
+    <template if:false={bDisplayBox}>
+        <lightning-accordion allow-multiple-sections-open active-section-name='form'>
+            <lightning-accordion-section name="form" label="Verified Demographics" class="custom-accordian-title">
+                <div class="slds-var-p-left_medium slds-text-align_left slds-text-body_medium">
+                    <ul class="slds-has-dividers_bottom-space">
+                        <li class="slds-item">
+                            <div class="slds-var-p-top_small">Last Verified By </div>
+                            <div>{lastVerifiedBy}</div>
+                        </li>
+                        <li class="slds-item">
+                            <div class="slds-var-p-top_small">Days Since Last Verified</div>
+                            <div>{daysSinceVerified}</div>
+                        </li>
+                        <li class="slds-item">
+                            <div class="slds-var-p-top_small">Last Verified On</div>
+                            <div>{lastVerifiedDate}</div>
+                        </li>
+                    </ul>
+                </div>
+            </lightning-accordion-section>
+        </lightning-accordion>
+    </template>
+</template>

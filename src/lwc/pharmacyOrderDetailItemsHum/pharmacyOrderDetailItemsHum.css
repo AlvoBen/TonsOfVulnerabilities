@@ -1,0 +1,154 @@
+.greenclock{
+    background: rgb(74, 153, 110) !important;
+}
+
+.blueclock{
+    background: rgb(92, 134, 197) !important;
+}
+
+.bluecalendar{
+    background: rgb(92, 134, 197) !important;
+}
+
+.refill{
+    left:10px;
+    width:5px;
+    text-align:center; 
+    color:black;
+    font-size: 20px;
+    position: absolute;
+    font-weight: bold;
+}
+.refill1{
+
+    left:10px;
+
+    width:5px;
+
+    text-align:center; 
+
+    color:black;
+
+    font-size: 20px;
+
+    position: absolute;
+
+    font-weight: bold;
+
+    top : 3px;
+
+}
+
+
+
+.refill2{
+
+    left:5px;
+
+    width:5px;
+
+    text-align:center; 
+
+    color:black;
+
+    font-size: 20px;
+
+    position: absolute;
+
+    font-weight: bold;
+
+    top : 3px;
+
+}
+
+.refill4{
+
+    left:10px;
+
+    width:5px;
+
+    text-align:center; 
+
+    color:black;
+
+    font-size: 20px;
+
+    position: absolute;
+
+    font-weight: bold;
+
+    
+
+}
+
+
+
+.refill5{
+
+    left:5px;
+
+    width:5px;
+
+    text-align:center; 
+
+    color:black;
+
+    font-size: 20px;
+
+    position: absolute;
+
+    font-weight: bold;
+
+    
+
+}
+
+.refill6{
+
+    left:10px;
+
+    width:5px;
+
+    text-align:center; 
+
+    color:black;
+
+    font-size: 20px;
+
+    position: absolute;
+
+    font-weight: bold;
+
+    top : 0.5px;
+
+    
+
+}
+
+
+
+.refill7{
+
+    left:5px;
+
+    width:5px;
+
+    text-align:center; 
+
+    color:black;
+
+    font-size: 20px;
+
+    position: absolute;
+
+    font-weight: bold;
+
+    top : 0.5px;
+
+    
+
+}
+
+.drug{
+    word-wrap: break-word;
+}

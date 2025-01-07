@@ -1,0 +1,191 @@
+﻿<!--*****************************************************************************************************************************
+LWC Name : coachingMemberSearchFormHum.html
+Function    : This LWC component serves as input for to search member data in Wellness Coaching APP
+
+Modification Log:
+Developer Name           Code Review              Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Jasmeen Shangari                                03/08/2022                   Member Search init version
+* Mohammed Noor                                   06/04/2021                   US2081412 - Ability to Create Unknown Member Accounts
+*******************************************************************************************************************************-->
+<template>
+    <div class="slds-grid slds-m-top_none slds-wrap">
+        <div class="slds-col slds-size_2-of-12 ">
+            <div class="slds-var-p-around_x-small slds-theme_default">
+                <div class="form-header">
+                    <lightning-icon icon-name="standard:account" size="small"></lightning-icon>
+                    <h1 class="slds-var-p-left_x-small slds-var-p-right_xx-small">{labels.HumMemberSearch}</h1>
+                    <lightning-helptext content="Member Search can be performed using the following combinations:
+                    Single Criteria Needed: Member ID, Group Number, Phone, First Name + Last Name
+                    Multiple Criteria Needed: Birthdate, State, and Zip Code require ID OR Group Number OR Phone or First Name + Last Name">
+                    </lightning-helptext>
+                </div>
+                <template if:true={suffixpermission}>
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_9-of-12">
+                            <span>
+                                <label class="slds-form-element__label slds-no-flex">ID</label>
+                                <lightning-input class="inputfield IDHighlight" data-fieldname="ID" type="text"
+                                                 name="ID" label="ID" maxlength="17" data-id="sMemberid" value={sMemberid}
+                                                 onchange={onFieldChange} variant="label-hidden" onkeyup={enterSeach}
+                                                 onfocus={removeError}>
+                                </lightning-input>
+                                <lightning-helptext content="The ID field can search Humana ID Number, Social Security Number, Medicare ID, and CBIS Alt ID"
+                                                    class="start-help-text-id slds-is-absolute">
+                                </lightning-helptext>
+                            </span>
+                        </div>
+
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_3-of-12 slds-var-p-left_xx-small">
+                            <span>
+                                <lightning-input class="inputfield" data-fieldname="Suffix" type="text" name="Suffix"
+                                                 data-id="sSuffix" label="Suffix" maxlength="3" value={sSuffix}
+                                                 onchange={onFieldChange} onfocus={highlightID} onblur={highlightIDByFiield}
+                                                 if:true={suffixpermission} onkeyup={enterSeach}>
+                                </lightning-input>
+                                <lightning-helptext content={labels.HumSearchSuffixHelpText}
+                                                    class="start-help-text-suffix slds-is-absolute">
+                                </lightning-helptext>
+                            </span>
+                        </div>
+                    </div>
+                </template>
+                <div class="slds-is-relative" if:false={suffixpermission}>
+                    <lightning-input class="inputfield" data-fieldname="ID" type="text" name="ID" label="ID"
+                                     maxlength="17" value={sMemberid} data-id="sMemberid" onchange={onFieldChange} onkeyup={enterSeach}
+                                     onfocus={removeError}>
+                    </lightning-input>
+                    <lightning-helptext content="The ID field can search Humana ID Number, Social Security Number, Medicare ID, and CBIS Alt ID"
+                                        class="start-help-text slds-is-absolute">
+                    </lightning-helptext>
+                </div>
+                <div class="slds-is-relative" if:true={pidPermission}>
+                    <lightning-input class="inputfield" type="integer" name="PID" data-id="sPID" maxlength="20"
+                                     label="PID" value={sPID} onchange={onFieldChange} onkeyup={enterSeach}>
+                    </lightning-input>
+                    <lightning-helptext content="The PID field can search the Personal Identification Number (Account Number)"
+                                        class="start-help-text-PID">
+                    </lightning-helptext>
+                </div>
+                <label class="slds-form-element__label slds-no-flex">First Name</label>
+                <lightning-input class="NameHighlight inputfield firstName" type="text" name="firstName"
+                                 label="First Name" value={sFirstName} data-id="sFirstName" onchange={onFieldChange}
+                                 onfocus={highlightFields} onblur={removehighlight} variant="label-hidden" onkeyup={enterSeach}>
+                </lightning-input>
+                <label class="slds-form-element__label slds-no-flex">Last Name</label>
+                <lightning-input class="NameHighlight inputfield lastName" type="text" name="lastName" label="Last Name"
+                                 value={sLastName} data-id="sLastName" onchange={onFieldChange} onfocus={highlightFields}
+                                 onblur={removehighlight} variant="label-hidden" onkeyup={enterSeach}></lightning-input>
+                <lightning-input data-id="birthday" class="inputfield birthdate-input" type="date" value={sBirthdate}
+                                 onchange={updateBirthDate} name="birthdate" date-style="short" max={today} onkeyup={enterSeach}
+                                 label="Birthdate" message-when-range-overflow={labels.memberSearchBirthdateLimit} max-length="10"
+                                 onblur={highlightByFieldValue} onfocus={highlightFields}
+                                 message-when-bad-input={labels.memberDateFormatHum}>
+                </lightning-input>
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col">
+                        <lightning-combobox class="inputfield" name="state" label="State" options={stateOptions}
+                                            value={sState} onblur={highlightByFieldValue} onfocus={highlightFields}
+                                            onchange={handleChangeStateValue}>
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-col">
+                        <lightning-input class="inputfield zipcode-field" type="text" name="zipCode" label="Zip Code"
+                                         value={sPostalCode} maxlength="5" onfocus={highlightFields} onchange={highlightByZipCode}
+                                         onblur={highlightByFieldValue}>
+                        </lightning-input>
+                    </div>
+                </div>
+
+                <lightning-input class="inputfield" type="text" name="phone" label="Phone" value={sPhone}
+                                 onchange={onPhoneFieldChange} data-id="sPhone" maxlength="10" onfocus={removeError}>
+                </lightning-input>
+                <lightning-input class="inputfield" type="text" name="groupNumber" label="Group Number"
+                                 value={sGroupNumber} data-id="sGroupNumber" onchange={onFieldChange} maxlength="13"
+                                 if:true={groupNumberPermission} onkeyup={enterSeach} onfocus={removeError}>
+                </lightning-input>
+                <div class="slds-clearfix slds-p-top_medium">
+                    <div class="slds-grid slds-grid_vertical">
+                        <div class="slds-col">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col">
+                                    <button class="slds-button slds-button_stretch slds-button_neutral"
+                                            onclick={handleReset}>
+                                        {labels.HUMResetButtonLabel}
+                                    </button>
+                                </div>
+                                <div class="slds-col slds-p-left_small">
+                                    <button class="slds-button slds-button_stretch slds-button_brand"
+                                            onclick={handleValidation}>
+                                        {labels.HUMSearchButton}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div if:true={showErrorMsg} class="slds-col">
+                            <div class="slds-text-color_error message-container" id="error">
+                                {labels.memberSearchAtleastOneHum}
+                            </div>
+                        </div>
+                        <div class="slds-col ">
+                            <div class="slds-p-top_medium">
+                                <button class="slds-button slds-button_stretch slds-button_neutral"
+                                        onclick={handleUnknownSearch}>
+                                    {labels.HUMLaunchGCPCCP_UnknownMember}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slds-col slds-size_10-of-12" if:true={showNoDataView}>
+            <div class="slds-var-m-horizontal_medium slds-theme_default">
+
+                <c-coach-search-no-result-hum no-result-message={noRecordlabel}></c-coach-search-no-result-hum>
+				<div class="slds-var-p-around_x-small slds-theme_default">                    
+					<p style="font-size:small; text-align:center;">Search again, or create an Unknown-Member</p>                    
+                    <div class="slds-col">
+                        <div class="slds-p-top_medium">
+                            <c-coaching-create-unknown-Member is-button-brand={boolFalse}></c-coaching-create-unknown-Member>
+                        </div>
+                    </div>
+                    <div class="slds-var-p-top_medium"></div>						
+                </div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_10-of-12">
+            <template if:true={resultsTrue}>
+                <c-coaching-table-component-hum if:true={hasData} name-of-screen="Member Search" response={accountList}
+                                                oninteractions={handleInteraction}></c-coaching-table-component-hum>
+                <div if:true={showBackToResults} class="slds-var-p-left_small">
+                    <a class="backResults" onclick={backToResults}>{labels.backToResultsHum}</a>
+                </div>
+                <div class="slds-var-p-top_medium result-container" if:true={policyList}>
+                    <c-coaching-table-component-hum if:true={policyList} templatemodal={newpolicy}
+                                                    name-of-screen="Policy" response={policyList} title="Policies"></c-coaching-table-component-hum>
+                </div>
+                <div if:true={noPolicyData} class="slds-var-p-top_medium result-container">
+                    <c-coach-search-no-result-hum no-result-message="No Policies Found For Selected Record">
+                    </c-coach-search-no-result-hum>
+                </div>
+            </template>
+        </div>
+    </div>
+	<div class="slds-grid slds-m-top_small slds-wrap">
+        <div class="slds-col slds-size_2-of-12 ">
+            <div class="slds-var-p-around_x-small slds-theme_default">
+                <div class="slds-var-p-top_medium">
+                    <p style="font-size: smaller;text-align: center;">Need to add someone not in the System?</p>
+                </div>
+                <div class="slds-col">
+                    <div class="slds-p-top_medium">
+                        <c-coaching-create-unknown-Member is-button-brand={boolTrue}></c-coaching-create-unknown-Member>
+                    </div>
+                </div>
+                <div class="slds-var-p-top_medium"></div>						
+            </div>						
+        </div>		
+    </div>
+</template>

@@ -1,0 +1,63 @@
+﻿<!--
+Component Name   : CCPGCPDataTable_CMP_HUM.component
+Version          : 1.0
+Created On       : 08/31/2017
+Function         : VF Component to display CCPGCP Datatable from the controller CCPGCPDataTableExtension_C_HUM
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Prasad Jandhyala         149219                     08/31/2017                    Original version
+ * Sumit Pharande                                      27/12/2017                    Fix - Defect-334135.0001
+ * Sumit Pharande                                      28/12/2017                    Rollback Changes
+ * Joel George                                         12/12/2018                    REQ 378820
+ * Rakesh Patni                                     
+ * Suraj Patil                                         10/02/2019                    REQ-404549 Link in CRM Case to IMS ticket
+ * Suraj Patil                                         11/20/2019                     REQ - 414435 Adding IMS Approval Link to Related Information section
+ * Santhi Mandava                                      03/06/2020                    US - 903424 added content type attribute value
+ * Santhi Mandava                                      03/06/2020                    US - 957458 Fixed multiple case tabs issue
+ * Prasanthi Kandula                                   07/24/2020                    US - 1031530 Added swtich to toggle between claim details V2 and V3 page 
+ * Mithra Bharadwaj                                                                  US#1522825 SonarQube Changes
+ * Jayesh Solanki									                     10/27/2021				        	   User Story 2786834: T1PRJ0001827 - MF 1 - AHT - Ability to copy fields on Vantage cases (RF)
+ ****************************************************************************************************************************
+ -->
+
+<apex:component controller="CCPGCPDataTableExtension_C_HUM" id="cmpId" allowDML="true">
+  <div id="ClaimErrMsg" style="text-align:center; vertical-align: middle;display:none">
+    <apex:PageMessage rendered="true" strength="2" summary="{!$Label.HUM_RelatedInfo_Claims_Error}" severity="Error" />
+  </div>
+  <script src="{!URLFOR($Resource.CaseDetailResources_SR_HUM,'/CaseCCPGCP/CaseCCPGCP_JS_HUM.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CopyToClipBoard/CopyToClipBoard.js')}"/>
+  <apex:attribute name="caseRecordId" type="string" description="The Case Record ID"/>
+
+  <c:BaseDataTable_CMP_HUM jqueryvariable="jQuery"
+          tableid="caseCCPGCPDataTable"
+          col1_accordian="true"
+          enablesearch="f"
+          tablecontainerid="caseCCPGCPDatatableContainer"
+          columnname="{!columnName}"
+          columnHeader="{!columnHeader}"
+          objname="Attachment_Log__c"
+          pagingbarBool="true"
+          info="true"
+          sort="false"
+          keyword="false"
+          orderColumn="4"
+          orderDirection="desc"
+          accordionColumns="recId,attachmentLogItemDTOList"
+          col1_orderable="false"
+          tableContentType="RelatedInformation_{!caseRecordId}"
+          />
+
+  <script>
+    var vGetCCPGCPAttachments= '{!$RemoteAction.CCPGCPDataTableExtension_C_HUM.getCCPGCPAttachments}';
+    var vCaseRecordId = '{!JSENCODE(caseRecordId)}';
+    Visualforce.remoting.timeout = '{!$Label.HUMMemWebActivityTimeout}'; // Set timeout at page level
+    var vGetClaimsSummary = '{!$RemoteAction.CCPGCPDataTableExtension_C_HUM.fetchClaimsSummary}';
+    var vIMSDetailURL = '{!JSENCODE(sIMSDetailURL)}';
+    var vIMSApprovalURL = '{!JSENCODE(sIMSApprovalURL)}';
+    var bClmDetailURLSwitch = '{!JSENCODE(IF(bClmDetailURLSwitch, "true", "false"))}';
+    var bisRapidForceUser = {!$Permission.RapidForceUser_AHT_HUM};
+  </script>
+
+</apex:component>

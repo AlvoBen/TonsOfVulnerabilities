@@ -1,0 +1,13 @@
+.hc-icon-comp {
+    position: relative;
+}
+
+.hc-icontext {
+    text-transform: uppercase;
+}
+
+.hc-iconcomp-heltext {
+    position: absolute;
+    top: -100%;
+    left: 20%;
+}

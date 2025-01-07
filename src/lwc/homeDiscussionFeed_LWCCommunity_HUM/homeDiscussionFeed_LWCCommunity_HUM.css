@@ -1,0 +1,17 @@
+.card-container {
+    font-size: 16px;
+}
+.search-input{
+    width:19rem;
+}
+.nocontent-section{
+    text-align: center;
+    color:red;
+}
+.textarea-section{
+    background-color: white;
+}
+.comment-button{
+    left: 37rem;
+    top:0.25rem;
+}

@@ -1,0 +1,14 @@
+.hContent {
+    background: #ECECEC;
+}
+
+.enroll-search-results {
+    position: sticky;
+    top: 9.2rem;
+}
+
+.select-system-freezer {
+    position: sticky;
+    top: 2.9rem;
+    z-index: 2;
+}

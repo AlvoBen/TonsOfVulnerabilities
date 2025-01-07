@@ -1,0 +1,105 @@
+﻿<!--
+LWC Name        : benefitsAccumsDetailHum.html
+Function        : LWC to display Benefit Current and Previous Tab
+
+Modification Log:
+* Developer Name                  Date                         Description
+* Swapnali Sonawane               05/27/2022                   US-3143662 - Medical Plan - Benefit Accumulators
+* Swapnali Sonawane               07/12/2022                   US-3312671 -  Benefits-  Lightning Build of Medical Plan: Logging for Accums
+* Jonathan Dickinson              07/29/2022                   US-3580751 - Dental Plan - Benefit Accumulators
+* Jonathan Dickinson		      08/15/2022		           US-3699864
+* Abhishek Mangutkar              06/14/2022                   US - 4703750 - Fix Table design for accums  per standard
+*************************************************************************************************************************** -->
+<template>
+    <article class="slds-brand-band slds-card slds-card_boundary headerBottomBorder forceRelatedListCardDesktop">
+        <div
+            class="slds-page-header--object-home slds-page-header_joined slds-page-header slds-shrink-none test-headerRegion forceListViewManagerHeader">
+
+            <header
+                class=" slds-card__header slds-grid slds-p-right_none slds-media slds-media_center slds-has-flexi-truncate hc-align-header slds-p-around_none slds-m-bottom_none">
+                <div class="slds-media__figure">
+                    <lightning-icon icon-name="standard:record"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <template lwc:if={benefitCurrent}>
+                        <h2 class="slds-card__header-title">Benefits - Current ({totalCount})</h2>
+                    </template>
+                    <template lwc:else>
+                        <h2 class="slds-card__header-title">Benefits - Previous ({totalCount})</h2>
+                    </template>
+                </div>
+            </header>
+        </div>
+        <div style="overflow-x: auto">
+            <template if:false={isLoading}>
+                <div data-id="result" class="slds-table--header-fixed_container">
+                    <div class="slds-scrollable_y container" style="height: 100%;">
+                        <table
+                            class="slds-table slds-table_cell-buffer slds-table_bordered slds-no-row-hover slds-table--header-fixed">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <template for:each={columns} for:item="col">
+                                        <th class="slds-is-sortable slds-cell-fixed" scope="col" key={col.label} style={col.style}>
+                                            <template if:true={col.showSortIcon}>
+                                                <div style="width: 100%;cursor: pointer;"
+                                                    class="slds-p-top_x-small slds-wrap slds-cell-fixed slds-m-left_x-small"
+                                                    title={col.label} onclick={handleSort}>{col.label}
+                                                    <span class="slds-m-left_small">
+                                                        <lightning-icon icon-name={sortIconType} size="xx-small">
+                                                        </lightning-icon>
+                                                    </span>
+                                                </div>
+                                            </template>
+                                            <template if:false={col.showSortIcon}>
+                                                <div class="slds-p-top_x-small slds-wrap slds-cell-fixed slds-m-left_x-small"
+                                                    style="width: 100%;">
+                                                    {col.label}
+                                                </div>
+                                            </template>
+                                        </th>
+                                    </template>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template if:true={showAccumsTable}>
+                                    <template for:each={accumsResponse} for:item="rec" for:index="index">
+                                        <tr key={rec.index} class="slds-hint-parent" onclick={handleLogging}>
+                                            <td class="logthis">
+                                                <div class="slds-wrap" title="Accumulator">{rec.sAccumulator}</div>
+                                            </td>
+                                            <td class="logthis">
+                                                <div class="slds-wrap" title="Form">{rec.sFrom}</div>
+                                            </td>
+                                            <td class="logthis">
+                                                <div class="slds-wrap" title="To">{rec.sTo}</div>
+                                            </td>
+                                            <td class="logthis">
+                                                <div class="slds-wrap" title="Limit">{rec.sLimit}</div>
+                                            </td>
+                                            <td class="logthis">
+                                                <div class="slds-wrap" title="Used">{rec.sUsed}</div>
+                                            </td>
+                                            <td class="logthis">
+                                                <div class="slds-wrap" title="Available">{rec.sAvailable}</div>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </template>
+                                <template if:false={showAccumsTable}>
+                                    <tr>
+                                        <td data-label="label" colspan=6 style="text-align: center;">
+                                            {labels.HUMNoRecords}
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </template>
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading...."></lightning-spinner>
+            </template>
+        </div>
+    </article>
+</template>

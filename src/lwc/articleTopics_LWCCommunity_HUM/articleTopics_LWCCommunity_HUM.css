@@ -1,0 +1,47 @@
+.rt_container h2 {
+    font-family: inherit;
+    font-size: 1.25rem;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: normal;
+    color: #414042;
+}
+
+.rt_item {
+    border-radius: 28px;
+    background-color: rgba(97, 33, 102, 0.15);
+    font-weight: 600;
+    font-size: 1rem;
+    border: 1px solid #612166;
+}
+
+.rt_item-text {
+    text-decoration: none;
+    color:#612166;
+}
+
+.rt_container_go365 h2 {
+    font-family: inherit;
+    font-size: 1.25rem;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: normal;
+    color: #414042;
+}
+
+.rt_item_go365 {
+    border-radius: 28px;
+    background-color: rgba(97, 33, 102, 0.15);
+    font-weight: 600;
+    font-size: 1rem;
+    border: 1px solid #612166;
+}
+
+.rt_item-text_go365 {
+    text-decoration: none;
+    color:#612166;
+}

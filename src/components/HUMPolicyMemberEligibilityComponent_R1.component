@@ -1,0 +1,131 @@
+﻿<!--
+Page Name        : HUMPolicyMemberEligibilityComponent_R1
+Version          : 1.0 
+Created Date     : Mar 31 2015
+Function         : Component to display Policy Member's Eligibility Information.
+Modification Log: 
+* Developer Name             Review Number            Date                       Description
+*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* Harshith M L                 22313                  04/02/2015                 Original Version
+* Shreya Choodamani            22313                  04/09/2015                 Added code for the Hover Text and styling for hovertext.
+* Tanushree Hazari             22313                  04/15/2015                 Added code for Hover Text for Type field in SNP Indicator.
+* Harshith M L                                        04/30/2015                 Defect fix for #181321 - Made changes to show eligibility info as bold.
+* Manish Kumar                                        06/27/2016                 Modified hover over functionality
+* Gargey Sharma                34890                  08/08/2016                 Added Value attribute to make it compatible for implementing continuation
+* Sharan Shanmugam									  04/18/2017				 REQ - 291107 : Ability to view MTM indicator
+* Amar Gadewar                                        08/21/2019                 REQ - 406850 AHT - All Users - Link to LIS Document from Policy Member page (RF)
+* Sunil Kumar Reddy                                   08/22/2020                 USER STORY 1008236 - PR00091574 - MF 1 - AHT - Link to LIS Document from Policy Member page (CRM)
+* Sunil Kumar Reddy                                   04/24/2020                 User Story 1042378 - PR00091574 - MF 1 - SF - TECH - On/Off Switch Cleanup - 5/8 and 5/22 Release (CRM)
+* Atia Uzma                                           01/13/2021                 User Story 1186334: PR00091574 - MF 1 - Quality - Iconology - Low Income Subsidy Icon (RF)
+* Amar Gadewar                                        03/03/2021                 User Story 1956988: T1PRJ0001827 - MF 1 - Quality - Iconology - Low Income Subsidy Icon (CRM)
+* Ankit Avula                                         03/07/2021                 User Story 1911636 HTMLENCODE Sonarqube
+* Samantha Tennyson                                   05/17/2021                 User Story 2271455: T1PRJ0001827 - MF 1 - AHT - Ability to copy information in CRM - Phase 2 (RF)
+* Ajay Chakradhar                                     05/17/2021                 User Story 2265486: T1PRJ0002606/PR00094268 - MF6 - SF - TECH - INC1083073 - Pop up messages displaying outside the message box area.
+* Anand Kumar                                         05/28/2021                 User Story 2325456: T1PRJ0001827 - MF 1 - AHT - Ability to copy information in CRM - Phase 2 (CRM)
+* Ajay Chakradhar                                     02/14/2022                 User Story 2806333: T1PRJ0001793 - WR 07512 - CRM- Update help hover on existing Special Needs Plan (SNP) field.
+* Ajay Chakradhar                                     07/02/2022                 REQ - US 3210977 - Classic Updating Branding from LIS to Extra Help in CRM Service
+***********************************************************************************************************************************************************************************************************************************/
+-->
+<apex:component id="PolicyMemberEligibilityComponent_R1">
+<apex:styleSheet value="{!URLFOR($Resource.HumPolicyMemberEligibilityInformation, 'HumPolicyMemberEligibilityInformation/HumPolicyMemberEligibilityInformationPageStyle.css')}" />
+<apex:includeScript value="/support/console/36.0/integration.js"/>
+<apex:includeScript value="{!URLFOR($Resource.HumPolicyMemberEligibilityInformation, 'HumPolicyMemberEligibilityInformation/HumPolicyMemberEligibilityInformationComponentJS.js')}" />
+<apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CSS/HoverOver.css')}"/>
+    
+    <apex:attribute name="mapEligibilityInfo" description="aMapWrapper" type="map" required="true"/>
+    <apex:attribute name="sectionPriorityList" description="Priority for sections" type="List" required="true"/>
+    <apex:attribute name="fieldPriorityList" description="Priority for fields" type="List"/>
+    <apex:attribute name="noServiceResponse" description="No service boolean" type="Boolean"/>
+    <apex:attribute name="lisComparisionMentorUrl" description="Mentor URL for LIS Document " type="String"/>
+    <apex:pageBlock id="pgBock1" mode="detail">
+        <apex:repeat value="{!sectionPriorityList}" var="sectionName" >
+            <apex:pageBlocksection id="pgBlockSec" title="{!IF(sectionName == $Label.MTM_ELIGIBILITY_HUM, $Label.ELIGIBILITYMTM_ELIGIBILITY_HUM, sectionName)}" columns="2" >
+                <apex:repeat value="{!fieldPriorityList}" var="eligibilityInfoFeilds" >
+                     <apex:outputPanel rendered="{!IF((mapEligibilityInfo[sectionName][eligibilityInfoFeilds]) == $Label.HUMNoValue,false,true)}">
+                         <apex:panelgrid columns="3" styleClass="panelGridPMEStyle">
+                            <apex:pageBlockSectionItem rendered="{!NOT(ISNULL(mapEligibilityInfo[sectionName][eligibilityInfoFeilds]))}">
+                                <apex:outputPanel >
+                                    <table class="tabPMEStyle">
+                                        <tr class="tabRowPMEStyle">
+                                            <td class="tabTextColPMEStyleRight">
+                                                <apex:outputText value="">{!eligibilityInfoFeilds}</apex:outputText>
+                                            </td>
+                                            <td class="tabFieldColPMEStyle">
+                                            </td>
+                                             <td class="tabTextColPMEStyleLeft">
+                                                 <apex:outputPanel rendered="{!IF(eligibilityInfoFeilds == $Label.HUMEligible,TRUE,FALSE)}">
+                                                    <span styleClass="fontBold">
+                                                                <apex:outputPanel rendered="{!IF(sectionName== $Label.HUMExtrahelp && eligibilityInfoFeilds == $Label.HUMEligible && mapEligibilityInfo[sectionName][eligibilityInfoFeilds] == $Label.HUMSmokingIndicator,true,false)}">
+                                                                    <a href="javascript:openLISComparisionMentorUrl('{!HTMLENCODE(lisComparisionMentorUrl)}')" id="hrefLISComparisionid" log_this="false" log_ignore_click="false" style="color:#3333ff;cursor:pointer;" >{!mapEligibilityInfo[sectionName][eligibilityInfoFeilds]}</a>
+                                                                    <script>sforce.console.fireEvent('LowSubsidyIconEvent');</script>
+                                                                </apex:outputPanel>
+                                                                <apex:outputPanel rendered="{!IF(sectionName== $Label.HUMExtrahelp && eligibilityInfoFeilds == $Label.HUMEligible && mapEligibilityInfo[sectionName][eligibilityInfoFeilds] == $Label.HUMSmokingIndicator,false,true)}">
+                                                                    {!mapEligibilityInfo[sectionName][eligibilityInfoFeilds]}
+                                                                </apex:outputPanel>
+                                                    </span>
+                                                 </apex:outputPanel>
+                                                 
+                                                 <apex:outputPanel rendered="{!IF(eligibilityInfoFeilds != $Label.HUMEligible,TRUE,FALSE)}">
+                                                    <span >
+                                                        {!mapEligibilityInfo[sectionName][eligibilityInfoFeilds]}
+                                                    </span>
+                                                 </apex:outputPanel>
+                                                 <apex:outputPanel rendered="{!IF(sectionName== $Label.HUMExtrahelp && eligibilityInfoFeilds == $Label.HUMEligible,true,false)}">
+                                                    
+                                                    <span class="vfHelpText" id="hoverOverArea">
+                                                         <a onclick="javascript:void(O);" log_this="false">
+                                                              <img id="lnkImg" style="margin-top: 2px; margin-left: 1px;" class="imgMargin hoverimagesize" src="{!$Resource.HUMHoverOverQuestionMark}"/>
+                                                              <apex:outputPanel style="height:4em;width:24em !important;line-height: normal;margin-right:15px;border:1px solid orange;top: 0em !important;left: 0em !important;background-color:#FEFDB9;text-align:left;" styleClass="hoverfontstyle" >
+                                                                  This information is as of todays date.<br/>
+                                                                  For any previous history, Please review CI Legacy
+                                                               </apex:outputPanel>
+                                                        </a>
+                                                    </span>
+                                                </apex:outputPanel>
+                                                                  
+                                                <apex:outputPanel rendered="{!IF(sectionName== $Label.HUMExtrahelp && eligibilityInfoFeilds == 'Percent/ Copay' && LEN(mapEligibilityInfo[sectionName]['Percent/ Copay'])>0,true,false)}">
+                                                    &nbsp;<apex:outputLink value="#" html-log_ignore_click="true" html-log_this="false" style="color:#3973ac;text-decoration:none !important;" onclick="copyToClipBoardFireEvent('{!mapEligibilityInfo[sectionName][eligibilityInfoFeilds]}'); return false;" >Copy</apex:outputLink>
+                                                </apex:outputPanel>
+                                                    
+                                                <apex:outputPanel rendered="{!IF(sectionName== $Label.HUMSpecialNeedsPlan && eligibilityInfoFeilds== $Label.HUMType,true,false)}">
+                                                    
+                                                    <span class="vfHelpText" id="hoverOverArea">
+                                                         <a onclick="javascript:void(O);" log_this="false">
+                                                              <img id="lnkImg" style="margin-top: 2px; margin-left: 1px;" class="imgMargin hoverimagesize" src="{!$Resource.HUMHoverOverQuestionMark}"/>
+                                                               <span style="height:5em;width:28em !important;line-height: normal;margin-right:15px;border:1px solid orange;top: 0em !important;left: 0em !important;background-color:#FEFDB9;text-align:left;" class="hoverfontstyle" >
+                                                                  DE= Dual Eligible<br/>
+                                                                  CC= Chronic Condition<br/>
+                                                                  In= Institutionalized or Institutional Equivalent
+                                                               </span>
+                                                        </a>
+                                                    </span>
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!IF(sectionName== $Label.MTM_ELIGIBILITY_HUM && eligibilityInfoFeilds == $Label.HUMEligible,true,false)}">
+                                                    
+                                                    <span class="vfHelpText" id="hoverOverArea">
+                                                         <a onclick="javascript:void(O);" log_this="false">
+                                                              <img id="lnkImg" style="margin-top: 2px; margin-left: 1px;" class="imgMargin hoverimagesize" src="{!$Resource.HUMHoverOverQuestionMark}"/>
+                                                              <span style="height:5em;width:28em !important;line-height: normal;margin-right:15px;border:1px solid orange;top: 0em !important;left: 0em !important;background-color:#FEFDB9;text-align:left;" class="hoverfontstyle" >
+                                                                  {!$Label.MTMHOVER_ELIGIBILITY_HUM}
+                                                               </span>
+                                                        </a>
+                                                    </span>
+                                                </apex:outputPanel>
+                                                
+                                            </td> 
+                                        </tr>
+                                    </table>
+                                </apex:outputPanel>
+                            </apex:pageBlockSectionItem>
+                        </apex:panelgrid> 
+                    </apex:outputPanel>
+                </apex:repeat>
+            </apex:pageBlockSection>
+            <apex:outputPanel rendered="{!IF(noServiceResponse == true && sectionName == $Label.MTM_ELIGIBILITY_HUM,true,false)}">
+	            <span style="margin-left: 25%;color: red;">
+	                {!$Label.MTMERROR_ELIGIBILITY_HUM}
+	            </span>
+        	</apex:outputPanel>
+        </apex:repeat>
+    </apex:pageBlock>
+</apex:component>

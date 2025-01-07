@@ -1,0 +1,217 @@
+﻿<!--/*******************************************************************************************************************************
+LWC JS Name : Authsummary_medical_authorization_detail_lwc_hum.HTML
+Function    : This HTML serves as UI to Table
+
+Modification Log: 
+Developer Name           Code Review                      Date                         Description
+*--------------------------------------------------------------------------------------------------------------------------------
+Sagar Gulleve                                         14/07/2022                    User story 3393658 Contact Information Tab.
+Sathish Babu                                          02/08/2022                    User story 3400770 Diagnosis Codes.
+Vishal Shinde                                         11/7/2022                     User story 3277055 CRM Service Benefits 2022- Auth/Referral: Lightning Build for Summary & Details - Logging Auth Details
+Vishal Shinde										  11/8/2022                     Defect- Fix:6610
+Vishal Shinde                                         11/25/2022                    Defect- Fix:6678
+Raj Paliwal											  06/12/2022					US #3888622 Auth/Referral: Lightning Verification: Auth Clean up
+Raj Paliwal											  09/12/2022                    Defect- Fix:6791
+*********************************************************************************************************************************/ -->
+<template>
+ <c-authdetails-highlight-panelhum></c-authdetails-highlight-panelhum >    
+    <template if:true={oDetails}>
+      
+        <div style="margin-top: 10px">
+	<lightning-card>
+		<lightning-tabset>
+			<lightning-tab label="Information">
+				<lightning-layout>
+					<lightning-layout-item size="3">
+						<c-display-fields-in-column-hum section-header='Contact Information'
+							section-data={oDetails.ContactInformation.fields} column-size="2">
+						</c-display-fields-in-column-hum>
+					</lightning-layout-item>
+					<lightning-layout-item size="9">
+						<c-display-fields-in-column-hum section-header='Authorization/Referral Information'
+							section-data={authInfoRow1} column-size={coloumnSize}></c-display-fields-in-column-hum>
+						<c-display-fields-in-column-hum section-data={authInfoRow2} column-size={coloumnSize}>
+						</c-display-fields-in-column-hum>
+					</lightning-layout-item>
+				</lightning-layout>
+				</br>
+					<div id="element-with-table-label" class=" slds-var-m-around_medium slds-text-heading_medium slds-m-bottom_xx-small">
+						<b>Provider Information</b>
+					</div>
+					<div class="slds-m-left_x-small slds-m-bottom_x-small">
+                    </div>
+					<div class="slds-p-left_x-small slds-p-right_small">
+						<span class="tooltip2" >
+							<lightning-icon class="myicon2"  size="xx-small"  icon-name="utility:info" ></lightning-icon>
+							<span if:true={sectionvalue} class="tooltipContent2">
+								<b>Requesting Provider:</b> Indicates the facility doctor's office or physician initiated the service request.</br> 
+								<b>Treating Provider:</b> Indicates the treating provider who is providing care to the member.</br>
+								<b>Facility Provider:</b> Indicates the location where the services are being performed.
+							</span>
+						</span>
+						<table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-label="Provider Information">
+						<thead>
+							<tr class="slds-line-height_reset">
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Type & Participating Status">Type & Participating Status
+										<span class="tooltip1">
+                                            <lightning-icon class="myicon"  size="xx-small"  icon-name="utility:info" onmouseover={handleMouseOver} onmouseleave={handleMouseOut}></lightning-icon>
+                                        </span>
+									</div>
+								</th>
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Name">Name</div>
+								</th>
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Demographic">Demographic</div>
+								</th>
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Tax & Humana Provider ID">Tax & Humana Provider ID</div>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<template for:each={providerRows} for:item="row">
+								<tr class="slds-hint-parent" key={row.Type} onclick={handleLogging1}>
+								
+							<td class="slds-truncate" data-label="Type & Participating Status" data-id="Type & Participating Status">
+                                                <div class="logthis">
+                                                   <b>Type: </b>{row.sReqProviderType}</br>
+                                                   <b>Participating Status: </b>{row.sReqProviderPartStatus}
+                                                </div>
+                                            </td>
+									<td  class="slds-truncate" data-label="Name">
+                                                <div class="logthis" data-id="Name" >
+                                                    <b>Name: </b>{row.sReqProviderName}
+                                                    <lightning-icon class="cloneIcon" size="x-small" icon-name="utility:copy" alternative-text=" " title="clone" data-cont={row.sReqProviderName} onclick={copyToClipboard}></lightning-icon>     
+                                                </div>   
+                                            </td>
+								<td class="slds-truncate" data-label="Demographic">
+                                                <div class="logthis" data-id="Demographic">
+                                                    <b>Street: </b>{row.sReqProviderStreet}</br>
+                                                    <b>City-State-Zip: </b>{row.sReqProviderCity},{row.sReqProviderState} {row.sReqProviderZipCode}</br>
+                                                    <b>Phone: </b>{row.sReqProviderPhnNum}
+                                                </div>
+                                            </td>
+								<td class="slds-truncate" data-label="Tax & Humana Provider ID">
+                                                <div class="logthis" data-id="Tax & Humana Provider ID">
+                                                    <b>TAX ID: </b>{row.sReqProviderTaxID}</br>
+                                                    <b>Humana Provider ID: </b>{row.sReqProviderID}
+                                                </div>
+                                            </td>
+									
+								</tr>
+							</template>
+						   </tbody>
+						</table>
+					</div>
+			</lightning-tab>
+		<lightning-tab label="Codes" title="Codes">
+			<lightning-layout style="width: 100%;">
+				<lightning-layout-item size="2">
+					<c-display-fields-in-column-hum section-header="Diagnosis Code">
+					</c-display-fields-in-column-hum>
+		
+					<template for:each={priResult} for:item="res">
+						<div key={res.sDiagnosisCode}>
+							<div class="slds-box" style="width: 90%;margin-left: 10px"  onclick={handleLogging}>
+								<div>
+								<div class="logthis" data-logid={generateLogId}>
+									<p style="text-align: center;" onclick={handleLogging}>Primary Diagnosis 
+									<span class="tooltip" >
+										<lightning-icon class="myicon" size="xx-small" icon-name="utility:info" ></lightning-icon>
+										<span class="tooltipContent">Indicates whether the diagnosis is a primary or secondary diagnosis code.</span>
+									</span>
+									</p>
+									<div class="">
+									<p style="font-size: 2rem;text-align: center;"><b>{res.sDiagnosisCode}</b></p>
+									</div>
+								</div>
+								</div>
+									<hr class="hr"/>
+									<div>
+									<div class="logthis" data-logid={generateLogId} data-id="Description" data-label="Description" data-value={res.sDiagnosisDescription}>
+										<p><b>Description:</b></p>
+										<p>{res.sDiagnosisDescription}</p>  
+									</div> 
+									</div>
+									<hr class="hr"/> 
+									<div>									
+									<div class="logthis" data-logid={generateLogId} data-id="Status" data-label="Status"> 
+										<p><b>Status:</b></p>
+										<p>{res.sDiagnosisStatus}</p>
+									</div>
+									</div>
+							</div>
+							</div>
+					</template>
+					</br>
+					<template for:each={secResult} for:item="res">
+						<div key={res.sDiagnosisCode}>
+					    <div class="slds-box" style="width: 90%;margin-left: 10px" onclick={handleLogging}>
+						<div>
+						<div class="logthis" data-logid={generateLogId}>
+							<p style="text-align: center;">Secondary Diagnosis
+							 <span class="tooltip" >
+									<lightning-icon class="myicon"  size="xx-small" icon-name="utility:info" ></lightning-icon>
+									<span class="tooltipContent">Indicates whether the diagnosis is a primary or secondary diagnosis code.</span>
+							 </span>
+							</p>
+								<div class="">
+							<p style="font-size: 2rem;text-align: center;"><b>{res.sDiagnosisCode}</b></p>
+						       </div>
+    					</div>
+						</div>
+							<hr class="hr"/>
+							<div>
+							  <div class="logthis" data-logid={generateLogId} data-id="Description" data-label="Description" data-value={res.sDiagnosisDescription}>
+								<p><b>Description:</b></p>
+								<p>{res.sDiagnosisDescription}</p>  
+							  </div>
+							</div>							  
+							<hr class="hr"/>
+							<div>							
+							   <div class="logthis" data-logid={generateLogId} data-id="Status" data-label="Status">
+								<p><b>Status:</b></p>
+								<p>{res.sDiagnosisStatus}</p>
+								</div>
+							</div>
+						</div>
+                        </div>
+					</template>
+				</lightning-layout-item>
+				<lightning-layout-item size="10">
+					<div>
+						<c-procedure-codes-lwc-hum procedure-result={procedureResponse}> </c-procedure-codes-lwc-hum>
+					</div>
+				</lightning-layout-item>
+		</lightning-layout>
+		</lightning-tab>
+			<lightning-tab label="Letters">
+				<c-communication-lwc-hum
+					auth-id={AuthNumber}
+					memberplanid={memberPlanId}
+					lettersresponse ={lettersresponse}	
+				></c-communication-lwc-hum>
+			</lightning-tab>
+			<lightning-tab label="Communication Records">
+				<c-communication-Records-lwc-hum
+					auth-id={AuthNumber}
+                    memberplanid={memberPlanId}
+                    communicationrecordresponse ={communicationrecordresponse}
+				></c-communication-Records-lwc-hum>
+			</lightning-tab>
+		</lightning-tabset>
+	</lightning-card>   
+    </div>
+    </template>   
+    <template if:true={bNoResponse}>
+        <div class="slds-align_absolute-center">
+            <c-search-no-result-hum
+                no-result-message="No matching records found"
+                message-with-icon="true"
+            >
+            </c-search-no-result-hum>
+        </div>
+    </template>  
+</template>

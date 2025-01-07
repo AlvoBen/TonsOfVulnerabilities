@@ -1,0 +1,83 @@
+﻿<!--
+Component Name   : AccumsPreviousBenefitDataTableV2_CMP_HUM.component
+Version          : 1.0
+Created On       : 04/11/2018  
+Function         : VF Component to display Accumalator Previous Benefit table from the controller BenefitsV2_C_HUM services
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description 
+ *------------------------------------------------------------------------------------------------------------------------------
+* Samridh Manucha           29832                      02/04/2016                   Original version
+ * Rajesh Keswani                                       02/24/2016                   Added hover over functionality and created .css in static resource.
+ * MadhuSudhan Chandra                                  03/25/2016                   Added changes for REQ - 255112
+ * Avinash Choubey           31077                      04/18/2016                   Design Change in All Accums Req ( 237142, 246888 etc)
+ * Shikhar Mehta                                        04/27/2016                   Added code for Logging REQ (REQ-184833)
+ * Apoorv Jain                                          07/15/2016                   Defect#223875
+ * Avinash Choubey           32583                      07/12/2016                   Removed MBE Dependency for Gen Key REQ - 269975
+ * Rajesh Keswani            42226                      10/05/2016                   REQ - 269915 Logging (Details): Logging Event from VOB Page ELIPSES.
+ * Praveen Kumar Parimi      56654                      01/11/2017                   Created a new version for referencing the new controller.
+ * Muralidhar Kollu                                     15/06/2017                   REQ - 304936 VOB � Accumulator section of the Benefits and Accumulator page (MF5)
+ * Melkisan Selvaraj         220187                     04/11/2018                   Cloned from BenefitsV1_VF_HUM for REQ - 360140
+ * Shailesh Mali										01/20/2020 					 Version - 2, REQ - 791947 Accumulator SOAP to REST Conversion.
+ * Sayali Gavane										 02/10/2021					REQ -1625471 PR00094226 - CR AEP readiness -Research - Critical Security Issues (slide 11)		
+ ****************************************************************************************************************************
+ -->
+<apex:component controller="BenefitsV2_C_HUM" >
+    <apex:attribute id="personID" name="personID" description="This is Person's ID" type="String" required="true"></apex:attribute>
+    <apex:attribute id="sBenefitsType" name="sBenefitsType" type="string" description="Current or History; dictates what type of service calls are made" required="true"/>
+    <apex:includeScript value="{!URLFOR($Resource.AccumsPreviousBenefitDataTable_SR_HUM,'AccumsPreviousBenefitDataTable_CMP_HUM/AccumsPreviousBenefitDataTable_JS_SR_HUM.JS')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.AddCaptionTag_JS_HUM)}" />     
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.AccumsPreviousBenefitDataTable_SR_HUM,'AccumsPreviousBenefitDataTable_CMP_HUM/AccumsPreviousBenefitDataTable_CSS_SR_HUM.css')}"/>
+    <script type="text/javascript">
+        var sGetVobMockBenefitsPrevious = '{!$RemoteAction.BenefitsV2_C_HUM.getAccumsData}';
+		var sGetVobMockBenefitsPrevious_V2 = '{!$RemoteAction.BenefitsV2_C_HUM.getAccumsDataREST}';
+		var RESTSwitchCall = '{!sRestSwitchCall}';
+		var personID = '{!JSENCODE(personID)}';
+        var BenefitType = '{!JSENCODE(sBenefitsType)}';
+        var sRefDate='{!JSENCODE($currentPage.parameters.refdate)}';        
+        var arryPreviousBenefits = [];  
+        var arryRemainingPreviousBenefits = []; 
+        var hasBeyondTwoYearsPolicies = false;  		
+        Visualforce.remoting.timeout = '{!$Label.HUMMemWebActivityTimeout}'; // Set timeout at page level 
+    </script>  
+       
+    <!-- This block will render a spinner image to indicate table loading in the UI -->
+    <div class="loadingSectionStyle" id="statusImageBenefitsPrevious">
+        <img src="/img/loading.gif" /> 
+        <span class="waitingDescription"> {!$Label.LOADING_HUM}</span>
+    </div>
+    <div id="responseErrorsAccumHistory" class="errorMsg"/>
+    <!-- This block will render a table using jQuery during the page load -->
+    <div id="theMainFormBenefitsPrevious" styleclass="formStyle" style="width:97%;">   
+        <table id="Previousbenefits" class="table table-striped table-bordered display enable_logging"  title="{!$Label.BENEFITSPREVIOUS_POLICY_MEMBER_HUM}" ></table>
+    </div>
+    <script>
+       var benefitsPreviousSectionImg = document.getElementById('{!$Component.theFormBenefits.thePageBolckBenefits.thePageBlockSectionAccumulatorInfomation.thePageBlockBenifitsPrevious}').getElementsByTagName('img');  
+       twistSection(benefitsPreviousSectionImg[0]);
+       benefitsPreviousSectionImg[0].addEventListener('click', function() //after the block collapses, sets a function to call the service
+       {    
+         if(sServiceCalled == "false")
+         {    //check to make sure service hasn't already been called
+            sServiceCalled = "true";    //sets service call to true to prevet more calls
+            callService();
+         }                 
+       }, false); 
+    </script>
+    <style>
+	
+	.dataTables_scroll{
+        width : 910px !important;
+    }
+    
+    .data2Col.first.last {
+        color : black !important;
+        font-weight : normal !important;
+     }
+	.table.table-striped.table-bordered.display.enable_logging.dataTable.no-footer {
+        width : 910px !important;
+        overflow-x : hidden;
+	}
+	.dataTables_scrollBody {
+        width : 927px !important;
+    }
+	</style>
+</apex:component>

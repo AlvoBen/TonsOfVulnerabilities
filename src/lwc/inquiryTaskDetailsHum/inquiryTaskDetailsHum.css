@@ -1,0 +1,46 @@
+.layout-flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.full-height {
+    height: 100%;
+}
+
+.sticky-header {
+    position: sticky;
+    top: 8.2rem;
+    z-index: 2;
+}
+
+.sticky-header-system-bar {
+    position: sticky;
+    top: 10.3rem;
+    z-index: 2;
+}
+
+.jump-links {
+    display: flex;
+    justify-content: space-around;
+    height: 40px;
+    background: white;
+    border-bottom: var(--lwc-borderWidthThin,1px) solid rgb(221, 219, 218);
+    align-items: center;
+}
+
+.jump-links span {
+    color: var(--lwc-brandTextLink,rgb(0, 109, 204));
+    cursor: pointer
+}
+
+.detail-page {
+    background: #f3f2f2;
+}
+
+.tabular-views {
+    scroll-margin-top: 215px; /*  Scroll top is required to adjust scroll due to freezing panels */
+}

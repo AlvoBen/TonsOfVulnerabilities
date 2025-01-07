@@ -1,0 +1,41 @@
+﻿<!--
+LWC Name        : enrollSelectSystemPharmacyHum.html
+Function        : Enrollment Search 
+
+Modification Log:
+* Developer Name                  Date                         Description
+*
+* RajKishore                      11/21/2020                Original Version 
+*-->
+<template>
+    <div class="form-format">
+        <lightning-card>
+            <div slot="title" class="slds-col slds-is-relative slds-p-horizontal_medium">
+                <span class="boldedText">Select a System</span>
+                <lightning-helptext content="
+                A system must be selected. For Automated Enrollment (AE) History, when a pend is present with a pend key other than 0, 
+                and that pend key is over 7 days old, create and route a case to Service Center: Louisville, Department: 
+                Account Installation Enrollment and select the most appropriate Topic
+                " class="start-help-text  slds-is-absolute">
+                </lightning-helptext>
+                &nbsp;
+            </div>
+            <div class="slds-grid slds-wrap slds-m-left_x-large">
+                <template for:each={options} for:item="item">
+                    <!--<fieldset key={item.value} style="display: block; float: left;">-->
+                    <div key={item.value} class=" slds-col slds-form-element__control system-item slds-var-m-1_x-small">
+                        <span class="slds-radio">
+                            <input name="radiogroup" id={item.value} type="radio" value={item.value}
+                                onchange={handleSelected} />
+                            <label class="slds-radio__label" for={item.value}>
+                                <span class="slds-radio_faux"></span>
+                                <span class="slds-form-element__label">{item.label}</span>
+                            </label>
+                        </span>
+                    </div>
+                    <!-- </fieldset>-->
+                </template>
+            </div>
+        </lightning-card>
+    </div>
+</template>

@@ -1,0 +1,154 @@
+﻿<!--
+Page Name        : PharmacyWebIssue_VF_HUM
+Version          : 1.0 
+Created Date     : 10/14/2020
+Function         : 
+Modification Log :
+*   Developer               Code Review                     Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Himalay Patel                                           10/14/2020           Original Version.
+*   Himalay Patel                                           02/22/2021           DF - 2453 - Fix
+* Shaik Mujeebur Rahaman                                04/29/2022                US-3324577 T1PRJ0272548 - SF Legacy API Retirement Upgrade API Version for Integrationjs Pharmacy Guided Processes
+* Pinky Vijur											05/10/2022				User Story 3376065: T1PRJ0010888 - MF [1] - Rebranding - Update text references from "Humana Pharmacy" to "Mail Order Pharmacy" - Web Issues Guided Flow - Process Content
+* Venkata Nagasiva                                05/17/2022                US-3367406 T1PRJ0010888 - MF [1] - Rebranding - Update text references from "Humana Pharmacy" to "Centerwell Pharmacy" - Web Issues Guided Flow - Process Name
+------------------------------------------------------------------------------------------------------------------------------      
+-->
+<apex:page id="PharmacyWebIssuePage" controller="PharmacyWebIssues_C_HUM">
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+    <apex:includeScript value="/support/console/54.0/integration.js" />
+    <apex:includescript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.js')}" />
+   <!--<apex:outputPanel rendered="{!!hasProcess}">
+        <apex:includeScript value="{!URLFOR($Resource.PharmacyWebIssues_SR_HUM,'/PharmacyWebIssues_JS_HUM.js')}" />
+    </apex:outputPanel>-->
+
+    <script type="text/javascript">
+        sforce.console.setTabTitle('Web Issues');
+
+        jQuery(document).ready(function() {
+            if(jQuery('.outcomeText').length > 0){
+                setFinishButton();
+            } 
+            
+            if({!!hasProcess}){
+                setGuidedProcessTabUnsavedChanges();
+            }
+        });
+    
+    	function setGuidedProcessTabUnsavedChanges()
+        {
+            sforce.console.getEnclosingTabId(setGuidedProcessTabDirty);
+        };
+    
+    	function setGuidedProcessTabDirty(result){
+            sforce.console.setTabUnsavedChanges(true, null, result.id);
+        }
+        function setFinishButton(){
+            jQuery('.FlowNextBtn').val('Finish');
+        }
+    </script>
+
+    <apex:outputpanel >
+        <style type="text/css">
+            .errorMsg{
+                font-size: 14px;
+                display:block;
+                margin-left: 6px;
+                padding-top: 5%
+            }
+            .errorMsg p {
+                margin-left: 0%;
+            }
+
+            .empty{
+                width: 0% !important;
+            }
+
+            .bPageBlock .detailList .dataCol {
+                width: 70%;
+            }
+           
+            .headerTitle {
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            .FlowPageBlockBtns {
+                text-align: left !important;
+            }
+
+            .websiteIssues {
+                font-size: 14px;
+                margin-left: 21.5%;
+                margin-top: -10px;
+                position: relative;
+                top: 20px;
+            }
+
+            p {
+                margin-left: 8.9%;
+            }
+
+            .emailIssues {
+                font-size: 14px;
+                margin-left: 21.5%;
+                margin-top: -140px;
+            }
+
+            hr {
+                margin-left: 3%;
+                margin-right: 3%;
+            }
+
+            .prefilledValues {
+                text-indent: 50px;
+                text-align: right;
+                margin-right: 35%;
+            }
+
+            .outcomeText {
+                font-size: 14px;
+                color: #ff0033;
+                font-family: Arial;
+
+            }
+
+            .interviewFormChoicesWithHelp div {
+                padding-top: 13px;
+                
+            }
+            
+            Style Attribute {
+                text-align: -webkit-left;
+                text-indent: 187px;
+            }
+           
+        </style>
+
+        <br/>
+        <font class="headerTitle">
+            <b>Centerwell Pharmacy Web Issues</b>
+        </font>
+        <br/>
+
+        <flow:interview name="Humana_Pharmacy_Web_Issues" rendered="{!!hasProcess}" interview="{!webIssuesFlow}" finishLocation="{!SubmitWebIssue}">
+
+            <apex:param name="Members_Name" value="{!MemberName}" />
+            <apex:param name="Members_ID" value="{!MemberId}" />
+            <apex:param name="Members_DateOf_Birth" value="{!MemberDOB}" />
+            <apex:param name="Case_ID" value="{!CaseId}" />
+            <apex:param name="TN" value="{!TN}" />
+            <apex:param name="ParamInputSID" value="{!SubmissionID}" />
+        </flow:interview>
+
+         <flow:interview id="Humana_Pharmacy_Web_Issues_Overview" name="Humana_Pharmacy_Web_Issues" rendered="{!hasProcess}" interview="{!webIssuesFlow}" finishLocation="{!$Page.HUMCloseFlow}">
+                <apex:param name="ParamInputSID" value="{!SubmissionID}" />
+                <apex:param name="WebIssues_Summary_Data" value="{!SubmissionData}" />
+                <apex:param name="Ticket_Required" value="{!TicketRequired}" />
+                <apex:param name="TN" value="{!TN}" />
+        </flow:interview>`
+        
+
+        
+    </apex:outputpanel>
+
+</apex:page>

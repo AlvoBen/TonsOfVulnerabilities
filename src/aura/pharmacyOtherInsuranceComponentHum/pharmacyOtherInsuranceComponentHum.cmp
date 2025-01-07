@@ -1,0 +1,22 @@
+﻿<!-- 
+Page Name        : pharmacyOtherInsuranceContainerHum
+Version          : 1.0 
+Created Date     : 09/02/2021
+Function         : Aura Component used to render Other Insurance detail on new subtabs.
+Modification Log :
+* Developer                                   Date                  Description
+*************************************************************************************************
+* Swapnali Sonawane            	             04/12/2021             UserStory:2508657 HP- Ability to add LIS and Other Insurance Details to the Plan Member card
+*************************************************************************************************
+-->
+<aura:component implements="lightning:isUrlAddressable" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.pageReference}" action="{!c.handlePageChange}" />
+
+    <aura:attribute name="data" type="Object"/> 
+    <div class="windowViewMode-maximized oneContent active lafPageHost hc-one-region">
+        <c:pharmacyOtherInsuranceContainerHum config="{!v.data.config}">
+        </c:pharmacyOtherInsuranceContainerHum>
+    </div> 
+
+</aura:component>

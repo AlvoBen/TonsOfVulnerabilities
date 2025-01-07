@@ -1,0 +1,248 @@
+﻿<!--
+Page Name        : RTIPrintDetails_VF_HUM
+Version          : 1.0 
+Created Date     : March 03, 2017
+Function         : This is the pagefor RTI Print details page
+Modification Log :
+
+* Developer               Code Review           Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Kritika Popat           86349                 03/03/2017           Original Version
+* Kritika Popat           111075                07/18/2017           Message in Print Card
+* Shivam Anand            106733                21/06/2017           REQ-296676 View Link RTI Service Call Changes
+* Imran                                         21/02/2020           REQ-436960 RTI VAT changes
+* Imran                                         05/03/2020           Defecte-DF282-REQ-436960 Changed the page title to Communication Details
+* Anjani Vaddadi                                03/26/2020           REQ-437065-RTI- MF4
+* Prasanthi Kandula                             4/16/2020            US 1003374 - To display send print page when redirected from RTI     
+*  Anjani Vaddadi                               07/03/2020           US - 1125628- Pass Message Definition Code (MDC) on Outbound Communications attached to CRM Cases via RTI
+* Trina  Ghosh                                  07/27/2020                 US# 965352
+*  Rahul Chaurasia                              03/22/2021           1931279 - PR00094226-MF 4-Tech-Decommissioned RTI Service
+* Satyanarayana chenna                          04/06/2021           1918758 - PR00094226 - CR AEP readiness - Low Security Issues 
+*  Prasanthi Kandula                            05/18/2021           US - 2082407 Added logic to display details for channel Email
+*  Anuradha Gajbhe                              05/18/2021           US - 2082385 Added logic to display details for channel Text
+*  Rahul Chaurasia                              05/19/2021           US - 2082359 Added logic to display details for channel Web
+----------------------------------------------------------------------------------------------------------------------------->
+<apex:page id="RPpageId" sidebar="false" showheader="true" tabStyle="Policy__c" controller="RTIPrintSummary_C_HUM" action="{!initiateRequest}">
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+  <apex:includeScript value="/support/console/39.0/integration.js"/>
+  <apex:includeScript value="{!URLFOR($Resource.RTIPrintDetails_SR_HUM,'/RTIPrintDetails_JS_HUM.js')}" id="RTIPrintDetailsJS"/> 
+  <apex:stylesheet value="{!URLFOR($Resource.RTIPrintDetails_SR_HUM,'/RTIPrintDetails_CSS_HUM.css')}" id="RTIPrintDetailsCSS"/>
+
+  <script type="text/javascript">
+    jQuery(document).ready(function () {
+    var rtiDetail= new RtiDetail();
+    rtiDetail.channelCode = '{!JSENCODE(sChannelName)}';
+    rtiDetail.accountName = '{!JSENCODE($CurrentPage.parameters.Name)}';
+    rtiDetail.title = '{!JSENCODE($CurrentPage.parameters.Title)}';
+    rtiDetail.msgFullfillmentId = '{!JSENCODE($CurrentPage.parameters.msgFullfillmentId)}';
+    rtiDetail.memberId = '{!JSENCODE($CurrentPage.parameters.memberId)}';
+    rtiDetail.dependentCode = '{!JSENCODE($CurrentPage.parameters.dependentCode)}';
+    rtiDetail.platformCode = '{!JSENCODE($CurrentPage.parameters.platformCode)}';
+    rtiDetail.personGenKey = '{!JSENCODE($CurrentPage.parameters.personGenKey)}';
+    rtiDetail.sdrPersonId = '{!JSENCODE($CurrentPage.parameters.sdrPersonId)}';
+    rtiDetail.dateSentRTI = '{!JSENCODE($CurrentPage.parameters.DateM)}';
+    rtiDetail.categoryDesc = '{!JSENCODE($CurrentPage.parameters.CategoryDesc)}';
+    rtiDetail.messageName = '{!JSENCODE($CurrentPage.parameters.MessagePrintParm)}';
+    rtiDetail.documentViewUrl = '{!sdocumentViewUrl}';
+    rtiDetail.docViewLink = encodeURIComponent(rtiDetail.documentViewUrl);
+    rtiDetail.displaySendLink = {!bDisplaySendLink};
+    rtiDetail.rtiPageId = '{!JSENCODE($CurrentPage.parameters.acctId)}';
+    rtiDetail.sSourceCode = "{!sSourceCode}";
+    rtiDetail.render();
+    });
+
+  </script>
+  <style type="text/css">
+    .sfdcBody.accountTab .pageTitleIcon {
+    content: url(/img/icon/mail32.png);
+    background-color: white;
+    background: url(/img/icon/mail32.png) left top no-repeat;
+    }
+  </style>
+
+ <apex:form style="font-size:12px" id="RPformId">
+   <apex:outputPanel >
+     <c:RTIOutBound_AttachToCase_CMP_HUM ObjectId="{!sObjectID}"
+                            Date="{!sDateM}"
+                            CategoryDesc="{!sCategoryDescription}"
+                            SubArea="{!sSubArea}"
+                            StatusDescription="{!sStatusDescription}"
+                            PhoneNumber="{!sPhoneNumber}"
+                            subStatusDesc="{!ssubStatusDesc}"
+                            TrackingId="{!sTrackingId}"
+                            CampaignName="{!sCampaignName}"
+                            ViewURL="{!sdocumentViewUrl}"
+                            MessagePrintParm="{!smessageprintParam}"
+                            sourceCode="{!sSourceCode}"
+                            MessageDefCode="{!sMessageDefCodes}"
+                            ChannelCode="{!sChannelName}"
+                            RecipientEmail="{!$CurrentPage.parameters.recipientName}"/>
+   </apex:outputPanel>        
+     
+     
+     <div style="font-size:12px; padding: 10px 0 0;" id="divWebPrint">
+        <apex:outputPanel id="opWebPrint" rendered="{!(sChannelName == 'WEB')}">
+            <div class="content" width="60%" height="10%"> <br/>
+            <img src='/img/icon/custom51_100/globe32.png'  title="WEB" alt="Account"  style="margin-right: 5px; float: left;"/>
+                <h1 class="pageType" style="font-size: .9em;font-weight: display: block; margin-left: 0px;  bold;color: #4a4a56;padding-left: 1px;">Communication Details</h1>
+                <span class="titleSeparatingColon">:</span>
+                <h2 class="pageDescription" style="font-size: 1.8em; display: block;  font-weight: normal;line-height: 1.1em;">{!$CurrentPage.parameters.Name}</h2>
+                <div class="blank"></div> <br/>
+            </div>    
+        </apex:outputPanel>  
+     <apex:outputPanel id="RPop1" rendered="{!sChannelName == 'WEB' || sChannelName == 'PRINT'}">
+            <table class="pageHeader" width="100%">
+                <tr>
+                    <td width="60%">                      
+            
+                        <apex:sectionHeader title="Communication Details" subtitle="{!$CurrentPage.parameters.Name}" rendered="{!(sChannelName == 'PRINT')}"/>
+                    </td>
+                </tr>
+            </table>
+        </apex:outputPanel>
+        <apex:pageBlock mode="maindetail" id="RPpgBlockId" rendered="{!sChannelName == 'WEB' || sChannelName == 'PRINT'}">
+            <apex:outputPanel id="RPop7">
+                <apex:pageblockSection id="RPpbs1" title="Communication Details" collapsible="true" columns="2">
+                    <apex:pageblocksectionitem id="RPpbsi1">
+                        <apex:outputlabel value="Communication Channel"/>
+                        <apex:outputtext value="{!$CurrentPage.parameters.sChannelCode}" id="RPot1"/> 
+                    </apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem id="RPpbsi2">
+                        <apex:outputlabel value="Date/Time Stamp"/>
+                        <apex:outputtext value="{!$CurrentPage.parameters.DateM}" id="RPot2"/>
+                    </apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem id="RPpbsi3">
+                        <apex:outputlabel value="Type"/>
+                        <apex:outputtext value="{!$CurrentPage.parameters.CategoryDesc}" id="RPot3"/>
+                    </apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem >
+                        <apex:outputlabel value="Communication"/>
+                        <apex:outputPanel >
+                          <a style="cursor:pointer;color:blue;" class="ViewLink">View</a>
+                          <a style="cursor:pointer;color:blue;padding-left:10px;" class="sendClick">Send</a>
+                        </apex:outputPanel>
+                    </apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem id="RPpbsi4">
+                        <apex:outputlabel value="Sub Area"/>
+                        <apex:outputtext value="{!$CurrentPage.parameters.SubArea}" id="RPot4"/>
+                    </apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem >
+                        <apex:outputlabel value=""/>
+                        <apex:outputtext value=""/>
+                    </apex:pageblocksectionitem>
+                </apex:pageblockSection>
+                <apex:pageblockSection id="RPpbs2" collapsible="false" columns="1">
+                    <apex:pageblocksectionitem >
+                        <apex:outputlabel value="Message Name"/>
+                        <apex:outputtext value="{!$CurrentPage.parameters.MessagePrintParm}"/>
+                    </apex:pageblocksectionitem>
+                </apex:pageblockSection>
+            </apex:outputPanel>
+        </apex:pageBlock>
+     </div>
+     
+       
+        <div style="font-size:12px; padding: 10px 0 0;" id="divTextEmail">
+        <apex:outputPanel id="opTextEmail" rendered="{!(sChannelName == 'Text' || sChannelName == 'Email')}">
+            <div class="content" width="60%" height="10%"> <br/>
+            <img src="{!siconPath}" title="{!IF((sChannelName == 'Text'),'Text',(IF((sChannelName == 'Email'),'Email','')))}" alt="Account"  style="margin-right: 5px; float: left;"/>
+                <h1 class="pageType" style="font-size: .9em;font-weight: display: block; margin-left: 0px;  bold;color: #4a4a56;padding-left: 1px;">Communication Details</h1>
+                <span class="titleSeparatingColon">:</span>
+                <h2 class="pageDescription" style="font-size: 1.8em; display: block;  font-weight: normal;line-height: 1.1em;">{!$CurrentPage.parameters.Name}</h2>
+                <div class="blank"></div> <br/>
+            </div>
+           </apex:outputPanel>
+        <apex:pageBlock mode="maindetail" id="RPpgBlockId2" rendered="{!(sChannelName == 'Text' || sChannelName == 'Email')}" >           
+            <apex:outputPanel id="RPop2">
+                <apex:pageblockSection id="RPpbs3" title="Communication Details" collapsible="true" columns="2">
+                    <apex:pageblocksectionitem id="RPpbsiCc">
+                        <apex:outputlabel value="Communication Channel"/>
+                        <apex:outputtext value="{!$CurrentPage.parameters.sChannelCode}" id="RPotCc"/>
+                    </apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem id="RPpbsiDt">
+                        <apex:outputlabel value="Date/Time Stamp"/>
+                        <apex:outputtext value="{!$CurrentPage.parameters.DateM}" id="RPotDt"/>
+                    </apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem id="RPpbsiTn" rendered="{!sChannelName == 'Text'}">
+                        <apex:outputlabel value="Recepient Telephone Number"/>
+                        <apex:outputtext value="{!$CurrentPage.parameters.PhoneNumber}" id="RPotTn"/>
+                    </apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem id="pbsiEmail" rendered="{!sChannelName == 'Email'}">
+                        <apex:outputlabel value="Recipient Email"/>
+                        <apex:outputtext value="{!$CurrentPage.parameters.recipientName}" id="otRecipientMail"/>
+                    </apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem id="RPpbsiS">
+                        <apex:outputlabel value="Status"/>
+                        <apex:outputtext value="{!$CurrentPage.parameters.StatusDescription}" id="RPotS"/>
+                    </apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem id="RPpbsiSa">
+                        <apex:outputlabel value="Sub Area"/>
+                        <apex:outputtext value="{!$CurrentPage.parameters.SubArea}" id="RPotSa"/>
+                    </apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem >
+                        <apex:outputlabel value="Communication"/>
+                        <apex:outputPanel >
+                          <a style="cursor:pointer;color:blue;" class="ViewLink">View</a>
+                        </apex:outputPanel>
+                    </apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem >
+                        <apex:outputlabel value="Message Name"/>
+                        <apex:outputtext value="{!$CurrentPage.parameters.MessagePrintParm}"/>
+                    </apex:pageblocksectionitem>
+                    <apex:pageblockSectionItem ></apex:pageblockSectionItem>
+                </apex:pageblockSection>
+            </apex:outputPanel>
+        </apex:pageBlock> 
+    </div>
+       
+     <div style="font-size:12px; padding: 10px 0 0;" id="RPformId1">
+        <apex:outputPanel id="RPop2" rendered="{!(sChannelName == 'VAT')}">
+            <div class="content" width="60%" height="10%">
+            <img src="{!siconPath}"  title="VAT" alt="Account"  style="margin-right: 5px; float: left;"/>
+                <h1 class="pageType" style="font-size: .9em;font-weight: display: block; margin-left: 0px;  bold;color: #4a4a56;padding-left: 1px;">Communication Details</h1>
+                <span class="titleSeparatingColon">:</span>
+                <h2 class="pageDescription" style="font-size: 1.8em; display: block;  font-weight: normal;line-height: 1.1em;">{!$CurrentPage.parameters.Name}</h2>
+                <div class="blank"></div> <br/>
+            </div>
+        </apex:outputPanel>
+        <apex:pageBlock mode="maindetail" id="RPpgBlockId1" rendered="{!(sChannelName == 'VAT')}">
+            <apex:outputPanel id="RPop2" styleClass="panelWrapper">
+                     <apex:pageblockSection id="ID1" title="Communication Details" collapsible="true" columns="2" >
+                    <apex:pageblocksectionitem id="IdCc">
+                        <apex:outputlabel value="Communication Channel"/>
+                        <apex:outputtext value="VAT" id="RPot1"/>
+                    </apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem id="idDts">
+                        <apex:outputlabel value="Date/Time Stamp"/>
+                        <apex:outputtext value="{!$CurrentPage.parameters.DateM}" id="idDts1"/>
+                    </apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem id="idCn">
+                        <apex:outputlabel value="Campaign Name"/>
+                        <apex:outputtext value="{!$CurrentPage.parameters.CampaignName}" id="idCn1"/>
+                    </apex:pageblocksectionitem>  
+                    <apex:pageblocksectionitem id="idS">
+                        <apex:outputlabel value="Status"/>
+                        <apex:outputtext value="{!$CurrentPage.parameters.StatusDescription}" id="idS1"/>
+                    </apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem id="idTn">
+                        <apex:outputlabel value="Telephone Number"/>
+                        <apex:outputtext value="{!$CurrentPage.parameters.PhoneNumber}" id="idTn1"/>
+                    </apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem id="idSr">
+                        <apex:outputlabel value="Status Result"/>
+                        <apex:outputtext value="{!$CurrentPage.parameters.subStatusDesc}" id="idSr1"/>
+                    </apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem id="id1"></apex:pageblocksectionitem>
+                    <apex:pageblocksectionitem >
+                        <apex:outputlabel value="Campaign Summary"/>   
+                        <apex:commandLink rendered="{!sdocumentViewUrl != '' || sdocumentViewUrl != null}" onclick="window.open('{!sdocumentViewUrl }')"  style="color:blue;" value="View"/>
+                    </apex:pageblocksectionitem>
+                    </apex:pageblockSection>
+            </apex:outputPanel>
+        </apex:pageBlock>
+        </div>
+    </apex:form>
+  <apex:outputPanel >
+    <c:GuidedProcess_Claims_CMP_HUM />
+  </apex:outputPanel>
+</apex:page>

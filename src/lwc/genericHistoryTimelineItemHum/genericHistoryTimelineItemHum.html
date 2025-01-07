@@ -1,0 +1,131 @@
+﻿<!--
+LWC Name        : PharmacyHistoryTimelineFilterHum.html
+Function        : LWC to display pharmacy history timeline data;
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Nirmal Garg                     11/09/2021                   initial version - US - 2527241
+* M K Manoj                       07/27/2022                 US-3522143,3495639 For passing Case Record Type to child cmp
+* Shailesh Bagade                 28/07/2022                 US-3560805 Close Tasks/Activity Section of Case Details 
+* Ashish/Kajal                    08/11/2022                    Added condition for archived case comments
+****************************************************************************************************************************-->
+<template>
+	<li>
+		<!-- //slds-timeline__item_event---red
+		slds-timeline__item_task ---green -->
+		<div style="width: 100%;" class={showTimeLineConnectorColor}>
+			<span class="slds-assistive-text"></span>
+			<div class="slds-media">
+				<div class="slds-media__figure">
+					<button class="slds-button slds-button_icon" title={historylineitemdata.headerline}  aria-controls="task-item-expanded" aria-expanded="true" >
+						<lightning-icon size="x-small" icon-name={expandCollapseIcon} onclick={toggleDetailSection}></lightning-icon>
+					</button>
+					<template if:true={historylineitemdata.icon}>
+						<div class={historylineitemdata.icon.iconclass} title="Notes">
+							<template if:false={historylineitemdata.icon.customicon}>
+								<span title={historylineitemdata.icon.iconname}>
+									<lightning-icon icon-name={historylineitemdata.icon.iconvalue}   alternative-text={historylineitemdata.icon.iconname} title={historylineitemdata.icon.iconname}
+										variant="border-filled" size={historylineitemdata.icon.iconsize}>
+									</lightning-icon>
+									<template if:true={historylineitemdata.icon.iconname}>
+										<span class="slds-assistive-text">{historylineitemdata.icon.iconname}</span>
+									</template>
+								</span>
+							</template>
+							<template if:true={historylineitemdata.icon.customicon}>
+								<span>
+									<lightning-icon icon-name={historylineitemdata.icon.iconvalue}
+										alternative-text={historylineitemdata.icon.iconname}
+										title={historylineitemdata.icon.iconname}
+										variant="border-filled"
+										size={historylineitemdata.icon.iconsize}
+										class={historylineitemdata.icon.customiconclass}>
+									</lightning-icon>
+								</span>
+							</template>
+						</div>
+					</template>
+				</div>
+				<div class="slds-media__body">
+					<div class="slds-grid slds-grid_align-spread slds-timeline__trigger" style="width: 100%">
+						<div
+							class="slds-grid slds-grid_vertical-align-center slds-truncate_container_100 slds-no-space">
+							<h3 class={headerLineClass}
+								title={historylineitemdata.headerline}>
+								<template if:true={historylineitemdata.headerline}>
+									<p style="color: rgb(1, 118, 211);">
+										<template if:true={showTaskNumberURL}>
+											<!-- <lightning-formatted-url onclick={navigateToRecordPage} value='test' label={headerlinedetails} ></lightning-formatted-url> -->
+											<a onclick={navigateToRecordPage}>{headerlinedetails}</a>
+										</template>
+										<template if:false={showTaskNumberURL}>
+											<strong>{headerlinedetails}</strong>
+										</template>
+									</p>
+								</template>
+							</h3>
+							<div class="slds-no-flex">
+								<span class="slds-icon_container slds-icon-utility-rotate" title="Recurring Task">
+									<svg class="slds-icon slds-icon_xx-small slds-icon-text-default slds-m-left_x-small"
+										aria-hidden="true">
+										<use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#rotate">
+										</use>
+									</svg>
+									<span class="slds-assistive-text">{headerlinedetails}</span>
+								</span>
+							</div>
+						</div>
+						<div class="slds-grid">
+							<div class="slds-timeline__actions slds-timeline__actions_inline">
+								<template if:false={hasComments}>
+									<p class="slds-timeline__date" style="text-align: right;">{createddatetime}</p>
+								</template>
+								<template if:true={hasComments}>
+									<p class="slds-timeline__date" style="text-align: right;">{createdbydatetime}</p>
+								</template>
+							</div>
+							<div class="slds-m-left_small" style="height: 20px; width: 20px;">
+								<template if:false={isArchived}>
+								<template if:true={historylineitemdata.hasAction}>
+									<!-- this will be called from normal case and task comment component -->
+									<template if:true={isCaseOpen}>
+										<lightning-button-menu if:false={showTaskNumberURL} alternative-text="Show menu" icon-size="x-small" menu-alignment="right">
+											<lightning-menu-item if:true={historylineitemdata.canEdit} value="Edit" label="Edit" onclick={editHandler}></lightning-menu-item>
+											<lightning-menu-item if:true={historylineitemdata.canDelete} value="Delete" label="Delete" onclick={deleteHandler}></lightning-menu-item>
+										</lightning-button-menu>
+									</template>
+									<!-- This will be called on edit/create depenedent task/ close task from case activity component -->
+									<lightning-button-menu if:true={showTaskNumberURL} alternative-text="Show menu" icon-size="x-small" menu-alignment="right">
+										<lightning-menu-item if:true={historylineitemdata.canEdit} data-id="edittask" label="Edit" onclick={handleTaskActivityActions}></lightning-menu-item>
+										<lightning-menu-item if:true={historylineitemdata.canCreate} data-id="createdependenttask" label="Dependent Task" onclick={handleTaskActivityActions}></lightning-menu-item>
+										<lightning-menu-item if:true={historylineitemdata.canClose} data-id="closetask" label="Close Task" onclick={handleTaskActivityActions}></lightning-menu-item>
+									</lightning-button-menu>
+									<c-generic-modal-hum if:true={enablePopup} b-show-modal={enablePopup} onclose={closeModal}
+										title={formTitle} onsave={saveForm} ondelete={deleteComment} buttons-config={buttonsConfig} b-spinner={showSpinner}>
+										<c-comments-form-hum slot="content"  is-it-task ={isItTask} line-item-details={historylineitemdata.compoundvalues}
+											b-log-code-visible={bLogCodeVisible} case-id={caseId}
+											delete-form={deleteForm} edit-form={editForm} onmodify={modifiedHandler} s-case-record-type-name={sCaseRecordTypeName} lst-codes={lstCodes}>
+										</c-comments-form-hum>
+									</c-generic-modal-hum>
+								</template>
+							</template>
+							</div>
+						</div>
+					</div>
+					<template if:true={historylineitemdata.subheaderline}>
+						<p class="slds-m-horizontal_xx-small slds-wrap" title={historylineitemdata.subheaderline}>
+							<lightning-formatted-rich-text value={subheaderlinedetails}></lightning-formatted-rich-text>
+						</p>
+					</template>
+					<div if:true={expanded}>
+						<article class="slds-box slds-timeline__item_details slds-theme_shade slds-m-top_x-small slds-m-horizontal_xx-small slds-p-around_medium"
+							id="task-item-expanded" aria-hidden="false" style="background-color: white;">
+							<c-generic-history-timeline-item-detail-hum lineitemdetails={historylineitemdata.compoundvalues} card-comment={hasComments}></c-generic-history-timeline-item-detail-hum>
+						</article>
+					</div>
+				</div>
+			</div>
+		</div>
+	</li>
+</template>

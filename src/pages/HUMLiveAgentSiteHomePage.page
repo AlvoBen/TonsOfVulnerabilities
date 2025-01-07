@@ -1,0 +1,85 @@
+﻿<!--
+Page Name        : HUMLiveAgentSiteHomePage
+Version          : 1.0
+Created Date     : 10/06/2014
+Function         : This page is Home page for Live agent Force.com sites. This page is just made to provide a home page to force.com sites.
+In order to create Force.com Sites, a home page is required though this home page wont be visible from front end to anyone i.e Customer or User.
+Modification Log :
+*   Modification ID     Developer               Code Review             Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------
+*   1.0                 Sagar Tapadia           18341               10/06/2014               Original
+*   1.1                 Sagar Tapadia           18341               10/06/2014               JS related to Live agent are kept on Page itself.
+Reason: Liveagent related JS are loaded after static resource loads. It is using attributes which is dependent on liveagent variable.
+If liveagent is moved into static resource, it is throwing error as liveagent undefined because deployment.js file is loaded after
+static resource and liveagent attribute is defined in deployment.js file.
+*   1.2                 Sagar Tapadia           18341               10/06/2014               Inline CSS is added to Components below as they are auto invite button and adding CSS to static resource is not loading properly.
+After button event triggers, Salesforce itself add some CSS to it based on animation and it overrides the css added from static resource.
+In order to make that happen, Inline CSS is added to component.
+*   1.3                 Ninad Patil             18975               11/04/2014               Code changes related to CR50.
+*   1.4                 Sagar Tapadia           19849               12/10/2014               Defect fix for 158671: Instead of saving URL from home page, do it from Pre chat page.
+*   1.5					Lakshmi Madduri                             04/09/2019               HP Live Agent changes
+*   1.6					Akshay Pai                             		01/25/2021               REQ-1932697,Checkmarx Scan issues fix
+*   1.7                 Prafull Verma                               04/07/2021               REQ- 1915629 Security vulnerability fix
+-------------------------------------------------------------------------------------------------------------------------------->
+<apex:page showHeader="false" sidebar="false" controller="HUMPreChatController" standardStyleSheets="false" cache="false" extensions="LiveAgentTestPage_C_HUM">
+    <title>Humana Web Chat - Mock</title>
+    <script src="{!JSENCODE(sWebChatVarMap['DeploymentJS'].value__c)}" type="text/javascript"></script>
+    <script type="text/javascript">
+        liveagent.init("{!JSENCODE(sWebChatVarMap['LiveChatURL'].value__c)}","{!JSENCODE(sWebChatVarMap['DeploymentID'].value__c)}","{!JSENCODE(sWebChatVarMap['CompanyID'].value__c)}", false, true);
+    </script>
+    <script type="text/javascript">
+
+    function openLiveAgentWindow()
+    {
+        clearCookies();
+    }
+
+    function clearCookies()
+    {
+        var cookies = document.cookie.split(";");
+        for (var i = 0; i < cookies.length; i++)
+            eraseCookie(cookies[i].split("=")[0]);
+    }
+
+    function eraseCookie(name) {
+        createCookie(name,"",-1);
+    }
+
+    function createCookie(name,value,days) {
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime()+(days*24*60*60*1000));
+            var expires = "; expires="+date.toGMTString();
+        }
+        else var expires = "";
+        document.cookie = name+"="+value+expires+"; path=/";
+    }
+
+    var currentURL = window.location.href;
+    liveagent.addCustomDetail('PersonId', '{!JSENCODE(encryptedValue)}', false);
+    liveagent.addCustomDetail('MemberGenKey', '{!$Label.HUMMenGenKeyLabel}', false);
+    liveagent.addCustomDetail('SLSessionID', '{!$Label.HUMSessionIdLabel}', false);
+    liveagent.addCustomDetail('URL', currentURL, false);
+    liveagent.addCustomDetail('EligibilityCode', 'All;{!JSENCODE(btnValues)};', false);
+    liveagent.setChatWindowWidth(600);
+    liveagent.setChatWindowHeight(700);
+    </script>
+    <apex:form >
+
+        <apex:pageblock >
+            <div id="{!sWebChatVarMap['AutoInviteDIVID'].value__c}" style="display: none; position: fixed;border: 2px solid darkblue; border-radius: 5px; background-color: #5c9a1b; height: 100px;width: 200px;">
+                <div style="cursor: pointer; top: 42px; left: 65px; position: absolute; font-weight: bold;font-size: 16px;" onclick="liveagent.startChat('{!JSENCODE(sWebChatVarMap['AutoInviteButtonID'].value__c)}')">Start Chat</div>
+                <div style="cursor: pointer; padding: 5px; right: 0px; position: absolute; color: darkred;font-weight: bold;" onclick="liveagent.rejectChat('{!JSENCODE(sWebChatVarMap['AutoInviteButtonID'].value__c)}')">X</div>
+            </div>
+        </apex:pageblock>
+        <script type="text/javascript">
+        function buttonCallback(e) {
+            if (e == liveagent.BUTTON_EVENT.BUTTON_REJECTED) {
+                document.getElementById("{!JSENCODE(sWebChatVarMap['AutoInviteDIVID'].value__c)}").style.display = 'none';
+            }
+        }
+        liveagent.addButtonEventHandler("{!JSENCODE(sWebChatVarMap['AutoInviteButtonID'].value__c)}", buttonCallback);
+        window.onload = openLiveAgentWindow;
+        </script>
+    </apex:form>
+</apex:page>

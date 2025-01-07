@@ -1,0 +1,60 @@
+﻿<!--
+Component Name   : CaseAttachments_CMP_HUM.component
+Version          : 1.0
+Created On       : 09/21/2017
+Function         : VF Component to display Case Attachments table from the controller CaseAttachments_C_HUM
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *---------------------------------------------------------------------------------------------------------------------------
+ * Pradeepkumar Dani          142531                  10/30/2017                    Original version
+ * Pradeepkumar Dani          157391                  12/14/2017                    Datatable updates
+ * Prudhvi Pamarthi                                   02/06/2019                 REQ - 361155 - Not allowing case creation on Legacy Deleted policies
+ * Santhosh Ganji                                     04/19/2019                    REQ - 386935 - Case Detail Restrictions (MED vs non-MED cases)—READ ONLY features
+ * Santhi Mandava                                     03/06/2020                       US - 903424 added content type attribute value
+ * Santhi Mandava                                     03/06/2020                    US - 957458 Fixed multiple case tabs issue
+ * Mohammed Noor									  09/18/2020					USER STORY 1334690 - Changes to open MRM documents in HumRecViewer
+ * Mithra Bharadwaj                                   02/09/2021                    US#1522825 SonarQube Changes
+ ---------------------------------------------------------------------------------------------------------------------------->
+
+<apex:component controller="CaseAttachments_C_HUM"  id="caseAttachmentsDataTableCMP" allowDML="true">
+    <apex:attribute name="caseRecordId" type="string" description="The Case Record ID"/>
+    <script src="{!URLFOR($Resource.CaseDetailResources_SR_HUM,'/CaseAttachments/CaseAttachments_JS_HUM.js')}"/>
+
+    <apex:commandButton value="{!$Label.CaseAttach_NewAttachment}" onclick="fOpenCaseAttSubTab(); return false;" disabled="{!bdisableButton}" rendered="{!(!hPharmacyUser || (hPharmacyUser && hideTheButton))}"/>
+    <br/>
+    <br/>
+    <div>
+        <apex:variable value="{!$Profile.Name == $Label.HUMAgencyCCSupervisor || (sPharmacyUser== $Label.PharmacyUserSupervisorYes_HUM && hideTheButton)}" var="bIsAction"/>
+        <c:BaseDataTable_CMP_HUM jqueryvariable="jQuery"
+            tableid="caseAttachmentsDataTable"
+            tablecontainerid="caseAttachmentsDataTable_div"
+            enablesearch="f"
+            rowdata=""
+            columnname="{!columnName}"
+            columnHeader="{!columnHeader}"
+            htmlColumnName="fileName,createdBy"
+            objname="Attachment__c"
+            col1_accordian="false"
+            col1_editDelete="{!bIsAction}"
+            pagingbarBool="true"
+            info="true"
+            sort="true"
+            keyword="false"
+            orderColumn="{!IF(bIsAction,2,1)}"
+            orderDirection="desc"
+            col1_orderable="false"
+            orderingBool="true"
+            tableContentType="Attachments_{!caseRecordId}"
+        />
+    </div>
+
+    <script>
+        Visualforce.remoting.timeout = '{!$Label.HUMMemWebActivityTimeout}';
+        var vCaseId = '{!JSENCODE(caseRecordId)}';
+        var vMethodGetAttJsonData = '{!$RemoteAction.CaseAttachments_C_HUM.getJSONData}';
+        var vMethodGetURL = '{!$RemoteAction.CaseAttachments_C_HUM.getURL}';
+        var vPageCaseDetailAttach = '{!$Page.CaseDetailAttach_VF_HUM}';
+        var vMRMViewerURL = '{!JSENCODE(sMRMViewerURL)}';
+    </script>
+</apex:component>

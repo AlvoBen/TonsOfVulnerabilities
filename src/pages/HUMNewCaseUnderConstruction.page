@@ -1,0 +1,17 @@
+﻿<!--
+Page Name        : HUMNewCaseUnderConstruction
+Version          : 1.0 
+Created Date     : 09/26/2014 
+Function         : This page displays when the NewCase button is clicked
+Modification Log :
+*   Modification ID     Developer               Code Review             Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   1.0              Manuel Johnson                                  09/26/2014                 Original
+* ------------------------------------------------------------------------------------------------------------------------------
+-->
+
+<apex:page standardController="Case">
+    <p>
+        <apex:pageMessage summary="This page is under development. To continue, close this tab." severity="warning" strength="3" />
+    </p>
+</apex:page>

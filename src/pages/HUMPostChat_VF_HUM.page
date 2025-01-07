@@ -1,0 +1,55 @@
+﻿<!--
+Page Name        : HUMPostChat_VF_HUM
+Version          : 1.0  
+Created Date     : 12/01/2016 
+Function         : This page is Go365 post-chat survey form Which is redirected based on Button ID aftr chat is ended.
+Modification Log :
+*   Modification ID     Developer               Code Review             Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   1.0                 Shiva Pasumarty            46782                12/01/2016           Original       
+*   1.1                 Shiva Pasumarty            93542                05/16/2017           Defect #280801.0001 Js Conflict fix
+*	1.2         		Rajesh C				   144547		    	11/03/2017           REQ - 321230 CRM will expose the unique identifier(s) that can be used to link Chat and Web Data sets.
+*	1.3         		Praveen Kumar Parimi       286713               09/14/2018           REQ - 374888 aka CA Incident #7744195 - Fix for handling Line breaking Chars in Issue Field.
+-------------------------------------------------------------------------------------------------------------------------------->
+<apex:page showheader="false" controller="HUMPreChatController" action="{!postchatinit}" standardStyleSheets="false">
+
+<div id="MyHumanapg">
+<apex:include pageName="HUMPostWebChatPage" />
+</div>
+
+<div id="Go365pg">
+<apex:include pageName="Go365PostChat_VF_HUM"  />
+</div>
+
+<script>
+//dont enable P9 Critical Fix var $Chat = jQuery.noConflict();
+ jQuery(document).ready(function()
+ {  
+        var sURL;        
+        var sChatDetails = '{!JSENCODE($CurrentPage.parameters.chatDetails)}';
+        var details = sChatDetails;
+        
+        var jsonDetails = eval ("(" + details + ")");
+        console.log(jsonDetails.prechatDetails);
+        
+        for(i=0;i<jsonDetails.prechatDetails.length;i++)
+        {
+            if(jsonDetails.prechatDetails[i].label=='URL')
+            {
+                    sURL = jsonDetails.prechatDetails[i].value;                   
+            }	
+        }	
+      
+		if(sURL.toLowerCase().indexOf("go365")>=0)
+		{   
+            console.log('go365 found in url...');
+		    jQuery("#MyHumanapg").hide();  
+		}
+		else
+		{		           
+		    jQuery("#Go365pg").hide();
+        }
+ }
+ );
+</script>
+</apex:page>

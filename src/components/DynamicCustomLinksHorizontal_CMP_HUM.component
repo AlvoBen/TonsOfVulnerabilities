@@ -1,0 +1,101 @@
+﻿<!--
+Page Name        : DynamicCustomLinksHorizontal_CMP_HUM
+Version          : 1.0
+Created Date     : Oct 09 2015
+Function         : Component use to display dynamic links
+Modification Log :
+* Developer                 Code review         Date                  Description
+* ------------------------------------------------------------------------------------------------------------------------------
+* Muralidhar Kollu           72179             01/22/2017            Original Version
+* Anupama Tavva              73690             03/07/2017            Fix for the defects 262289.0001(floating links) and 262167.0001(history link is not expanding)  
+* T Prasanna Sai Kumar                         03/22/2021            Req 1912034 - Dynamic Links Vulnerabilities - DynamicCustomLinksHorizontal_CMP_HUM,DisplayCustomLinks_C_HUM,DisplayCustomLinks_T_HUM
+-------------------------------------------------------------------------------------------------------------------------------->
+
+<apex:component id="DynamicCustomLinksHorizontal_CMP_HUM" controller="DynamicCustomLinksHorizontal_C_HUM" allowDML="true">
+    <apex:attribute id="sBirthDateLink" name="sBirthDateLinks" description="This is birthdate for interacting about account." type="String" required="true" />
+    <apex:includeScript value="/support/console/35.0/integration.js" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Base64_Encode_Decode.v.1.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.DynamicCustomLinks_JS_HUM,'/CustomLink.js')}" />
+    <apex:includeScript value="{!$Resource.Go365KidsDelegatesHistory_SR_HUM}" />
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CSS/HoverOver.css')}" />
+    <apex:styleSheet value="{!URLFOR($Resource.DynamicCustomLinks_JS_HUM,'/CustomLink.css')}"/>
+   
+    <apex:attribute name="DynamicLinkController"
+                    type="SObjectDescriptorImpl_H_HUM"
+                    assignTo="{!pageController}"
+                    required="true"
+                    description="The controller for the page." />
+             
+    <apex:form id="frm">
+        <apex:pageBlock id="pb">
+            <apex:outputPanel id="errMsg" html-log_this="false">
+                <apex:pageMessages id="pgMsg" />
+            </apex:outputPanel>
+
+            <apex:inputHidden id="recid" value="{!recID}" />
+            <apex:inputHidden id="sobj" value="{!sObjname}" />
+            <apex:inputHidden id="lnkMap" value="{!mapLinks}" />
+
+
+            <apex:repeat value="{!lstFinalCustomLinks}" var="item">
+             <div id="relatedlistMenuHeader" class="relatedListHeader">
+                    <div class="divMenuHeader">
+                        <div class="divRelatedListTable">
+                            <apex:repeat value="{!item.lstCustomLinks}" var="lnk">
+                                <apex:outputPanel Styleclass="seperator" rendered="{!item.lstCustomLinks[0].LinkLabel != lnk.LinkLabel}">  |</apex:outputPanel>
+                                <span>
+                                    <a id="{!lnk.LinkLabel}" onclick="gotoLocation('{!JSENCODE(lnk.Link.Url__c)}');" class="cursorPointer">{!lnk.LinkLabel}</a>
+                                </span>
+                            </apex:repeat>
+                        </div>
+                  </div>
+                </div>
+            </apex:repeat>
+            <apex:actionFunction name="urlpreparation" action="{!prepareLinkUrl}"
+                                 oncomplete="return htmlUnescape('{!JSENCODE(sVFJSON)}','LinkParam','{!JSENCODE(objLnk.Url__c)}','{!JSENCODE(objLnk.Target_Type__c)}','{!JSENCODE(objLnk.Link_Label__c)}','{!JSENCODE(objLnk.Link_Action__c)}','{!JSENCODE(HTMLENCODE(jsonMap))}','{!JSENCODE(IF(objLnk.RequireSSO__c,'true','false'))}','{!JSENCODE(HSS_ONECLICK_URL)}','{!JSENCODE(HSS_ONECLICK_TARGET)}','{!JSENCODE(Text(MAP_URL_LENGTH))}');"
+                                 reRender="errMsg"
+                                 status="pleaseWait">
+                <apex:param name="slinkId" value="" />
+                <apex:param name="sRecId" value="" />
+                <apex:param name="sobjname" value="" />
+                <apex:param name="lnkMap" value="" />
+            </apex:actionFunction>
+
+            <apex:actionFunction name="callRemoteActionForParameters" action="{!populateVFVariables}"
+                                 oncomplete="return htmlUnescape('{!JSENCODE(sVFJSON)}','LinkParam','{!JSENCODE(objLnk.Url__c)}','{!JSENCODE(objLnk.Target_Type__c)}','{!JSENCODE(objLnk.Link_Label__c)}','{!JSENCODE(objLnk.Link_Action__c)}','{!JSENCODE(HTMLENCODE(jsonMap))}','{!JSENCODE(IF(objLnk.RequireSSO__c,'true','false'))}','{!JSENCODE(HSS_ONECLICK_URL)}','{!JSENCODE(HSS_ONECLICK_TARGET)}','{!JSENCODE(Text(MAP_URL_LENGTH))}');"
+                                 reRender="errMsg"
+                                 status="pleaseWait">
+                <apex:param name="linksJSONMap" value="" />
+                <apex:param name="actionType" value="" />
+                <apex:param name="lnkMap" value="" />
+            </apex:actionFunction>
+
+            <apex:actionFunction name="initializeLoggingRecords" action="{!initiate}"
+                                 onComplete="return checkVFLink('{!JSENCODE(sVFJSON)}','LinkCriteria','','','','','','','','','');"
+                                 reRender="pb" status="pleaseWait" />
+
+            <apex:actionFunction name="logError" action="{!logError}" onComplete="return false;" reRender="errMsg" status="pleaseWait" />
+
+            <apex:actionFunction name="callRemoteAction" action="{!populateVFVariables}" onComplete="return false;" reRender="pb" status="pleaseWait">
+                <apex:param name="linksJSONMap" value="" />
+                <apex:param name="actionType" value="" />
+            </apex:actionFunction>
+        </apex:pageBlock>
+
+        <apex:actionStatus id="pleaseWait">
+            <apex:facet name="start">
+                <div class="divWaitingSearch"/>
+                <div id="HLinksearchingStatus" class="divWaitingSearchStatus">
+                    <div class="divWaitingHolder">
+                        <img class="waitingImage" src="/img/loading.gif" /> <span class="waitingDescription">Loading...</span>
+                    </div>
+                </div>
+            </apex:facet>
+            <apex:facet name="stop" />
+        </apex:actionStatus>   
+		 </apex:form>
+    <script>
+      var sDOBLinks= "{!JSENCODE(sBirthDateLinks)}";
+      </script>
+</apex:component>

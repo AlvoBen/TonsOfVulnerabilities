@@ -1,0 +1,92 @@
+﻿<template>
+
+    <div>
+    <lightning-input 
+         type="checkbox" 
+         label={checkboxLabel} 
+         checked={showBool}
+         onchange={handleChangebox}
+         disabled = {disableCheckbox}>
+    </lightning-input>
+    </div>
+
+    <div>
+    <template if:true={gnaRightGivenPicklist.data}>
+        <lightning-combobox class="slds-m-bottom_x-small"
+            name="GaRight"
+            label={gnaRightsLabel}
+            value={grievanceSelected}
+            placeholder="--None--"
+            options={gnaRightGivenPicklist.data.values}
+            onchange={handleChangeGnA}
+            disabled = {disableGnARight} 
+            >
+        </lightning-combobox> 
+    </template>
+    </div>
+
+    <div>
+    <template if:true ={displayGaReason}> 
+        <template if:true={gaReasonPicklist.data}>
+            <lightning-combobox class="slds-m-bottom_x-small"
+                name="GaReason"
+                label={gnaReasonLabel}
+                value={gnaReason}
+                placeholder="--None--"
+                options={gaReasonPicklist.data.values}
+                onchange={handleChangeGnARsn}
+                disabled = {disableGnARsn}
+                >
+            </lightning-combobox>
+        </template>
+    </template>
+    </div>
+
+    <div>
+    <template if:true={compliantPicklist}>
+        <lightning-combobox class="slds-m-bottom_x-small"
+            name="Compliant" 
+            label={complaintLabel}
+            value={complaintSelected} 
+            placeholder="--None--" 
+            options={compliantPicklist} 
+            onchange={handleChangeCompliant} 
+            disabled = {disableCompliant}>
+        </lightning-combobox>
+    </template>
+    </div>
+
+<div>
+    <template if:true={displayCompReason}>
+        <template if:true={compliantReasonPicklist}>
+            <lightning-combobox class="slds-m-bottom_x-small"
+                name="CompliantReason" 
+                label={complaintReasonLabel}
+                value={complaintReason} 
+                placeholder="--None--" 
+                options={compliantReasonPicklist} 
+                onchange={handleChangeCompliantRsn}
+                disabled={disableComliantRsn}
+                >
+            </lightning-combobox>
+        </template>
+    </template>
+    </div>
+
+    <div>
+    <template if:true ={displayCompType}>
+        <template if:true={compliantTypePicklist.data}>
+            <lightning-combobox class="slds-m-bottom_x-small"
+                name="CompliantType" 
+                label={complaintTypeLabel}
+                value={complaintType} 
+                placeholder="--None--" 
+                options={compliantTypePicklist.data.values} 
+                onchange={handleChangeCompliantType}
+                disabled={disableComliantType}>
+            </lightning-combobox>
+        </template>
+    </template>
+    </div>
+
+</template>

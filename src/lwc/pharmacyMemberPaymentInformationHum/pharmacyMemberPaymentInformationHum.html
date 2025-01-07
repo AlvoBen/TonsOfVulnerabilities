@@ -1,0 +1,220 @@
+﻿<!--
+Component        : Pharmacy Member Payment Information
+Version          : 1.0
+Created On       : 11/9/2021
+Function         : Component to display to pharmacy member payment information
+
+Modification Log:
+* Developer Name                       Date                         Description
+* Swapnali Sonawane                    11/9/2021                   Original Version
+* Nirmal Garg				           3/3/2022					   US-3001765 Invoice Request Flow
+* Nirmal Garg						   07/13/2022					US-3184447-Optimization of invoice request flow.
+* Jonathan Dickinson                   06/14/2023                  User Story 4705843: T1PRJ0891339 2023 Arch Remediation-SF-Tech-Filter cases having template attached from existing case history logging for process logging
+* Vishal Shinde                        10/10/2023                 User Story 5002422- Mail Order Management; Pharmacy - identify Error Messaging and parameters (Lightning)
+*------------------------------------------------------------------------------------------------------------------------------
+-->
+<template>
+	<lightning-card>
+		<div class="slds-grid slds-m-left_small slds-m-right_x-small slds-wrap">
+			<div class="slds-col slds-size_1-of-1 ">
+				<div class="slds-grid slds-grid_align-spread">
+					<div class="slds-col">
+						<h3>
+							<span class="slds-page-header__title slds-truncate" title="Member Payment Information">Member
+							Payment Information</span>
+						</h3>
+					</div>
+					<div class="slds-col">
+						<lightning-button variant="brand-outline" label="Invoice Request" title="Invoice Request"
+							onclick={handleInvoiceRequestClick} class="slds-float_right">
+						</lightning-button>
+					</div>
+				</div>
+			</div>
+			<div class="slds-col slds-size_1-of-1 slds-m-top_small slds-wrap">
+				<div class="slds-grid slds-gutters">
+					<div class="slds-col slds-size_6-of-12">
+						<div class="slds-grid slds-gutters">
+							<div class="slds-col">
+								<c-generic-date-selector dlabel="Start Date" dhelptext={labels.pharmacyGetOrderMessage}
+									dkeyname="StartDate" dminvalue={sMinDate} onsenddatedata={handleDateChange}
+									dvalue={sStartDate} dmaxvalue={sMaxDate}>
+								</c-generic-date-selector>
+							</div>
+							<div class="slds-col">
+								<c-generic-date-selector dlabel="End Date" dhelptext={labels.pharmacyGetOrderMessage}
+									dkeyname="EndDate" onsenddatedata={handleDateChange} dvalue={sEndDate}
+									dmaxvalue={sMaxDate}>
+								</c-generic-date-selector>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<template if:true={loaded}>
+				<template if:false={isPaymentAvailable}>
+					<div class="slds-col slds-size_1-of-1 slds-m-top_small">
+						<template if:false={isPaymentAvailable}>
+							<template if:false={serviceError}>
+								<c-generic-scoped-notification-hum iconname="utility:info"
+									message="No Payments are available for selected member.">
+								</c-generic-scoped-notification-hum>
+							</template>
+							<template if:true={serviceError}>
+								<c-generic-scoped-notification-hum iconname="utility:error" message={serviceErrorMessage} type="error">
+								</c-generic-scoped-notification-hum>
+							</template>
+						</template>
+					</div>
+				</template>
+			</template>
+			<template if:true={loaded}>
+				<template if:true={isPaymentAvailable}>
+					<div class="slds-col slds-size_1-of-1 slds-m-top_small">
+						<div class="slds-grid slds-grid_align-end">
+							<div class="slds-col">
+								<div class="slds-text">{filteredcount} of {totalCount} items</div>
+							</div>
+						</div>
+					</div>
+				</template>
+			</template>
+			<div class="slds-col slds-size_1-of-1 slds-m-top_small">
+				<template if:true={loaded}>
+					<template if:true={isPaymentAvailable}>
+						<div class="slds-table--header-fixed_container" style="height: 290px;">
+							<div class="slds-scrollable_y" style="height: 100%;" onscroll={handleScroll}>
+								<table class="slds-no-row-hover slds-table slds-table_bordered slds-table_cell-buffer slds-table--header-fixed">
+									<thead>
+										<tr class="slds-line-height_reset">
+											<template for:each={memberpaymentlayout} for:item="col">
+												<th  scope="col" key={col.label} style={col.style}
+													data-iconname={col.iconname} data-label={col.label} data-id={col.id}
+													onmouseenter={handleMouseEnter} onmouseleave={handleMouseLeave} onclick={onHandleSort}>
+													<div class="slds-p-top_x-small slds-truncate slds-cell-fixed" title={col.label}>
+														{col.label}
+														<span>
+															<template if:false={col.mousehover}>
+																<template if:true={col.sorting}>
+																	<lightning-icon class="slds-var-m-left_small remove-display-sort-icon"
+																		icon-name={col.iconname} size="xx-small">
+																	</lightning-icon>
+																</template>
+															</template>
+															<template if:true={col.mousehover}>
+																<lightning-icon class="slds-var-m-left_small remove-display-sort-icon"
+																	icon-name={col.mousehovericon} size="xx-small">
+																</lightning-icon>
+															</template>
+														</span>
+													</div>
+												</th>
+											</template>
+										</tr>
+									</thead>
+									<tbody>
+										<template if:true={PaymentDetailsData}>
+											<template for:each={PaymentDetailsData} for:item="payObj">
+												<tr key={payObj.Id} aria-selected="false" class="slds-hint-parent">
+													<td role="gridcell">
+														<div class="slds-truncate slds-cell-wrap"
+														title={payObj.PaymentScheduledDate}>{payObj.PaymentScheduledDate}</div>
+													</td>
+													<td role="gridcell">
+														<div class="slds-truncate slds-cell-wrap"
+														title={payObj.PaymentProcessedDate}>{payObj.PaymentProcessedDate}</div>
+													</td>
+													<td role="gridcell">
+														<div class="slds-truncate slds-cell-wrap" title={payObj.CreditCardTypeLiteral}>
+														{payObj.CreditCardTypeLiteral}</div>
+													</td>
+													<td role="gridcell">
+														<div class="slds-truncate slds-cell-wrap" title={payObj.Last4Digit}>
+														{payObj.Last4Digit}</div>
+													</td>
+													<td role="gridcell">
+														<div class="slds-truncate slds-cell-wrap" title={payObj.Amount}>
+														${payObj.Amount}</div>
+													</td>
+													<td role="gridcell">
+														<div class="slds-truncate slds-cell-wrap" title={payObj.SourceApplicationCodeLiteral}>
+														{payObj.SourceApplicationCodeLiteral}</div>
+													</td>
+												</tr>
+											</template>
+										</template>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</template>
+				</template>
+				<template if:false={loaded}>
+					<lightning-spinner alternative-text="Loading"></lightning-spinner>
+				</template>
+			</div>
+		</div>
+	</lightning-card>
+	<template if:true={invoiceRequest}>
+		<div>
+			<section role="dialog" tabindex="-1"
+				class="slds-modal slds-fade-in-open slds-modal_medium flow-modal-component"
+				aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+				<div class="slds-modal__container">
+					<header class="slds-modal__header">
+						<lightning-button-icon icon-name="utility:close" alternative-text="Close this window"
+							size="large" variant="bare-inverse" onclick={handleflowabort} class="slds-modal__close">
+						</lightning-button-icon>
+						<h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Invoice Request</h2>
+					</header>
+					<template if:true={flowname}>
+						<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+							<template if:true={firstRequest}>
+								<c-screen-flow onflowstatuschange={handleflowfinished} onflowfailed={handleflowfailed}
+									width="100%" height="500px;" flow-name={flowname} flow-params={flowParamsJSON}>
+								</c-screen-flow>
+							</template>
+							<template if:false={firstRequest}>
+								<lightning-tabset>
+									<template for:each={invoiceProcessData} for:item="item">
+										<template if:true={item.processExist}>
+											<lightning-tab label={item.label} key={item.label} style="height: 500px;">
+												<lightning-formatted-rich-text value={item.value}>
+												</lightning-formatted-rich-text>
+											</lightning-tab>
+										</template>
+										<template if:false={item.processExist}>
+											<lightning-tab label={item.label} key={item.label} style="height:500px ">
+												<c-screen-flow onflowstatuschange={handleflowfinished}
+													onflowfailed={handleFlowFailed} width="100%" height="500px;"
+													flow-name={flowname} flow-params={flowParamsJSON}>
+												</c-screen-flow>
+											</lightning-tab>
+										</template>
+									</template>
+								</lightning-tabset>
+							</template>
+						</div>
+					</template>
+				</div>
+			</section>
+			<div class="slds-backdrop slds-backdrop_open flow-modal-component"></div>
+		</div>
+	</template>
+	<template if:true={invoiceRequestFinalScreen}>
+		<c-generic-case-comment-logging record-id={recordId} onfinish={handleFinishLogging}
+			responseobj={invoiverequestobj} filter-cases-having-template={filterCasesHavingTemplate}>
+		</c-generic-case-comment-logging>
+	</template>
+	<template if:true={isConfirmingFlowExit}>
+		<c-generic-unsaved-changes-prompt-hum header={labels.UnsavedChangesHeader} message={labels.unsavedModalMsgHum} button-config={buttonConfig}
+			promptclass={promptclass} oncancel={handleCancelFlowExit} oncontinue={handleContinueFlowExit}>
+		</c-generic-unsaved-changes-prompt-hum>
+	</template>
+	<c-generic-modal-hum if:true={bIsFlowFinished} b-show-modal={bIsFlowFinished} onclose={handleNo} onyes={handleYes}
+		onno={handleNo} buttons-config={modalButtonConfig}>
+		<div slot="content" class="slds-modal__content slds-var-p-around_medium">
+			<P class="slds-text-align_center slds-var-m-top_xx-large slds-var-m-bottom_xx-large">Does the member want to request another type of invoice?</P>
+		</div>
+	</c-generic-modal-hum>
+</template>

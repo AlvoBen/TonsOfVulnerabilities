@@ -1,0 +1,228 @@
+﻿<!--
+LWC Name        : interactionCmp.html
+Function        : LWC container to display Interaction log component in Lightning strides app.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+*  Kalyani Pachpol                02/01/2023                   US-4185604 
+* Muthukumar 					  02/07/2023				   US-4141940 Authenticate incoming calls- IVR/Genesys
+ * Vardhman Jain                  04/13/2023                    US4363205: save and continue button changes
+ * Muthukumar 					  05/22/2023				   US-4522776 & 4522916 warning message
+****************************************************************************************************************************-->
+
+<template>
+    <div class="slds-utility-bar_container slds-utility-bar panel">
+        <div class="slds-utility-panel slds-grid slds-grid_vertical slds-is-open panel" role="dialog"
+            aria-labelledby="panel-heading-01">
+            <div class="slds-utility-panel__header slds-grid slds-shrink-none">
+                <div class="slds-media slds-media_center">
+                    <div class="slds-media__figure slds-m-right_x-small">
+                        <span class="slds-icon_container">
+                            <lightning-icon size="small" icon-name="standard:account" alternative-text="Interaction log"
+                                title="Interaction log"></lightning-icon>
+                        </span>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-grid slds-gutters">
+                            <div class="slds-col">
+                                <h2 class="slds-card__header-title">
+                                    <span>Interaction log</span>
+                                </h2>
+                            </div>
+                    <template if:true={isShowAuthSol}>
+                            <div class={authMsgStyle}>
+                            {authMessage}
+                            </div>
+                               
+                            &nbsp;&nbsp;
+                            <div class="slds-form-element">
+                                <label class="slds-checkbox_toggle slds-grid">
+                                    <input type="checkbox" onchange={setToggleValue} name="checkbox-toggle-16" checked={authcheckValue} value={authcheckValue} disabled={disabledtoggle} aria-describedby="checkbox-toggle-16" />
+                                    <span  id="checkbox-toggle-16" class="slds-checkbox_faux_container" aria-live="assertive">
+                                    <span data-id="toggleSpanDiv" class={toggleBGColor}></span>
+                                    </span>
+                                </label>
+                            </div>
+                            &nbsp;&nbsp;
+                            <template if:true={isActionMsgShow}>
+                            <div class="slds-theme_error slds-m-left_small">
+                                <lightning-icon icon-name="utility:error" variant="inverse"
+                                    size="x-small">
+                                </lightning-icon>
+                                {actionMsg}
+                            </div>
+                        </template>
+                    </template>       
+                    &nbsp;&nbsp;
+                            <div class="slds-col">
+                                <template if:true={pageMessages}>
+                                    <div class="slds-text-color_error slds-m-around_medium"
+                                        style="margin:0px;text-align:center">
+                                        {errorMessage}
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col_bump-left slds-shrink-none">
+                    <lightning-button icon-name={iconName} variant="base" size="x-small" onclick={handleMinimizeBtn}
+                        slot="actions"></lightning-button>
+                </div>
+            </div>
+            <div class="slds-utility-panel__body slds-m-left_x-small slds-m-right_x-small">
+                <div class="slds-grid slds-gutters slds-wrap">
+                    <div class="slds-col slds-size_4-of-12">
+                        <lightning-input name="firstNameinput" type="text" label={labels.HUMIntNameFieldLabel}
+                            field-level-help="The interaction name must not exceed 150 characters" value={firstName}
+                            onchange={handleChange} max-length="150" message-when-too-long="Too long message">
+                        </lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_4-of-12">
+                        <c-interaction-cmp-lookup lookup-label={labels.HUMIntWithFieldLabel} object-api-name="account"
+                            icon-name="standard:account" onrecordselection={onIntWithSelection} interacting-with="true"
+                            onopenlookup={handleLkp} data-id="IntWithDID" selected-value={intWithName} selected-record-id={intWithRecordId}>
+                        </c-interaction-cmp-lookup>
+                    </div>
+                    <div class="slds-col slds-size_4-of-12">
+                        <lightning-combobox name="InteractingAbout" data-id="InteractingAbout" class="interaction-dropdown"
+                            dropdown-alignment="bottom-left" label="Interacting About" value={InteractingAboutvalue}
+                            placeholder="--None--" options={InteractingAboutPicklistvalue} onchange={handleChange}
+                            onopen={handleIntAboutOpen}>
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-col slds-size_4-of-12">
+                        <template if:true={originPikLst}>
+                            <div style="overflow: visible;">
+                                <lightning-combobox name="InteractionOrigin" dropdown-alignment="bottom-left"
+                                    label={labels.HUMIntOriginFieldLabel} value={InteractionOriginvalue}
+                                    placeholder="--None--" options={originPikLst} onchange={handleChange}
+                                    data-id="intOrigin" class="interaction-dropdown">
+                                </lightning-combobox>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="slds-col slds-size_4-of-12">
+                        <template if:true={interWithTypePikLst}>
+                            <lightning-combobox dropdown-alignment="bottom-left" name="Interactingwithtype" class="interaction-dropdown"
+                                label={labels.HUMIntWithTypeFieldLabel} value={industryPicklistvalue}
+                                placeholder="--None--" options={interWithTypePikLst} onchange={handleChange}>
+                            </lightning-combobox>
+                        </template>
+                    </div>
+                    <div class="slds-col slds-size_4-of-12">
+                        <template if:false={isAccountPage}>
+                            <template if:true={interactingAboutTypePikLst}>
+                                <lightning-combobox name="InteractingAboutType" dropdown-alignment="bottom-left" class="interaction-dropdown"
+                                    label={labels.HUMIntAboutTypeFieldLabel} value={InteractingAboutTypevalue}
+                                    placeholder="--None--" options={interactingAboutTypePikLst} onchange={handleChange}
+                                    disabled={disableIntAbout} data-id="InteractingAboutType">
+                                </lightning-combobox>
+                            </template>
+                        </template>
+                        <template if:true={isAccountPage}>
+                            <template if:true={interactingAboutTypePikLst}>
+                                <lightning-combobox name="InteractingAboutType" dropdown-alignment="bottom-left" class="interaction-dropdown"
+                                    label={labels.HUMIntAboutTypeFieldLabel} value={InteractingAboutTypevalue}
+                                    placeholder="--None--" options={interactingAboutTypePikLst} onchange={handleChange}
+                                    disabled>
+                                </lightning-combobox>
+                            </template>
+                        </template>
+                    </div>
+                    <div class="slds-col slds-size_4-of-12">
+                        <template if:false={isAccountPage}>
+                            <c-interaction-cmp-lookup lookup-label={labels.HUMIntNumberFieldLabel}
+                                object-api-name="Interaction__c" icon-name="standard:account" bdisabled={isDisabled}
+                                onrecordselection={onIntNumSelection} help-msg={labels.HUMInteractionLimitMsg}
+                                onopenlookup={handleLkp} data-id="IntNumDID" selected-value={intNumName} selected-record-id={intNumRecordId}>
+                            </c-interaction-cmp-lookup>
+                        </template>
+                        <template if:true={isAccountPage}>
+                            <lightning-input name="IntNumInp" type="text" label={labels.HUMIntNumberFieldLabel} disabled
+                                value={interactionNameAcc} onchange={handleChange}>
+                            </lightning-input>
+                        </template>
+                    </div>
+                    <div class="slds-col slds-size_8-of-12"></div>
+                    <div class="slds-col slds-size_12-of-12 slds-m-top_x-small">
+                        <div class="slds-grid slds-grid_align-end slds-gutters">
+                            <div class="slds-col">
+                                <template if:true={saveRender}>
+                                    <lightning-button type="submit" name="savebtn" variant="brand" label={labels.HUMSaveBtn}
+                                        class="slds-m-left_x-small slds-float_right" onclick={handleSaveButton}>
+                                    </lightning-button>
+                                </template>
+                                <template if:true={saveNContbtnRender}>
+                                    <lightning-button type="submit" name="saveNContbtn" variant="brand" label="Save and continue"
+                                        class="slds-m-left_x-small slds-float_right" onclick={handleSaveandContinueButton}>
+                                    </lightning-button>
+                                </template>
+                                <button class="slds-button slds-button_neutral slds-m-left_x-small slds-float_right button-css"
+                                    name="saveNnewLogbtn" onclick={handleSaveAndNewLogBtn}>{labels.HUMSaveNewBtn}</button>
+                                <template if:true={bShowUpdate}>
+                                    <button class="slds-button slds-button_neutral slds-m-left_x-small slds-float_right button-css"
+                                        name="saveNContbtn" onclick={handleUpdateBtn}>Update
+                                    </button>
+                                </template>
+                                <template if:false={genesysUserBtn}>
+                                    <button class="slds-button slds-button_neutral slds-m-left_x-small slds-float_right button-css"
+                                        name="getInteractionBtn" onclick={handleGetInteractionBtn}>Get Interaction</button>
+                                </template>
+                                <template if:true={isCasePage}>
+                                    <button class="slds-button slds-button_neutral slds-m-left_x-small slds-float_right button-css"
+                                        name="saveNContbtn" onclick={handleAssCaseBtn}>Associate Case
+                                    </button>
+                                </template>
+                                <!--<template if:false={mf3Switch}>
+                                    <lightning-input type="checkbox" name="authRadio" label={authCheckLabel}
+                                        class="slds-m-left_x-small slds-float_right" onclick={handleAuthchanges} value={authCheck}
+                                        checked={authCheck}>
+                                    </lightning-input>
+                                </template>-->
+                                <template if:true={validateCRMSwitch}>
+                                    <button class="slds-button slds-button_neutral slds-m-left_x-small slds-float_right button-css"
+                                        name="clearBtn" onclick={handleResetAll}>Clear</button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <c-humlookup-search onselectedrecord={onIntRecordSearch}></c-humlookup-search>
+    <c-generic-modal-hum if:true={bShowModal} buttons-config={buttonsConfig} b-show-modal={bShowModal}
+        onclose={closeModal1} title={labels.AckPopUpTitle_Hum}>
+        <div class={passwordModalCss} slot="content">
+            <c-question-form-hum form-data={questionDetails} is-acknowledge-form></c-question-form-hum>
+        </div>
+    </c-generic-modal-hum>
+
+    <c-generic-modal-hum if:true={cShowModal} buttons-config={updateButtonsConfig} b-show-modal={cShowModal}
+        onclose={closeModal2} ondelete={deleteInteractionMember} title="Update Interaction">
+        <div slot="content">
+            <template if:true={radioErrorMessages}>
+                <div class="slds-text-color_error slds-m-around_medium" style="margin:0px;text-align:center">
+                    {radioErrorMessage}
+                </div>
+            </template>
+            <div class="slds-scrollable" style="max-height: 150px">
+                <lightning-radio-group name="radioGroup" label="Select one interacting about to delete."
+                    options={InteractionMemberList} value={interactingAboutRadioValue} type="radio"
+                    onchange={handleChange}>
+                </lightning-radio-group>
+            </div>
+        </div>
+    </c-generic-modal-hum>
+	
+	<template if:true={isModalOpen}>
+        <c-generic-modal-hum b-show-modal="true" is-show-warning="true" buttons-config={buttonConfiguration} 
+        onclose={closeModalPopUp} oncontinue={openAccPage} title="Warning Message">
+            <div slot="content" style="text-align:center;">
+                {warningMessage}
+            </div>
+        </c-generic-modal-hum>
+    </template>
+</template>

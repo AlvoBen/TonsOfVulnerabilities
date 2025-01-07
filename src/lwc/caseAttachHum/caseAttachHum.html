@@ -1,0 +1,117 @@
+﻿<!--
+LWC Name        : CaseAttachHum.html
+Function        : LWC to display case attachments.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Tummala Vijaya Lakshmi                                        17/Oct/2021        Original Version-Case Attachment-Feature-3033033
+ * 												UserStory -3775271 Creating Case Attachments in Lightining
+****************************************************************************************************************************-->
+<template>
+    <template if:true={issubtab}>
+    <lightning-card>
+      <div class="slds-grid slds-grid_vertical-align-center">
+          <div class="slds-media__body slds-p-left--medium">
+              <h1 style="font-size: 1rem;">
+                  <lightning-formatted-url value="/my/path"  target="_blank" label={goTOCaseLabel} onclick={goBackToCase}></lightning-formatted-url>
+              </h1>
+              <header class=" slds-card__header slds-grid slds-p-right_none slds-media slds-media_center slds-has-flexi-truncate hc-align-header slds-p-around_none slds-m-bottom_none">
+                  
+                  <div class="slds-media__figure">
+                    <lightning-icon icon-name="standard:attach" size="medium"></lightning-icon>
+                  </div>
+                  <div class="slds-media__body">
+                      <h2 class="slds-card__header-title"> Attachments ({attachmentSize})</h2>
+                  </div>
+              </header>
+          </div>
+      </div>
+    </lightning-card>
+  </template>  
+   
+    <div>
+     <div class="slds-grid slds-gutters">
+      <template if:false={issubtab}>
+       <div class="slds-col">
+         <span><lightning-card><h1 align="bottom"><lightning-icon icon-name="standard:attach" size="medium"></lightning-icon><b><font class="slds-truncate">  Attachments ({attachmentSize})</font></b></h1></lightning-card></span>
+       </div>
+       </template>
+       <div class="slds-col">
+         <span></span>
+       </div>
+       <template if:false={issubtab}>
+      
+       <div class="slds-col" align="right">
+         <template if:true={uploadButtonVisibility}>
+           <span><lightning-file-upload
+           label=""
+           name="fileUploader"           
+           record-id={recordId}
+           onuploadfinished={handleUploadFinished}
+           multiple>
+           </lightning-file-upload></span>
+         </template>
+       </div> 
+      </template>
+     </div>
+     <div class="slds-grid slds-grid_vertical-reverse" style="height:5px">
+        <div class="slds-col">
+          <span> </span>
+        </div>  
+      </div>
+      <template if:false={issubtab}>
+      
+     <template if:true={uploadButtonVisibility}>
+        <div class="slds-scoped-notification slds-media slds-media_center slds-scoped-notification_light" role="status" style="height:30px">
+         <div class="slds-media__figure">
+             <lightning-icon icon-name="utility:info"  size="small"></lightning-icon>
+         </div>
+         <div class="slds-media__body">
+             <span> Attach up to 10 files at a time and the file size should not exceed 2 GB.</span>
+         </div>
+       </div> 
+       </template>
+      </template>    
+   </div>
+   
+    <div class="slds-grid slds-grid_vertical-reverse" style="height:5px">
+      <div class="slds-col">
+        <span> </span>
+      </div>  
+    </div>
+       <template if:true={profileVisibility}>
+        <div class="slds-border_left slds-border_right">
+       <lightning-datatable
+           hide-checkbox-column="true"      
+           key-field="Id"
+           data={filesList}
+           columns={columnsSup}
+           onrowaction={handleRowAction}>
+       </lightning-datatable>
+       </div>
+      </template>
+       
+     
+     <template if:false={profileVisibility}>
+      <div class="slds-border_left slds-border_right">
+       <lightning-datatable
+           hide-checkbox-column="true"      
+           key-field="Id"
+           data={filesList}
+           columns={columns}
+           onrowaction={handleRowAction}>
+       </lightning-datatable>
+      </div>
+     </template>  
+     <template if:true={viewDataTableNoRows}>
+         <div class="slds-align_absolute-center" >{NoRecordsToDisplayMsg}</div>
+       </template>
+     
+     <template if:false={issubtab}>
+      <template if:true={recordslength}>
+        <button class="slds-button slds-button_stretch slds-button_neutral slds-is-static hc-cursor"  onclick={onViewAllClick}  style="height:40px">View All</button>
+      </template>
+    </template>
+  
+  </template>

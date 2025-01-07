@@ -1,0 +1,14 @@
+﻿<!--
+Page Name   	: CaseDetailRedirect_VF_HUM.page
+Version       	: 1.0
+Function     	: VF page to show the standard case detail or redirect to custom page.
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Rakesh Patni		         146796                   11/10/2017                    Original version
+ ****************************************************************************************************************************
+ -->
+ <apex:page standardController="Case" extensions="CaseDetail_C_HUM" action="{!redirectToRecType}">
+    <apex:detail subject="{!case.id}" relatedList="true" title="true"/>
+</apex:page>

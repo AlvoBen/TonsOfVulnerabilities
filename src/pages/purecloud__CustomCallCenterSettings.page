@@ -1,0 +1,928 @@
+﻿<apex:page sidebar="false" showHeader="false" controller="purecloud.PCCallCenterSettingsController" action="{!initPage}" >
+
+    <apex:includeScript value="{!$Resource.purecloud__jquery}"/>
+    <apex:includeScript value="{!URLFOR($Resource.purecloud__intl_tel_input, 'build/js/intlTelInput.min.js')}"/>
+    <link href="{!URLFOR($Resource.PureCloudStaticResources, 'stylingResources/css/customCallCenterSettings.css')}" rel="stylesheet" />
+    <link href="{!URLFOR($Resource.intl_tel_input, 'build/css/intlTelInput.css')}" rel="stylesheet" />
+    <link href="{!URLFOR($Resource.font_awesome, 'font-awesome/css/font-awesome.min.css')}" rel="stylesheet" />
+    <style type="text/css">
+        input{
+            margin-left: 50px;
+        }
+        .staticInput select{
+        	margin-left: 50px;
+        }
+        .staticInput .multiSelectPicklistTable {
+            margin-left: 50px;
+        }
+        .staticInput .multiSelectPicklistRow select {
+            margin-left: 0;
+            width: 113px;
+        }
+        .attrInput{
+            margin-left:0px;
+            width:95%;
+        }
+        .new-highlight{
+            border-right:4px solid blue;
+            color:blue;
+            font-weight:bold;
+            height:17px;
+            line-height:1.35em;
+            padding-right:5px;
+            position: absolute;
+            text-align: right;
+            width:38px;
+        }
+        .required-highlight{
+            border-right:4px solid red;
+            color:red;
+            font-weight:bold;
+            height:17px;
+            line-height:1.35em;
+            padding-right:5px;
+            position: absolute;
+            text-align: right;
+            width:38px;
+        }
+        .helpOrb{
+            right:-25px !important
+        }
+        .staticInput{
+            left: 8px;
+            position: relative;
+        }
+        .noUnderline{
+            display:inline-block;
+            text-align:center;
+            text-decoration: none;
+            margin:0 8px !important;            
+        }
+        .noUnderline:hover{
+            text-decoration:none;
+        }
+        .errorMsg{
+            color: red;
+            display:block;
+            font-style: italic;
+            font-weight: bold;
+            margin-top:4px;
+        }
+        .omniErrorMsg{
+        	color: red;
+            font-style: italic;
+            font-weight: bold;
+            margin-top:4px;
+        	padding-left: 10px;
+        }
+        .attrTable{
+            border-collapse: collapse !important;
+        }
+        .attrTable tr td{
+            vertical-align: top !important;
+        }
+        .attrTable .attrActions{
+            vertical-align: middle !important;
+        }
+        .attrTable .dataRow td{
+            border-width: 0 1px 1px 0px !important;
+        }
+        .attrTable .dataRow td:last-child{
+            border-width: 0 0 1px 0px !important;
+        }        
+        .countryCodeTable{
+            border-collapse: collapse !important;
+        }
+        .countryCodeTable .countryCodeActions{
+            vertical-align: middle !important;
+        }
+        .countryCodeTable .dataRow td{
+            border-width: 0 1px 1px 0px !important;
+        }
+        .countryCodeTable .dataRow td:last-child{
+            border-width: 0 0 1px 0px !important;
+        }        
+        .country-code-setting-divider {
+            display: block;
+            margin: 25px 0;
+        }
+        .outbound-sms-label {
+            text-align: right;
+            font-size: 91%;
+            font-weight: bold;
+            margin-right: 50px;
+            margin-left: -3px;
+        }
+        .pickListBtn{
+            display:block;
+            height:16px;
+            margin:0 !important;
+            padding:3px !important;
+            width:16px;    
+        }
+        .pickListBtn i{
+            font-size:16px;
+            position:relative;
+            top:2px;
+        }
+        .btnCenter{
+            display:inline-block;
+            height:24px;
+            width:24px;
+        }
+        .buttonCell{
+            width:25px;
+        }
+        .attrActions{
+            padding:4px !important;
+        }
+        .countryCodeActions{
+        	padding:4px !important;
+        }
+        div.hr{
+            height:0px;
+            font-size:1px;
+            margin-bottom:0;
+            margin-top:0;
+            width:95%;
+        }
+        div.hr.gray{
+            border-bottom:1px solid #dbdbdb;
+        }
+        div.hr.white{
+            border-top:1px solid #fff;
+        }
+        div.hr.white.search-settings{
+            margin-bottom: 20px;
+        }
+        .mapping-direction {
+        	font-size: 18px;
+            padding: 0px 15px;
+        	width: 5%;
+            text-align: center;
+            position: relative;
+            top: 3px;
+        	display: inline-block;
+		}
+        .mapping-left,
+        .mapping-right {
+            display: inline-block;
+            width: 25%;
+		}
+        .mapping-left {
+    		text-align: right;
+        	margin-left: 3px;
+		}
+		.mapping-right {
+    		text-align: left;
+        	margin-left: 1px;
+		}
+        .mapping-header{
+        	text-align:left;
+        	display:inline-block;
+        	width:10%;
+        }
+        .mapping-header-label{
+        	color: #4a4a56;
+        	font-weight: bold;
+        }
+        .mapping-left-header,
+        .mapping-right-header{
+        	display: inline-block;
+            width: 15%;
+        }
+        .mapping-left-header{
+        	text-align: right;
+        }
+        .mapping-right-header{
+        	text-align: left;
+        }
+        .detailList tr th,
+        .detailList tr td{
+        	border:0px !important;
+        }
+        .client-search-label{
+            color: #4a4a56;
+        	font-weight: bold;
+            display: block;
+            padding-bottom: 7px;
+        }
+        input.btn.sync-button,
+        input.btnDisabled.sync-button,
+        input.btnDisabled.sync-in-progress-button {
+            margin-left: 15px;
+            width: 22px;
+            height: 23px;
+            background: url(/img/alohaSkin/sync.png) top left no-repeat;
+            background-position: 2px 3px;
+        }
+        input.btnDisabled.sync-in-progress-button {
+            background: url(/img/loading.gif) top left no-repeat;
+            background-position: 2px 3px;
+        }
+        .help-icon{
+            vertical-align: bottom;
+        }
+        .help-align{
+        	margin-left: 225px;
+        }
+        .customAttributesDelete{
+        	display:inline-block !important; 
+        	text-align: center;
+        	margin-left: 10px;
+        }
+        .customAttributeSelectList{
+        	margin-bottom: -4px;
+            margin-top: 5px;
+            width: 218px;
+        }
+        .customAttributeInputText{
+        	width: 210px;
+        }
+
+    </style>
+    <style>
+    	.bPageBlock {
+	    	border-top: 4px solid #36859f;
+        }
+        /*
+        input.btn.save-btn {
+            width: 60px;
+            height: 32px;
+            text-align: center;
+            vertical-align: middle;
+            background: rgb(0, 112, 210);
+            border: 1px solid rgb(0, 112, 210);
+            color: #fff;
+        }
+        */
+    </style>
+    <script type="text/javascript">
+    // Added this logic to handle the browser's back button
+    // See http://stackoverflow.com/questions/4370819/select-menu-not-being-restored-when-back-button-used
+        $(document).ready(function () {
+            $("select.selectList").each(function () {
+                $(this).val($(this).find('option[selected]').val());
+            });
+        })
+    </script>
+    <style>
+        .container {
+        	padding: 20px;
+        }
+    </style>
+    <div class="container">
+        <apex:sectionHeader title="Genesys Cloud for Salesforce" subtitle="Client Settings"/>
+        <apex:form >        
+            <apex:pageBlock title="Call Centers" helpTitle="Release Notes" helpUrl="https://help.mypurecloud.com/?p=45459">
+                <apex:pageBlockSection columns="2">
+                    <apex:pageBlockSectionItem HelpText="Choose call center definition file">
+                        <apex:outputPanel >
+                            <apex:selectList id="SelectedCallCenterId" styleClass="selectList slds-select" value="{!SelectedCallCenterId}" size="1">
+                                <apex:actionSupport event="onchange" action="{!getCustomSettings}" rerender="outerPanel" status="status" />
+                                <apex:selectOptions value="{!CallCenters}"/>
+                            </apex:selectList>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+            <apex:outputPanel id="outerPanel">
+                <apex:outputPanel id="out" rendered="{! IF(SelectedCallCenterId=='',false,true)}">
+                    <apex:pageBlock title="Settings" helpTitle="Settings" helpUrl="https://help.mypurecloud.com/?p=66092">
+                        <apex:pageMessages id="showmsg"></apex:pageMessages>
+                        <apex:actionstatus id="status">
+                            <apex:facet name="start">
+                                <c:LoadingSpinner />
+                            </apex:facet>
+                            <apex:facet name="stop">
+                                <apex:pageBlockSection columns="1">
+                                    <apex:outputPanel >                                
+                                        <apex:outputPanel styleClass="staticInput">
+                                            <apex:pageBlockSection columns="1" id="settings">  
+                                                <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_SSO__c.inlineHelpText}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_SSO__c.label}" />
+                                                    <apex:inputCheckbox disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__Enable_SSO__c}" id="autoRedirectToSSO" required="false">
+                                                        <apex:actionSupport event="onchange" action="{!UpdateSsoSettings}" rerender="settings"/>
+                                                    </apex:inputCheckbox>
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__SSO_Provider_Name__c.inlineHelpText}" rendered="{!CustomCallCenterSettings.purecloud__Enable_SSO__c}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__SSO_Provider_Name__c.label}" />
+                                                    <apex:inputText disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__SSO_Provider_Name__c}" id="ssoProviderName" required="false" /> 
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Organization_Name__c.inlineHelpText}" rendered="{!CustomCallCenterSettings.purecloud__Enable_SSO__c}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Organization_Name__c.label}" />
+                                                    <apex:inputText disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__Organization_Name__c}" id="organizationName" required="false" /> 
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Dedicated_Login_Window__c.inlineHelpText}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Dedicated_Login_Window__c.label}" />
+                                                    <apex:inputCheckbox disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__Enable_Dedicated_Login_Window__c}" id="enableDedicatedLoginWindow" required="false" />
+                                                </apex:pageBlockSectionItem>
+                                                <apex:outputPanel >
+                                                    <div class="hr gray"></div>
+                                                    <div class="hr white"></div>
+                                                </apex:outputPanel>
+                                                <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Auto_Association__c.inlineHelpText}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Auto_Association__c.label}" />
+                                                    <apex:outputPanel >
+                                                        <div class="mouseOverInfoOuter" onmouseover="addMouseOver(this)">
+                                                            <apex:inputCheckbox disabled="{!IF((SelectedCallCenterId=='' || disableAutoAssociation),true,false)}" value="{!CustomCallCenterSettings.purecloud__Enable_Auto_Association__c}" id="enableAutoAssociation" required="false">
+                                                                <apex:actionSupport event="onchange" action="{!AutoAssociationChanged}" rerender="settings" focus="enableAutoAssociation"/>
+                                                            </apex:inputCheckbox>
+                                                            <img src="../img/alohaSkin/help_grey.png" class="help-icon"/>
+                                                            <div class="mouseOverInfo">
+                                                                <div class="body">Enable Auto Association on Navigation is unavailable when Enable Tab/Interaction Sync is selected.</div>
+                                                            </div>
+                                                        </div>
+                                                    </apex:outputPanel>
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Tab_Interaction_Sync__c.inlineHelpText}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Tab_Interaction_Sync__c.label}" />
+                                                    <apex:outputPanel >
+                                                        <div class="mouseOverInfoOuter" onmouseover="addMouseOver(this)">
+                                                            <apex:inputCheckbox disabled="{!IF((SelectedCallCenterId=='' || disableTabInteractionSync),true,false)}" value="{!CustomCallCenterSettings.purecloud__Enable_Tab_Interaction_Sync__c}" id="enableTabInteractionSync" required="false">
+                                                                <apex:actionSupport event="onchange" action="{!TabInteractionSyncChanged}" rerender="settings" focus="enableTabInteractionSync"/>
+                                                            </apex:inputCheckbox>
+                                                            <img src="../img/alohaSkin/help_grey.png" class="help-icon"/>
+                                                            <div class="mouseOverInfo">
+                                                                <div class="body">Enable Tab/Interaction Sync is unavailable when Enable Auto Association on Navigation is selected.</div>
+                                                            </div>
+                                                        </div>
+                                                    </apex:outputPanel>
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Disconnect_on_Tab_Close__c.inlineHelpText}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Disconnect_on_Tab_Close__c.label}" />
+                                                    <apex:outputPanel >
+                                                        <div class="mouseOverInfoOuter" onmouseover="addMouseOver(this)">
+                                                            <apex:inputCheckbox disabled="{!IF((SelectedCallCenterId=='' || !disableAutoAssociation),true,false)}" value="{!CustomCallCenterSettings.purecloud__Enable_Disconnect_on_Tab_Close__c}" id="autoDisconnectOnTabClose" required="false"></apex:inputCheckbox>
+                                                            <img src="../img/alohaSkin/help_grey.png" class="help-icon"/>
+                                                            <div class="mouseOverInfo">
+                                                                <div class="body">Enable Disconnect on Tab Close is available only when Enable Tab/Interaction Sync is selected.</div>
+                                                            </div>
+                                                        </div>
+                                                    </apex:outputPanel>
+                                                </apex:pageBlockSectionItem>
+                                                <apex:outputPanel >
+                                                    <div class="hr gray"></div>
+                                                    <div class="hr white"></div>
+                                                </apex:outputPanel>
+                                                <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Call_Log_Functionality__c.inlineHelpText}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Call_Log_Functionality__c.label}" />
+                                                    <apex:inputCheckbox disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__Enable_Call_Log_Functionality__c}" id="enableCallLogs" required="false" /> 
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Call_Logs__c.inlineHelpText}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Call_Logs__c.label}" />
+                                                    <apex:inputCheckbox disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__Enable_Call_Logs__c}" id="enableCallLogEditing" required="false" /> 
+                                                </apex:pageBlockSectionItem> 
+                                                <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Workspace_Transfers__c.inlineHelpText}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Workspace_Transfers__c.label}" />
+                                                    <apex:inputCheckbox disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__Enable_Workspace_Transfers__c}" id="enableWorkspaceTransfers" required="false" /> 
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Embed_Scripts_in_Console__c.inlineHelpText}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Embed_Scripts_in_Console__c.label}" />
+                                                    <apex:inputCheckbox disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__Embed_Scripts_in_Console__c}" id="embedScriptsInConsole" required="false" /> 
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Server_Side_Logging__c.inlineHelpText}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Server_Side_Logging__c.label}" />
+                                                    <apex:inputCheckbox disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__Enable_Server_Side_Logging__c}" id="enableServerSideLogging" required="false" /> 
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Configurable_CallerID__c.inlineHelpText}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Configurable_CallerID__c.label}" />
+                                                    <apex:inputCheckbox disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__Enable_Configurable_CallerID__c}" id="enableConfigurableCallerID" required="false" />
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Auto_Assign_Owner__c.inlineHelpText}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Auto_Assign_Owner__c.label}" />
+                                                    <apex:inputCheckbox disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__Auto_Assign_Owner__c}" id="autoAssignOwner" required="false" />
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_High_Velocity_Sales__c.inlineHelpText}" rendered="{!canUseLightning}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_High_Velocity_Sales__c.label}" />
+                                                    <apex:inputCheckbox disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__Enable_High_Velocity_Sales__c}" id="enableHighVelocitySales" required="false" />
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Call_History__c.inlineHelpText}" >
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Call_History__c.label}" />
+                                                    <apex:inputCheckbox disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__Enable_Call_History__c}" id="enableCallHistory" required="false" />
+                                                </apex:pageBlockSectionItem>
+                                            </apex:pageBlockSection> 
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSection>
+                            </apex:facet>
+                        </apex:actionstatus>
+                        <apex:pageBlockButtons location="bottom">                   
+                            <apex:commandButton value="Save" disabled="{!IF(SelectedCallCenterId=='',true,false)}" action="{!Save}"  styleClass="save-btn"/>    
+                        </apex:pageBlockButtons>
+                    </apex:pageBlock>
+                    <apex:pageBlock title="Client Event Settings" helpTitle="Client Event Settings" helpUrl="https://help.mypurecloud.com/?p=241665">
+                        <apex:pageMessages id="showmsg"></apex:pageMessages>
+                        <apex:actionstatus id="status">
+                            <apex:facet name="start">
+                                <c:LoadingSpinner />
+                            </apex:facet>
+                            <apex:facet name="stop">
+                                <apex:pageBlockSection id="clientEventSection" columns="1">
+                                    <apex:outputPanel >                             
+                                        <apex:outputPanel styleClass="staticInput">
+                                            <apex:pageBlockSection columns="1" id="settings">  
+                                                <span class="mapping-header">
+                                                    <apex:outputLabel styleClass="mapping-header-label">Client Event Messages</apex:outputLabel>
+                                                </span>
+                                                <apex:pageBlockSectionItem rendered="{!canUseLightning}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Client_Event_Message_Type__c.label}" />
+                                                    <apex:outputPanel >
+                                                        <apex:selectList value="{!CustomCallCenterSettings.purecloud__Client_Event_Message_Type__c}" size="1" id="clientEventMessageTypeSelectList">
+                                                            <apex:actionSupport event="onchange" rerender="settings" focus="clientEventMessageTypeSelectList"/>
+                                                            <apex:selectOption itemValue="none" itemLabel="None"/>
+                                                            <apex:selectOption itemValue="windowPostMessage" itemLabel="Window.postMessage API"/>
+                                                            <apex:selectOption itemValue="lightningMessageChannel" itemLabel="Lightning Message Channel"/>
+                                                        </apex:selectList>
+                                                        <div class="mouseOverInfoOuter" onmouseover="addMouseOver(this)">
+                                                            <img src="../img/alohaSkin/help_grey.png" class="help-icon"/>
+                                                            <div class="mouseOverInfo">
+                                                                <div class="body">
+                                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Client_Event_Message_Type__c.inlineHelpText}" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </apex:outputPanel>
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem rendered="{!IF(CustomCallCenterSettings.purecloud__Client_Event_Message_Type__c=='none',false,true) && canUseLightning}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__PureCloud_Client_Event_Types__c.Fields.purecloud__Client_Event_Types__c.label}" />
+                                                    <apex:inputField value="{!clientEventTypes.purecloud__Client_Event_Types__c}">
+                                                        <apex:actionSupport event="onchange" rerender="enableChatMessages" focus="enableClientEvents"/>
+                                                    </apex:inputField>
+                                                </apex:pageBlockSectionItem>
+                                                <apex:pageBlockSectionItem rendered="{!IF(CustomCallCenterSettings.purecloud__Client_Event_Message_Type__c=='none',false,true) && canUseLightning}">
+                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Chat_Messages__c.label}" />
+                                                    <apex:outputPanel >
+                                                        <div class="mouseOverInfoOuter" onmouseover="addMouseOver(this)">
+                                                            <apex:inputCheckbox disabled="{!IF(CONTAINS(clientEventTypes.purecloud__Client_Event_Types__c,"Notification"),false,true)}" value="{!CustomCallCenterSettings.purecloud__Enable_Chat_Messages__c}" id="enableChatMessages" required="false"/>
+                                                            <img src="../img/alohaSkin/help_grey.png" class="help-icon help-align"/>
+                                                            <div class="mouseOverInfo">
+                                                                <div class="body">
+                                                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Chat_Messages__c.inlineHelpText}" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </apex:outputPanel>
+                                                </apex:pageBlockSectionItem>
+                                                <apex:outputPanel >
+                                                    <div class="hr gray"></div>
+                                                    <div class="hr white"></div>
+                                                </apex:outputPanel>
+                                                <span class="mapping-header">
+                                                    <apex:outputLabel styleClass="mapping-header-label" value="Custom Interaction Attributes" />
+                                                </span>
+                                                <apex:pageBlockSectionItem >
+                                                    <apex:outputLabel value="Custom Interaction Attribute" />
+                                                    <apex:outputPanel >
+                                                        <div>
+                                                            <apex:inputText id="customAttributeInput" disabled="{!IF(SelectedCallCenterId=='',true,false)}" onkeypress="multiSelectPicklistNoEnter(event, '{!$Component.inputBtn}')" styleClass="customAttributeInputText" value="{!customAttributeToAdd}" />
+                                                            <apex:commandButton id="inputBtn" disabled="{!IF(SelectedCallCenterId=='',true,false)}" reRender="customAttributesPanel, customAttributeInput" action="{!addCustomAttribute}" value="Add" style="margin-left:5px;" />
+                                                            <script>
+                                                            function multiSelectPicklistNoEnter(event, id){
+                                                                var inputBtn = document.getElementById(id);
+                                                                if(event.keyCode == 13){
+                                                                    event.preventDefault();
+                                                                    inputBtn.click();
+                                                                }                                
+                                                            }
+                                                            </script> 
+                                                        </div>
+                                                        <div>
+                                                            <apex:selectList id="customAttributesPanel" disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!selectedCustomAttribute}" multiselect="true" size="10" styleClass="customAttributeSelectList">
+                                                                <apex:selectOptions value="{!customInteractionAttributes}" />
+                                                            </apex:selectList>
+                                                            <span style="margin-left:3px;">
+                                                                <apex:commandButton reRender="customAttributesPanel" action="{!deleteCustomAttribute}"  value="Delete"></apex:commandButton>
+                                                            </span>
+                                                        </div>
+                                                    </apex:outputPanel>
+                                                </apex:pageBlockSectionItem>
+                                            </apex:pageBlockSection>
+                                        </apex:outputPanel> 
+                                    </apex:outputPanel>
+                                </apex:pageBlockSection>
+                            </apex:facet>
+                        </apex:actionstatus>
+                        <apex:pageBlockButtons location="bottom">                   
+                            <apex:commandButton value="Save" disabled="{!IF(SelectedCallCenterId=='',true,false)}" action="{!Save}"  styleClass="save-btn"/>    
+                        </apex:pageBlockButtons> 
+                    </apex:pageBlock>
+                    <apex:pageBlock title="Omni-Channel Sync Settings" helpTitle="Omni-Channel Sync Settings" helpUrl="https://help.mypurecloud.com/?p=117712">
+                        <apex:outputPanel styleClass="staticInput">
+                            <apex:pageBlockSection columns="1" id="omniSettings">
+                                <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Omni_Sync__c.inlineHelpText}">
+                                    <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Enable_Omni_Sync__c.label}" />
+                                    <apex:outputPanel >
+                                        <apex:inputCheckbox disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__Enable_Omni_Sync__c}" id="enableOmniSync" required="false">
+                                            <apex:actionSupport event="onchange" action="{!UpdateOmniSyncSettings}" rerender="omniSettings" focus="syncSFStatusToPCOnQueue"/>
+                                        </apex:inputCheckbox>
+                                        <apex:outputLabel styleClass="omniErrorMsg" id="omniSyncGeneralError" value="{!omniSyncGeneralError}"></apex:outputLabel>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem> 
+                                <apex:pageBlockSection columns="1" rendered="{!CustomCallCenterSettings.purecloud__Enable_Omni_Sync__c}">
+                                    <apex:outputPanel >
+                                        <div class="hr gray"></div>
+                                        <div class="hr white"></div>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <span class="mapping-header">
+                                            <apex:outputLabel styleClass="mapping-header-label">Mapped Status</apex:outputLabel>
+                                        </span>
+                                        <span class="mapping-left-header">
+                                            <apex:outputLabel styleClass="mapping-header-label">Omni-Channel Status</apex:outputLabel>
+                                        </span>
+                                        <span class="mapping-direction">
+                                            <apex:outputLabel ></apex:outputLabel>
+                                        </span>
+                                        <span class="mapping-right-header">
+                                            <apex:outputLabel styleClass="mapping-header-label">Genesys Cloud Status</apex:outputLabel>
+                                        </span>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <span class="mapping-left">
+                                            <apex:selectList label="" disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!syncSFStatusToPCOnQueue.purecloud__Salesforce_Status_Id__c}" id="syncSFStatusToPCOnQueue" size="1">
+                                                <apex:actionSupport event="onchange" action="{!UpdateOmniSyncTransitions}" rerender="omniSettings"/>
+                                                <apex:selectOptions value="{!sfStatuses}"/>
+                                            </apex:selectList>
+                                        </span>
+                                        <span class="mapping-direction">
+                                            <apex:outputLabel >&#8644;</apex:outputLabel>
+                                        </span>
+                                        <span class="mapping-right">
+                                            <apex:outputLabel >On Queue</apex:outputLabel>
+                                        </span>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!IF(omniSyncMissingSFMappedStatusError != '', true, false)}">
+                                        <span class="mapping-left">
+                                            <apex:outputLabel styleClass="errorMsg" value="{!omniSyncMissingSFMappedStatusError}"></apex:outputLabel>
+                                        </span>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel >
+                                        <div class="hr gray"></div>
+                                        <div class="hr white"></div>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!showOmniSyncTransitions}">
+                                        <span class="mapping-header">
+                                            <apex:outputLabel styleClass="mapping-header-label">Transition Status</apex:outputLabel>
+                                        </span>
+                                        <span class="mapping-left-header">
+                                            <apex:outputLabel styleClass="mapping-header-label">Omni-Channel Status</apex:outputLabel>
+                                        </span>
+                                        <span class="mapping-direction">
+                                            <apex:outputLabel ></apex:outputLabel>
+                                        </span>
+                                        <span class="mapping-right-header">
+                                            <apex:outputLabel styleClass="mapping-header-label">Genesys Cloud Status</apex:outputLabel>
+                                            <apex:outputPanel >
+                                                <apex:actionStatus id="retrievalStatus">
+                                                    <apex:facet name="stop">
+                                                        <apex:outputPanel >
+                                                            <div class="mouseOverInfoOuter" onmouseover="addMouseOver(this)">
+                                                                <apex:commandButton value="" title="" action="{!RetrieveSecondaryStatuses}" styleClass="sync-button" rerender="omniSettings" status="retrievalStatus" onmouseover="addMouseOver(this)"></apex:commandButton> 
+                                                                <div class="mouseOverInfo">
+                                                                    <div class="body">Retrieve Genesys Cloud secondary statuses.</div>
+                                                                </div>
+                                                            </div>
+                                                            <apex:outputPanel rendered="{! (statusRetrievalSucceeded && statusRetrievalAttempted) }">
+                                                                <i class="fa fa-check" style="color: green; margin-left: 5px;"></i>
+                                                            </apex:outputPanel>
+                                                            <apex:outputPanel rendered="{! (!statusRetrievalSucceeded && statusRetrievalAttempted) }">
+                                                                <div class="mouseOverInfoOuter" onmouseover="addMouseOver(this)">
+                                                                    <i class="fa fa-warning" style="color: red; margin-left: 5px;"></i>
+                                                                    <div class="mouseOverInfo" style="border-color: red; word-wrap: break-word;">
+                                                                        <div class="body">{!statusRetrievalMessage}</div>
+                                                                    </div>
+                                                                </div>
+                                                            </apex:outputPanel>
+                                                        </apex:outputPanel>
+                                                    </apex:facet>
+                                                    <apex:facet name="start">
+                                                        <apex:outputPanel >
+                                                            <apex:commandButton disabled="true" styleClass="sync-in-progress-button"></apex:commandButton> 
+                                                        </apex:outputPanel>
+                                                    </apex:facet>
+                                                </apex:actionStatus>
+                                            </apex:outputPanel>
+                                        </span>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!showOmniSyncTransitions}">
+                                        <span class="mapping-left">
+                                            <apex:outputLabel value="{!labelSetPCStatusOnLeaveSFStatus}"/>
+                                        </span>
+                                        <span class="mapping-direction">
+                                            <apex:outputLabel >&rarr;</apex:outputLabel>
+                                        </span>
+                                        <span class="mapping-right">
+                                            <apex:selectList label="" style="margin-left:0;" disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!setPCStatusOnLeaveSFOnQueueStatus.purecloud__PureCloud_Status_Name__c}" id="setPCStatusOnLeaveSFOnQueueStatus" size="1">
+                                                <apex:selectOptions value="{!pcStatuses}"/>
+                                            </apex:selectList>
+                                        </span>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!IF(omniSyncMissingPCStatusError != '', true, false)}">
+                                        <span class="mapping-left">
+                                            <apex:outputLabel />
+                                        </span>
+                                        <span class="mapping-direction">
+                                            <apex:outputLabel ></apex:outputLabel>
+                                        </span>
+                                        <span class="mapping-right">
+                                            <apex:outputLabel styleClass="errorMsg" value="{!omniSyncMissingPCStatusError}"></apex:outputLabel>
+                                        </span>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!showOmniSyncTransitions}">
+                                        <span class="mapping-left">
+                                            <apex:selectList label="" disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!setSFStatusOnLeavePCOnQueue.purecloud__Salesforce_Status_Id__c}" id="setSFStatusOnLeavePCOnQueue" size="1">
+                                                <apex:selectOptions value="{!sfStatuses}"/>
+                                            </apex:selectList>
+                                        </span>
+                                        <span class="mapping-direction">
+                                            <apex:outputLabel >&larr;</apex:outputLabel>
+                                        </span>
+                                        <span class="mapping-right">
+                                            <span class="mapping-options">
+                                                <apex:outputLabel >Upon leaving "On Queue" status</apex:outputLabel>
+                                            </span>
+                                        </span>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!IF(omniSyncMissingSFTransitionStatusError != '', true, false)}">
+                                        <span class="mapping-left">
+                                            <apex:outputLabel styleClass="errorMsg" value="{!omniSyncMissingSFTransitionStatusError}"></apex:outputLabel>
+                                        </span>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!showOmniSyncTransitions}">
+                                        <span class="mapping-left">
+                                            <apex:outputLabel value="When handling a work item in Salesforce"/>
+                                        </span>
+                                        <span class="mapping-direction">
+                                            <apex:outputLabel >&rarr;</apex:outputLabel>
+                                        </span>
+                                        <span class="mapping-right">
+                                            <apex:selectList label="" style="margin-left:0;" disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!setPCStatusWhenHandlingWorkItemInSF.purecloud__PureCloud_Status_Name__c}" id="setPCStatusWhenHandlingWorkItemInSF" size="1">
+                                                <apex:selectOptions value="{!pcStatuses}"/>
+                                            </apex:selectList>
+                                        </span>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!showOmniSyncTransitions}">
+                                        <span class="mapping-left">
+                                            <apex:selectList label="" disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!setSFStatusWhenInteractingInPC.purecloud__Salesforce_Status_Id__c}" id="setSFStatusWhenInteractingInPC" size="1">
+                                                <apex:selectOptions value="{!sfStatuses}"/>
+                                            </apex:selectList>
+                                        </span>
+                                        <span class="mapping-direction">
+                                            <apex:outputLabel >&larr;</apex:outputLabel>
+                                        </span>
+                                        <span class="mapping-right">
+                                            <span class="mapping-options">
+                                                <apex:outputLabel >When interacting in Genesys Cloud</apex:outputLabel>
+                                            </span>
+                                        </span>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSection>
+                            </apex:pageBlockSection>
+                        </apex:outputPanel>
+                        <apex:pageBlockButtons location="bottom">                   
+                            <apex:commandButton value="Save" disabled="{!IF(SelectedCallCenterId=='',true,false)}" action="{!Save}" styleClass="save-btn" />    
+                        </apex:pageBlockButtons>
+                    </apex:pageBlock>
+                    <apex:pageBlock title="Country Code Settings" helpTitle="Country Code Settings" helpUrl="https://help.mypurecloud.com/?p=71576">
+                        <apex:outputPanel id="countryCodeSettings">
+                            <apex:variable var="countryCodeRowNum" value="{!0}" />
+                            <apex:actionStatus id="mapCountryCodes">
+                                <apex:facet name="start">
+                                    <c:LoadingSpinner />
+                                </apex:facet>
+                            </apex:actionStatus>                    
+                            <apex:pageBlockTable styleClass="countryCodeTable" value="{!countryCodes}" var="countryCode" columnsWidth="10%, 80%, 5%" style="width:50%;min-width:450px;">
+                                <apex:column headerValue="Screen Pop Country Codes">
+                                    <div style="margin-bottom:2px">
+                                        <apex:inputText disabled="{!IF(SelectedCallCenterId=='',true,false)}" id="countryCodeInput" styleClass="countryCodeInput"/>
+                                        <apex:inputHidden id="countryDialCode" value="{!countryCode.dialCode}"/>
+                                        <apex:inputHidden id="countryIso2" value="{!countryCode.iso2}"/>
+                                    </div>
+                                </apex:column>
+                                <apex:column >
+                                    <apex:outputLabel id="countryCodeDescription"/>
+                                </apex:column>
+                                <apex:column styleClass="countryCodeActions">
+                                    <apex:facet name="header"><apex:commandButton disabled="{!IF(SelectedCallCenterId=='',true,false)}" reRender="countryCodeSettings" status="mapCountryCodes" action="{!addCountryCodeRows}" value="Add"/></apex:facet>
+                                    <apex:commandLink reRender="countryCodeSettings" status="mapCountryCodes" styleClass="btn noUnderline" action="{!delCountryCodeRows}" value="X">
+                                        <apex:param assignTo="{!countryCodeRowToRemove}" name="countryCodeRowToRemove" value="{!countryCodeRowNum}" />
+                                    </apex:commandLink>
+                                    <apex:variable var="countryCodeRowNum" value="{!countryCodeRowNum + 1}" />
+                                </apex:column>
+                            </apex:pageBlockTable>   
+                            <apex:outputPanel styleClass="country-code-setting-divider">
+                                <div class="hr gray"></div>
+                                <div class="hr white"></div>
+                            </apex:outputPanel>   
+                            <apex:actionFunction name="setDefaultOutboundSMSCountryCodeValue" reRender="false">
+                                <apex:param name="x" value="x" assignTo="{!CustomCallCenterSettings.Default_Outbound_SMS_Country_Code__c}"/>
+                            </apex:actionFunction>
+                            <apex:pageBlockSection columns="1">
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputPanel >
+                                        <apex:outputLabel styleClass="outbound-sms-label" value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Default_Outbound_SMS_Country_Code__c.label}" />
+                                        <select id="outboundSMSDropdown" onchange="setDefaultOutboundSMSCountryCodeValue(this.value)">
+                                            <option value=" ">-- Choose a country code --</option>
+                                        </select>
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                            <script type="text/javascript">
+                            j$ = jQuery.noConflict();
+                            
+                            j$('.countryCodeInput').each(function(){
+                                j$(this).intlTelInput({
+                                    utilsScript: "{!URLFOR($Resource.purecloud__intl_tel_input , 'build/js/utils.js')}"
+                                });
+                                
+                                //Hide the textbox portion. We just want the drop-down
+                                j$(this).hide();
+                                
+                                //Get the ids and elements of all the other related items for this row
+                                var id = j$(this).attr('id');
+                                var dialCodeId = id.replace('countryCodeInput', 'countryDialCode');
+                                var iso2Id = id.replace('countryCodeInput', 'countryIso2');
+                                var labelId = id.replace('countryCodeInput', 'countryCodeDescription');                            
+                                var label = j$(document.getElementById(labelId));
+                                var dialCode = j$(document.getElementById(dialCodeId));
+                                var iso2 = j$(document.getElementById(iso2Id));
+                                
+                                
+                                //Auto-select the country based on the previously saved values
+                                var country = iso2.val();
+                                if(country != null && country != ''){
+                                    j$(this).intlTelInput("setCountry", country);
+                                }
+                                
+                                //Populate the label with the selected country info
+                                j$(this).on("country-change", function(){
+                                    var selectedCountry = j$(this).intlTelInput("getSelectedCountryData");
+                                    dialCode.val("+" + selectedCountry.dialCode);
+                                    iso2.val(selectedCountry.iso2);
+                                    label.text(selectedCountry.name + " +" + selectedCountry.dialCode);
+                                });
+                                
+                                //Trigger a fake change event to populate the initial data
+                                j$(this).trigger("country-change");
+                            });
+
+                            // Populate country codes for outbound SMS
+                            var selectedCountryCode = '{!CustomCallCenterSettings.purecloud__Default_Outbound_SMS_Country_Code__c}';
+                            j$('#outboundSMSDropdown').append(j$.fn.intlTelInput.getCountryData().map(function (country) {
+                                return '<option value="' + country.iso2 + '" ' + ((country.iso2 == selectedCountryCode) ? 'selected' : '') + '>' + country.name + ' +' + country.dialCode + '</option>';
+                            }).join(''));
+
+                            </script>
+                        </apex:outputPanel>
+                        <apex:pageBlockButtons location="bottom">                   
+                            <apex:commandButton value="Save" disabled="{!IF(SelectedCallCenterId=='',true,false)}" action="{!Save}" styleClass="save-btn"/>    
+                        </apex:pageBlockButtons>
+                    </apex:pageBlock>
+                    <apex:pageBlock title="Activity Field Mapping" helpTitle="Activity Field Mapping" helpUrl="https://help.mypurecloud.com/?p=69008">                        
+                        <apex:outputPanel id="mappingTable">
+                            <apex:variable var="rowNum" value="{!0}" />
+                            <apex:actionStatus id="mapAction">
+                                <apex:facet name="start">
+                                    <c:LoadingSpinner />
+                                </apex:facet>
+                                <apex:facet name="stop">
+                                    <apex:pageBlockTable styleClass="attrTable" value="{!attrWrappers}" var="key" columnsWidth="45%, 45%, 5%" style="width:50%;min-width:600px;">   
+                                        <apex:column headerValue="Interaction Attributes">
+                                            <apex:inputText disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!key.activityAttribute.purecloud__ININ_Attribute__c}" styleClass="attrInput" />
+                                            <apex:outputLabel styleClass="errorMsg" value="{!key.ininErrorMsg}"></apex:outputLabel>
+                                        </apex:column>
+                                        <apex:column headerValue="Salesforce Fields">
+                                            <apex:selectList disabled="{!IF(SelectedCallCenterId=='',true,false)}" style="width:95%" value="{!key.activityAttribute.purecloud__SF_Attribute__c}" size="1">
+                                                <apex:selectOptions value="{!TaskFields}"/>
+                                            </apex:selectList>
+                                            <apex:outputLabel styleClass="errorMsg" value="{!key.sfErrorMsg}"></apex:outputLabel>
+                                        </apex:column>
+                                        <apex:column styleClass="attrActions">
+                                            <apex:facet name="header"><apex:commandButton disabled="{!IF(SelectedCallCenterId=='',true,false)}" reRender="mappingTable" status="mapAction" action="{!addRows}" value="Add"/></apex:facet>
+                                            <apex:commandLink reRender="mappingTable" status="mapAction" styleClass="btn noUnderline" action="{!delRow}" value="X">
+                                                <apex:param assignTo="{!rowToRemove}" name="rowToRemove" value="{!rowNum}" />
+                                            </apex:commandLink>
+                                            <apex:variable var="rowNum" value="{!rowNum + 1}" />
+                                        </apex:column>
+                                        <apex:pageMessages id="mappingMsg"></apex:pageMessages>
+                                    </apex:pageBlockTable>  
+                                </apex:facet>
+                            </apex:actionStatus>
+                        </apex:outputPanel>
+                        <apex:pageBlockButtons location="bottom">                                        
+                            <apex:commandButton disabled="{!IF(SelectedCallCenterId=='',true,false)}" action="{!Save}" value="Save" styleClass="save-btn"/>
+                        </apex:pageBlockButtons>                
+                    </apex:pageBlock>
+                    <apex:pageBlock id="callControls" title="Call Controls" helpTitle="Call Controls" helpUrl="https://help.mypurecloud.com/?p=231593" >                                                         
+                        <c:MultiselectPicklist parentController="{!this}" callCenter="{!SelectedCallCenterId}" title="Call Controls" type="CallControl"  />
+                        <apex:pageBlockButtons location="bottom">
+                            <apex:commandButton value="Save" disabled="{!IF(SelectedCallCenterId=='',true,false)}" action="{!Save}" styleClass="save-btn"/>
+                        </apex:pageBlockButtons>
+                    </apex:pageBlock>
+                    <apex:pageBlock id="interactionDetails" title="Customize Interaction Details" helpTitle="Customize Interaction Details" helpUrl="https://help.mypurecloud.com/?p=69156" >                                                         
+                        <c:MultiselectPicklist parentController="{!this}" callCenter="{!SelectedCallCenterId}" title="Call Details" type="Call"  />
+                        <c:MultiselectPicklist parentController="{!this}" callCenter="{!SelectedCallCenterId}" title="Callback Details" type="Callback"  />
+                        <c:MultiselectPicklist parentController="{!this}" callCenter="{!SelectedCallCenterId}" title="Chat Details" type="Chat"  />
+                        <c:MultiselectPicklist parentController="{!this}" callCenter="{!SelectedCallCenterId}" title="Email Details" type="Email"  />
+                        <c:MultiselectPicklist parentController="{!this}" callCenter="{!SelectedCallCenterId}" title="Message Details" type="Message"  />
+                        <apex:pageBlockButtons location="bottom">
+                            <apex:commandButton value="Save" disabled="{!IF(SelectedCallCenterId=='',true,false)}" action="{!Save}" styleClass="save-btn"/>
+                        </apex:pageBlockButtons>
+                    </apex:pageBlock>
+                    <apex:pageBlock title="Contact Search" helpTitle="Contact Search" helpUrl="https://help.mypurecloud.com/?p=161821">
+                        <apex:pageBlockSection columns="1" id="clientSearchSettings">
+                            <apex:outputPanel >
+                                <apex:outputLabel styleClass="client-search-label" value="Client Search Settings" />
+                                <apex:pageBlockSection columns="1" id="searchSettings">
+                                    <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Search_People__c.inlineHelpText}">
+                                        <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Search_People__c.label}" />
+                                        <apex:inputCheckbox disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__Search_People__c}" id="searchPeople" required="false" /> 
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Search_Queues__c.inlineHelpText}">
+                                        <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Search_Queues__c.label}" />
+                                        <apex:inputCheckbox disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__Search_Queues__c}" id="searchQueues" required="false" /> 
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Search_External_Contacts__c.inlineHelpText}">
+                                        <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Search_External_Contacts__c.label}" />
+                                        <apex:inputCheckbox disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__Search_External_Contacts__c}" id="searchExternalContacts" required="false" /> 
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Search_Salesforce__c.inlineHelpText}">
+                                        <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__Search_Salesforce__c.label}" />
+                                        <apex:inputCheckbox disabled="{!IF(SelectedCallCenterId=='',true,false)}" value="{!CustomCallCenterSettings.purecloud__Search_Salesforce__c}" id="searchSalesforce" required="false">
+                                            <apex:actionSupport event="onchange" action="{!loadCTISearchableObjects}" rerender="clientSearchSettings" status="mapObjectPhoneAction"/>
+                                        </apex:inputCheckbox>
+                                    </apex:pageBlockSectionItem>
+                                </apex:pageBlockSection>
+                            </apex:outputPanel>
+                            <apex:outputPanel >
+                                <div class="hr gray"></div>
+                                <div class="hr white search-settings"></div>
+                            </apex:outputPanel>
+                            <apex:outputPanel id="mapObjectPhoneTable">
+                                <apex:variable var="objectPhoneRowNum" value="{!0}" />
+                                <apex:actionStatus id="mapObjectPhoneAction">
+                                    <apex:facet name="start">
+                                        <c:LoadingSpinner />
+                                    </apex:facet>
+                                    <apex:facet name="stop">
+                                        <apex:pageBlockTable id="objectPhoneTable" rendered="{!CustomCallCenterSettings.purecloud__Search_Salesforce__c}" styleClass="attrTable" value="{!ctiContactSearchList}" var="contactSearch" columnsWidth="45%, 45%, 5%" style="width:50%;min-width:600px;">                                
+                                            <apex:column headerValue="Objects to Search">
+                                                <apex:selectList disabled="{!IF(SelectedCallCenterId=='',true,false)}" style="width:95%" value="{!contactSearch.ctiContactSearch.purecloud__Object_Name__c}" size="1">
+                                                    <apex:actionSupport event="onchange" action="{!UpdateAvailablePhoneFields}" reRender="phoneFields">
+                                                        <apex:param assignTo="{!objectPhoneRowToUpdate}" name="objectPhoneRowToUpdate" value="{!objectPhoneRowNum}" />
+                                                    </apex:actionSupport>
+                                                    <apex:selectOptions value="{!ctiSearchableObjects}"/>
+                                                </apex:selectList>
+                                                <apex:outputLabel styleClass="errorMsg" value="{!contactSearch.objectErrorMsg}"></apex:outputLabel>
+                                            </apex:column>
+                                            <apex:column headerValue="Phone Fields to Return">
+                                                <apex:selectList disabled="{!IF(SelectedCallCenterId=='',true,false)}" id="phoneFields" multiselect="true" value="{!contactSearch.selectedPhoneFields}" style="width:95%">
+                                                    <apex:selectOptions value="{!contactSearch.phoneFieldOptions}"/>
+                                                </apex:selectList>
+                                                <apex:outputLabel styleClass="errorMsg" value="{!contactSearch.phoneErrorMsg}"></apex:outputLabel>
+                                            </apex:column>
+                                            <apex:column styleClass="attrActions">
+                                                <apex:facet name="header"><apex:commandButton disabled="{!IF(SelectedCallCenterId=='',true,false)}" reRender="mapObjectPhoneTable" status="mapObjectPhoneAction" action="{!addObjectPhoneRows}" value="Add"/></apex:facet>
+                                                <apex:commandLink reRender="mapObjectPhoneTable" status="mapObjectPhoneAction" styleClass="btn noUnderline" action="{!delObjectPhoneRow}" value="X">
+                                                    <apex:param assignTo="{!objectPhoneRowToRemove}" name="objectPhoneRowToRemove" value="{!objectPhoneRowNum}" />
+                                                </apex:commandLink>
+                                                <apex:variable var="objectPhoneRowNum" value="{!objectPhoneRowNum + 1}" />
+                                            </apex:column>
+                                        </apex:pageBlockTable>
+                                    </apex:facet>
+                                </apex:actionStatus>
+                            </apex:outputPanel>
+                        </apex:pageBlockSection>
+                        <apex:pageBlockButtons location="bottom">                                        
+                            <apex:commandButton disabled="{!IF(SelectedCallCenterId=='',true,false)}" action="{!Save}" value="Save" styleClass="save-btn"/>
+                        </apex:pageBlockButtons>  
+                    </apex:pageBlock>
+                    <apex:pageBlock title="Extension Point Settings" helpTitle="Extension Points" helpUrl="https://help.mypurecloud.com/?p=225479">
+                        <apex:pageBlockSection columns="1" id="extensionPointsSettings">
+                            <apex:pageBlockSectionItem helpText="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__CTI_Extension_Apex_Class__c.inlineHelpText}">
+                                <apex:outputLabel value="{!$ObjectType.purecloud__CallCenterCustomSettings__c.Fields.purecloud__CTI_Extension_Apex_Class__c.label}" />
+                                <apex:outputPanel styleClass="staticInput">
+                                    <div class="mouseOverInfoOuter" onmouseover="addMouseOver(this)">
+                                        <apex:selectList id="extensionClass" multiselect="false" value="{!CustomCallCenterSettings.purecloud__CTI_Extension_Apex_Class__c}" size="1">
+                                            <apex:selectOptions value="{!extensionClassOptions}"/>
+                                        </apex:selectList> 
+                                        <img src="../img/alohaSkin/help_grey.png" class="help-icon"/>
+                                        <div class="mouseOverInfo">
+                                            <div class="body">Your Apex class only appears as an option if the class implements a CTI extension interface and is declared as global.</div>
+                                        </div>
+                                    </div>
+                                </apex:outputPanel>
+                            </apex:pageBlockSectionItem> 
+                        </apex:pageBlockSection>
+                        <apex:pageBlockButtons location="bottom">                                        
+                            <apex:commandButton disabled="{!IF(SelectedCallCenterId=='',true,false)}" action="{!Save}" value="Save" styleClass="save-btn"/>
+                        </apex:pageBlockButtons>
+                    </apex:pageBlock>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            
+        </apex:form>
+    </div>
+    
+</apex:page>

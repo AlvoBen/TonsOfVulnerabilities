@@ -1,0 +1,72 @@
+﻿<!--
+LWC Name        : demographicSummaryComponentLightning.html
+Function        : 
+
+Modification Log:
+* Developer Name                     Date                         Description
+* Muthukumar                         09/08/2022                   US-3279519 update plan demographic
+* Vardhman Jain                      10/20/2023                   US-5009031 update Commercial demographic
+*-->
+<template>
+    <template if:true={display}>
+        <template if:true={displayButtons}>
+            <template if:true={displayBtnReadMsg}>
+                <div class="slds-m-left_medium slds-m-right_medium">
+                    <c-case-process-display-msg-hum icon-type="utility:warning" help-text-msg="Warning" message={btnReadMessage}></c-case-process-display-msg-hum>
+                </div>
+            </template>
+        </template>
+            <div class="slds-p-left_large slds-p-right_large">
+                <c-display-fields-in-two-column-hum section-data={inputArray}></c-display-fields-in-two-column-hum>
+            </div>
+			<template if:false={displaybottom}>
+            <div class="slds-m-top_x-small slds-m-bottom_x-small 
+            slds-align_absolute-center top-next-btn-holder-height btn-cont">
+            <div class="btn-div">
+            <template for:each={buttonArray} for:item="button">
+                <div key={button.order}>
+                    <lightning-button 
+                        data-id={button.order}
+                        onclick={triggerInstructions}
+                        variant="brand" 
+                        label={button.label} 
+                        title={button.title} 
+                        disabled={button.disabled}
+                        class="slds-m-left_x-small">
+                    </lightning-button>
+                </div>
+            </template>
+            </div>
+        </div>
+    </template>
+            <div class="slds-p-top_large">
+                <template if:true={displaybottom}>
+                    <template if:true={displayButtons}>
+                        <template if:false={isEnd}>
+                            <div class="slds-m-left_medium slds-m-right_medium">
+                                   <c-case-process-display-msg-hum message={flowMessage}></c-case-process-display-msg-hum>
+                            </div>
+                        </template>
+                        <div class="slds-m-top_x-small slds-m-bottom_x-small 
+                        slds-align_absolute-center top-next-btn-holder-height btn-cont">
+                            <div class="btn-div-bottom slds-m-right_medium">
+                                <template for:each={buttonArray} for:item="button">
+                                    <div key={button.order}>
+                                        <lightning-button 
+                                            data-id={button.order}
+                                            onclick={triggerInstructions}
+                                            variant="brand" 
+                                            label={button.label} 
+                                            title={button.title} 
+                                            disabled={button.disabled}
+                                            class="slds-m-left_x-small">
+                                        </lightning-button>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+            </div>
+        </template>
+</template>

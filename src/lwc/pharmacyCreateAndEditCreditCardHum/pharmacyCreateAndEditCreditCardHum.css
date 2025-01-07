@@ -1,0 +1,28 @@
+.section-background {
+    background-color: rgb(209,238,254);
+    max-width: 100%;
+    height: fit-content;
+}
+
+.card-details{
+    /* width: 311px;
+    height: 196px; */
+    border-radius: 10px;
+    /* background: rgba(194,232,255,0.75); */
+    box-shadow: 14.6469px 17.5762px 29.2937px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20.5056px);
+    background: linear-gradient(112.91deg, rgba(255, 255, 255, 0.51) 3.51%, rgba(255, 255, 255, 0) 111.71%);
+    filter: drop-shadow(14.6469px 17.5762px 29.2937px rgba(0, 0, 0, 0.1));
+    margin: auto;
+    /*position: absolute;*/
+    top: spacingNone;
+    bottom: spacingNone;
+    width: 324px;
+    height: 203px;
+    margin-left: 20px;
+    /* top: 342px; */
+}
+
+.input-min-width {
+    min-width: 0px;
+}

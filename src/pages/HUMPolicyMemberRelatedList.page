@@ -1,0 +1,5 @@
+﻿<apex:page standardController="Account" showHeader="false" sidebar="false">
+<apex:form >
+    <c:HUMPolicyRelatedListComponent AccountId="{!Account.id}"></c:HUMPolicyRelatedListComponent>
+ </apex:form>
+</apex:page>

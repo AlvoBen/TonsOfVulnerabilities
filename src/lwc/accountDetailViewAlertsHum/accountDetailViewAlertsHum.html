@@ -1,0 +1,65 @@
+﻿<!-- sldsValidatorIgnore -->
+<!--
+LWC Name        : accountDetailViewAlertsHum.html
+Function        : Alerts icon on highlights panel
+
+Modification Log:
+* Developer Name                  Date                         Description
+*
+* Ritik Agarwal                   04/26/2021                 initial version US-1464401
+* Supriya Shastri                 04/26/2021                 added conditions to render icon for US-1464401
+* Aishwarya Pawar                 10/09/2021                Added Alert UI
+* Aishwarya Pawar                 05/12/2022                REQ - 3285223 Alert Configuration on Plan Member Page
+* Aishwarya Pawar                 05/12/2022                REQ - 3127063  Lightning - CRM90 Day Recertification Notification in Medicaid Details Section  for OH MCD
+* Jonathan Dickinson              03/31/2023                User Story 4365030: T1PRJ0865978-MF 23786 -SF - TECH DF - 7268 - By Delivering or Terming an Alert, the number of alerts displayed in the bubble isn't auto updating causing a mism
+****************************************************************************************************************************-->
+<template>
+    <div class={alertContainerClass}>
+        <div class="slds-is-relative">
+            <div class="slds-is-relative">
+                <c-alert-icon-hum alert-count={alertCount} onshowalert={handleShowAlert} onrefresh={handleRefresh}></c-alert-icon-hum>
+            </div>
+
+            <div if:true={alertCountdisplay}>
+                <section aria-describedby="dialog-body-id-33" aria-label="Dialog Title" class={RccGboSection}
+                         role="dialog" if:true={displayAlertPopover}>
+                    <button 
+                            class="closebutton slds-button slds-button_icon slds-button_icon-small slds-float_right slds-popover__close slds-button_icon-inverse "
+                            onclick={hideAlert}>
+                        <lightning-icon icon-name="utility:close" size="x-small" variant="bare" class="" title="close">
+                        </lightning-icon>
+                    </button>
+                    <header class="slds-popover__header">
+                        <div class="slds-media slds-media_center slds-has-flexi-truncate ">
+                            <div class="slds-media__body">
+                                <h2 class="slds-truncate slds-text-heading_medium" id="dialog-heading-id-1"
+                                    title="Alerts"> ALERTS</h2>
+                            </div>
+                        </div>
+                    </header>
+                    <div style=" width:400px; max-height:450px;">
+                        <c-screen-flow onflowstatuschange={finishcheck} width='400px' height='450px' maxheight="true"
+                                       flow-name='NBA_Display_Recommendation_Screen_Flow' flow-params={flowParamsJSON}>
+                        </c-screen-flow>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    <template if:true={displayCommandAlertPopup}>
+        <section role="dialog" tabindex="-1" aria-label="Command Alert" aria-modal="true"
+                 class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+
+                <div class="slds-modal__content slds-p-around_medium slds-modal__content_headless"
+                     id="modal-content-id-1">
+
+                    <c-screen-flow onflowstatuschange={CloseCommandAlert} width='400px' height='350px'
+                                   flow-name='NBA_Display_Recommendation_Screen_Flow' flow-params={commandAlertFlowParamsJSON}>
+                    </c-screen-flow>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+</template>

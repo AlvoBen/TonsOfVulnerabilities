@@ -1,0 +1,351 @@
+﻿<!--
+/*
+LWC Name        : Go365 Kidsdetails.html
+Function        : LWC to display Go365 Kids  Details.
+
+Modification Log:
+* Developer Name                  Date                         Description
+* Pallavi Shewale				  02/25/2022				   US-2557646 Original Version
+* Swapnali Sonawane			      07/13/2023				   US-4812119
+***************************************************************************************************************************/
+-->
+<template>
+    <h4 class="slds-var-m-left_x-small">
+        <div class="slds-text-title_bold" style="font-size: 16px;">Go365 Details</div>
+    </h4>
+    <div class="slds-var-p-around_medium">
+        <c-generic-scoped-notification-hum message={label.go365_InfoMessage} iconname="utility:info"
+                                           type="info">
+        </c-generic-scoped-notification-hum>
+    </div>
+    <template if:true={loaded}>
+        <template if:false={isMedicareMedicaid}>
+            <div class="slds-grid slds-gutters slds-wrap slds-var-m-top_x-small slds-var-p-around_medium">
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Group Name</span>
+                                <div class="slds-form-element__control">
+                                    <div style="font-weight: bold;cursor:pointer;"
+                                         class="slds-form-element__static slds-text-link"
+                                         onclick={navigateToBusinessAccount}>
+                                        {groupName}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Group Number</span>
+                                <div class="slds-form-element__control">
+                                    <div style="font-weight: bold;" class="slds-form-element__static">
+                                        {groupNumber}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Status</span>
+                                <div class="slds-form-element__control">
+                                    <div style="font-weight: bold;" class="slds-form-element__static">
+                                        {Go365DetailResponse.status}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Go365 Age</span>
+                                <div class="slds-form-element__control">
+                                    <div style="font-weight: bold;" class="slds-form-element__static">
+                                        {Go365DetailResponse.go365Age}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Bucks</span>
+                                <div class="slds-form-element__control">
+                                    <div style="font-weight: bold;" class="slds-form-element__static">
+                                        {Go365DetailResponse.bucks}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Points</span>
+                                <div class="slds-form-element__control">
+                                    <div style="font-weight: bold;" class="slds-form-element__static">
+                                        {Go365DetailResponse.points}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Entity ID</span>
+                                <div class="slds-form-element__control">
+                                    <div style="font-weight: bold;" class="slds-form-element__static">
+                                        {Go365DetailResponse.go365EntityId}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label"> MyHumana Last Login Date</span>
+                                <div class="slds-form-element__control">
+                                    <div style="font-weight: bold;" class="slds-form-element__static">
+                                        {Go365DetailResponse.myHumanaLastLogindate}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Health Assessment (HA) Completed</span>
+                                <div class="slds-form-element__control">
+                                    <div style="font-weight: bold;" class="slds-form-element__static">
+                                        {Go365DetailResponse.healthAssessment}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Effective Date</span>
+                                <div class="slds-form-element__control">
+                                    <template if:true={Go365DetailResponse.go365}>
+                                        <div style="font-weight: bold;" class="slds-form-element__static">
+                                            The Policy's effective and end date may not apply to the Rewards program.
+                                            For Go365 effective and end date questions contact Go365 Level 2
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">MyHumana Registered</span>
+                                <div class="slds-form-element__control">
+                                    <div style="font-weight: bold;" class="slds-form-element__static">
+                                        {Go365DetailResponse.webRegistered}
+                                        <template if:true={Go365DetailResponse.memGenKey}>
+                                            <div style="font-weight: bold;cursor:pointer;float:right;width:87%"
+                                                 class="slds-text-link" onclick={openWebEmulate}>
+                                                Web Emulated
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template if:true={isMedicareMedicaid}>
+            <div class="slds-grid slds-gutters slds-wrap slds-var-m-top_x-small slds-var-p-around_medium">
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Group Name</span>
+                                <div class="slds-form-element__control">
+                                    <div style="font-weight: bold;cursor:pointer;"
+                                         class="slds-form-element__static slds-text-link"
+                                         onclick={navigateToBusinessAccount}>
+                                        {groupName}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Group Number</span>
+                                <div class="slds-form-element__control">
+                                    <div style="font-weight: bold;" class="slds-form-element__static">
+                                        {groupNumber}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Value of Rewards</span>
+                                <div class="slds-form-element__control">
+                                    <div style="font-weight: bold;" class="slds-form-element__static">
+                                        <lightning-formatted-number value={Go365DetailResponse.bucks}
+                                                                    format-style="currency" currency-code="USD" maximum-fraction-digits="2"
+                                                                    class="authvalue">
+                                        </lightning-formatted-number>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">MyHumana Registered</span>
+                                <div class="slds-form-element__control">
+                                    <div style="font-weight: bold;" class="slds-form-element__static">
+                                        {Go365DetailResponse.webRegistered}
+                                        <template if:true={Go365DetailResponse.memGenKey}>
+                                            <div style="font-weight: bold;cursor:pointer;float:right;width:87%"
+                                                 class="slds-text-link" onclick={openWebEmulate}>
+                                                Web Emulated
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Entity ID</span>
+                                <div class="slds-form-element__control">
+                                    <div style="font-weight: bold;" class="slds-form-element__static">
+                                        {Go365DetailResponse.go365EntityId}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Health Assessment (HA) Completed</span>
+                                <div class="slds-form-element__control">
+                                    <div style="font-weight: bold;" class="slds-form-element__static">
+                                        {Go365DetailResponse.healthAssessment}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label">Effective Date</span>
+                                <div class="slds-form-element__control">
+                                    <template if:true={Go365DetailResponse.go365}>
+                                        <div style="font-weight: bold;" class="slds-form-element__static">
+                                            The Policy's effective and end date may not apply to the Rewards program.
+                                            For Go365 effective and end date questions contact Go365 Level 2
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <span class="slds-form-element__label"> MyHumana Last Login Date</span>
+                                <div class="slds-form-element__control">
+                                    <div style="font-weight: bold;" class="slds-form-element__static">
+                                        {Go365DetailResponse.myHumanaLastLogindate}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <div class="slds-var-p-around_medium">
+            <div class=" slds-border_top"></div>
+        </div>
+        <div class="slds-var-p-around_medium">
+            <template if:false={bActiveDataPresent}>
+                <!-- sldsValidatorIgnoreNextLine -->
+                <lightning-datatable columns={columns} key-field="id" hide-checkbox-column="true"
+                                     class="slds-table_fixed-layout slds-table_striped" resize-column-disabled>
+                </lightning-datatable>
+                <div class="slds-var-p-top_small">
+                    This member has no Recommended or Active activities
+                </div>
+                <div class=" slds-border_bottom slds-var-p-around_x-small"></div>
+            </template>
+            <template if:true={bActiveDataPresent}>
+                <div style="max-height: 300px;">
+                    <lightning-datatable key-field="id" data={activityData} columns={columns} sorted-by={sortBy}
+                                         sorted-direction={sortDirection} onsort={handleSortData} hide-checkbox-column="true"
+                                         class="slds-table_fixed-layout slds-table_striped" resize-column-disabled>
+                    </lightning-datatable>
+                </div>
+            </template>
+        </div>
+    </template>
+    <template if:false={loaded}>
+        <lightning-spinner alternative-text="Loading"></lightning-spinner>
+    </template>
+</template>

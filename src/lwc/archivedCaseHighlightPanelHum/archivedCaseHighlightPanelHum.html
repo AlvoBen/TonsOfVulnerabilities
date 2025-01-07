@@ -1,0 +1,49 @@
+﻿<template>
+
+   <div class="highlights-panel">
+
+      <div class="slds-page-header slds-page-header_record-home">
+         <div class="highlights-container">
+            <div class="slds-page-header__row slds-grid_vertical-align-center">
+               <div class="slds-page-header__col-title">
+                  <div class="slds-media">
+                     <div class="slds-media__figure">
+                        <lightning-icon icon-name="standard:case" size="medium" slot="icon">
+                        </lightning-icon>
+                     </div>
+                     <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                           <div class="slds-page-header__name-title">
+                              <h1>
+                                 <span>Case</span>
+                                 <span
+                                    class="slds-page-header__title slds-truncate slds-text-heading_medium slds-m-top_x-small">
+                                    <b>{caseNum}</b>
+                                 </span>
+                              </h1>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="slds-page-header__row slds-page-header__row_gutters">
+            <div class="slds-page-header__col-details">
+               <div class="slds-grid slds-page-header__detail-row slds-p-top_none slds-p-bottom_none">
+                  <div class="hc-fields">
+                     <template for:each={highlightModel} for:item="field">
+                        <div key={field} class="column">
+                           <div class="slds-truncate field-title" title="random label"><b>{field.label}</b></div>
+                           <div class="slds-truncate" style="padding-top: 1px">
+                              {field.value}
+                           </div>
+                        </div>
+                     </template>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</template>

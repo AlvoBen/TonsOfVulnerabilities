@@ -1,0 +1,58 @@
+﻿<!--
+LWC Name        : GrievanceAndAppealsDetailsHum.html
+Function        : LWC to display Grievance and Appeal Detail Section
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Abhishek Mangutkar             10/12/2022                 initial version - US - 3833504
+* Jonathan Dickinson             12/02/2022                 US - 4016881
+*****************************************************************************************************************************-->
+<template>
+
+    <template if:true={detailsObj}>
+        <div class="slds-grid slds-gutters slds-wrap slds-p-vertical_medium">
+            <div class="slds-grid slds-col slds-wrap slds-border_right slds-size_3-of-7">
+                <template for:each={detailsObj} for:item="item">
+
+                    <div key={item.fieldname} class={item.gridSize}>
+
+                        <span style='font-weight: 500' class={item.labelClass} title={item.fieldname}>{item.fieldname}</span>
+
+                        <template if:true={item.fieldvalue}>
+                            <template if:true={item.copyableField}>
+                                <span style="position: relative; bottom: 4px;">
+                                    <c-generic-copy-icon-hum copycontent={item.fieldvalue}></c-generic-copy-icon-hum>
+                                </span>
+                            </template>
+                            <div title={item.fieldvalue} class={item.valueClass}>
+                                {item.fieldvalue}
+                            </div>
+                        </template>
+                        <template if:false={item.fieldvalue}>
+                            <div class='slds-p-vertical_medium slds-p-left_medium'>
+                            </div>
+
+
+                        </template>
+                    </div>
+
+                </template>
+                <div class="slds-col slds-size_3-of-3">
+                    <lightning-button variant="brand-outline" label="View Document" title="View Document" onclick={redirectToDocumentlist} class="slds-float_right slds-m-vertical_medium"></lightning-button>
+                </div>
+            </div>
+            <div class="slds-col slds-size_4-of-7">
+                <template if:true={commentsTimelineData}>
+                    <div class="slds-p-top_small slds-text-title_bold" style="font-size: 16px;">Comments</div>
+                    <div class="slds-scrollable_y fixTableHead" style="height:400px;">
+                        <c-generic-history-timeline-hum historytimelinedata={commentsTimelineData}>
+                        </c-generic-history-timeline-hum>
+                    </div>
+                </template>
+
+            </div>
+        </div>
+    </template>
+
+</template>

@@ -1,0 +1,110 @@
+﻿<!--
+Page Name        : HUMEligibilityInfo_R1
+Version          : 1.0 
+Created Date     : APRIL 02 2015
+Function         : Page used to display the indicators associated to the Policy Member record.
+Modification Log :
+* Developer                     Code Review              Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Harshith M L                  22313                    04/02/2015           Original Version
+* Manish Kumar                                           06/27/2016           Modified version 
+* Gargey Sharma                 34890                    08/08/2016           REQ - 269734 : Ability to view AEC Care Manager Information in CRM
+* Sharan Shanmugam									  	 04/18/2017			  REQ - 291107 : Ability to view MTM indicator
+* Avinash Choubey				90004					 05/05/2017			  REQ - 303396 : Show only LIS for Pharmacy User
+* Rajesh Keswani                116759                   07/20/2017           Implementation of REQ - 323389 - adding networkId in service request
+* Piyusha Babar                			                 12/18/2017           REQ - 350357 Ability to view Segment Code on the Member Policy Page (RF)
+* Amar Gadewar					184004					 02/14/0218			  REQ - 350832 - Ability to view Segment Code on the Member Policy Page (CRM)
+* Sai Ayyagari                  184451              02/21/2018                REQ - 350853 Fix for HUMExceptionHelper, store the list of exceptions capture
+* Sai Ayyagari                  214956	                 04/23/2018           REQ - 350870 Convert HumCIMedicareMemberService to Async
+* Subhamay Mandal               		                 06/12/2018           REQ-363629: Member policy pag: "jump links", �New Case� button not floating down the page -RFSUP Use
+* Amol Patil                                             07/24/2018           REQ - 358964 Ability for CRM to display additional Care Managers
+* Amol Patil                                             08/21/2018           Defect 379162.0001 Hover text changes for req 358964
+* Amol Patil                                             08/27/2018           Defect 379956.0001 Changed Spacing between the Button and Table for req 358964
+* Sumit Pharande                303900					 10/30/2018           Incident 7861339 Fix
+* Shailesh Mali					353777					 04/25/2019			  REQ - 396397 Hover issue fixed.
+* Aamr Gadewar                                           08/21/2019           REQ - 406850 AHT - All Users - Link to LIS Document from Policy Member page (RF)
+* Jasmeen Shangari                                       12/19/2019           Fix for CA Ticket 8696945 for Eligibility section
+* Ajay Chakradhar                                        05/14/2021           User Story 2265486: T1PRJ0002606/PR00094268 - MF6 - SF - TECH - INC1083073 - Pop up messages displaying outside the message box area.
+-------------------------------------------------------------------------------------------------------------------------------> 
+
+<apex:page sidebar="false" showHeader="false" standardController="Policy_Member__c" extensions="HUMEligibilityInfoController" id="thePage">
+<apex:styleSheet value="{!URLFOR($Resource.HumPolicyMemberEligibilityInformation, 'HumPolicyMemberEligibilityInformation/HumPolicyMemberEligibilityInformationPageStyle.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.HumPolicyMemberEligibilityInformation,'HumPolicyMemberEligibilityInformation/HumPolicyMemberEligibilityInformationComponentJS.js')}"/>
+ <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CSS/HoverOver.css')}"/> 
+    <apex:pageblock rendered="{!bProcessFlag}" id="pbEligibility">
+		<c:loadingImage />
+        <apex:outputText value="" rendered="false">{!Policy_Member__c.Policy__r.Major_LOB__c}</apex:outputText>
+        <apex:panelGrid columns="7">
+        <apex:form id="aecdet"> 
+            <!-- For Constructor Related exception -->
+            <c:HUMConstructorExceptionComponent errorLogs="{!listErrorLogs}" />
+	    <apex:outputText styleclass="fontBold" value="{!$Label.HUMContractId}"/>&nbsp;&nbsp;
+            <apex:outputText value="{!Policy_Member__c.Policy__r.Contract_Number__c}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+         
+            <apex:outputText styleclass="fontBold" value="{!$ObjectType.Policy__c.Fields.PBP_Code__c.Label}"/>&nbsp;&nbsp;
+            <apex:outputText value="{!Policy_Member__c.Policy__r.PBP_Code__c}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+            
+            <apex:outputText styleclass="fontBold" value="{!$Label.HUMSegmentCode}" >&nbsp;&nbsp;</apex:outputText>
+            <apex:outputText value="{!Policy_Member__c.Policy__r.Medicare_Segment_ID__c}" >&nbsp;&nbsp;&nbsp;&nbsp;</apex:outputText>
+                     
+            <apex:commandButton value="{!$Label.CareManagerDetails_HUM}" onclick="callLoading();return false;" reRender="tableDivId" />
+            <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea" rendered="{!!bIsPharmacyUser}">
+            <a onclick="javascript:void(O);" html-log_this="false">
+                    <apex:image id="lnkImg" style="margin-top: 2px; margin-left: 1px;" styleClass="imgMargin hoverimagesize" value="{!$Resource.HUMHoverOverQuestionMark}"/>
+                    <apex:outputPanel styleClass="hoverfontstyle">{!$Label.CareManagerHelpTextDTO_HUM}</apex:outputPanel>
+                    <style>
+                        .vfHelpText a:hover span {height:50px !IMPORTANT;width:270px !IMPORTANT;top: -1.25em !IMPORTANT;left: -15.00em !IMPORTANT;line-height: 1.2em;}
+                    </style>
+                 </a>
+             </apex:outputPanel>
+                 <apex:outputPanel id="tableDivId">
+              <apex:outputPanel id="MangerDetail" rendered="{!bTable}">
+             <table id="clinicalCareManagerTable" style="margin-top: 10px;">
+                <tr id="tableRow" class="headerClass headerBgColor" > 
+                
+                  <th class="textPadding"> Care Manager Type</th>
+                  <th class="textPadding"> Care Manager Name</th>
+                  <th class="textPadding"> Phone Number</th>
+                  
+                </tr>
+            
+               <apex:repeat value="{!mngrDetails}" var="a" >
+                 <tr class="headerClass hideClass" id="repeatId">
+                    <td class="textPadding">{!a.Type}  </td>
+                    <td class="textPadding">{!a.Name} </td>
+                    <td class="textPadding">{!a.PhoneNumber} </td>
+                  </tr>
+                 </apex:repeat> 
+             </table>  
+           <a onclick="hideManagerFunction()" id="hideLink" class="showHidelink">Hide</a>
+           <a onclick="showManagerFunction()" id="showLink" class="showHidelink">Show More</a>
+          <script>
+                      jQuery("#showLink").hide();
+          </script>
+          </apex:outputPanel>
+          </apex:outputPanel>
+          
+            
+           <apex:actionFunction name="managerData" action="{!retrieveCareManagerDetailById}" rerender="tableDivId" oncomplete="closeLoading();return false;"/>
+                <apex:actionFunction name="jsCallGetMemberService" action="{!callCIMedMultipleMemberService}" reRender="pbEligibility">
+                <apex:param name="userNetworkId" value=""/>
+                </apex:actionFunction>
+          </apex:form>
+                        
+        </apex:panelGrid>   
+        <br/>
+		<apex:outputPanel styleClass="eligibilityComponent">
+		<div style="margin-top: 10px;">
+          <c:HUMPolicyMemberEligibilityComponent_R1 mapEligibilityInfo="{!mapEligibilityInfo}" sectionPriorityList="{!lstSectionName}" fieldPriorityList="{!lstFieldNames}" noServiceResponse="{!bNoResponse}" lisComparisionMentorUrl="{!sLISComparisionMentorUrl}"/>
+		 </div> 
+		</apex:outputPanel>
+    </apex:pageblock>
+    <apex:outputPanel rendered="{!bProcessFlag}" id="pbEligibilityJSBlock">
+    <script>
+//dont enable P9 Critical Fix     var j$ = jQuery.noConflict();
+     jQuery(document).ready(function() {    
+     	jsCallGetMemberService('{!$User.Network_User_Id__c }');
+     });
+    </script>
+    </apex:outputPanel>
+</apex:page>

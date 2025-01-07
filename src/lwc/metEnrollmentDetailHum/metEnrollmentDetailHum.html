@@ -1,0 +1,45 @@
+﻿<template>
+    <article class="slds-card slds-card_boundary slds-grid slds-grid--vertical full-container slds-scrollable">
+        <div class="hc-standard-table-styles">
+            <header class="slds-card__header slds-grid slds-p-right_none slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <lightning-icon icon-name="standard:case"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">MET Enrollment ({totalRecords})</h2>
+                </div>
+            </header>
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_1-of-12"></div>
+                        <div class="slds-col slds-size_1-of-12"></div>
+                        <template if:true={showTrackID}>
+                    <lightning-formatted-text value="TrackID"></lightning-formatted-text> &nbsp;&nbsp;&nbsp;
+                    <template if:true={TrackID}>
+                                <lightning-formatted-text value={TrackID} class="copy-Me"></lightning-formatted-text>  &nbsp;&nbsp;
+                                <button
+                                    class="custom-tooltip-icon slds-button slds-button_icon slds-button slds-button_icon"
+                                    aria-describedby="custom-help" aria-disabled="true" onclick={CopyToClipboard} onmouseover={omMouseOver} onmouseout={onMouseOut}>
+                                    <lightning-icon class="my-icon" icon-name="utility:copy" size="xx-small" ></lightning-icon>
+                                                    
+                                </button>
+                                <div class={popOverCss} role="tooltip"
+                                        id="custom-help" data-custom-help="custom-help">
+                                        <div class="slds-popover__body">
+                                            <lightning-formatted-rich-text value={helpText}></lightning-formatted-rich-text>
+                                        </div>
+                                    </div>   
+                            </template>
+<br/><br/>
+</template>
+</div>
+</div>
+<div>
+    <lightning-datatable class={sldsTable} min-column-width={minColWidth} key-field="id" data={METData} columns={METcolumns} hide-checkbox-column="false" wraptextmaxlines="10" sorted-by={sortBy} sorted-direction={sortDirection} onsort={doSorting}>
+    </lightning-datatable>
+    <template if:true={recordslength}>
+        <button class="slds-button slds-button_stretch slds-button_neutral slds-is-static hc-cursor"
+             onclick={onViewAllClick}>{labels.HUMViewAll}</button>
+    </template>
+</div>
+</article>
+</template>

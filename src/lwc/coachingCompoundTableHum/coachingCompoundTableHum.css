@@ -1,0 +1,90 @@
+.boldedText {
+    font-weight: bold;
+}
+
+.std-table-buttons-group {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+    .std-table-buttons-group .slds-col:first-child {
+        width: 100%;
+    }
+
+.status-termed {
+    color: red;
+    font-size: 42px;
+}
+
+.status-active {
+    color: green;
+    font-size: 42px;
+}
+
+.status-future {
+    color: blue;
+    font-size: 42px;
+}
+
+.cell-status {
+    display: flex;
+    align-items: center;
+    height: 20px;
+}
+
+.button-s-wrapper {
+    width: 47%;
+}
+
+    .button-s-wrapper:nth-child(odd) {
+        margin-left: 3%;
+    }
+
+    .button-s-wrapper:nth-child(even) {
+        margin-right: 3%;
+    }
+.boldedText {
+    font-weight: bold;
+}
+
+.std-table-buttons-group {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+    .std-table-buttons-group .slds-col:first-child {
+        width: 100%;
+    }
+
+.status-termed {
+    color: red;
+    font-size: 42px;
+}
+
+.status-active {
+    color: green;
+    font-size: 42px;
+}
+
+.status-future {
+    color: blue;
+    font-size: 42px;
+}
+
+.cell-status {
+    display: flex;
+    align-items: center;
+    height: 20px;
+}
+
+.button-s-wrapper {
+    width: 47%;
+}
+
+    .button-s-wrapper:nth-child(odd) {
+        margin-left: 3%;
+    }
+
+    .button-s-wrapper:nth-child(even) {
+        margin-right: 3%;
+    }

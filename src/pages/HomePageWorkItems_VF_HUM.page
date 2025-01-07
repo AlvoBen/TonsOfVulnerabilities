@@ -1,0 +1,90 @@
+﻿<!--
+Page Name        : HomePageWorkItems_VF_HUM.page
+Version          : 1.0
+Function         : VF page to display Work Items on Home Page 
+Created On       : September 19 2016
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+*  Vishal Verma					    40368               09/19/2016          Original Version -> REQ-244451 : Due items on Home Tab 
+*  Gourab Tewary                                        03/10/2021          User Story 1896836: T1PRJ0001827- IR 5050 - Show last comment on Case&Task link hover on home page (Due Date) (CRM)
+*  Karthik Varma N R							        07/23/2021	      User Story 2503627: T1PRJ0001827 - IR 5050 - Tech Debt - Clean up switch for past releases(CRM)
+------------------------------------------------------------------------------------------------------------------------------>
+<apex:page id="pageId" controller="WorkItems_C_HUM" action="{!populateWorkItems}" showHeader="false">
+    <apex:includeScript value="/support/console/36.0/integration.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.HOMEPAGEWORKITEMS_SR_HUM, 'main.js')}"/>     
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HOMEPAGEWORKITEMS_SR_HUM, 'main.css')}"/>
+    
+
+   <apex:form id="formId">
+        
+        <apex:pageblock id="pgBlkId" Title="{!$Label.MyDueItems_WorkItem_HUM}">
+            
+            <apex:pageblockButtons location="Top">
+                <apex:commandbutton value="Refresh" action="{!populateWorkItems}" rerender="gridId,Op1" />
+            </apex:pageblockButtons>
+                <apex:outputPanel id="Op1" >
+                <apex:outputPanel style="height:250px;position: relative; left: 2%;" rendered="{! IF(sMessage == '' , False,True)}">                   
+                    <apex:outputtext value="{!sMessage}" />                
+                </apex:outputPanel>
+
+                <apex:outputPanel style="position: relative;left: 2%" styleClass="colorRed fontBold" rendered="{! IF(sErrorMessage == '' , False,True)}">                   
+                    <apex:outputtext value="{!sErrorMessage}" />                   
+                </apex:outputPanel>
+               <br/><div style="margin-top:8px; margin-bottom:8px;">
+                <apex:outputText style="position: relative; left: 2%;" value="{!$Label.Due_Item_Note}"/>
+            </div> 
+            </apex:outputPanel>        
+            <apex:pageblockSection id="gridId" >
+                <apex:pageblockSection columns="2">
+                    <apex:pageblock >
+                        <apex:outputText value="{!$Label.MyOverDueItems_WorkItem_HUM}" styleClass="fontBold" />
+                        <apex:outputText value=" (Total Items - {!iOverDueCount})" styleClass="fontBold" />
+                        <BR/> 
+                        <apex:pageblockTable value="{!OverDueList}" var="Item">
+                            <apex:column >
+                                <apex:facet name="header">{!$Label.CaseTaskID_WorkItem_HUM}</apex:facet>
+                                <a href="javascript:void(0);" id="{!Item.sRecordId}" onclick="openCaseTask('{!Item.sRecordId}','{!Item.sCaseTaskId}'); return false;" onmouseout="clearPopUpComments();"  onmouseover="openPopUpComments('{!Item.sRecordId}');">{!Item.sCaseTaskId}</a>
+                            </apex:column>
+                            <apex:column >
+                                <apex:facet name="header">{!$Label.DueDate_WorkItem_HUM}</apex:facet>
+                                <apex:outputText value="{0,date,MM/dd/yyyy}" styleClass="colorRed fontBold">
+                                    <apex:param value="{!Item.dDueDate}" />
+                                </apex:outputText>
+                            </apex:column>
+                        </apex:pageblockTable> 
+                    </apex:pageblock>
+                   
+
+                    <apex:pageblock >
+                        <apex:outputText value="{!$Label.MyNearDueItems_WorkItem_HUM}" styleClass="fontBold" />
+                        <apex:outputText value=" (Total Items - {!iNearDueCount})" styleClass="fontBold"/>
+                        <BR/>
+                        <apex:pageblockTable value="{!NearDueList}" var="Item">
+                            <apex:column >
+                                <apex:facet name="header">{!$Label.CaseTaskID_WorkItem_HUM}</apex:facet>
+                                <a href="javascript:void(0);"   id="{!Item.sRecordId}" onclick="openCaseTask('{!Item.sRecordId}','{!Item.sCaseTaskId}'); return false;" onmouseout="clearPopUpComments();"  onmouseover="openPopUpComments('{!Item.sRecordId}');" >{!Item.sCaseTaskId}</a>
+                            </apex:column>
+                            <apex:column >
+                                <apex:facet name="header">{!$Label.DueDate_WorkItem_HUM}</apex:facet>
+                                <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                    <apex:param value="{!Item.dDueDate}" />
+                                </apex:outputText>
+                            </apex:column>
+                        </apex:pageblockTable>
+                    </apex:pageblock>
+                </apex:pageblockSection>
+                
+            <apex:actionFunction name="callFunAF" action="{!getComments}" reRender="commentsComponent" oncomplete="getPopupForComments('{!$CurrentPage.parameters.sobjectIdValue}');">
+              <apex:param name="sobjectIdValue" value=""/>
+            </apex:actionFunction>
+                                   
+        </apex:pageblockSection>
+        </apex:pageblock>    
+    </apex:form>
+    <div id="commentPopUp" class="arrow_box" >
+        <c:PopUpComments_CMP_HUM id="commentsComponent" objectId="{!$CurrentPage.parameters.sobjectIdValue}"/>
+    </div>
+       
+</apex:page>

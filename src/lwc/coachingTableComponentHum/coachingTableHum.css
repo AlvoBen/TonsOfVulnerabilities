@@ -1,0 +1,77 @@
+.results-container-header {
+    display: flex;
+    align-items: center;
+    padding: 20px 20px;
+    background: white;
+    font-size: 1rem;
+}
+
+    .results-container-header lightning-helptext {
+        margin: 0 0 5px 5px;
+    }
+
+.results-table tr,
+.results-table th {
+    display: flex;
+}
+
+.results-table td,
+.results-table th {
+    flex: 1 1 25%;
+    align-items: center;
+    white-space: normal;
+}
+
+.results-table-cell-action {
+    max-width: 80px;
+}
+
+.results-icon-col {
+    max-width: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.results-table-header th {
+    background-color: #d8d8d8;
+    color: black;
+}
+
+.results-table-cell {
+    display: flex;
+    align-items: center;
+    word-break: break-word;
+}
+
+.results-table tr > td:last-child,
+.results-table tr > th:last-child {
+    padding-right: 6px;
+}
+
+
+.results-row-highlight {
+    background-color: #E6F0FC
+}
+
+.inner-table-width {
+    width: 100%;
+}
+
+.table-expand tr {
+    border-top: var(--lwc-borderWidthThin,1px) solid var(--lwc-colorBorder,rgb(221, 219, 218));
+}
+
+.table-expand th,
+.table-expand td {
+    border: none;
+}
+
+.table-expand .results-table-header,
+.table-expand .results-table-header th {
+    background-color: #FAFAF9;
+}
+
+.table-expand td:not(.results-icon-col),
+.table-expand th:not(.results-icon-col) {
+    max-width: 20%;
+}

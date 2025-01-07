@@ -1,0 +1,259 @@
+﻿<!--
+Page Name        : AttachGuidedProcessCase_CMP_HUM
+Version          : 1.0 
+Created Date     : 03/31/2016
+Function         : Component use to attach Guided process to Existing or New Case.
+Modification Log :
+* Developer                 Code review         Date                  Description
+* -------------------------------------------------------------------------------------------------
+* Praveen Kumar Parimi        27942            03/31/2016            Original Version
+* Praveen Kumar Parimi        28931            05/27/2016            Updated the functionality to open the case detail page in different subtab when clicked on casenumber.
+* Praveen Kumar Parimi        29980            06/13/2016            Updated the functionality to disable the options on log to page and show info message as part of REQ - 270127 aka 229898.0001.
+* Praveen Kumar Parimi        30989            06/22/2016            Defect fixes for 230433.0001, 230588.0001, 230591.0001.
+* Avinash Choubey             33332            07/20/2016            Chnages made as part of REQ- 270351
+* Praveen Kumar Parimi        39715            09/15/2016            Adding functionality to show the work Queue popup.
+* Pradeepkumar Dani							   04/04/2017			 CTCI Data model update REQ - 306337
+* Jamuna  Sarla                                1/23/2019             Defect 398795.0001 Defect Fix
+* Prudhvi Pamarthi                             02/06/2019                 REQ - 361155 - Not allowing case creation on Legacy Deleted policies
+* Jasmeen Shangari                             04/21/2021            Checkmarx fixes Azure ID - 2163309
+* Pinky Vijur                                    05/11/2022           User Story 2892985: T1PRJ0022885/96118 - SF - Tech - CR7/MF 10 -(HMO/IPA) Ability to house all ASO and FI Custom, along w/ FI General medical auths criteria within CRM
+------------------------------------------------------------------------------------------------------------>
+
+<apex:component id="AttachGuidedProcessCase_CMP_HUM" controller="AttachGuidedProcessCase_C_HUM" allowDML="true">    
+<apex:attribute name="ObjectId" assignTo="{!sObjectId}" type="String" description="SFDC Id of the selected object"/> 
+<apex:attribute name="SubmissionID" assignTo="{!sSubId}" type="String" description="Contains the Submission ID"/>
+<apex:attribute name="Message" assignTo="{!sMessage}" type="String" description="Contains the Message"/>
+<apex:attribute name="legacyDeleteCheck" assignTo="{!blegacyDeleteCheck}" type="Boolean" required="false" description="Boolean value to disable new and existing case buttons"/>  
+<apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/> 
+<apex:includeScript value="{!URLFOR($Resource.HUMCaseHistoryComponent,'/HUMCaseHistoryComponent/main.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.GuidedProcess_SR_HUM,'/GuidedProcess_SR_HUM/GuidedProcessJS_SR_HUM.JS')}"/>
+<apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery-ui.js')}"/>
+<link href= "{!URLFOR($Resource.GuidedProcess_SR_HUM,'/GuidedProcess_SR_HUM/GuidedProcessCSS_SR_HUM.CSS')}" rel = "stylesheet"/>
+<link href= "{!URLFOR($Resource.HUMCaseHistoryComponent,'/HUMCaseHistoryComponent/main.css')}" rel = "stylesheet"/>
+<link href= "{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/jquery-ui.css')}" rel = "stylesheet"/>
+   
+    <script>
+      var gptableId = '{!$Component.AttachGuidedProcessCase_CMP_HUM.pb.pnlcaselist}';
+      var gpbtnId = '{!$Component.AttachGuidedProcessCase_CMP_HUM.pb.idLogGuidedprocess}';
+      var hiddenCaseId = '{!$Component.AttachGuidedProcessCase_CMP_HUM.caseId}';
+      var errormsgId = '{!$Component.AttachGuidedProcessCase_CMP_HUM.errMsgSection}';
+      var cols = [];
+      cols.push('{!$Component.AttachGuidedProcessCase_CMP_HUM.pb.pbs.pbtCases.cmdSort2}');
+      cols.push('{!$Component.AttachGuidedProcessCase_CMP_HUM.pb.pbs.pbtCases.cmdSort3}');
+      cols.push('{!$Component.AttachGuidedProcessCase_CMP_HUM.pb.pbs.pbtCases.cmdSort4}');
+      cols.push('{!$Component.AttachGuidedProcessCase_CMP_HUM.pb.pbs.pbtCases.cmdSort5}');
+      cols.push('{!$Component.AttachGuidedProcessCase_CMP_HUM.pb.pbs.pbtCases.cmdSort6}');
+      cols.push('{!$Component.AttachGuidedProcessCase_CMP_HUM.pb.pbs.pbtCases.cmdSort7}');
+      cols.push('{!$Component.AttachGuidedProcessCase_CMP_HUM.pb.pbs.pbtCases.cmdSort8}');
+      cols.push('{!$Component.AttachGuidedProcessCase_CMP_HUM.pb.pbs.pbtCases.cmdSort9}');
+      cols.push('{!$Component.AttachGuidedProcessCase_CMP_HUM.pb.pbs.pbtCases.cmdSort10}');
+      cols.push('{!$Component.AttachGuidedProcessCase_CMP_HUM.pb.pbs.pbtCases.cmdSort11}');
+      var message = '{!sMessage}';
+      window.onLoad = openGuidedProcessSubtab();
+    </script>    
+    
+        <apex:outputPanel id="errMsgSection">
+        <apex:pageMessages ></apex:pageMessages>        
+        <apex:pageMessage id="errMessage2" severity="info" strength="3" escape="true" summary="{!$Label.GPLogToCaseInfoMessage}" rendered="{!bSucessSave}">
+        <a href="javascript:openCaseDetailPage('{!sCaseId}','{!sCaseNumber}');">{!sCaseNumber}</a> &nbsp;
+        </apex:pageMessage>
+        </apex:outputPanel>
+        
+        <apex:inputHidden id="caseId"/>
+        <apex:outputPanel id="comp_container" layout="block" html-log_this="false">
+            <div id="dvcasedetails">
+            
+                <apex:pageBlock id="pb">
+                    <table width="400px;" style="margin-left:40%;" border="0">
+                        <tr>
+                            <td>
+                                <div style="justify-content:justify; float:left; text-align:center;">
+                                    <apex:outputLabel value="Log To:" style="font-weight:normal; width:15%;" ></apex:outputLabel>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <apex:selectRadio id="caseoption" style="font-weight:normal; text-align:center;" onclick="guidedProcessOperateButton(this);" onkeypress="return guidedProcessIgnoreEnterKey(event);" value="{!selectedCaseOption}" styleClass="radioOpt">
+                                        <apex:selectOption itemValue="New Case" itemLabel="New Case" itemdisabled="{!blegacyDeleteCheck}" />
+                                        <apex:selectOption itemValue="Existing Case" itemLabel="Existing Case" itemdisabled="{!blegacyDeleteCheck}" />
+                                    </apex:selectRadio>
+                                </div>
+                            </td>
+                            <td>
+                                <apex:commandButton styleClass="cmdBtn" style="width:80px; font-weight:normal;" value="Log & Finish" id="idLogGuidedprocess" onclick="checkUserQueue(); return false;"/>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                <apex:outputPanel id="pnlcaselist" layout="block" html-log_this="false">&nbsp;&nbsp;&nbsp;
+                <apex:outputLabel value="{!$Label.Existing_Cases}" html-log_this="false" style="font-weight:bold;"/>
+                <br></br><br></br>
+                    <apex:pageBlockSection columns="1" id="pbs">
+                        <apex:outputPanel layout="block" html-log_this="false">
+                            <apex:outputLabel value="Case" html-log_this="false" style="font-weight:bold;"></apex:outputLabel>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <apex:inputtext value="{!sCaseNumber}" html-log_this="false" id="inpCaseNum" onkeypress="return guidedProcessIgnoreEnterKey(event);" />
+                            <input type="button" value="Search" id="SearchCase" onClick="searchGuidedProcessCases();" log_this="false"></input>
+                        </apex:outputPanel>
+                        
+                        <apex:outputPanel layout="block" id="pnlProfs" style="width:100%;">
+                        
+                             <apex:pageBlockTable id="pbtCases" value="{!lstCases}" var="item" html-log_this="false" >
+                                
+                                <apex:column headerValue="{!$Label.HUMSelectLabel}">
+                                    <input type="checkbox" class="chb" id="chb" onkeypress="return guidedProcessIgnoreEnterKey(event);" onclick="guidedProcessHandleClick(this,'{!item.Id}','{!JSENCODE(item.CaseNumber)}');" log_ignore_click="false"/>                                
+								</apex:column>
+                                
+                                <apex:column headerValue="{!$Label.HUMCaseID}">
+                                    <a href="javascript:openSubtabImmediately = true; openCaseDetailPage('{!JSENCODE(item.id)}','{!item.CaseNumber}');" id="{!item.Id}" onmouseover="openPopUp('{!item.Id}','');" onmouseout="clearPopUp();">{!item.CaseNumber}</a>
+                                </apex:column>
+                                <apex:column value="{!item.Origin}"> 
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist" action="{!sortResultPage}" value="{!$Label.HUMCaseOrigin}{!IF(sSortExpression=='Origin',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort2">
+                                            <apex:param value="Origin" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column>
+                                <apex:column value="{!item.Type}">
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist" action="{!sortResultPage}" value="{!$Label.HUMCaseType}{!IF(sSortExpression=='Type',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort3">
+                                            <apex:param value="Type" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column>
+                                <apex:column value="{!item.CTCI_List__r.Classification__r.Name}">
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist" action="{!sortResultPage}" value="{!$Label.HUMCaseClassification}{!IF(sSortExpression=='CTCI_List__r.Classification__r.Name',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort4">
+                                            <apex:param value="CTCI_List__r.Classification__r.Name" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column>
+                                <apex:column headerValue="{!$Label.HUMCaseIntent}">
+                                    <apex:outputText value="{!item.CTCI_List__r.Intent__r.Name}" />
+                                </apex:column>
+                                <apex:column value="{!item.Product__c}">
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist" action="{!sortResultPage}" value="{!$Label.HUMCaseProduct}{!IF(sSortExpression=='Product__c',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort5">
+                                            <apex:param value="Product__c" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column>
+                                <apex:column value="{!item.Interacting_With__r.Name}">
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist" action="{!sortResultPage}" value="{!$Label.HUMIntWithFieldLabel}{!IF(sSortExpression=='Interacting_With__r.Name',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort6">
+                                            <apex:param value="Interacting_With__r.Name" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column>
+                                <apex:column value="{!item.Interacting_With_Type__c}">
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist" action="{!sortResultPage}" value="{!$Label.HUMIntWithTypeFieldLabel}{!IF(sSortExpression=='Interacting_With_Type__c',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort7">
+                                            <apex:param value="Interacting_With_Type__c" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column> 
+                                <apex:column value="{!item.Interacting_About__c}">
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist" action="{!sortResultPage}" value="{!$Label.HUMIntAboutFieldLabel}{!IF(sSortExpression=='Interacting_About__c',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort11">
+                                            <apex:param value="Interacting_About__c" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column> 
+                                <apex:column value="{!item.Status}">
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist" action="{!sortResultPage}" value="{!$Label.HUMCaseStatus}{!IF(sSortExpression=='Status',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort8">
+                                            <apex:param value="Status" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column>  
+                                <apex:column value="{!item.Priority}">
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist" action="{!sortResultPage}" value="{!$Label.HUMCasePriority}{!IF(sSortExpression=='Priority',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort9">
+                                            <apex:param value="Priority" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column>  
+                                <apex:column >
+                                    <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                        <apex:param value="{!item.CreatedDate}" />
+                                    </apex:outputText>
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist" action="{!sortResultPage}" value="{!$Label.HUMCaseCreatedDate}{!IF(sSortExpression=='CreatedDate',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort10">
+                                            <apex:param value="CreatedDate" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column> 
+                                <apex:column headerValue="{!$Label.HUMCaseClosedDate}">
+                                    <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                        <apex:param value="{!item.ClosedDate}" />
+                                    </apex:outputText>
+                                </apex:column>
+                                <apex:column headerValue="{!$Label.HUMCaseCreatedBy}">
+                                    <apex:outputText value="{!item.CreatedBy.Name}" />
+                                </apex:column>
+                                <apex:column headerValue="{!$Label.HUMCaseQueue}">
+                                    <apex:outputText value="{!item.Created_By_Queue__c}" />
+                                </apex:column>
+                                 
+                            </apex:pageBlockTable>
+                        </apex:outputPanel>
+                </apex:pageBlockSection>
+                <apex:pageblockSection id="pgSect3" columns="1">
+                    <apex:outputPanel layout="block" styleClass="pSearchShowMore" id="otpNav">
+                        
+                        {!$Label.HUMTotalRecordsFound}
+                        
+                        {!IF((NOT(ISNULL(stdsetcon)) && stdsetcon.resultSize == iConstantValue),$Label.HUMMaximumPageSize,'')}
+                        {!IF(stdsetcon.resultSize < iConstantValue ,stdsetcon.resultSize,'')} &nbsp;
+                        <apex:commandButton id="idfirstbutton" action="{!first}" reRender="pnlcaselist" title="First Page" value="{!$Label.HUMFirstLabel}" rendered="{!stdsetcon.HasPrevious}" />&nbsp;
+                        <apex:image url="/img/search_prevarrow.gif" title="Previous Page" styleClass="prevArrow" rendered="{!stdsetcon.HasPrevious}" />&nbsp;
+                        <apex:commandButton id="idpreviousbutton" action="{!Previous}" rerender="pnlcaselist" title="Previous Page" value="{!$Label.HUMPreviousLabel}" rendered="{!stdsetcon.HasPrevious}" />
+                        ({!IF(stdsetcon.PageNumber == 1,1,((stdsetcon.PageNumber -1) * stdsetcon.PageSize)+1)}-{!IF(stdsetcon.resultSize < stdsetcon.PageSize,stdsetcon.resultSize,stdsetcon.PageNumber * stdsetcon.pageSize)})&nbsp;
+                        <apex:commandButton id="idnextPagebutton" title="Next Page" reRender="pnlcaselist" value="{!$Label.HUMNextLabel}" rendered="{!stdsetcon.HasNext}" action="{!Next}" />&nbsp;
+                        <apex:image url="/img/search_nextarrow.gif" title="Next Page" styleClass="nextArrow" rendered="{!stdsetcon.HasNext}" />
+                        &nbsp;<apex:commandButton id="idlastPagebutton" action="{!last}" reRender="pnlcaselist" title="Last Page" value="{!$Label.HUMLastLabel}" rendered="{!(stdsetcon.HasNext)}" />&nbsp;&nbsp;
+                        
+                    </apex:outputPanel>
+                </apex:pageBlockSection>
+                </apex:outputPanel>
+            </apex:pageBlock>
+        
+        </div>
+        
+    </apex:outputPanel>
+    
+    <apex:actionStatus id="pleaseWait">
+        <apex:facet name="start">
+            <div class="waitingSearchDiv waitingSearchDivOpacity" style="width: 100%; height: 130%; display: block; opacity: 0.70" />
+            
+            <div id="searchingStatus" class="waitingSearchDiv" style="width: 100%; height: 100%; display: block;">
+                <div class="waitingHolder" style="top: 300px; width: 110px;">
+                    <img class="waitingImage" src="/img/loading.gif" /> <span class="waitingDescription">Loading...</span>
+                </div>
+            </div>
+        </apex:facet>
+        <apex:facet name="stop" />
+    </apex:actionStatus>
+
+    <div id="PopUp" class="arrow_box">
+       <c:HUMPopUPForCaseComments id="CustomComponent" CaseId="{!sCaseId}"/>
+    </div>
+    <apex:actionFunction name="guidedProcessCaseCreation" action="{!createCaseAndRedirect}" oncomplete="openGuidedProcessSubTabForNewCase('{!sSelectedCaseId}','{!sSelectedCaseNumber}'); return false;" status="pleaseWait">
+        <apex:param name="standardURL" value="" />
+    </apex:actionFunction>
+    <apex:actionFunction name="displayGuidedProcessCaseList" action="{!displayGuidedProcessCaseList}" reRender="pnlcaselist"/>
+    <apex:actionFunction name="search" action="{!search}" reRender="pnlcaselist" status="pleaseWait"/>
+    
+    <apex:actionFunction name="checkGuidedProcessPresent" action="{!checkGuidedProcessPresent}" oncomplete="openSubTabForGuidedProcess('{!bGuidedProcesscheck}'); return false;" status="pleaseWait" rerender="errMsgSection">
+        <apex:param name="caseId" value="" />
+    </apex:actionFunction>
+    
+    <apex:actionFunction name="callFunAF" action="{!getCaseId}" reRender="ComponentRef" oncomplete="onCompleteOfAF('{!sCaseID}');">
+        <apex:param name="caseId" value=""/>
+    </apex:actionFunction>
+    
+    <apex:actionFunction name="callSaveGPOwnerID" action="{!updateWhoID}" oncomplete="replaceSubTabForGuidedProcess(); return false;" status="pleaseWait" rerender="errMsgSection">
+        <apex:param name="CaseId" value="" />
+    </apex:actionFunction>
+    
+</apex:component>

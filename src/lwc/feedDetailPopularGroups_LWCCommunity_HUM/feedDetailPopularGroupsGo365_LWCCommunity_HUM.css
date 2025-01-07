@@ -1,0 +1,71 @@
+.go365 .headerMain{
+
+    font-family: FSHumana;
+    font-size: 36px;
+    font-weight: 300;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.33;
+    letter-spacing: normal;
+    color: #164aad;
+    margin-bottom: 20px;
+  }
+  .go365 .pointsSentence{
+   
+    font-family: FSHumana;
+    font-size: 16px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.69;
+    letter-spacing: normal;
+    color: #4e8416;
+    margin-bottom: 40px;
+  }
+
+  .go365 .header{  
+    font-family: FSHumana;
+    font-size: 20px;
+    font-weight: bold;
+    color: #58595c;
+  
+  }
+
+
+  .go365 .header a{  
+    font-family: FSHumana;
+    font-size: 16px;
+    font-weight: bold;
+    color: #164aad;
+  
+  }
+  .go365 .groupIcon{
+       width: 64px;
+    height: 64px;
+    margin-right: 16px;
+  }
+  .go365 .width70{
+      width: 70%;
+  }
+  .go365 .infoText{
+    width: 86px;
+    height: 20px;
+    font-family: FSHumana;
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.43;
+    letter-spacing: normal;
+    color: #164aad;
+  }
+  .go365 .icon-wrappers{
+      margin:2.5rem 0 2.25rem;
+  }
+  .go365.section-wrapper{
+    margin: 0;
+  }
+  .go365 .section-header{
+    font-family: FSHumana;
+    font-size: 1.875rem;
+  }

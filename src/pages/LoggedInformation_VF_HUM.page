@@ -1,0 +1,16 @@
+﻿<!--
+Page Name        : LoggedInformation_VF_HUM
+Version          : 1.0 
+Created Date     : 03/16/2016
+Function         : Component use to display logged information.
+Modification Log :
+* Developer                 Code review         Date                  Description
+* -------------------------------------------------------------------------------------------------
+* Santhi Mandava                                03/16/2016            Original Version
+------------------------------------------------------------------------------------------------------------>
+
+<apex:page standardController="Case" extensions="LoggedInformation_C_HUM">
+    <apex:form >
+        <c:LoggedDetails_CMP_HUM CaseId="{!sCaseId}"></c:LoggedDetails_CMP_HUM>
+    </apex:form>
+</apex:page>

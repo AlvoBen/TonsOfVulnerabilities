@@ -1,0 +1,292 @@
+.empty-container {
+    order: 1;
+    flex-basis: 5%;
+}
+.field-editable-container {
+    display: flex;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    position: relative;
+}
+.account-editable-label {
+    order: 0;
+    flex-basis: 18.75%;
+    text-align: left;
+    position: relative;
+    font-weight: 600;
+}
+.account-editable-value {
+    order: 2;
+    flex-basis: 30%;
+}
+.page-title {
+    /*text-decoration: underline; */ 
+    font-weight: 600;
+}
+.valid-item {
+    color: rgb(22, 50, 92);
+}
+.invalid-item {
+    color: rgb(194, 57, 52);
+}
+.verify-address-btn {
+/*    position: absolute;
+    left: 77%;
+    top: 0vh;
+    z-index: 999;
+    padding: 1%; */
+}
+.du-overlay {
+    position: absolute;
+    z-index: 900;
+    width: 100%;
+    height: 100%;
+    top: 0vh;
+    background-color: rgba(0, 0, 0, 0.10);
+}
+.bad-request-msg {
+    position: absolute;
+    left: 97%;
+    top: 0vh;
+    z-index: 999;
+    padding: 1%;
+    color: red;
+    font-weight: bold;
+    width: 100%;
+}
+.top-next-btn-holder-height {
+    /* position: fixed; */
+    top: 2vh;
+    left: 60%;
+    z-index: 11;
+}
+.bad-request-msg {
+    position: absolute;
+    left: 97%;
+    top: 0vh;
+    z-index: 999;
+    padding: 1%;
+    color: red;
+    font-weight: bold;
+    width: 100%;
+}
+.top-next-btn-holder-height {
+    /* position: fixed; */
+    top: 2vh;
+    left: 60%;
+    z-index: 11;
+}
+.bad-osa-msg {
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+    text-align: center;
+}
+.good-osa-msg {
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+    text-align: center;
+}
+.osa-bad-msg-holder {
+    height: inherit;
+    background: linear-gradient(to right, #cc0000 0%, #ff5050 100%);
+    width: 50%;
+    border-radius: 5px;
+    border: 1px solid #efefef;
+}
+.osa-good-msg-holder {
+    height: inherit;
+    background: linear-gradient(to right, #009900 0%, #33cc33 100%);
+    width: 50%;
+    border-radius: 5px;
+    border: 1px solid #efefef;
+}
+@media only screen and (max-width: 1440px) {
+    .bad-osa-msg {
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        text-align: center;
+    }
+    .good-osa-msg {
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        text-align: center;
+    }
+    .osa-bad-msg-holder {
+        height: inherit;
+        background: linear-gradient(to right, #cc0000 0%, #ff5050 100%);
+        width: 50%;
+        border-radius: 5px;
+        border: 1px solid #efefef;
+    }
+    .osa-good-msg-holder {
+        height: inherit;
+        background: linear-gradient(to right, #009900 0%, #33cc33 100%);
+        width: 50%;
+        border-radius: 5px;
+        border: 1px solid #efefef;
+    } 
+}
+.field-readonly-container {
+    display: flex;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    padding: 1%;
+}
+.field-container {
+    display: flex;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    padding: 0.5%;
+}
+.account-readonly-label {
+    order: 0;
+    flex-basis: 25%;
+    text-align: right;
+    font-weight: 600;
+}
+.account-readonly-value {
+    order: 2;
+    flex-basis: 70%;
+}
+.empty-container {
+    order: 1;
+    flex-basis: 5%;
+}
+.title-container {
+    font-weight: 800;
+    font-size: medium;
+    padding: 1%;
+    text-decoration: underline;
+    display: flex;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+}
+.render-btn-cont {
+    display: block; /*flex;*/
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    position: absolute;
+    z-index: 899;
+    left: 55vw;
+    top: 8%;
+}
+.render-btn-msg {
+    font-weight: 700;
+    text-align: center;
+}
+@media only screen and (max-width: 1366px) {
+    .render-btn-msg {
+        font-weight: 700;
+        text-align: center;
+        flex: 1;
+    }
+    .render-btn-cont {
+        display: block; /*flex;*/
+        flex-basis: 100%;
+        flex-wrap: wrap;
+        position: absolute;
+        z-index: 899;
+        left: 60vw;
+        top: 8%;
+    }
+}
+.render-btn-msg-div {
+    display: flex;
+    flex-basis: 100%;
+    order: 0;
+    justify-content: center;
+}
+.render-btn-div {
+    display: flex;
+    flex-basis: 100%;
+    order: 1;
+    padding: 1%;
+    justify-content: center;
+}
+.field-div {
+    position: relative;
+}
+.render-osa-cont {
+    display: flex;
+    flex-basis: 100%;
+    order: 2;
+    flex-wrap: wrap;
+}
+.osa-empty {
+    display: flex;
+    flex-basis: 12%;
+    order: 0;
+}
+.osa-holder {
+    display: block; /*flex;*/
+    flex-basis: 50%;
+    order: 1;
+}
+.next-btn-msg {
+    font-weight: 700;
+    text-align: center;
+}
+.btn-cont {
+    display: flex;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+}
+.btn-msg-div {
+    display: flex;
+    flex-basis: 100%;
+    order: 1;
+    justify-content: center;
+    padding: 1%;
+}
+.btn-div {
+    display: flex;
+    flex-basis: 100%;
+    order: 0;
+    justify-content: right;
+}
+.btn-msg-read-div {
+    display: flex;
+    flex-basis: 50%;
+    order: 2;
+    justify-content: center;
+}
+.msg-container {
+    display: flex;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.icon-container {
+    display: flex;
+    order: 0;
+    flex-basis: 10%;
+    justify-content: center;
+}
+.text-container {
+    display: flex;
+    order: 1;
+    flex-basis: 55%;
+    justify-content: center;
+}
+.msg-cont {
+    display: flex;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1rem;
+    background-color: #f0f7fb;
+    /* border-left: solid 4px #3498db; */
+    line-height: 18px;
+    overflow: hidden;
+    padding: 12px;
+}
+.btn-msg {
+    font-weight: 700;
+    text-align: center;
+    justify-content: center;
+}

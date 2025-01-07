@@ -1,0 +1,86 @@
+﻿<!--
+Page Name        : LoggedDetails_CMP_HUM
+Version          : 1.0 
+Created Date     : 02/22/2016
+Function         : Component use to display logged information.
+Modification Log :
+* Developer                 Code review         Date                  Description
+* -------------------------------------------------------------------------------------------------
+* Santhi Mandava            24069               02/22/2016            Original Version
+* Santhi Mandava            27992               05/16/2016            Implemented REQ - 263794
+* Harika Devi Kalidindi     88181               04/28/2017            CA Ticket# 6688666 : Displaying UserName instead of network Id in CreatedBy column of Logged Information section 
+* Shreya Choodamani         90487               04/28/2017            REQ#: 311397 Updated the code to mimic the behavior for HP Supervisor and Specialist
+* Shivam Anand              98714               06/01/2017            Defect Fix 287137.0001 - to include space after colon in Type column
+------------------------------------------------------------------------------------------------------------>
+
+<apex:component controller="LoggedDetails_C_HUM" allowDML="true">
+
+  <apex:includeScript value="/support/console/38.0/integration.js"/>
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.Logging_JS_HUM,'/LoggedDetails.js')}"/>
+
+  <apex:attribute name="CaseId" assignTo="{!sCaseId}" type="String" description="SFDC Case Id"/>
+
+  <script>
+    var pageURL = '{!$Page.DisplayAttachmentLog_VF_HUM}';
+
+    var attachId = '';
+    var workqueue ='';
+    var sattachType = '';
+//dont enable P9 Critical Fix    jQuery.noConflict();
+
+
+  </script>
+  <apex:outputpanel id="pnlcaselist">
+    <apex:pageblock id="pnlDetails">
+      <apex:pageBlockSection id="pbsCaseDetails" columns="1">
+        <apex:pageBlockTable value="{!lstLogReocrds}" var="item" >
+          <apex:column headerValue="Action" width="10%">
+            <apex:commandLink onclick="openScreesnhotSubtab('{!item.Id}','{!JSENCODE(item.CreatedByQueue__c)}','{!JSENCODE(item.Attachment_Sub_type__c)}'); return false;" value="View"/> &nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:commandLink value="Del" action="{!deleteLogAttachments}" rendered="{!if((($Profile.Name == $Label.HUMAgencyCCSupervisor) || (sPharmacyUser == $Label.PharmacyUserSupervisorYes_HUM)),TRUE,FALSE)}">
+              <apex:param name="attchmentId" value="{!item.Id}"/>
+            </apex:commandLink>
+          </apex:column>
+          <apex:column value="{!item.Attachment_Sub_type__c}" width="30%">
+            <apex:facet name="header">
+              <apex:commandLink reRender="pbsCaseDetails,pgSect3" action="{!sortResultPage}" value="Type{!IF(sSortExpression=='Attachment_Sub_type__c',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort1">
+                <apex:param value="Attachment_Sub_type__c" name="column" assignTo="{!sSortExpression}" ></apex:param>
+              </apex:commandLink>
+            </apex:facet>
+          </apex:column>
+          <apex:column value="{!item.CreatedBy.Name}, {!item.CreatedDate}" width="30%">
+            <apex:facet name="header">
+              <apex:commandLink reRender="pbsCaseDetails,pgSect3" action="{!sortResultPage}" value="Created By{!IF(sSortExpression=='CreatedDate',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort2">
+                <apex:param value="CreatedDate" name="column" assignTo="{!sSortExpression}" ></apex:param>
+              </apex:commandLink>
+            </apex:facet>
+          </apex:column>
+
+          <apex:column value="{!item.CreatedByQueue__c}" width="30%">
+            <apex:facet name="header">
+              <apex:commandLink reRender="pbsCaseDetails,pgSect3" action="{!sortResultPage}" value="Created By Queue{!IF(sSortExpression=='CreatedByQueue__c',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSor3t">
+                <apex:param value="CreatedByQueue__c" name="column" assignTo="{!sSortExpression}" ></apex:param>
+              </apex:commandLink>
+            </apex:facet>
+          </apex:column>
+        </apex:pageBlockTable>
+      </apex:pageBlockSection>
+      <apex:pageblockSection id="pgSect3" columns="1">
+        <apex:outputPanel layout="block" styleClass="pSearchShowMore" id="otpNav">
+          {!$Label.HUMTotalRecordsFound}
+
+          {!IF((NOT(ISNULL(stdsetcon)) && stdsetcon.resultSize == iConstantValue),$Label.HUMMaximumPageSize,'')}
+          {!IF(stdsetcon.resultSize < iConstantValue ,stdsetcon.resultSize,'')}&nbsp;
+          <apex:commandButton action="{!first}" reRender="pnlDetails" title="First Page" value="{!$Label.HUMFirstLabel}" rendered="{!stdsetcon.HasPrevious}" />&nbsp;
+          <apex:image url="/img/search_prevarrow.gif" title="Previous Page" styleClass="prevArrow" rendered="{!stdsetcon.HasPrevious}" />&nbsp;
+          <apex:commandButton action="{!Previous}" rerender="pnlDetails" title="Previous Page" value="{!$Label.HUMPreviousLabel}" rendered="{!stdsetcon.HasPrevious}" />
+          ({!IF(stdsetcon.PageNumber == 1,1,((stdsetcon.PageNumber -1) * stdsetcon.PageSize)+1)}-{!IF(stdsetcon.resultSize < stdsetcon.PageSize,stdsetcon.resultSize,stdsetcon.PageNumber * stdsetcon.pageSize)})&nbsp;
+          <apex:commandButton title="Next Page" reRender="pnlDetails" value="{!$Label.HUMNextLabel}" rendered="{!stdsetcon.HasNext}" action="{!Next}" />&nbsp;
+          <apex:image url="/img/search_nextarrow.gif" title="Next Page" styleClass="nextArrow" rendered="{!stdsetcon.HasNext}" />
+          &nbsp;<apex:commandButton action="{!last}" reRender="pnlDetails" title="Last Page" value="{!$Label.HUMLastLabel}" rendered="{!(stdsetcon.HasNext)}" />&nbsp;&nbsp;
+        </apex:outputPanel>
+        </apex:pageBlockSection>
+      </apex:pageblock>
+    <apex:actionFunction name="retrieveLogDetails" action="{!retrieveLogDetails}" reRender="pnlDetails"/>
+  </apex:outputpanel>
+</apex:component>

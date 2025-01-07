@@ -1,0 +1,52 @@
+﻿<!--
+LWC Name        : coachingPOAHum.html
+Function        : POA search Html 
+
+Modification Log:
+* Developer Name                  Date                         Description
+*
+* Prudhvi Pamarthi                05/22/2021                   Original Version 
+****************************************************************************************************************************-->
+<template>
+    <div id="ExpandablePowerSection" class="slds-section slds-is-open">
+        <article class="slds-card">
+          <div class="slds-card__header slds-grid" style="background-color:#F3F2F2">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+              <div class="slds-media__figure">
+                <span class="slds-icon_container slds-icon-standard-account" title="account">
+                  <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account" size="small"></lightning-icon>
+                  <span class="slds-assistive-text">account</span>
+                </span>
+              </div>
+              <div class="slds-media__body">
+                <h2 class="slds-card__header-title">
+                    <span class="slds-text-title_bold">Power of Attorney</span>
+                </h2>
+              </div>
+            </header>
+          </div>
+          <div class="slds-card__body slds-section__content" aria-hidden="false"  id="expandPowerSection" style='padding-top:0;'>
+              <div class="slds-tile__detail slds-text-body_small slds-card__body_inner">
+                <template if:true={noResults}>
+                  <div class="slds-align_absolute-left slds-p-around_medium">{labels.Hum_NoResultsFound}</div>
+                </template>
+                <template for:each={result} for:item="acc">
+                  <dl class="slds-list_horizontal slds-p-bottom_medium slds-wrap" key={acc.PhoneNumber}>
+                    <dt class="slds-item_label slds-p-right_none slds-line-clamp" title="Name"><b>Name:</b></dt>
+                    <dd class="slds-item_detail slds-line-clamp">
+                      <span>{acc.FirstName}</span>&nbsp;<span>{acc.LastName}</span>
+                    </dd>
+                    <dt class="slds-item_label slds-p-right_none slds-line-clamp" title="Phone"> <b>Phone:</b> </dt>
+                    <dd class="slds-item_detail slds-line-clamp"><lightning-formatted-phone value={acc.PhoneNumber}></lightning-formatted-phone></dd>
+                    <dt class="slds-item_label slds-p-right_none slds-line-clamp" title="Action"><b>POA Type:</b></dt>
+                    <dd class="slds-item_detail" style="display: inherit">
+                      <span>{acc.Type}</span>
+                      <c-custom-tooltip-hum if:true={labels.poaTypeHelpText} help-text={labels.poaTypeHelpText}></c-custom-tooltip-hum>
+                    </dd>
+                  </dl>
+                </template>
+              </div>
+          </div>
+        </article>
+    </div>
+  </template>

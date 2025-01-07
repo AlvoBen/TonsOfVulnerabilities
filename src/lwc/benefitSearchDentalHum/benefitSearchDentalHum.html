@@ -1,0 +1,149 @@
+﻿<!--
+LWC Name        : benefitSearchDentalHum.html
+Function        : LWC to display benefit search details;
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Kalyani Pachpol                 06/01/2023                   initial version - US - 4654362
+* Kinal Mangukiya 				  07/07/2023				   US - 4658257 Dental UI Logging Search
+* Atul Patil					  09/14/2023				   T1PRJ0865978 - MF 28289 - C02, Contact Servicing/Benefits- Add "Category Type" and " Type of Service" to Table Results after Search - DENTAL
+****************************************************************************************************************************-->
+<template>
+	<article
+		class="slds-brand-band slds-card slds-card_boundary forceRelatedListCardDesktop">
+		<div
+			class="slds-page-header--object-home slds-page-header_joined slds-page-header slds-shrink-none test-headerRegion forceListViewManagerHeader">
+			<header
+				class=" slds-card__header slds-grid slds-p-right_none slds-media slds-media_center slds-has-flexi-truncate hc-align-header slds-p-around_none slds-m-bottom_none">
+				<div class="slds-media__figure">
+					<lightning-icon icon-name="standard:record"></lightning-icon>
+				</div>
+				<div class="slds-media__body">
+					<h2 class="slds-card__header-title">Benefits Search ({totalCount})</h2>
+				</div>
+			</header>
+		</div>
+		<div class="slds-grid slds-grid_align-spread slds-wrap slds-m-top_x-small slds-p-left_x-small">
+			<div class="slds-col slds-size_1-of-1">
+				<c-generic-horizontal-search-hum filterconfig={filterconfig} onselectitem={handleChange}
+						onbuttonclick={handleFilterBtnClick} onkeywordvalue={handleKeyWordValue}
+						ontextclear={clearSearchData}></c-generic-horizontal-search-hum>
+			</div>
+		</div>
+		<div style="overflow-x: auto" class="slds-m-top_x-small">
+			<template if:true={loaded}>
+				<template if:false={serviceerror}>
+						<div data-id="result" class="slds-table--header-fixed_container ">
+							<div class="slds-scrollable_y container" data-id="tablediv" style="height:100%;"
+								onscroll={handleScroll}>
+								<table
+									class="slds-no-row-hover slds-table slds-table_cell-buffer slds-table_bordered slds-table--header-fixed slds-table_fixed-layout">
+									<thead>
+										<tr class="slds-line-height_reset">
+											<template for:each={columns} for:item="col">
+												<th key={col.label} aria-label={col.label} aria-sort="none"
+													title={col.label}
+													class="slds-is-resizable slds-is-sortable slds-cell-fixed"
+													scope="col" data-label={col.label} style={col.style}>
+													<div class="slds-p-top_x-small slds-wrap slds-cell-fixed slds-m-left_x-small"
+														style="width: 100%;">
+														{col.label}
+													</div>
+												</th>
+											</template>
+										</tr>
+									</thead>
+									<tbody>
+										<template for:each={filteredBenefits} for:item="benefit" for:index="index">
+											<tr class="slds-hint-parent benefitsearchtablerow" key={benefit.Index} data-item={benefit.Index} onclick={handleSearchBenefitsLogging}>
+													<td data-label="action" scope="row"   class="logthis">
+														<lightning-icon size="x-small" data-rowid={benefit.Index}
+															style="cursor: pointer;" icon-name="utility:chevronright"
+															onclick={toggleDetailSection}>
+														</lightning-icon>
+													</td>
+													<td data-label="Service Category"  class="logthis slds-cell-wrap">
+														<div class="" title="Service Category">
+															{benefit.CategoryType}
+														</div>
+													</td>
+													<td data-label="Type of Service"  class="logthis slds-cell-wrap">
+														<div class="" title="Type of Service">
+															{benefit.TypeOfService}
+														</div>
+													</td>
+													<td data-label="Benefit Type"  class="logthis slds-cell-wrap">
+														<div class="" title="Benefit Type">
+															{benefit.BenefitType}
+														</div>
+													</td>
+													<td data-label="Benefit Description" class="logthis slds-cell-wrap">
+														<div class="" title="Benefit Description">
+															{benefit.BenefitDescription}
+														</div>
+													</td>
+													<td data-label="Coverage Type" class="logthis slds-cell-wrap">
+														<div class="" title="Coverage Type">
+															{benefit.CoverageType}
+														</div>
+													</td>
+													<td data-label="Place Of Service" class="logthis slds-cell-wrap">
+														<div class="" title="Place Of Service">
+															{benefit.PlaceOfService}
+														</div>
+													</td>
+													<td data-label="PAR" class="logthis slds-cell-wrap">
+														<div class="" title="PAR">{benefit.Par}</div>
+													</td>
+													<td data-label="NonPar" class="logthis slds-cell-wrap">
+														<div class="" title="Non PAR">
+															{benefit.NonPar}
+														</div>
+													</td>
+													<td data-label="ADA Code" class="logthis slds-cell-wrap">
+														<div class="" title="ADA Code">
+															{benefit.AdaCode}
+														</div>
+													</td>
+												</tr>
+												<tr key={benefit.Index} data-key={benefit.Index} class="slds-hide">
+													<td colspan="13">
+														<c-benefit-search-details-hum item={benefit}
+														onlimitlogging={handleLimitLogging}
+														ondetaillogging={handleDetailLogging}>
+														</c-benefit-search-details-hum>
+													</td>
+												</tr>
+											</template>
+										
+									</tbody>
+								</table>
+							</div>
+						</div>
+				</template>
+				<template if:false={datafound}>
+					<div class="slds-grid slds-grid_align-spread slds-m-top_x-small">
+						<div class="slds-col slds-size_1-of-1">
+							<div class="slds-p-around_small">
+								<p style="text-align:center">No records to display</p>
+							</div>
+						</div>
+					</div>
+				</template>
+				<template if:true={serviceerror}>
+					<div class="slds-grid slds-grid_align-spread slds-m-top_x-small">
+						<div class="slds-col slds-size_1-of-1 slds-m-vertical_small">
+							<c-generic-scoped-notification-hum iconname="utility:error" message={message}
+								type="error">
+							</c-generic-scoped-notification-hum>
+						</div>
+					</div>
+				</template>
+			</template>
+			<template if:false={loaded}>
+					<lightning-spinner alternative-text="Loading...."></lightning-spinner>
+			</template>
+		</div>
+	</article>
+</template>

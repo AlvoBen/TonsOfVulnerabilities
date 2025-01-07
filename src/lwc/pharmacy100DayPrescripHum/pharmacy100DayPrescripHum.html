@@ -1,0 +1,32 @@
+﻿<!--
+Function        : LWC to update the auto refill for prescription.
+
+Modification Log:
+* Developer Name                  Date                         Description
+****************************************************************************************************************************
+* Nirmal Garg                    07/18/2022                 	 Initial version US#5071365
+* Vishal Shinde                  10/12/2023                      DF-8208
+*****************************************************************************************************************************-->
+<template>
+    <div class="slds-grid slds-align-start">
+        <div>
+            <div class="slds-text-body_regular">100 Day Supply Benefit:</div>
+        </div>
+        <template if:true={serviceCall}>
+            <div class="slds-col">
+                <template if:true={loaded}>
+                    <div class="slds-text-body_regular">{prescripResult}</div>
+                </template>
+                <template if:false={loaded}>
+                    <div class="exampleHolder">
+                        <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                    </div>
+                </template>
+            </div>
+        </template>
+        <div class="buttonPos">
+            <lightning-button variant="brand-outline" label="Retrieve" title="Retrieve" onclick={handleClick}
+                class="slds-m-left_x-small"></lightning-button>
+        </div>
+    </div>
+</template>

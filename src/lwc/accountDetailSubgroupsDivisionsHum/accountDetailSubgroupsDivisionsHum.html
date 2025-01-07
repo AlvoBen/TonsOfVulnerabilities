@@ -1,0 +1,24 @@
+﻿<!--
+/*******************************************************************************************************************************
+LWC JS Name : acountDetailSubgroupsDivisionsHum.js
+Function    : This JS serves as controller to accountDetailSubgroupsDivisionsHum.html. 
+
+Modification Log: 
+Developer Name           Code Review                      Date                         Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Ashish Kumar                                          12/18/2020                    initial version
+*Surendra Vemulapalli                                   09/16/2021                    Added templatemodal
+* Vardhman Jain                                         04/22/2022                    US-3046016_3045989: Group Account logging stories changes.
+*********************************************************************************************************************************/
+-->
+<template>
+  <lightning-layout>
+    <lightning-layout-item flexibility="auto">
+      <c-standard-table-component-hum name-of-screen="Division Table" response={groupSubDivisionList} show-view-all=true
+      onlinkclick={handleclicked} title="Divisions/Subgroups" templatemodal={divisionLayout} related-input-field={loggingRelatedField} screen-name="Divisions And Subgroups"></c-standard-table-component-hum>
+      <template if:true={noResults}>
+        <c-search-no-result-hum no-result-message={labels.Hum_NoResultsFound}></c-search-no-result-hum>
+      </template>
+    </lightning-layout-item>
+  </lightning-layout>
+</template>

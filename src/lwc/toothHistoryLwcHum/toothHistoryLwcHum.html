@@ -1,0 +1,171 @@
+﻿<!-- /*******************************************************************************************************************************
+LWC JS Name : ToothHistory_LWC_HUM.html.HTML
+Function    : This JS serves as UI to tooth history on dental plan benefits
+
+Modification Log: 
+Developer Name           Code Review                      Date                         Description
+*--------------------------------------------------------------------------------------------------------------------------------
+Suraj Patil                                             05/08/2023                    
+*********************************************************************************************************************************/ -->
+<template>
+    <div class="slds-var-m-around_small">
+        <div class="slds-box slds-p-around_none">
+            <div class=" slds-page-header" style="padding:10px;">
+                <div class="slds-media">
+                    <div class="slds-media__figure">
+                        <lightning-icon icon-name='standard:record' size='medium'></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h1><span class="slds-page-header__title slds-truncate slds-text-align_center slds-p-top_xx-small">Tooth History ({currentCount})</span></h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div if:false={noData} class="slds-align_absolute-right slds-float-right">
+                        <div class="slds-col ch-filter-keyword" >
+                            <lightning-layout>
+                                <lightning-helptext icon-name="utility:info" class="icon" content="Enter Keyword to search in the table"></lightning-helptext>
+                                <lightning-input class="inputfield keyword-field state-field"  label ="Keyword" type="search" name="keyword"
+                                value={keyword} onchange={findByWord} ondblclick={handleClear} placeholder="Enter Keyword"></lightning-input>
+                            </lightning-layout>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+            </br>
+            <div class="slds-scrollable_y container" style="height:200px;" onscroll={handleScroll}>
+                <table class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols slds-no-row-hover" style="table-layout: auto" role="grid">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th class="" scope="col" style="width:8rem;padding:10px;">
+                                <div if:true={SortIconHide.SortIcon1} class=" my-class slds-truncate" title="Date of Service">Date of Service
+                                    <lightning-icon onclick={handleSort} icon-name={sortDirHandler} alternative-text="Date of Service"
+                                        size="xx-small" class="slds-var-m-left_small"></lightning-icon>
+                                </div>
+                                <div if:false={SortIconHide.SortIcon1} class=" my-classHover slds-truncate" title="Date of Service">Date of Service
+                                    <lightning-icon onclick={handleSort} icon-name={sortDirHandler} alternative-text="Date of Service"
+                                        size="xx-small" class="slds-var-m-left_small"></lightning-icon>
+                                </div>
+                            </th>
+                            <th class="" scope="col" style="width:7rem">
+                                <div if:true={SortIconHide.SortIcon2} class=" my-class slds-truncate"  title="Tooth">Tooth
+                                    <lightning-icon onclick={handleSort} icon-name={sortDirHandler} alternative-text="Tooth"
+                                        size="xx-small" class="slds-var-m-left_small"></lightning-icon>
+                                </div>
+                                <div if:false={SortIconHide.SortIcon2} class=" my-classHover slds-truncate"  title="Tooth">Tooth
+                                    <lightning-icon onclick={handleSort} icon-name={sortDirHandler} alternative-text="Tooth"
+                                        size="xx-small" class="slds-var-m-left_small"></lightning-icon>
+                                </div>
+                            </th>
+                            <th class="" scope="col" style="width:7rem">
+                                <div if:true={SortIconHide.SortIcon3} class=" my-class slds-truncate"  title="Surface Code">Surface Code
+                                    <lightning-icon onclick={handleSort} icon-name={sortDirHandler} alternative-text="Surface Code"
+                                        size="xx-small" class="slds-var-m-left_small"></lightning-icon>
+                                </div>
+                                <div if:false={SortIconHide.SortIcon3} class=" my-classHover slds-truncate"  title="Surface Code">Surface Code
+                                    <lightning-icon onclick={handleSort} icon-name={sortDirHandler} alternative-text="Surface Code"
+                                        size="xx-small" class="slds-var-m-left_small"></lightning-icon>
+                                </div>
+                            </th>
+                            <th class="" scope="col" style="width:6rem">
+                                <div if:true={SortIconHide.SortIcon4} class=" my-class slds-truncate"  title="ADA Code">ADA Code
+                                    <lightning-icon onclick={handleSort} icon-name={sortDirHandler} alternative-text="ADA Code"
+                                        size="xx-small" class="slds-var-m-left_small"></lightning-icon>
+                                </div>
+                                <div if:false={SortIconHide.SortIcon4} class=" my-classHover slds-truncate"  title="ADA Code">ADA Code
+                                    <lightning-icon onclick={handleSort} icon-name={sortDirHandler} alternative-text="ADA Code"
+                                        size="xx-small" class="slds-var-m-left_small"></lightning-icon>
+                                </div>
+                            </th>
+                            <th class="" scope="col" style="width:20rem">
+                                <div if:true={SortIconHide.SortIcon5} class=" my-class slds-truncate"  title="Description">Description
+                                    <lightning-icon onclick={handleSort} icon-name={sortDirHandler} alternative-text="Description"
+                                        size="xx-small" class="slds-var-m-left_small"></lightning-icon>
+                                </div>
+                                <div if:false={SortIconHide.SortIcon5} class=" my-classHover slds-truncate"  title="Description">Description
+                                    <lightning-icon onclick={handleSort} icon-name={sortDirHandler} alternative-text="Description"
+                                        size="xx-small" class="slds-var-m-left_small"></lightning-icon>
+                                </div>
+                            </th>
+                            <th class="" scope="col" style="width:8rem">
+                                <div if:true={SortIconHide.SortIcon6} class=" my-class slds-truncate"  title="Claim Number">Claim Number
+                                    <lightning-icon onclick={handleSort} icon-name={sortDirHandler} alternative-text="Claim Number"
+                                        size="xx-small" class="slds-var-m-left_small"></lightning-icon>
+                                </div>
+                                <div if:false={SortIconHide.SortIcon6} class=" my-classHover slds-truncate"  title="Claim Number">Claim Number
+                                    <lightning-icon onclick={handleSort} icon-name={sortDirHandler} alternative-text="Claim Number"
+                                        size="xx-small" class="slds-var-m-left_small"></lightning-icon>
+                                </div>
+                            </th>
+                            <th class="" scope="col" style="width:8rem">
+                                <div if:true={SortIconHide.SortIcon7} class=" my-class slds-truncate"  title="Status">Status
+                                    <lightning-icon onclick={handleSort} icon-name={sortDirHandler} alternative-text="Status"
+                                        size="xx-small" class="slds-var-m-left_small"></lightning-icon>
+                                </div>
+                                <div if:false={SortIconHide.SortIcon7} class=" my-classHover slds-truncate"  title="Status">Status
+                                    <lightning-icon onclick={handleSort} icon-name={sortDirHandler} alternative-text="Status"
+                                        size="xx-small" class="slds-var-m-left_small"></lightning-icon>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template if:false={noData}>
+                            <template for:each={records} for:item="ele">
+                                <tr key={ele.name} onclick={handleLogging} style="padding:10px;">
+                                    <td data-label="Date of Service" role="gridcell" class="slds-cell-wrap" style="padding-left: 20px;">
+                                    <div class="logthis slds-cell-wrap" data-logid={generateLogId} data-id="Date of Service">
+                                            <div data-value="Date of Service">{ele.sDateOfService}</div>
+                                        </div>
+                                    </td>
+                                    <td  data-label="Tooth" role="gridcell" class="slds-cell-wrap">
+                                        <div class="logthis slds-cell-wrap" data-logid={generateLogId} data-id="Tooth" >
+                                            <div data-value="Tooth">{ele.sTooth}</div>
+                                        </div>
+                                    </td>
+                                    <td data-label="Surface Code" role="gridcell" class="slds-cell-wrap">
+                                        <div class="logthis slds-cell-wrap" data-logid={generateLogId} data-id="Surface Code">
+                                            <div data-value="Surface Code">{ele.sSurfaceCode}</div>
+                                        </div>
+                                    </td>
+                                    <td data-label="ADA Code" role="gridcell" class="slds-cell-wrap">
+                                    <div class="logthis slds-cell-wrap" data-logid={generateLogId} data-id="ADA Code">
+                                            <div data-value="ADA Code">{ele.sADACode}</div>
+                                        </div>                           
+                                    </td>
+                                    <td data-label="Description" role="gridcell">
+                                        <div class="logthis slds-cell-wrap" data-logid={generateLogId} data-id="Description">
+                                            <div data-value="Description">{ele.sDescription}</div>
+                                        </div>
+                                    </td>
+                                    <td data-label="Claim Number" role="gridcell">
+                                        <div class="logthis slds-cell-wrap" data-logid={generateLogId} data-id="Claim Number">
+                                            <div data-value="Claim Number">{ele.sClaimNumber}</div>
+                                        </div>
+                                    </td>
+                                    <td data-label="Status" role="gridcell">
+                                        <div class="logthis slds-cell-wrap" data-logid={generateLogId} data-id="Status">
+                                            <div data-value="Status">{ele.sStatus}</div>
+                                        </div> 
+                                    </td>
+                                </tr>
+                            </template>
+                        </template>
+                        <template if:true={noData}>
+                            <tr class="slds-line-height_reset">
+                                <td colspan="8">
+                                    <div class="slds-grid slds-grid_align-spread">
+                                        <div class="slds-col slds-size_1-of-1">
+                                            <p style="text-align:center">{labels.HUMNoRecords}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</template>

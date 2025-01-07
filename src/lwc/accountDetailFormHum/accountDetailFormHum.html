@@ -1,0 +1,34 @@
+﻿<!--
+LWC Name        : accountDetailFormHum.html
+Function        : LWC to display form section on account pages.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Supriya                         03/30/2021                Original Version US-2133530 
+****************************************************************************************************************************-->
+<template>
+	<lightning-record-view-form onload={handleLoad} class={customClass}>
+		<div class="custom-spacing">
+			<lightning-card title={title} style="border:0">
+				<div class="slds-p-horizontal_small">
+					<div class="slds-form" role="list">
+						<div class="slds-form__row">
+							<template for:each={oDetails} for:item="oField">
+								<div class="slds-col slds-size_1-of-2 slds-p-horizontal_small" role="listitem"
+									key={oField}>
+									<div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-hint-parent"
+										style="height: 100%">
+										<span class="slds-form-element__label">{oField.label}
+										</span>
+										<div class={isEmptyField}>{oField.value}</div>
+									</div>
+								</div>
+							</template>
+						</div>
+					</div>
+				</div>
+			</lightning-card>
+		</div>
+	</lightning-record-view-form>
+</template>

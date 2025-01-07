@@ -1,0 +1,134 @@
+﻿<!--
+LWC Name        : accountDetailRecordHum.html
+Function        : LWC to display detail section on account pages.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Pradeep Dani                  12/18/2020                Original Version 
+* Arpit jain					02/12/2021				  Click To Dial
+* Abhishek Mangutkar			05/09/2022				  US-2871585
+* Supriya Shastri				03/16/2021		          US-1985154
+* Muthu kumar					06/17/2022				  DF-5050
+* Visweswararao j               02/21/2023                User Story 3731797: T1PRJ0865978 - MF 19972 Lightning- Veteran's Update Section and fields (Jaguars)
+* Santhi Mandava                06/15/2023                US 4525669: Display HRA/HNA flag/indicator (Y/N) on the Person Account Page
+****************************************************************************************************************************-->
+<template>
+	<lightning-record-view-form record-id={recordId} object-api-name="Account" onload={handleLoad}>
+		<template for:each={oDetails} for:item="oSection">
+			<lightning-accordion allow-multiple-sections-open active-section-name='form' key={oSection.title}>
+				<lightning-accordion-section class="no-border custom-accordian-title" name="form" key={oSection.title}
+					label={oSection.title}>
+					<article class="slds-card">
+						<div class="slds-p-horizontal_small">
+							<div class="slds-form" role="list">
+								<div class="slds-form__row">
+									<template for:each={oSection.fields} for:item="oField">
+										<div class="slds-form__item slds-col slds-size_1-of-2 logthis" role="listitem"
+											key={oField.label} onclick={handleLogging} data-id={oField.label} data-donotlog={oField.donotlog}>
+											<div
+												class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_stacked slds-hint-parent">
+												<template if:false={oField.bAddress}>
+													<span class="slds-form-element__label">
+														{oField.label}
+													</span>
+													<div if:false={oField.bIsCustom}>
+														<lightning-output-field field-name={oField.mapping}
+															variant="label-hidden" class="hc-custom-output" data-value={oField.label}>
+														</lightning-output-field>
+														<span if:true={oField.copyToClipBoard}>
+														<c-custom-tooltip-hum class="slds-show_inline-block slds-is-relative" onclick={copyToBoard} 
+														data-field={oField.mapping} 
+                           								icon-type=true help-text={copyClipBoardMsg} align="top"></c-custom-tooltip-hum>
+														</span>
+													</div>
+												</template>
+												<div if:true={oField.bAddress}> 
+													<span class="slds-form-element__label">
+														{oField.label}
+													</span>
+													<div data-value={oField.label}>{oField.value}
+														<span if:true={oField.copyToClipBoard}>
+														<c-custom-tooltip-hum class="slds-show_inline-block slds-is-relative" onclick={copyToBoard} 
+														data-field={oField.value} data-address=true 
+                           								icon-type=true help-text={copyClipBoardMsg} align="top"></c-custom-tooltip-hum>
+														</span>
+													</div>
+												</div>
+												<span if:true={oField.bIsCustom}>
+													<div class="slds-form-element__control">
+														<div class="slds-form-element__static">
+															<span if:true={oField.bAge} data-value={oField.label}>{iAge}</span>
+															<span if:true={oField.bRecordTypeName} data-value={oField.label}>
+																{sRecordTypeName}
+															</span>
+															<span if:true={oField.bGroupEffectiveDate} data-value={oField.label}>
+																{sGroupEffectiveDate}
+															</span>
+															<span if:true={oField.bGroupEnrolledSubscriberCountDental} data-value={oField.label}>
+																{sGroupEnrolledSubscriberCountDental}
+															</span>
+															<span if:true={oField.bGroupEnrolledSubscriberCountMedical} data-value={oField.label}>
+																{sGroupEnrolledSubscriberCountMedical}
+															</span>
+															<span if:true={oField.bGroupNextRenewalDate} data-value={oField.label}>
+																{sGroupNextRenewalDate}
+															</span>
+															<span if:true={oField.bEDIValue} data-value={oField.label}>{sEDIValue}</span>
+															<span if:true={oField.bGroupUpdateFrequency} data-value={oField.label}>
+																{sGroupUpdateFrequency}
+															</span>
+															<span if:true={oField.bHumanaCanChange}>
+																<lightning-formatted-text value={sHumanaCanChange} data-value={oField.label}>
+																</lightning-formatted-text>
+															</span>
+															<span if:true={oField.bFrequencyDetails} data-value={oField.label}>
+																{sFrequencyDetails}
+															</span>
+															<span if:true={oField.bIsWork}>
+																<lightning-click-to-dial value={sOtherphone} data-value={oField.label}>
+																</lightning-click-to-dial>
+															</span>
+															<span if:true={oField.bIsHome}>
+																<lightning-click-to-dial value={sHomephone} data-value={oField.label}>
+																</lightning-click-to-dial>
+															</span>
+															<span if:true={oField.bIsMobile}>
+																<lightning-click-to-dial value={sMobilephone} data-value={oField.label}>
+																</lightning-click-to-dial>
+															</span>
+															<span if:true={oField.bIsPhone}>
+																<lightning-click-to-dial value={sphone} data-value={oField.label}>
+																</lightning-click-to-dial>
+															</span>
+															<span if:true={oField.copyToClipBoard}>
+																<c-custom-tooltip-hum
+																	class="slds-show_inline-block slds-is-relative"
+																	onclick={copyToBoard} data-field={oField.mapping}
+																	icon-type=true help-text={copyClipBoardMsg} 
+																	align="top"></c-custom-tooltip-hum>
+															</span>
+															<span if:true={oField.isHRAHNA} data-value={oField.label}>{sHRAStatus}</span>
+														</div>
+													</div>
+												</span>
+											</div>
+										</div>
+									</template>
+								</div>
+							</div>
+						</div>
+					</article>
+				</lightning-accordion-section>
+			</lightning-accordion>
+		</template>
+		<template if:true={isVeteran}>
+			<lightning-accordion allow-multiple-sections-open active-section-name='form' >
+			<lightning-accordion-section class="no-border custom-accordian-title" name="form"
+				label='Veteran Information'>
+				<c-veteran-information  acc-id={recordId} ></c-veteran-information>
+			</lightning-accordion-section>
+			</lightning-accordion>
+		</template>
+	</lightning-record-view-form>
+</template>

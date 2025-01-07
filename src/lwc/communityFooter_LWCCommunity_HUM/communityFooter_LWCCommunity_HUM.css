@@ -1,0 +1,216 @@
+.backToTopButtonContainer{
+  padding: 0 120px;
+  margin-bottom: 55px;
+}
+.bodyContainer{
+  padding: 0 120px; 
+  align-items: stretch;
+  
+}
+.full-height{
+  height: 100%;
+}
+.margin55{
+  margin-bottom: 55px;
+}
+.humanaLogoFooter{
+width: 190px;
+height: 229px;
+}
+.verticalRuler {
+  width: 1px;
+  height: 319px;
+  border: solid 1px #d5d5d5;
+  position: relative;
+  top: 65px;
+}
+.width95{
+  width: 88%;
+}
+.helpLinkHeader {
+
+font-family: FSHumana;
+font-size: 27px;
+font-weight: 300;
+font-stretch: normal;
+font-style: normal;
+line-height: 1.63;
+letter-spacing: normal;
+color: #414042;
+margin-bottom: 28px;
+width: 100%;
+}
+.helpLinkElements{
+font-family: FSHumana;
+font-size: 18px;
+font-weight: 300;
+font-stretch: normal;
+font-style: normal;
+line-height: 1.44;
+letter-spacing: normal;
+color: #000000;
+width: 100%;
+}
+.humanaLogoIcon {
+width: 190px;
+height: 229px;
+
+}
+.newWindowIcon {
+width: 10px;
+height: 10px;
+margin-left: 10px;
+}
+.appleStoreIcon {
+width: 120px;
+height: 40px;
+box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+}
+.googlePlayStoreIcon {
+width: 135px;
+height: 41px;
+object-fit: contain;
+box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+}
+.otherHumanaSitesHeader {
+
+font-family: FSHumana;
+font-size: 15px;
+font-weight: 300;
+font-stretch: normal;
+font-style: normal;
+line-height: 1.8;
+letter-spacing: normal;
+color: #414042;
+text-align: center;
+margin-bottom: 10px;
+}
+.otherHumanaSites{
+
+font-family: FSHumana;
+font-size: 18px;
+font-weight: 300;
+font-stretch: normal;
+font-style: normal;
+line-height: 1.5;
+letter-spacing: normal;
+text-align: center;
+color: #005f6c;
+
+}
+.textCenter{
+justify-content: center;
+}
+.margin28{
+margin-right: 28px;
+}
+.margin5{
+margin-left: 5px;
+}
+.margin10{
+margin-right: 10px;
+margin-bottom: 16px;
+}
+.longitudeIcon {
+width: 22px;
+height: 22px;
+object-fit: contain;
+}
+.documentsLinksContainer{
+margin-right: 20px;
+}
+.documentsLinks {
+font-family: FSHumana;
+font-size: 15px;
+font-weight: 300;
+font-stretch: normal;
+font-style: normal;
+line-height: 1.33;
+letter-spacing: -0.21px;
+text-align: center;
+color: #414042;
+}
+.displayOnlyMobile{
+display: none;
+}
+.displayOnlyDesktop{
+display: block;
+}
+.dropDownHeader{
+
+height: 50px;
+font-family: FSHumana;
+font-size: 27px;
+font-weight: 300;
+font-stretch: normal;
+font-style: normal;
+line-height: 1.63;
+letter-spacing: normal;
+color: #414042;
+
+}
+.footer-cookies-image {
+  padding-left: 4px;
+}
+@media only screen and (min-width: 701px) and (max-width: 1200px){
+   .bodyContainer {
+      padding: 0px 50px; 
+  }
+  .margin55{
+    width:50%;
+}
+  .hideVerticalRuler{
+    display: none
+  }
+  
+}
+@media only screen and (max-width: 700px){
+  .bodyContainer {
+      padding: 0px 21px; 
+  }
+  .backToTopButton{
+  padding: 0; 
+  width: 100%;
+  }
+  .backToTopButtonContainer{
+      padding: 0;
+  }
+  .verticalRuler {
+ 
+  display: none;
+  }   
+  .width95{
+       width: 100%;
+  }
+  .margin28{
+      margin-right: 22px;
+}
+  .otherHumanaSites{
+    font-size: 15px;
+  }
+  .documentCenterLinks{
+    justify-content: center;
+    text-align: center;
+  }
+  .displayOnlyMobile{
+    display: block;
+  }
+  .margin55{
+    margin-bottom: 0;
+  }
+  .displayOnlyDesktop{
+    display: none;
+  }
+  .documentsLinksContainer{
+    width: 100%;
+  }
+  .actualNode .backToTopButtonContainer{
+    padding: 0 1px;
+  }
+  .mobile-no-border.slds-border_right{
+    border-right: none;
+  }
+  .humanaLogoIcon {
+    margin-bottom: 25px;
+  }
+}

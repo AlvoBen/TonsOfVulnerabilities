@@ -1,0 +1,78 @@
+﻿<!--
+LWC Name        : standardTableAccordianPolicyHum.html
+Function        : LWC to display Policy section on account details pages.
+
+Modification Log:
+* Developer Name                  Date                          Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Akshay K                        11/24/2020                    Original Version 
+* Mohan                           04/12/2021                    US-1892975 accordian policy view all, breadcrumbs  
+* Mohan                           04/16/2021                    DF:2883
+* Supriya                         08/23/2021                    US-2363825 Standardized icons
+* Supriya                         09/02/2021                    DF-3674
+* Supriya Shastri                 09/06/2021                    Added grey headers to member detail table
+* Supriya Shastri                 10/27/2021                    US-2440592 : Account Detail Page Redesign
+* Abhishek Mangutkar			  05/09/2022				    US-2871585
+****************************************************************************************************************************-->
+<template>
+    <article class="slds-card slds-card_boundary slds-grid slds-grid--vertical full-container hc-standard-table-styles">
+        <div>
+            <c-generic-bread-crumbs-hum if:true={bInfiniteScroll} items={breadCrumbItems}></c-generic-bread-crumbs-hum>
+            <header class=" slds-card__header slds-grid slds-p-right_none slds-media slds-media_center slds-has-flexi-truncate slds-grid_align-spread">
+                <div class="slds-grid slds-grid_vertical-align-center">
+                  <div class="slds-media__figure">
+                      <lightning-icon icon-name="custom:custom60"></lightning-icon>
+                  </div>
+                  <div class="slds-media__body">
+                        <h2 class="slds-card__header-title">{labels.Policy} ({accPolicyList.length})</h2>
+                  </div>               
+                </div>
+              </header>
+              <lightning-layout slot="actions" vertical-align="end" horizontal-align="end" class="slds-p-bottom_small">
+                <!--THIS SECTION IS FOR  ACCOUNT POLICY TABLE-->
+                
+                <template if:true={getMemberSection}>
+                    <lightning-layout-item padding="horizontal-small">
+                        <lightning-combobox class="hc-text-wrap" name=Member_Coverage_Status__c label={labels.HumStatus} onchange={getFilterValue} value=""
+                            options={filterFldValues.Member_Coverage_Status__c}>
+                        </lightning-combobox>
+                    </lightning-layout-item>
+                    <lightning-layout-item padding="horizontal-small">
+                        <lightning-combobox class="hc-text-wrap" name=Product__c label={labels.HUMCaseProduct} onchange={getFilterValue} value=""
+                            options={filterFldValues.Product__c}>
+                        </lightning-combobox>
+                    </lightning-layout-item>
+                </template>
+                <!----THIS SECTION IS FOR GROUP ACCOUNT POLICY TABLE-->
+                <template if:false={getMemberSection}>
+                    <lightning-layout-item padding="horizontal-small">
+                        <lightning-combobox class="hc-text-wrap" name=Plan_Status__c label={labels.HumStatus} onchange={getFilterValue} value=""
+                            options={filterFldValues.Plan_Status__c}>
+                        </lightning-combobox>
+                    </lightning-layout-item>
+                    <lightning-layout-item padding="horizontal-small">
+                        <lightning-combobox class="hc-text-wrap" name=Product__c label={labels.HUMCaseProduct} onchange={getFilterValue} value=""
+                            options={filterFldValues.Product__c}>
+                        </lightning-combobox>
+                    </lightning-layout-item>
+                </template>
+                <lightning-layout-item padding="horizontal-small">
+                    <div onclick={clearData}>
+                        <lightning-icon class="health-filter-icon slds-p-around_x-small" icon-name={iconName}
+                            size="x-small" alternative-text="Clear Filters"></lightning-icon>
+                    </div>
+                </lightning-layout-item>            
+            </lightning-layout>
+            <c-standard-filter-pills-hum filter-config-obj={filterObj} filter-values={pillFilterValues} onremovepill={handleRemove}>
+            </c-standard-filter-pills-hum>
+        </div>
+        <div if:true={bDataLoaded} class="slds-grid full-container slds-is-relative">
+            <c-standard-table-component-hum class="full-container" templateaccordian=true ongetaccordiandata={getaccordiandata}
+                b-hide-title=true show-view-all={showViewAll} name-of-screen={nameOfScreen} response={accPolicyList}
+                templatemodal={oPolicyLayout} no-data-message={labels.Hum_NoResultsFound}
+                disable-checkbox=true b-infinite-scroll={bInfiniteScroll} 
+                o-view-all-params={oViewAllParams} default-header-icon='custom:custom60' related-input-field={loggingRelatedField} screen-name="Account Detail Policy">
+            </c-standard-table-component-hum>
+        </div>
+    </article>
+</template>

@@ -1,0 +1,13 @@
+.slds-hForm {
+    padding-top: 15px;
+}
+.customtop{
+    top: -15px;
+}  
+.mandatory::before {
+  content: "* ";
+  color:red;
+}
+.modal_height{
+    height: 75%;
+}

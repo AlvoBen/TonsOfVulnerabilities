@@ -1,0 +1,237 @@
+﻿<!--
+LWC Name        : accuntDetailCaseHistoryHum.html
+Function        : LWC to display Case History section on member details pages.
+
+Modification Log:
+* Developer Name                  Date                         Description
+Isha/Ankima                     07/12/2022                     Original version
+****************************************************************************************************************************-->
+<template>
+    <article class="slds-card slds-card_boundary slds-grid slds-grid--vertical full-container hc-case-history" style='height:108vh'>
+        <div class="page-error-message slds-m-top_small"></div>
+        <div style="display:flex">
+          
+        <div if:false={viewAllArchivedData} style={varObj.widthval}>
+            <header
+                class=" slds-card__header slds-grid slds-p-right_none slds-media slds-media_center slds-has-flexi-truncate slds-grid_align-spread">
+                <div class="slds-grid slds-grid_vertical-align-center">
+                    <div class="slds-media__figure">
+                        <lightning-icon icon-name="standard:account" size="small"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <h1 slot="title" class="slds-card__header-title">{varObj.archivalScreen}</h1>
+                    </div>
+                </div>
+            </header>
+            <div class="slds-grid slds-grid_vertical-align-center slds-p-around_x-small">
+                <lightning-icon class="info-alt-icon" icon-name="utility:info_alt" size="x-small">
+                </lightning-icon>
+                <template if:false={resultsTrue}>
+                    <div style="display: flex;">
+                        <div class="slds-m-left_x-small history-warn-msg"> 
+                            The table is displaying 0 to 0 of 0 archived cases. </div>
+                    </div>
+                </template>
+                <template if:true={resultsTrue}>
+                    <div style="display: flex;">
+                        <div class="slds-m-left_x-small history-warn-msg"> 
+                            The table is displaying {varObj.startCount} to {varObj.lastIndex} of {totalCasesCount} archived cases. </div>
+                        <div if:true={varObj.displayViewAllMsg} style="margin-left: 4px;"> Click 'View All' to display all records.</div>
+                    </div>
+                </template>
+                
+            </div>
+            <div class="slds-grid slds-grid_vertical-align-center slds-p-around_x-small">
+                <lightning-icon class="info-alt-icon" icon-name="utility:info_alt" size="x-small">
+                </lightning-icon>
+                <span class="slds-m-left_x-small history-warn-msg">Additional archived cases may be available (up to 01/01/2014). <b>Please choose a 24 month range or less.</b></span>
+            </div>
+            <br/>
+            <div class="slds-grid slds-wrap slds-gutters slds-p-horizontal_small">
+                <div class="slds-grid">
+                    
+                    <div class="slds-col slds-grid slds-grid_vertical-align-center slds-p-around_x-small range-fields"
+                        style="display: inline-flex">
+                        <label for="lch-from"
+                            class="slds-form-element__label slds-no-flex">{labels.HUM_LegacyFrom}</label>
+                        <lightning-input type="text" data-id="fromField" class="dateVal"
+                            value={varObj.initFromDate} variant="label-hidden" maxlength="10"
+                            onblur={validateFromDate}>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-col slds-grid slds-grid_vertical-align-center slds-p-around_x-small 
+                     range-fields" style="display: inline-flex">
+                        <label for="lch-to" class="slds-form-element__label slds-no-flex">{labels.HUM_LegacyTo}</label>
+                        <lightning-input type="text" data-id="toField" maxlength="10" class="dateVal"
+                            variant="label-hidden" value={varObj.initToDate}  onblur={validateToDate}>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-col slds-p-vertical_small">
+                        <lightning-button class="" variant="brand-outline"
+                             label="Go" onclick={fetchResultOnDateValues} disabled={disableGoButton}>
+                        </lightning-button>
+                    </div>
+                    <div class="slds-col slds-p-vertical_small">
+                        <lightning-button class="slds-p-right_small" variant="brand-outline" label="Clear"
+                            onclick={clearDateValues}>
+                        </lightning-button>
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <template if:true={varObj.showOutOfRangeError}>
+                <div class="slds-grid slds-grid_vertical-align-center slds-p-around_x-small">
+                    <lightning-icon class=" redicon info-alt-icon slds-icon-text-warning" icon-name="utility:info_alt" size="x-small" >
+                    </lightning-icon>
+                    <span class="slds-m-left_x-small history-warn-msg" style="color:red">{varObj.errorMessageVal}</Current></span>
+                </div>
+            </template>
+            <div class="slds-grid slds-grid_vertical-align-center slds-p-around_x-small">
+                <lightning-icon class="info-alt-icon" icon-name="utility:info_alt" size="x-small">
+                </lightning-icon>
+                <span class="slds-m-left_x-small history-warn-msg">{varObj.infoMsg}</span>
+            </div>
+            <br/>
+            <div class="slds-grid slds-wrap slds-gutters slds-p-horizontal_small">
+                <div class="slds-grid">
+                    <div class="slds-col slds-p-bottom_small">
+                        <label for="lch-reference-num" class="slds-form-element__label slds-no-flex">
+                            Case Number</label>
+                        <lightning-helptext content="This Case Number refers to Archived Cases"
+                            class="slds-is-relative slds-p-top_none">
+                        </lightning-helptext>
+                        
+                    </div>
+                    <div class="slds-col slds-p-bottom_small slds-p-left_none">
+                        <lightning-input type="text" id="lch-reference-num" data-id="refField" placeholder="Case Number"
+                            class="refID slds-m-left_small ref-num-filed"  maxlength="13" onchange={handleChange}
+                            variant="label-hidden">
+                        </lightning-input>
+                    </div>
+                    <div class="slds-col">
+                        <lightning-button class="slds-p-right_small" variant="brand-outline" label="Go" disabled={disableCaseGoButton}
+                            onclick={getCaseDataFromAPI}>
+                        </lightning-button>
+                    </div>
+                    <template if:true={varObj.showCaseNotFoundMsg}>
+                    <div class="slds-grid slds-grid_vertical-align-center slds-p-around_x-small">
+                        <span class="slds-m-left_x-small history-warn-msg" style="color:red;margin-top:-17px">{varObj.caseNumberErrorMsg}</Current></span>
+                    </div>
+                </template>
+                </div>
+            </div>
+        </div>
+        <template if:false={viewAllArchivedData}>
+            <template if:true={varObj.showButtons}>
+                <div style={varObj.buttonCss}>
+                    <template for:each={ButtonVals} for:item="viewButton">
+                        <div key={viewButton} class = 'test'> 
+                        <lightning-button class="slds-button_full-width "  disabled ={viewButton.disabled} style={viewButton.buttonWidth} data-id={viewButton.value} variant='brand-outline' value={viewButton.value} label={viewButton.value} onclick={setCount}></lightning-button>
+                        </div> 
+                    </template>
+                </div>
+            </template>
+        </template>
+        </div>
+        <div class="hc-standard-table-styles">
+            <header class=" slds-card__header slds-grid slds-p-right_none slds-media slds-media_center slds-has-flexi-truncate hc-align-header">
+                <div class="slds-grid slds-grid_vertical-align-center">
+                    <div class="slds-media__figure">
+                        <lightning-icon icon-name="standard:case"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <template if:true={viewAllArchivedData}>
+                        <h2 class="slds-card__header-title">Archived Cases ({sStartCount} - {sEndCount})</h2>
+                        </template>
+                        <template if:false={viewAllArchivedData}>
+                        <h2 class="slds-card__header-title">Archived Cases ({varObj.totalcases})</h2>
+                        </template>
+                    </div>
+                </div>
+               
+            </header>
+            <div class="slds-grid slds-wrap slds-gutters slds-grid slds-grid_align-end">
+                <div class="slds-grid slds-size_6-of-12"> 
+                </div>
+            </div>
+            <lightning-layout slot="actions" vertical-align="end" horizontal-align="end" class="slds-p-bottom_small">
+
+                <div class="slds-col ch-filter-keyword slds-p-horizontal_x-small">
+                    <lightning-input class="inputfield keyword-field state-field resultFilter" type="text" name="keyword" label="Filter by keyword" 
+                        value={keyword} onchange={findByWord} onfocus={onFormItemFocus}>
+                    </lightning-input>
+                </div>
+                <div class="slds-col ch-date-picker slds-p-horizontal_x-small">
+                    <label class="slds-form-element__label">{labels.caseHistoryDateLabel}</label>
+                    <div class="slds-is-relative">
+                        <button class="slds-button slds-button_neutral  slds-button_stretch slds-show ch-custom-date-popover" onclick={datePickerShow} data-id="test">
+                            <span class="slds-show slds-text-body_small slds-text-color_weak
+                                    slds-show--inline-block ch-custom-date-popover">{labels.caseHistoryDateSelect}</span>
+                            <lightning-icon icon-name="utility:down" alternative-text="Show More" size="xx-small"
+                                class="ch-date-button-arrow ch-custom-date-popover"></lightning-icon>
+                        </button>
+                    </div>
+
+                    <section aria-label="Dialog title" aria-describedby="popover-body-id"
+                     role="dialog" class={bShowDatePicker}>
+                        <div id="popover-body-id" class="slds-popover__body">
+                            <lightning-input class="inputfield birthdate-FromInput date-input message-FromInput ch-custom-date-popover resultFilter" type="text" 
+                            onkeyup={formatDateOnkeyupHandler} placeholder="From" 
+                            date-style="short" value={fromDate} name="fromDate" maxlength="10">
+                            </lightning-input>
+                            <lightning-input class="inputfield birthdate-ToInput date-input message-ToInput ch-custom-date-popover resultFilter" type="text" 
+                            placeholder="To" date-style="short" value={toDate} name="toDate"
+                                onkeyup={formatDateOnkeyupHandler} maxlength="10">
+                            </lightning-input>
+                        </div>
+                    </section>
+                </div>
+                <template if:true={varObj.isGeneral}>
+                    <div class="slds-col ch-picker-fields slds-p-horizontal_x-small" >
+                        <lightning-combobox class="inputfield state-field resultFilter" name="sOrigin" label="Case Origin" value=""
+                            options={filterFldValues.sOrigin} onchange={selectFilter} onfocus={onFormItemFocus}>
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-col ch-picker-fields slds-p-horizontal_x-small" >
+                        <lightning-combobox class="inputfield state-field custom-dropdown resultFilter" name="sClassification" label="Classification"
+                            value="" options={filterFldValues.sClassification} onchange={selectFilter} onfocus={onFormItemFocus}>
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-col ch-picker-fields slds-p-horizontal_x-small">
+                        <lightning-combobox class="inputfield state-field resultFilter" name="sIntent" label="Intent" value=""
+                            options={filterFldValues.sIntent} onchange={selectFilter} onfocus={onFormItemFocus}>
+                        </lightning-combobox>
+                    </div>
+                    
+                </template>
+                <div class="slds-col ch-clear-filters slds-p-horizontal_x-small">
+                    <div class="slds-p-top_large" onclick={selectFilter}>
+                        <lightning-icon class="health-filter-icon slds-p-around_x-small" name='clear'
+                        icon-name={iconName} size="x-small" alternative-text="Clear Filters">
+                        </lightning-icon>
+                    </div>
+                </div>
+            </lightning-layout>
+            <div class="">
+                <c-standard-filter-pills-hum filter-config-obj={filterObj} filter-values={pillFilterValues}
+                    onremovepill={handleRemove}>
+                </c-standard-filter-pills-hum>
+            </div>
+        </div>
+        <div class="slds-grid full-container slds-is-relative slds-p-horizontal_none" style='margin-bottom:3rem'>
+            <template if:false={resultsTrue}>
+                <p style="text-align:center;margin:auto">No records to display</p>
+            </template>
+           
+            <template if:true={resultsTrue}>
+                <c-standard-table-component-hum class="full-container hc-account-detail-standard-table" standard-table-accordian-hum=true name-of-screen="Archived Case"
+                     response={oData} is-enable-accordion = "true"
+                    templatemodal={oArchivedModel} show-view-all={showViewAll} no-data-message={labels.Hum_NoResultsFound} 
+                    b-hide-title=true ontabopen={handleAppliedFilters} b-infinite-scroll={bInfiniteScroll} 
+                    o-view-all-params={oViewAllParams} onlinkclick={handleclicked} is-archived={isArchived} default-header-icon='standard:case' related-input-field={loggingRelatedField} screen-name="Archived Case"
+                    onopencustomsubtab={handleSubtabOpen}>
+                </c-standard-table-component-hum>
+            </template>
+        </div>
+    </article>
+</template>

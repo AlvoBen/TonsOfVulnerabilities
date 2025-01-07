@@ -1,0 +1,114 @@
+﻿<!--
+Page Name        : BenefitsVerificationRedirect_VF.page
+Version          : 1.1
+Created On       : 2021
+Function         : VF page to redirect to the Benefits Verification (Pilot) link
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Sayali Gavane                            				10/16/2020                   Original Version 
+* Nirmal Garg                                           04/14/2021                   Created New Version
+* Nirmal Garg											04/14/2021					 US-1966394 - T1PRJ0064724 - MF 1 - Adding data elements to Benefits Verification (Pilot) link to pass over to DEBUT tool
+*Samruddhi Rathi 										05/21/2021					 US -2225974 T1PRJ0064724 - DEBUT Browser ServiceCRM at 1280 x 1024 px 
+*Apurva Urkude									        06/04/2021					 Defect Fix-DF3188 When clicking on DEBUT Benefit Quoting Tool a New window should get open 
+* Nirmal Garg											06/28/2021					 Incident fix - INC1190164
+* Pinky Vijur                                        4/28/2022                     User Story 3213645: T1PRJ0272548 - SF Legacy API Retirement Upgrade API Version for Integrationjs Benefits
+****************************************************************************************************************************
+-->
+
+<apex:page id="thePage" showHeader="false" sidebar="false" controller="BenefitsVerificationRedirectV1_C_HUM">
+	<apex:includeScript value="/support/console/54.0/integration.js" />
+	<apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+	<apex:form >
+	 <apex:actionFunction action="{!generateURL}" name="generateurl" reRender="op">
+		 <apex:param assignTo="{!sCaseId}" name="sCaseId" value="" />
+		 <apex:param assignTo="{!sInteractionId}" name="sInteractionId" value=""/>
+	  </apex:actionFunction>
+	  <apex:actionFunction action="{!decodeTabLink}" name="decodeTabLink" reRender="op1">
+		  <apex:param assignTo="{!sTabURL}" name="sTabURL" value="" />
+	  </apex:actionFunction>
+	</apex:form>
+	<apex:outputPanel id="op1">
+		<script>
+			var taburl = '{!sDecodedTabUrl}';
+			var intId = '';
+			var caseId = '';
+			if(taburl != '' &&  taburl != undefined)
+			{
+			   var linkdata = taburl.split('|');
+			   for(var i=0; i < linkdata.length; i++)
+				   {
+				   linkdata[i] = linkdata[i].replace('//','');
+					   if(linkdata[i].indexOf('interactionId') != -1)
+						  {
+							   intId = urlParam('interactionId', linkdata[i]);
+						  }
+					   if(linkdata[i].indexOf('CaseHistory') != -1)
+						  {
+							   caseId = urlParam('cancelURL', linkdata[i]);
+							   caseId = caseId.replace('/','');
+						  }
+						  if(linkdata[i].trim() != '' && linkdata[i] != null && linkdata[i].length >= 15)
+						  {
+							  linkdata[i] = linkdata[i].replace('/','');
+							  if(linkdata[i].trim().substring(0,3) == '500')
+							   caseId = linkdata[i].substring(0,15);
+						  }
+				   }
+				generateurl(caseId,intId);
+			}
+			
+			function urlParam(name, url)
+			{
+				var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(url);
+				if (results == null){
+					return null;
+				}
+				else {
+				   return decodeURI(results[1]) || 0;
+				}
+			}
+		</script>
+	</apex:outputPanel>
+    
+	<apex:outputPanel id="op">
+		<script>
+			var url = "{!sBaseURL}";
+			if(url != '' && url != undefined)
+			{
+                window.open(url,'_blank','toolbar=yes,scrollbars=yes,resizable=yes,top=0,left=0,width=1280,height=1024');
+                closetab();
+			}
+			function closetab() {
+				//First find the ID of the current tab to close it
+				sforce.console.getEnclosingTabId(closeSubtab);
+			}
+			var closeSubtab = function closeSubtab(result) {
+				//Now that we have the tab ID, we can close it
+				var tabId = result.id;
+				sforce.console.closeTab(tabId);
+			};
+		</script>
+	</apex:outputPanel>
+    
+	<script>
+			function getPrimaryTabId() {
+				//First find the ID of the current primary tab to close it
+					if (sforce.console.isInConsole()) {
+					 sforce.console.getEnclosingPrimaryTabId(getSubTabData);
+				}
+			}
+			var getSubTabData = function getSubTabData(result) {
+				//Now that we have the primary tab ID, we can close it
+				var tabId = result.id;
+				//alert(tabId);
+				sforce.console.getTabLink(sforce.console.TabLink.PARENT_AND_CHILDREN, result.id, showTabLink);
+			};
+			var showTabLink = function showTabLink(result) {  
+				var link = decodeURI(result.tabLink);
+				decodeTabLink(link);
+			};
+		getPrimaryTabId();
+	</script>
+</apex:page>

@@ -1,0 +1,50 @@
+﻿<!--
+Page Name        : PhysicianFinder_VF_HUM
+Version          : 1.0 
+Created Date     : 11 Nov 2021
+Function         : Page to Accommodate to redirect to physician finder end point URL with encrypted parameters from encryption service.
+Modification Log :
+*       Developer                   Code Review            Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Suraj Patil								   				11/10/2021			REQ - 2512130 T1PRJ0193862 - MF 01 - Ability to attach PFP email automatically to CRM case (Mbr Policy Page)
+* Tharun Madishetti											27/04/2022			US - 3213651 T1PRJ0272548 - SF Legacy API Retirement Upgrade API Version for Integrationjs linkouts
+----------------------------------------------------------------------------------------------------------------------------------->
+
+<apex:page id="RPpageId" sidebar="false" showheader="true" tabStyle="Policy__c" controller="PhysicianFinder_C_HUM"  action="{!initiateRequest}">
+<apex:includeScript value="/support/console/54.0/integration.js"/>
+
+    <script>
+        var formAction = '{!JSENCODE(sRedirectMember)}';
+        var formParm = '{!JSENCODE(sFinalMapJsonValue)}';
+        window.onload = closetab(); 
+        function onLoadEvents() 
+        {   
+            var mapJson = JSON.parse(formParm);
+            var mapForm = document.createElement("form");
+            mapForm.method = "POST";
+            mapForm.action = formAction;
+            mapForm.target = "_blank";
+            for (x in mapJson) {
+                var mapInput = document.createElement("input");
+                mapInput.type = "hidden";
+                mapInput.name = x;
+                mapInput.value = mapJson[x];
+                mapForm.appendChild(mapInput);
+            }
+            document.body.appendChild(mapForm);
+            mapForm.submit();
+        }
+		
+		function closetab() {
+			//Get the ID of the current Physician Finder tab to close it
+            sforce.console.getEnclosingTabId(closeSubtab);         
+           	onLoadEvents();
+        }  
+
+    	function closeSubtab(result) {
+			//Now that we have the tab ID, we can close the tab
+			var tabId = result.id;
+			sforce.console.closeTab(tabId);
+		}
+    </script>
+</apex:page>

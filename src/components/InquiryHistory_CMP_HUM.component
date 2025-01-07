@@ -1,0 +1,76 @@
+﻿<!--
+Component Name   : InquiryHistory_CMP_HUM
+Version          : 1.0
+Created On       : 07/24/2020
+Function         : VF Component to display retrieve contact history button
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Sayali Nemade                                        07/24/2020                    REQ - 1137828 : MF 3 - CRM User Access to CCP GCP Data in Repository (Legacy Contact History Section - Member/ Policy Member/ Policy/ Unknown Member/ Agent-Broker/ Provider/ Group)
+ * Sayali Nemade 				                        08/27/2020               REQ - 1170241 MF 3 - Archived CCP Reference Summary Page - High Level  (Overall look)
+ * Sayali Nemade 								       09/03/2020                REQ - 1170241 DF -1509 Not able to see data on UI for Group, Provider and Agent/Broker
+ * Sayali Nemade 					   				    09/12/2020               REQ - 1138575 Logging Component for Inquiry Details
+ * Sayali Nemade 					   				    09/12/2020               REQ - 1170241 Added new Parameter Record Type in Legacy Contact History 
+ * Pinky Vijur											04/13/2021				 REQ - T1PRJ0002736 - 2021 MF6 - TECH - SF - CheckMarxFix Part 1 - Data Retention - Fixes
+ * Tharun Madishetti							        03/01/2024				 US-5318077 : Consumer Mgt-Classic-VIT Remediation Member Plan and Verify Demographics; VIT37935988,VIT37935989
+ ****************************************************************************************************************************-->
+<apex:component allowDML="True">
+
+	<apex:attribute id="sInteractingAboutCCPGCP" name="sInteractingAboutCCPGCP" description="This is Member Gen Key" type="String"></apex:attribute>
+    <apex:attribute id="sSelectedPolicy" name="sSelectedPolicy" description="This is Selected Policy" type="String"></apex:attribute>
+    <apex:attribute id="sAccName" name="sAccName" description="Account Name For Tab" type="String"></apex:attribute>
+    <apex:attribute id="sProductName" name="sProductName" description="To Get Product Name" type="String"></apex:attribute>
+	<apex:attribute id="sEnterpriseID" name="sEnterpriseID" description="To Get Enterprise ID" type="String"></apex:attribute>
+	<apex:attribute id="sRecordId" name="sRecordId" description="To Get Record Id of Account or Policy Member or Group Page" type="String"></apex:attribute>
+	<apex:attribute id="sMemberId" name="sMemberId" description="To Get Member ID" type="String"></apex:attribute>
+	<apex:attribute id="sRecordType" name="sRecordType" description="To Get Record Type" type="String"></apex:attribute>
+    <apex:includescript value="/support/console/33.0/integration.js"/>
+	<script>
+	function openInquirySummarySubTab() {
+        if(sPageName =='AccountPage' || sPageName == 'PolicyMemberPage')
+        {
+            window.parent.sforce.console.getEnclosingPrimaryTabId(openSubtab);
+        }
+        else if(sPageName =='GroupPolicy'){
+            sforce.console.getEnclosingPrimaryTabId(openSubtab);
+        }
+    }
+        
+    var openSubtab = function openSubtab(result) {
+    var primaryTabId = result.id;
+        if(sPageName == 'AccountPage')
+        {
+            window.parent.sforce.console.openSubtab(primaryTabId , '/apex/InquirySummary_VF_HUM?sInteractingAboutCCPGCP={!JSENCODE($CurrentPage.parameters.sInteractingAboutCCPGCP)}&sAccName={!JSENCODE($CurrentPage.parameters.sAccName)}&sEnterpriseID={!JSENCODE($CurrentPage.parameters.sEnterpriseID)}&sRecordId={!$CurrentPage.parameters.id}&sRecordType={!JSENCODE($CurrentPage.parameters.sRecordType)}', true, 
+            'Archived CCP Inquiry Summary: ' + sAccName, null);
+        }
+    
+        else if(sPageName == 'PolicyMemberPage')
+        {
+            window.parent.sforce.console.openSubtab(primaryTabId , '/apex/InquirySummary_VF_HUM?sInteractingAboutCCPGCP={!JSENCODE($CurrentPage.parameters.sInteractingAboutCCPGCP)}&sSelectedPolicy={!JSENCODE($CurrentPage.parameters.sSelectedPolicy)}&sProductName={!JSENCODE($CurrentPage.parameters.sProductName)}&sAccName={!JSENCODE($CurrentPage.parameters.sAccName)}&sEnterpriseID={!JSENCODE($CurrentPage.parameters.sEnterpriseID)}&sRecordId={!$CurrentPage.parameters.id}&sMemberId={!JSENCODE($CurrentPage.parameters.sMemberId)}&sRecordType=Member', true, 
+            'Archived CCP Inquiry Summary: ' + sAccName, null);
+        }
+    
+        else if(sPageName =='GroupPolicy'){
+            sforce.console.openSubtab(primaryTabId , '/apex/InquirySummary_VF_HUM?sInteractingAboutCCPGCP={!JSENCODE(sInteractingAboutCCPGCP)}&sSelectedPolicy={!JSENCODE(sSelectedPolicy)}&sProductName={!JSENCODE(sProductName)}&sAccName={!JSENCODE(sAccName)}&sEnterpriseID={!JSENCODE(sEnterpriseID)}&sRecordId={!$CurrentPage.parameters.id}&sMemberId={!JSENCODE(sMemberId)}&sRecordType=Group', true,
+            'Archived CCP Inquiry Summary: ' + sAccName, null);
+        }
+    };
+	</script>
+	
+    <apex:stylesheet value="{!URLFOR($Resource.HUMInquiryHistoryDataRetention,'/HUMInquiryHistoryDataRetention_CSS_HUM.css')}"/> 
+    
+    <apex:form id="theForm">
+    
+      <apex:pageBlock title="" id="pageBlock">
+            <apex:pageBlockButtons location="top">
+                <apex:outputLabel value="{!$Label.HUMInqLegacySystem}" for="legselectList" style="padding-right:10px;font-weight:normal !important "></apex:outputLabel>            
+                <apex:selectList id="legselectList">
+                    <apex:selectOption itemValue="{!$Label.HUM_GCP}" itemLabel="{!$Label.HUMInqGCPCCP}"></apex:selectOption>
+                </apex:selectList>  
+                <apex:commandButton value="{!$Label.HUMRetLegacyHistory}" onClick="openInquirySummarySubTab();" id="theButton" styleClass="LegacyBtnClass" reRender="theForm"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+
+</apex:component>

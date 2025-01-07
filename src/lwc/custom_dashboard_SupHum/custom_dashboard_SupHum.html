@@ -1,0 +1,266 @@
+﻿<!--
+LWC Name        : custom_dashboard_SupHum.html
+Function        : Parent LWC component for custom_filter_Sup, Custom_dashboard_table_Sup. Used to show case/ Task dashboard page for Supervisor profile
+
+Modification Log:
+* Developer Name                  Date                          Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Shailesh B                      07/03/2022                    Original Version 
+* Gowthami T                      07/03/2022                    Original Version 
+****************************************************************************************************************************-->
+<template>
+    <template if:true={isLoading}>
+        <div class="slds-p-around_x-large">
+            <lightning-spinner alternative-text="Loading" size="large" variant="brand"></lightning-spinner>
+        </div>
+    </template>
+    <div class="slds-grid slds-grid_vertical">
+        <lightning-card  variant="Narrow">
+            <div class="slds-col">
+                <template if:false={isSupervisor}>
+                <h2  class="slds-p-left--small" style="line-height: revert;font-size: var(--lwc-fontSizeLarge);font-weight: 400; font-size: var(--lwc-fontSizeXLarge);">View My Assigned Work</h2>
+                </template>
+                <template if:true={isSupervisor}>
+                    <h2  class="slds-p-left--small" style="line-height: revert;font-size: var(--lwc-fontSizeLarge);font-weight: 400; font-size: var(--lwc-fontSizeXLarge);">Cases/Tasks</h2>
+                </template>
+            </div>
+            <div class="slds-col slds-p-left--small slds-p-right--small">
+                <template if:true={showCaseUpdateError}>
+                    <div class="slds-notify slds-notify_alert slds-alert_warning" role="alert" style="background-color: #FFB75D; border-radius: 4px;background-image: none;">
+                        <div class="slds-grid slds-wrap" style="width: 100%;">
+                            <div class="slds-col slds-size_11-of-12 slds-text-align_left" style="display: flex;">
+                                <span class="slds-icon_container slds-icon-utility-warning slds-m-around--x-small">
+                                    <div class="slds-icon slds-icon_small" aria-hidden="true">
+                                        <lightning-icon  icon-name="utility:warning" size="small"></lightning-icon>
+                                    </div>
+                                </span>
+                                <h2 style="font-size: 14px;">
+                                    <div id="errormessage" class="slds-m-around--xxx-small">{caseUpdateErrorMessage}</div>
+                                    <div data-id="links" class="slds-m-around--xxx-small">
+                                        <template for:each={unclosedCases} for:item="rec">
+                                            <lightning-formatted-url key={rec.id} value={rec.viewUrl} tooltip="Navigate to case/Task" label={rec.number}></lightning-formatted-url>
+                                        </template>
+                                    </div>
+                                </h2>       
+                            </div>
+                            <div class="slds-col slds-size_1-of-12">
+                                <div class="slds-notify__close slds-m-around--xx-small">
+                                    <lightning-icon class="slds-modal__close" style="cursor: pointer;" icon-name="utility:close" size="x-small" onclick={closeWaringMsgPopup}></lightning-icon>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </template>
+            </div>
+            <lightning-layout>
+            <lightning-layout-item >
+                <div class="slds-p-left_large" style="line-height: revert;font-size:initial;font-weight: 400; font-size: large; padding-left:550px;">
+                    <div class = {caseCountColorClass}>
+                    Total Cases Open: {totalOpenCaseCount}
+                    </div>
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item >
+                <div class="slds-p-right_x-small slds-p-left_x-small" style="line-height: revert;font-size:initial;font-weight: 400; font-size: large;">
+                    |
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item >
+                <div class="" style="line-height: revert;font-size:initial;font-weight: 400; font-size: large;">
+                     <div class={caseCountColorClass}>
+                    Total Tasks Open: {totalOpenTaskCount}
+                    </div>
+                </div>
+            </lightning-layout-item>
+        </lightning-layout>
+
+            <div class="slds-col">
+                <c-custom_filter_-sup-hum issupervisor={isSupervisor} onprofilecheck = {handleProfile}></c-custom_filter_-sup-hum>
+            </div>
+            <div class="slds-col slds-var-p-horizontal_small">
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_3-of-12 slds-m-top--xx-small">
+                        <span>{pageCount} out of {totalCount} results</span>
+                    </div>
+                    <div class="slds-col slds-size_4-of-12">
+                        <template if:true={isSupervisor}>
+                            <span> 
+                                <lightning-button-group>
+                                    <lightning-button label="Accept Selected" onclick={handleAcceptSelected}></lightning-button>
+                                    <lightning-button label="Close/Cancel Cases" disabled={enableCloseButton} data-name="closeCase" onclick={handleButtonClick}></lightning-button>
+                                    <lightning-button label="Change Case Owner" disabled={enableTransferButton} data-name="transferCase" onclick={handleButtonClick}></lightning-button>
+                                </lightning-button-group>
+                            </span>
+                        </template> 
+                    </div>
+                    <div class="slds-col slds-size_3-of-12">
+                        <span>
+                            <div class="slds-form-element slds-form-element__control slds-input-has-icon slds-m-right--medium slds-input-has-icon--right">
+                                <lightning-icon class="slds-input__icon" icon-name="utility:search" size="x-small" alternative-text="Search">
+                                </lightning-icon>
+                                <lightning-input type="text" data-attr = "cmt" variant="label-hidden" name="Search" placeholder="Search" onchange={handleInputChange}></lightning-input>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12">
+                        <span style="display: flex;">
+                            <c-custom-multi-select-combobox-hum multi-select="true"  onchildclick = {handlechildClick} selected-values={selectedValues}></c-custom-multi-select-combobox-hum>
+                            <lightning-helptext class="slds-var-m-left_xx-small" content="You can add additional columns"></lightning-helptext>
+                        </span>
+                    </div>
+                </div>            
+            </div> </br>
+            <div class="slds-col">
+                <c-custom_dashboard_table_-sup-hum original-case-task-list = {originalCaseTaskList} column-set={sColumnSet} columns={columns} columns1={columns} onpagecountnumber = {handlePageCount} oncheckboxcheck = {onRowSelectEvent} onclosecaseerror={handleCaseCloseError} onfetchopencasetaskcount={handleFetchOpenCaseTaskCount}></c-custom_dashboard_table_-sup-hum>
+            </div>
+            <div class="slds-col slds-m-left--medium slds-m-top--medium" style="font-weight : 600; color: red;">
+                *Views displaying in red color are unassigned views.
+            </div>
+        </lightning-card>
+    </div>
+    <template if:true={isModalOpen}>
+        <section aria-modal="true" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container ">
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_small" if:true={isCaseClose}>Close/Cancel Cases</h2>
+                    <h2 class="slds-text-heading_small" if:true={isCaseTransfer}>Case Transfer</h2>
+                    <lightning-icon class="slds-modal__close" icon-name="utility:close" size="small" onclick={cancelErrMsg}></lightning-icon>
+                </header>
+                <div class="slds-modal__content">
+                    <template if:true={popUpError}>
+                        <div class="slds-notify slds-notify_alert slds-alert_warning" role="alert">
+                            <span class="slds-assistive-text">warning</span>
+                            <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Description of icon when needed">
+                            <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                                <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+                            </svg>
+                            </span>
+                            <h2>
+                                {popUpErrorMessage}
+                            </h2>
+                            <div class="slds-notify__close">
+                            <button class="slds-button slds-button_icon slds-button_icon-small" title="Close">
+                                <svg class="slds-button__icon" aria-hidden="true">
+                                <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+                                </svg>
+                                <span class="slds-assistive-text">Close</span>
+                            </button>
+                            </div>
+                        </div>
+                    </template>
+                    <div class="slds-p-around_small" if:true={isCaseClose}>
+                        <lightning-combobox class="slds-var-p-left_small slds-var-p-right_small"
+                            data-id="casestatus"
+                            name="progress"
+                            label="Status"
+                            value={valueForClosedStatus}
+                            options={optionsForStatus}
+                            onchange={handleStatusChangePicklist} >
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-p-around_small" if:true={isCaseTransfer}>
+                        <!-- code goes here -->
+                        <lightning-layout multiple-rows>
+                            <lightning-layout-item size="6" padding="around-small" small-device-size="3" medium-device-size="6" large-device-size="6" >
+                                <!-- fields in one row -->
+                                <lightning-combobox
+                                    data-id="Service Center"
+                                    label="Service Center" required onblur={handleBlurDeptValidation}
+                                    value={changeOwnerCombo.sValue} 
+                                    placeholder="---None---"
+                                    options={changeOwnerCombo.Service_Center}
+                                    onchange={handleChangePicklist}></lightning-combobox>
+
+                                    <lightning-combobox
+                                    data-id="Department" required
+                                    label="Department" onblur={handleBlurDeptValidation}
+                                    value={changeOwnerCombo.dValue}
+                                    placeholder="---None---"
+                                    options={changeOwnerCombo.Department}
+                                    onchange={handleChangePicklist}></lightning-combobox> 
+
+                                    <lightning-combobox
+                                    data-id="Topic"
+                                    label="Topic" disabled={disableTopic}
+                                    value={changeOwnerCombo.tValue}
+                                    placeholder="Select a Topic"
+                                    options={changeOwnerCombo.Topic}
+                                    onchange={handleChangePicklist}></lightning-combobox>
+
+                            </lightning-layout-item>
+                            <lightning-layout-item size="6" padding="around-small" small-device-size="3" medium-device-size="6" large-device-size="6">
+                                
+                                <lightning-combobox  field-level-help = {Transfer_Tooltip_Hum}
+                                data-id="Transfer Reason" required
+                                label="Transfer Reason" 
+                                value={changeOwnerCombo.transValue}
+                                placeholder="Select Progress"
+                                options={changeOwnerCombo.Transfer_Reason}
+                                onchange={handleChangePicklist}></lightning-combobox>
+                                
+                                <!-- //for user selection call seperate component -->
+                                <c-custom-lookup-hum scope-values = {selectedRecord} disable-user-lookup = {disableUserLookup} selected-work-queue = {sSelectedWorkQueue} onuserselect = {handleTransferUserAutoSelect} object-name="User" field-name="Name" label="User" placeholder="search User" icon-name="standard:user"></c-custom-lookup-hum>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                        <!-- end -->
+                    </div>
+                    <div class="slds-p-bottom--large slds-p-left--large slds-p-right--large">
+                        <lightning-textarea  name="input1" label="Case Comments" value={storeCaseCmmt} onchange = {checkCountValidation}></lightning-textarea>
+                    </div>
+                </div> 
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="neutral" label="Cancel" onclick={cancelErrMsg} class="slds-p-around_x-small"></lightning-button>
+                    <lightning-button variant="brand" label="Save" onclick={popUpSaveBtn} class="slds-p-around_x-small"></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+    <template if:true={isQueueModalOpen}>
+        <section aria-modal="true" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container " >
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_small">Work Queue Selection</h2>
+                    <lightning-icon class="slds-modal__close" icon-name="utility:close" size="small" onclick={closeModal}></lightning-icon>
+                </header>
+                <div class="slds-modal__content">
+                    <div class="slds-p-around_small">
+                        <div style="color: dodgerblue;">Current Work Queue is :</div>
+                        <lightning-combobox
+                            name="workQueue"
+                            label="Select a Work Queue"
+                            value={value}
+                            options={PicklistValues}
+                            disabled={isEditUnable}
+                            onchange={handleChange} >
+                        </lightning-combobox>
+                    </div>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="brand" label="Submit" onclick={saveQueue} class="slds-p-around_x-small"></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+    <template if:true={isDialogVisible}>
+        <section aria-modal="true" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container1 " style="position: absolute;top: 40%;width: 100%;">
+                <header class="slds-modal__header slds-theme_error">
+                    <h2 class="slds-text-heading--medium">Unsaved Changes</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_small">
+                    <center>
+                        You will lose any unsaved changes. Are you sure you want to continue?</br>
+                    </center>
+                </div>
+                <footer class="slds-modal__footer slds-align_absolute-center">
+                    <lightning-button variant="brand-outline" label="Cancel" onclick={handleClick} data-name="cancel" class="slds-p-around_x-small"></lightning-button>
+                    <lightning-button variant="brand-outline" label="Continue" onclick={handleClick} data-name="continue" class="slds-p-around_x-small"></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

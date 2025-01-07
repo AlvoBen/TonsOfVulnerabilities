@@ -1,0 +1,61 @@
+﻿<!-- 
+*******************************************************************************************************************************
+File Name        : crmRetail_MobileScanner_LWC_HUM.html
+Version          : 1.0 
+Created Date     : 01/12/2023 
+Function         : Lightning web component used for the Mobile Scan Card functionality.
+Modification Log :
+* Developer                 Code review         Date                  Description
+*******************************************************************************************************************************
+* Mohamed Thameem      	                	    01/12/2023            Original Version : Request 3866581 - Mobile Scanner
+* Mohamed Thameem      	                	    03/01/2023            Request 4231928 - Mobile Scanner Phase 2    
+* Vinoth L                                      10/03/2023            User Story 5132659 Ability to Edit Mobile Location Field  -->
+<template>
+    <div class="crm_criteria-card">      
+        <div class="crm_criteria-title" >
+            {label.CRMRetail_Scanner_Mobile_Section_Title} 
+        </div>   
+        <div>
+            <lightning-combobox disabled={disableLocation} name={label.cRMRetail_Location} label={label.cRMRetail_Location}
+                data-id="selectType" onchange={handleLocationChange} value={defaultLocation} options={locationList}>
+            </lightning-combobox>
+            <div style="margin-bottom: 15px;" class="slds-form-element">
+                <label class="slds-form-element__label" for="text-input-id-46">{label.CRMRetail_Interaction_Date}</label>
+                <div class="slds-form-element__control">
+                <input type="text" id="text-input-id-46" value={interactionDate} disabled class="slds-input crm_date-style" />
+                </div>
+            </div>
+
+
+            <div class="crm_action_footer">
+                
+                
+                <lightning-button variant="brand"  class="slds-m-right_x-small" label={label.CRMRetail_Scan_Card_Button}
+                    title={label.CRMRetail_Scan_Card_Button} onclick={enableScancard}>
+                </lightning-button>
+                <div if:true={enableHomeLocation}>
+                    <lightning-button variant="brand" label={label.CRMRetail_Save_Home_Location} 
+                                                    onclick={saveHomeLocation} 
+                                                    ></lightning-button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <template if:true={isNotificationModalActive}>
+        <c-storefront-notification-l-w-c-h-u-m notification-wrap-data={notificationData}
+            onnotificationack={ackNotification} onnotificationclose={handleNotificationModalClose}
+            page-name={sourcePageName}></c-storefront-notification-l-w-c-h-u-m>
+    </template>
+    <template if:true={isModalActive}>
+        <c-crm-retail_-scancard_-l-w-c_-h-u-m onloading={handleLoading} onscancomplete={handleScanComplete} view-mode={pageName} is-active={isModalActive} new-account={account}
+            onscancardevent={handleScanCardEvt} oncloseinactivemembermodal={handleinactivememModalClose} onclosescancardmodal={handleScanCardModalClose}>
+        </c-crm-retail_-scancard_-l-w-c_-h-u-m>
+    </template>
+<template if:true={isDuplicateModalOpen}>
+        <c-crm-retail_-generic-modal_-l-w-c_-h-u-m header-val={genericModalHeader} value-list={duplicateIntList}
+            ongenericmodalclosedevt={handleduplicatemodalclosedevt}></c-crm-retail_-generic-modal_-l-w-c_-h-u-m>
+    </template>
+    <template if:true={isSpinnerVisible}>
+        <lightning-spinner class="crm_spinner" alternative-text="Loading" variant="brand" size="large" role="alert"></lightning-spinner>
+    </template>
+</template>

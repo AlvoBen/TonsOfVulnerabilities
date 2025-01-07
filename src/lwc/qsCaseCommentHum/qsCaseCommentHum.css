@@ -1,0 +1,142 @@
+textarea {
+    height: 100px !important;
+}
+
+.slds-panel {
+    margin-bottom: 20px;
+    background-color: #fff;
+}
+
+.required-line-item {
+    background-color: #f44336;
+    padding: 1.8px;
+    line-height: 1.4000;
+}
+
+.pretext-view:focus {
+    border-color: #66afe9;
+    outline: 0;
+    box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.075), 0px 0px 8px rgba(102, 175, 233, 0.6);
+}
+
+.pretext-view {
+    height: 20px;
+    padding: 3px 6px;
+    font-size: 12px;
+    line-height: 1.4000;
+    color: #555;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
+}
+
+.pretext-view-checkbox {
+    width: 12px !important;
+    height: 12px !important;
+}
+
+.input-required {
+    border-left-width: medium!important;
+    border-left-color: red!important;
+}
+
+.form-control {
+    padding: 3px 6px;
+}
+
+.PreviousComment {
+    display: none;
+}
+
+.slds-panel__header {
+    border: none !important;
+}
+
+textarea.form-control {
+    height: auto;
+}
+
+.form-control {
+    padding: 3px 6px;
+    box-shadow: none;
+    display: block;
+    width: 100%;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.Messages {
+    background-color: #555;
+}
+
+.formattedText{
+    text-align: left !important;
+}
+
+.slds-notify_alert{
+    justify-content: left !important;
+	align-items: flex-start;
+}
+
+textarea {
+    height: 57px !important;
+}
+
+.my-icon{
+    --sds-c-icon-color-foreground-default: black;
+}
+
+.slds-scoped-notification{
+    color: black;
+}
+
+.inTxtaResolution.slds-form-element.slds-form-element__label:empty {
+    display: none !important;
+}
+
+.div_display {
+    display: block;
+    padding: 5px 5px;
+    margin-bottom: 15px;
+    border-color: #ddd;
+    border-bottom-style: solid;
+    border-bottom-width: thin;
+    border-left-style: solid;
+    border-left-width: thin;
+    border-right-style: solid;
+    border-right-width: thin;
+    border-top-style: solid;
+    border-top-width: thin;
+}
+
+.div_disable {
+    display: block;
+    padding: 5px 5px;
+    margin-bottom: 15px;
+    border-color: #ddd;
+    border-bottom-style: solid;
+    border-bottom-width: thin;
+    border-left-style: solid;
+    border-left-width: thin;
+    border-right-style: solid;
+    border-right-width: thin;
+    border-top-style: solid;
+    border-top-width: thin;
+    pointer-events: none;
+    background-color: var(--lwc-colorBackgroundInputDisabled, rgb(243, 243, 243));
+    cursor: not-allowed;
+    border-color: var(--lwc-colorBorderInputDisabled, rgb(201, 201, 201));
+    color: inherit;
+    user-select: none;
+}
+
+.div_hide {
+    display: none;
+}

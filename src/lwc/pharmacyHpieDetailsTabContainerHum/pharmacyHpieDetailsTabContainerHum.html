@@ -1,0 +1,29 @@
+﻿<!--
+Function        : LWC to callout HPIE Integration methods from apex .
+
+Modification Log:
+* Developer Name                  Date                         Description
+****************************************************************************************************************************
+* Nirmal Garg                    07/18/2022                user story 4861950, 4861945
+* Atul Patil                     07/28/2023                user story 4861950, 4861945
+* Jonathan Dickinson			 09/22/2023				   User Story 5061288: T1PRJ0870026   MF 27406 HPIE/CRM - SF Tech- Mail Order Management - Pharmacy -  Details tab - Address section
+*****************************************************************************************************************************-->
+<template>
+	<div class="slds-grid slds-wrap">
+		<div class="slds-col slds-size_1-of-1">
+			<c-pharmacy-hpie-account-details-hum profile-details={profileDetails} finance-details={financeDetails}
+				account-id={accountId} enterprise-id={enterpriseId} user-id={userId} user-profile={userProfile}>
+			</c-pharmacy-hpie-account-details-hum>
+		</div>
+		<div class="slds-col slds-size_4-of-12 slds-m-top_x-small">
+			<c-pharmacy-hpie-health-history-hum account-id={accountId} enterprise-id={enterpriseId} user-id={userId}
+				user-profile={userProfile}>
+			</c-pharmacy-hpie-health-history-hum>
+		</div>
+		<div class="slds-col slds-size_8-of-12 slds-m-top_x-small">
+			<c-pharmacy-hpie-address-hum record-id={accountId} enterprise-id={enterpriseId} user-id={userId}
+				user-profile={userProfile} onaddresssavesuccess={handleAddressSaveSuccess} is-lightning>
+			</c-pharmacy-hpie-address-hum>
+		</div>
+	</div>
+</template>

@@ -1,0 +1,84 @@
+﻿<!--
+LWC Name        : pcpprovidersearch.html
+Function        : LWC to display pcp provider search screen.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Nirmal Garg                     08/12/2022                  initial version US3410898
+* Swapnali Sonawane               08/16/2023                  US-4938422 PCP Change Template
+****************************************************************************************************************************-->
+<template>
+    <lightning-card>
+        <div class="slds-p-around_x-small">
+            <div class="slds-m-bottom_large slds-border_bottom">
+                <c-pcp-update-current-pcp-hum currentpcpname={currentpcpname} change-reason-options={changeReasonOptions}
+                                              onreasonchange={handleReasonChange} oneffectivedatechange={handleEffectiveDateChange} change-reason={changeReason}
+                                              other-reason={otherReason} effective-date={effectiveDate}
+                                              onotherreason={handleOtherReasonDetails} bpcpprovider>
+                </c-pcp-update-current-pcp-hum>
+            </div>
+        </div>
+        <div class="slds-p-around_x-small">
+            <template if:true={showProviderSearch}>
+                <h2 class="slds-text-heading_medium slds-m-bottom_medium">
+                    <b>Physician Search</b>
+                </h2>
+                <div class="slds-p-vertical_small">
+                    <c-generic-scoped-notification-hum iconname="utility:info"
+                                                       message='After choosing the Physician, update the PCP in CI'>
+                    </c-generic-scoped-notification-hum>
+                </div>
+                <div class="lgc-bg">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_1-of-1 slds-p-around_xx-small">
+                            <c-pcp-provider-search-hum memberdob={memberdob} zipcode={inputZipCode} personid={personid}
+                                                       onselectedprovider={handleProviderSelect}
+                                                       plandata={memberplandata} request-effective-date={effectiveDate}
+                                                       providernetworkid={providernetworkId} providernetwork-ids={providerIds}>
+                            </c-pcp-provider-search-hum>
+                        </div>
+                    </div>
+                    <div class="slds-var-m-bottom_medium"></div>
+                </div>
+            </template>
+            <div class="slds-p-vertical_small">
+                <c-generic-scoped-notification-hum iconname="utility:info"
+                                                   message=' Update PCP info if required (PCP #, name, and Contact Information) and update CI'>
+                </c-generic-scoped-notification-hum>
+            </div>
+            <div class="slds-p-top_x-small">
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_4-of-12 slds-p-around_xx-small">
+                        <c-pcp-selected-physician-hum selected-physician={selectedPhysicianData} onupdatephysician={updateSelectedPhysicianInfo}></c-pcp-selected-physician-hum>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-p-around_x-small">
+            <lightning-button label="Update CI" variant="brand" name="Update CI" onclick={handleUpdateCI}
+                disabled={disableUpdateCI}>
+            </lightning-button>
+        </div>
+        <div class="slds-p-around_x-small">
+            <template if:true={providerSearchQuestions}>
+                <template for:each={providerSearchQuestions} for:item="element">
+                    <template if:true={element.Required}>
+                        <lightning-radio-group key={element.Id} label={element.Question} options={element.Options}
+                                               class="psvalidate validate" type="radio" onchange={handleAnswerChange} required
+                                               disabled={element.disabled} data-id={element.Id} value={element.Answer} data-name="Provider Search">
+                        </lightning-radio-group>
+                    </template>
+                    <template if:false={element.Required}>
+                        <lightning-radio-group key={element.Id} label={element.Question} options={element.Options}
+                                               type="radio" onchange={handleAnswerChange} data-id={element.Id} value={element.Answer} data-name="Provider Search">
+                        </lightning-radio-group>
+                    </template>
+                </template>
+            </template>
+        </div>
+        <template if:false={loaded}>
+            <lightning-spinner alternative-text="Loading...."></lightning-spinner>
+        </template>
+    </lightning-card>
+</template>

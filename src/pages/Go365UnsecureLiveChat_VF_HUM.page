@@ -1,0 +1,322 @@
+﻿<!--
+Page Name        : Go365UnsecureLiveChat_VF_HUM
+Version          : 1.0 
+Created Date     : 12/12/2019
+Function         : Custom window for Live Chat form on Live agent for Go365 site
+Modification Log :
+*   Modification ID     Developer                     Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*           1.0         Joel George                                     12/12/2019          Original Version
+*           1.1         Akshay Pai                                      02/18/2021          REQ - 1910316 - SonarQube Scan issue fix
+*           1.2         Akshay Pai                                      03/26/2021          REQ - 1859270 - Visual Cue for New Messages in Chat Window –  Go365.com Unsecure
+*           1.3         Alvaro Madrid                                   08/18/2022          REQ - 3750632 - Adding BotTranscript to LiveChat Agent.
+*           1.3         Shivani Shrivastav                              09/04/2023          REQ - 4899580 - Chat timer should disappear when customer responds.
+  ------------------------------------------------------------------------------------------------------------------------------>
+<apex:page controller="Go365UnsecureChat_C_HUM" id="tPage" showheader="false" standardStyleSheets="false" >
+
+<!--[if IE 8]>      <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if IE 9]>      <html class="no-js ie9" lang="en"> <![endif]-->
+<!--[if gt IE 9]><!-->
+<html class="no-js" lang="en">
+<!--<![endif]-->
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Chat</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <style>
+    #liveAgentClientChat.liveAgentStateWaiting .liveAgentChatElement {display: none;}
+    </style>
+    <script type="text/javascript">
+    
+        //Code related to Code Metrics.
+        var src = "{!JSENCODE(sWebChatVarMap['CodeMetricsJS'].value__c)}";
+		
+        if (window.location.host.substring(0, 2) == "qa") 
+        {
+            src = "{!JSENCODE(sWebChatVarMap['CodeMetricsQaJS'].value__c)}";
+        } 
+        else if (window.location.host.substring(0, 4) == "test") 
+        {
+            src = "{!JSENCODE(sWebChatVarMap['CodeMetricsTestJS'].value__c)}";
+        }
+        document.write('<script src="' + src + '" type="text/javascript"><' + '/script>');
+        
+        //Storing values from the prechat page.
+        var sButtonId = '{!JSENCODE($CurrentPage.parameters.liveagent.prechat:SelBtnId)}';
+        var sOrgId = '{!JSENCODE($CurrentPage.parameters.liveagent.prechat:org_id)}'; 
+        var sDepId = '{!JSENCODE($CurrentPage.parameters.liveagent.prechat:deployment_id)}';
+        var sSecondaryChatId = '{!JSENCODE($CurrentPage.parameters.liveagent.prechat:SecChatID)}';
+        
+        //liveagent Initialisation 
+        liveagent.chasitor.setOrgId(sOrgId);
+        liveagent.chasitor.setDeploymentId(sDepId);
+        liveagent.chasitor.setButtonId(sButtonId);
+        liveagent.addEventListener(liveagent.chasitor.Events.CHAT_REQUEST_SUCCESSFUL,chatRequestSuccess);
+        liveagent.addEventListener(liveagent.chasitor.Events.CHAT_ESTABLISHED,chatEstablished);
+        liveagent.addEventListener(liveagent.chasitor.Events.AGENT_CHAT_TRANSFERRED,agentChatTransferred);
+        if({!bSwitch})
+		{
+			liveagent.addEventListener(liveagent.chasitor.Events.AGENT_CHAT_MESSAGE,newAgentMessage);        
+			//Getting custom label details
+			window.$Label = window.$Label || {};
+			$Label.HUMNewMsgDesktopNotification = '{!JSENCODE($Label.HUMNewMsgDesktopNotification)}';
+        }
+        //CHAT_REQUEST_SUCCESSFUL event callback helper function
+        function chatRequestSuccess() 
+        {
+            var details = liveagent.chasitor.getDetails();
+            console.log(details);
+            for(i=0;i<details.prechatDetails.length;i++)
+            {
+                if(details.prechatDetails[i].label=='MemberGenKey')
+                {
+                    HumAnalytics.regid = details.prechatDetails[i].value;
+                }
+                else if(details.prechatDetails[i].label=='sLSessionID')
+                {
+                    HumAnalytics.ssid = details.prechatDetails[i].value;
+                }
+                HumAnalytics.secid = sSecondaryChatId;
+            }
+        }
+        
+        //CHAT_ESTABLISHED event callback helper function
+        function chatEstablished() 
+        {
+            var details = liveagent.chasitor.getDetails();
+            var agentName = details['agent']['agentName'];
+            
+            document.getElementById('agNameId').style.display = '';
+            document.getElementById('sendBtn').style.display = '';
+            
+            document.getElementById('hideTillChat').style.display = '';
+            document.getElementById('agName').innerHTML = agentName;
+            var labels = {
+                AGENT_TYPING: agentName + ' is typing...',
+            };
+            SfdcApp.LiveAgent.Chasitor.loadLabels(labels);
+            
+            // Logic to send custom event for Bot Transcript
+            console.log('BotTranscriptSwitch: ' + {!botTranscriptSwitch});
+            if({!botTranscriptSwitch}){
+                if({!go365RoutingSwitch}){
+		        data = getBotTranscript();
+                console.log('##--BotTranscript: ' + data);
+                liveagent.chasitor.sendMessage(data);
+                }
+			    else{
+                type = 'botTranscriptGreeting';
+                data = getBotTranscript();
+                console.log('##--BotTranscript: ' + data);
+                liveagent.chasitor.sendCustomEvent(type, data);
+				}
+            }
+            commitTranscript();
+        }
+        
+        //parsing botTranscript from liveagent details
+        function getBotTranscript()
+        {
+            var details = liveagent.chasitor.getDetails();
+            var botTranscript='';
+            for(i=0;i<details.prechatDetails.length;i++)
+            {
+                if(details.prechatDetails[i].label=='BotTranscript')
+                {
+                    botTranscript = details.prechatDetails[i].value;
+                }
+            }
+            return botTranscript;
+        }
+
+        //AGENT_CHAT_TRANSFERRED event callback helper function
+        function agentChatTransferred() 
+        {
+            var details = liveagent.chasitor.getDetails();
+           
+            var agentName = details['agent']['agentName'];
+            document.getElementById('agName').innerHTML = agentName;
+            var agentName = details['agent']['agentName'];
+            var labels = {
+                AGENT_TYPING: agentName + ' is typing...',
+            };
+            SfdcApp.LiveAgent.Chasitor.loadLabels(labels);
+        }
+        
+        //Cannot Move it into static resource as it is using parameters that are related to live agent
+        //Live agent components cannot be loaded inside static resource 
+        function commitTranscript()
+        {
+            try
+            {
+                Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.Go365UnsecureChat_C_HUM.onCommitTranscript}',liveagent.chasitor.getChatKey(),getAgentDetail(),function(result, event)
+                {
+                    if (event.status) 
+                    {
+                        return true;
+                    } 
+                    else
+                    {
+                        return false;
+                    }
+                 }, 
+                 {
+                    escape:true
+                 });
+            }
+            catch (ex) 
+            {
+                alert(ex.message);
+                return false;
+            }
+            return false;  
+        }
+        
+        //commitTranscript helper function
+        function getAgentDetail()
+        {
+            var details = liveagent.chasitor.getDetails();
+            var tId='';
+            tId = details['agent']['userId'];
+            return tId;
+        }
+        
+        //parsing the interaction info from liveagent details
+        function getInteractionId()
+        {
+            var details = liveagent.chasitor.getDetails();
+            var intId='';
+            for(i=0;i<details.prechatDetails.length;i++)
+            {
+                if(details.prechatDetails[i].label=='InteractionId')
+                {
+                    intId = details.prechatDetails[i].value;
+                }
+            }
+            return intId;
+        }
+        
+        </script> 
+        <!-- Loading CSS files received from digital team for Humana view standards -->
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.Go365UnsecureLiveChatWindowCSS,'/LiveChatWindowCSS/base.css')}" />
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.Go365UnsecureLiveChatWindowCSS,'/LiveChatWindowCSS/framework.css')}" />
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.Go365UnsecureLiveChatWindowCSS,'/LiveChatWindowCSS/global.css')}" />
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.Go365UnsecureLiveChatWindowCSS,'/LiveChatWindowCSS/global1.css')}" />
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.Go365UnsecureLiveChatWindowCSS,'/LiveChatWindowCSS/humanacom.css')}" />
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.Go365UnsecureLiveChatWindowCSS,'/LiveChatWindowCSS/lib.css')}" />
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.Go365UnsecureLiveChatWindowCSS,'/LiveChatWindowCSS/styles.css')}" />
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.Go365UnsecureLiveChatWindowCSS,'/LiveChatWindowCSS/renderings.css')}" />
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.Go365UnsecureLiveChatWindowCSS,'/LiveChatWindowCSS/main.css')}" />
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.Go365UnsecureLiveChatWindowCSS,'/LiveChatWindowCSS/Chat.css')}" />
+        
+        
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HumGo365LiveAgentCSS,'/content/dist/css/go365.css')}"/>
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HumGo365SampleCSS,'/c2csample/custom.css')}"/>      
+        
+        
+        <!-- Loading jQuery toolkit as per VF standards -->
+		<apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+        <apex:outputText rendered="{!bSwitch}">
+            <apex:includeScript value="{!URLFOR($Resource.NewChatMsgNotification_SR_HUM,'NewChatMsgNotification/NewChatMsgNotification.js')}"/>   
+            <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.NewChatMsgNotification_SR_HUM,'NewChatMsgNotification/NewChatMsgNotification.css')}" />    
+        </apex:outputText>
+    </head>
+    <liveAgent:clientchat >
+    <body class="x5">
+        <!-- Start Tealium analytics v1_3 - do not remove or change -->
+    <script type="text/javascript">
+        var utag_data = {};
+            if (typeof HumAnalytics == "undefined"){
+                var HumAnalytics = window.HumAnalytics = {};}
+        HumAnalytics.appid = [];
+        HumAnalytics.autorenewflag = [];
+        HumAnalytics.copayexcflag = [];
+        HumAnalytics.prodcat = [];
+        HumAnalytics.prodid = [];      
+        HumAnalytics.prodname = [];
+        HumAnalytics.prodpkgqty = [];      
+        HumAnalytics.prodqty = [];
+        HumAnalytics.prodsav = [];   
+        HumAnalytics.prodtranstype = [];          
+        HumAnalytics.prodtype = []; 
+        HumAnalytics.produp = [];
+    </script>
+
+    <!-- Loading script asynchronously -->
+    <script type="text/javascript">
+        (function(a,b,c,d){
+        a='{!JSENCODE(sWebChatVarMap['Go365Unsecure_Tealium'].value__c)}';
+        b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c;d.async=true;
+        a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
+        })();
+    </script>
+    <!-- End Tealium analytics - do not remove or change -->
+    
+    <main>
+        <div class="chat-page-heading">
+            <h1>Go365 chat</h1>
+        </div>
+        
+        <div class="chat-wrapper">
+            <div class="container">
+                 <div class="row">
+           
+                    <liveAgent:clientChatAlertMessage />
+                    <liveAgent:clientChatStatusMessage />
+                    <table id="waitingMessage" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td><script type="text/javascript">
+                                SfdcApp.LiveAgent.Chasitor.addQueueComponent("queuePosition");
+                                </script>
+                                <div class="hide_queuePos" id="liveAgentQueuePosition">
+                                    <span id="agnStatus">You are currently number <span id="queuePosition" class="liveAgentQueuePosition"></span> in
+                                        the queue.&nbsp;&nbsp;</span>A Go365 representative will be with you soon.
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="row">
+                            <div class="row" style="display: none;" id="agNameId">
+                             
+                                    <p class="x0 legal-copy">
+                                        You are now connected with <span id="agName" value=""></span>.
+                                    </p>
+                            </div>
+                            <div class="row">
+                                <div class="seventeen columns scrollable-content x2-left">
+                                    <div class="section-content ">
+                                        <liveAgent:clientChatLog />
+                                        <apex:outputPanel rendered="{!bSwitch}">  
+											<div id="newAgentMessage" onclick = "scrollToBottom();">
+												<p id = "NewGo365UnsecureMessage" align="right">{!$Label.HUMNewMsgNotification}</p>
+											</div>
+										</apex:outputPanel>                                       
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                            <div><liveAgent:clientChatLogAlertMessage /></div><br />
+                            <liveagent:clientChatInput useMultiline="true" />
+                            </div>
+                            <br/>
+                            <div class="row x1 paddingStyle">
+                                    <button class="go-strong-button" style="display: none;" id="sendBtn" onclick="SfdcApp.LiveAgent.Chasitor.sendMessage();" title="Send">
+                                        <span>Send</span>
+                                    </button>
+                                    <span class="go-primary-button" style="display: none;" id="hideTillChat"> <liveAgent:clientChatEndButton /></span> 
+                                    
+                            </div>
+                    </div>
+                </div>          
+            </div>
+         </div>
+            
+    </main>
+    </body> 
+     </liveAgent:clientchat>
+    </html>
+</apex:page>

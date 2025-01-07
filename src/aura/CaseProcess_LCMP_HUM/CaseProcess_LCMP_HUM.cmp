@@ -1,0 +1,23 @@
+﻿<!--
+Component Name   : CaseProcess_LCMP_HUM
+Version          : 1.0
+Created On       : 07/28/2022
+Function         : Custom component to display case template in a console subtab.
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *****************************************************************************************************************************
+ * Santhi Mandava                                      07/28/2022                   Original Version
+ ****************************************************************************************************************************
+-->
+<aura:component implements="force:appHostable,lightning:isUrlAddressable,flexipage:availableForRecordHome" access="global">
+    <ltng:require scripts="{!$Resource.AttestationVerification_SR_HUM + '/AttestationFlowScript.js'}"
+                  afterScriptsLoaded="{!c.afterloaded}"/>
+    <aura:attribute name="caseId" type="String" />
+    <aura:attribute name="flowDetails" type="String" />
+    <lightning:workspaceAPI aura:id="workspace" />
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <div>
+        <c:caseProcessHUM recordId="{!v.caseId}" flowDetails="{!v.flowDetails}"></c:caseProcessHUM>
+    </div>
+</aura:component>

@@ -1,0 +1,18 @@
+.textareastyle{
+    resize: none !important;
+    height: 203px;
+    border: none;
+  }
+
+  .qoutput br{
+    display:block !important;
+  }
+
+  .itempaddingbottom{
+    padding-bottom: 10px;
+  }
+
+  .customHR{
+    margin-bottom: 15px !important;
+    margin-top: 15px !important;
+  }

@@ -1,0 +1,12 @@
+﻿<apex:page showHeader="false" standardStylesheets="false" title="Humana Support Community Redirect">
+    <script type="text/javascript">
+    
+    var checkParameter ='{!$CurrentPage.parameters.startURL}';
+    if (checkParameter)
+    {
+        window.open('https://www.humana.com/',"_self");
+    }
+    
+    </script>
+    
+</apex:page>

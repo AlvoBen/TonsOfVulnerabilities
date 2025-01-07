@@ -1,0 +1,21 @@
+﻿<!-- 
+Function    : Aura component to render inquiry and task details page 
+Modification Log: 
+Developer Name                    Date                       Description
+*
+* Ritik               04/22/2021                  US: 1628165  
+****************************************************************************************** -->
+
+<aura:component implements="lightning:isUrlAddressable" access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.pageReference}" action="{!c.handlePageChange}" />
+
+    <aura:attribute name="inquiryDetailsData" type="Object"/>    	
+    	
+    <div class="windowViewMode-maximized oneContent active lafPageHost">
+        <c:inquiryTaskDetailsHum bInquiryPage="{!v.inquiryDetailsData.bInquiryPage}"
+                     oParams="{!v.inquiryDetailsData.oParams}"></c:inquiryTaskDetailsHum>
+    </div>  
+
+</aura:component>

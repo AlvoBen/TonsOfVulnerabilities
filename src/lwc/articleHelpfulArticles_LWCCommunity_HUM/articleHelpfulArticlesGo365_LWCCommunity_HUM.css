@@ -1,0 +1,121 @@
+.go365 .body-container {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .go365 .articleHyperLinkCard {
+    width: 32%;
+    flex: none;
+    box-shadow: 0 4px 8px 0 rgba(65, 64, 66, 0.2);
+    border: solid 1px #efeff0;
+    margin: 0 15px 16px 0;
+    padding: 1.5rem;
+  }
+  
+  .go365 .articleHeader {
+    font-size: 36px;
+    color: #58595c;
+  }
+  
+  .go365 .articleLinks {
+    height: 70px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    margin-bottom: 1rem;
+  }
+  
+  .go365 .articleLinks a {
+    font-size: 22px;
+    color: #164aad;
+    text-decoration: underline;
+    font-weight: bold;
+  }
+  
+  .go365 .articleDates {
+    font-size: 16px;
+    color: #58595c;
+    font-weight: bold;
+  }
+  
+  .go365 .recWatch-cardcont {
+    overflow-x: hidden;
+    width: 900px;
+  }
+  
+  .go365 .rec-container {
+    width: 1140px;
+  }
+  
+  .go365 .recWatch-cont {
+    align-items: center;
+  }
+  
+  .go365 .arrow-image {
+    height: 50px;
+    width: 50px;
+  }
+  .go365 .arrow-image[disabled]{
+    opacity: 0.5;
+  }
+  
+  .go365 .icon-container{
+    height: 3rem;
+    width: 3rem;
+  }
+  
+  .go365 .arrow-image:focus {
+    outline: none;
+  }
+  
+  .go365 .doc-img {
+    height: 40px;
+    width: 40px;
+  }
+  
+  @media only screen and (max-width: 740px) {
+    .go365 .bodyContainer {
+      margin: 0 15px;
+    }
+  
+    .go365 .articleHyperLinkCard {
+      width: 100%;
+    }
+  
+    .go365 .recWatch-cont {
+      width: 100%;
+    }
+  
+    .go365 .recWatch-arrow-left {
+      display: none;
+    }
+  
+    .go365 .recWatch-arrow-right {
+      display: none;
+    }
+  
+    .go365 .recWatch-cardcont {
+      display: block;
+    }
+  
+    .go365 .rec-container {
+      width: 100%;
+    }
+
+    .go365 .articleHeader {
+      font-size: 32px;
+    }
+  }
+  
+  @media only screen and (max-width: 1199px) and (min-width: 741px) {
+    .go365 .rec-container {
+      width: 720px;
+    }
+  
+    .go365 .recWatch-cardcont {
+      width: 610px;
+    }
+  
+  }

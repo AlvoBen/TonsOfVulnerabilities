@@ -1,0 +1,71 @@
+﻿<!-- *****************************************************************************************
+Page Name          : HUMCustomLinks
+Version            : 1.0
+Function           : Page to display list of Links
+Created Date       : 04/01/2015
+
+Modification Log:
+*   Developer                   Code Review          Date                Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Asha Deepika Koyyana                            04/07/2015          Original Version
+*   Saurabh Lamba				113727				07/25/2017			REQ - 323535 - Added an empty label
+*   Yogesh Gupta                      04/18/2019      REQ - 388830 - Adding a rendered condition based on value from subsection picklist field 
+*	Rahul Cahurasia									07/23/2021			US 2085780 - PR00094226 - SF - CR AEP Readiness - High Security Issues
+*   Kavya Bondada                                   07/19/2021         User Story 2551570: T1PRJ0001827 - MF 1 - Quality - Add 'Medicaid Related Resources' section under Additional Resources (CRM)
+*Swetha Thuti                                      09/08/2023                   User Story 4853184: T1PRJ1117588 CarePlus - Classic CRM - Create a CarePlus section on Additional Resource Widget
+
+******************************************************************************************************************************* -->
+
+<apex:page controller="HUMCustomLinksController" action="{!populateSubSections}" showHeader="false" id="thePage" sidebar="false">
+<apex:stylesheet value="{!URLFOR($Resource.HUMCustomLinks, 'Color.css')}"/>
+     <apex:form id="form1">   
+        <apex:pageBlock id="pbBlock">
+           <apex:outputPanel styleClass="Blue"  layout="block" style="height:460px;overflow:auto;"> 
+                <apex:pageBlockSection id="pgSect1" columns="1" collapsible="true" title="{!$Label.HUMMedicareResource}">
+                    <apex:repeat id="pgTable1" value="{!lstMedicareResource}" var="item" >
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLink target="_blank" onclick="window.open('{!JSINHTMLENCODE(item.URL__c) }');return false;">{!item.Name}</apex:outputLink>
+                        </apex:pageBlockSectionItem>
+                    </apex:repeat>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection id="pgSect4" columns="1" collapsible="true" title="{!$Label.HUMMedicaidResource}" >
+                    <apex:repeat id="pgTable4" value="{!lstMedicaidResource}" var="item" >
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLink target="_blank" onclick="window.open('{!JSINHTMLENCODE(item.URL__c) }');return false;" >{!item.Name}</apex:outputLink>
+                        </apex:pageBlockSectionItem>
+                    </apex:repeat> 
+                </apex:pageBlockSection> 
+                <apex:pageBlockSection id="pgSect2" columns="1" collapsible="true" title="{!$Label.HUMCommercialResource}">
+                    <apex:repeat id="pgTable2" value="{!lstCommercialResource}" var="item" >
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLink target="_blank" onclick="window.open('{!JSINHTMLENCODE(item.URL__c) }');return false;" >{!item.Name}</apex:outputLink>
+                        </apex:pageBlockSectionItem>
+                    </apex:repeat>
+                </apex:pageBlockSection>
+              
+                <apex:pageBlockSection id="pgSect3" columns="1" collapsible="true" title="{!$Label.HUMGeneralResource}">
+                    <apex:repeat id="pgTable3" value="{!lstGeneralResource}" var="item" >
+                        <!-- Adding a rendered condition based on value from subsection picklist field -->
+                        <apex:pageBlockSectionItem rendered="{!IF(item.Name = $Label.Search_Code_Sets,true,false)}">
+                            <apex:outputLink target="_blank" onclick="window.open('{!JSINHTMLENCODE(item.URL__c) }', '_blank', 'top=200 left=200 width=900, height=500, toolbar=no,resizable=yes,scrollbars=yes,location=no' );return false;" >{!item.Name}</apex:outputLink> 
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem rendered="{!IF(item.Name != $Label.Search_Code_Sets,true,false)}">
+                            <apex:outputLink target="_blank" onclick="window.open('{!JSINHTMLENCODE(item.URL__c) }' );return false;" >{!item.Name}</apex:outputLink>
+                        </apex:pageBlockSectionItem>
+                    </apex:repeat>
+                </apex:pageBlockSection>
+
+             <apex:pageBlockSection id="pgSect5" columns="1" collapsible="true" title="{!$Label.HUMCareplusResource}" rendered="{!bShowCarePlusResources}">
+               <apex:repeat id="pgTable5" value="{!lstCareplusResource}" var="item" >
+                 <apex:pageBlockSectionItem >
+                   <apex:outputLink target="_blank" onclick="window.open('{!JSINHTMLENCODE(item.URL__c) }' );return false;" >{!item.Name}</apex:outputLink>
+                 </apex:pageBlockSectionItem>
+               </apex:repeat>
+             </apex:pageBlockSection>
+
+
+
+           </apex:outputPanel>
+        </apex:pageBlock>
+    </apex:form> 
+</apex:page>

@@ -1,0 +1,77 @@
+﻿<template>
+    <template if:true={isHomePage}>
+    <div class="section-wrapper go365">
+      <h2 class="section-header" tabindex="0">
+        {label.recommendedLabel}
+      </h2>
+      <div class="subheader-wrapper" tabindex="0">
+        <img class="jewel-img" src={jewelIcon} alt="jewel" height="24px" width="24px">
+        <span class="section-subheader">
+            {label.pointsLabel}
+        </span>
+      </div>
+      <div class="slds-grid slds-wrap icon-wrappers">
+        <template for:each={lstGroups} for:item="group">
+            <div key={group.Id} class="slds-max-medium-size_1-of-1 slds-size_1-of-4 ">
+                <div class="slds-grid slds-wrap">
+                    <div class="groupIcon">
+                        <img src={groupIconGo365} alt="Group Icon" onclick={changeBookmarkStatus} class="bookmarkIcon" />
+                    </div>
+                    <div class="slds-grid slds-wrap width70">
+                        <div class="header slds-size_1-of-1">
+                            <a href={group.url}>{group.Name}</a>
+                        </div>
+                        <div class="header slds-size_1-of-1 slds-m-bottom_x-small" tabindex="0">
+                            ({group.CollaborationType})
+                        </div>
+                        <div class="header slds-size_1-of-1 slds-m-bottom_x-small infoText" tabindex="0">
+                            {group.MemberCount} {label.membersLabel}
+                        </div>                                            
+                    </div>
+                </div>
+            </div>
+        </template>
+      </div>
+      <div>
+        <lightning-button class="allGroupsButton" label="All Groups" variant="brand" onclick={navigateToAllGroupsPage}></lightning-button>
+      </div>
+    </div>
+</template>
+
+<template if:false={isHomePage}>
+    <div class="section-wrapper go365">
+        <div class="header slds-m-bottom_large" tabindex="0">
+            {label.popularGroupsLabel}
+        </div>
+        <div class="slds-grid slds-wrap icon-wrappers">
+            <template for:each={lstGroups} for:item="group">
+                <div key={group.Id} class="slds-grid slds-wrap">
+                    <div class="groupIcon">
+                        <img
+                            src={groupIconGo365}
+                            alt="Group Icon"
+                            onclick={changeBookmarkStatus}
+                            class="bookmarkIcon"
+                        />
+                    </div>
+                    <div class="slds-grid slds-wrap width70">
+                        <div class="header slds-size_1-of-1 ">
+                            <a href={group.url}>{group.Name}</a>
+                        </div>
+                        <div class="header slds-size_1-of-1 slds-m-bottom_x-small" tabindex="0">
+                            ({group.CollaborationType})
+                        </div>
+                        <div class="header slds-size_1-of-1 slds-m-bottom_x-small infoText" tabindex="0">
+                            {group.MemberCount} {label.membersLabel}
+                        </div>
+                    </div>
+                    
+                </div>
+            </template>
+        </div>
+    </div>
+</template>
+
+
+
+</template>

@@ -1,0 +1,82 @@
+﻿<template>
+    <lightning-layout>
+        <lightning-layout-item size="12" class={stickyHeaderCss} style="margin-bottom: 10px">            
+            <div class="background-template" >
+            <lightning-card style="background: rgb(240, 238, 238)">
+            <div class="highlights-container">
+                <div class="slds-page-header__row slds-grid_vertical-align-center" onclick={handleLogging}>
+                    <div class="slds-page-header__col-title">
+                        <div class="slds-media">
+                            <div class="slds-media__figure slds-m-left_medium">
+                                <lightning-icon icon-name="standard:contact" size=medium slot="icon"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <div class="slds-page-header__name">
+                                    <div class="slds-page-header__name-title logthis" data-id="Member Billing Profile Summary" data-donotlog="false">
+                                        <h1>
+                                            <span> Member Billing Profile Summary </span>
+                                            <span
+                                                class="slds-page-header__title slds-truncate slds-text-heading_medium slds-m-top_xxx-small"
+                                                data-value="Member Billing Profile Summary">
+                                                <b>{sHeaderGroupPIDNumber}</b>
+                                            </span>
+                                        </h1>
+                                    </div>
+                                </div>
+                            </div>                            
+                            <!--Logging component-->
+                            <template if:true={showLoggingIcon}>
+                                <div class=" slds-col slds-size_1-of-10"  style="width: 40px ;margin-left: 900px ; float : right;">                               
+                                    <c-lightning-logging-component-hum record-id={recordId} networkid={netWorkId}
+                                        profilename={profilename} workqueue={workQueue} related-field={sHeaderGroupPIDNumber} auto-logging={autoLogging} type="Billing Profile"
+                                        subtype="Billing Summary" attachmentkey={personid}
+                                        attachmentdescription="Enterprise Id">
+                                    </c-lightning-logging-component-hum>
+                                </div>
+                            </template>					        
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </lightning-card>
+            </div>
+        </lightning-layout-item>
+    </lightning-layout>
+    <lightning-layout>    
+        <lightning-layout-item size="12">
+            <div style="height:100%;width:100%">
+            <article class="slds-card slds-p-right_small slds-card_boundary slds-grid slds-grid--vertical" style=" height: 100%; width: 100%;"> 
+
+            <header class=" slds-card__header slds-grid slds-p-right_none slds-media slds-media_center slds-has-flexi-truncate slds-grid_align-spread">
+                <div class="slds-grid slds-grid_vertical-align-center">
+                <div class="slds-media__figure">
+                    <lightning-icon icon-name="standard:account"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                        <h2 class="slds-card__header-title">Billing List</h2>
+                </div>               
+                </div>
+            </header> 
+            <lightning-layout-item size="8" style="padding-top: 10px; margin-left:15px" >
+               {CurrentlyShowingRecords} item(s) of {totalNumberOfRecords}   
+               </br> 
+            </lightning-layout-item>
+
+            <div class="slds-grid full-container slds-is-relative slds-p-horizontal_none" style="margin-left:15px">
+                <template if:true={bResponse}>
+                    <c-standard-table-component-hum class="full-container" style="width: 1400px;" templateaccordian=false name-of-screen="BillingSummary"
+                        response={billingSummaryResponse} templatemodal={billingSummaryItemModel} onlinkclick={handleclicked} data-id="billing-summary" show-view-all={showViewAll} no-data-message="No Data available"
+                        b-hide-title=true b-infinite-scroll={bInfiniteScroll} title={title} o-view-all-params={oViewAllParams} related-input-field="sGroupPIDNumber" screen-name={loggingScreenName}>
+                    </c-standard-table-component-hum>   
+                </template> 
+                <template if:true={bNoResponse}>                   
+                    <div style="padding-left:350px">
+                        <c-search-no-result-hum no-result-message="No matching records found" message-with-icon="true"></c-search-no-result-hum>  
+                    </div>
+                </template>
+            </div>
+            </article> 
+            </div>
+        </lightning-layout-item>
+    </lightning-layout>
+</template>

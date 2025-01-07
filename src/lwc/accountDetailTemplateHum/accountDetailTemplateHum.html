@@ -1,0 +1,156 @@
+﻿<!--
+LWC Name        : accountDetailTemplateHum.html
+Function        : LWC container to display account detail in Lightning strides app.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Pradeep Dani                   12/18/2020                Original Version 
+* Joel George			         02/26/2021		           REQ 1892718 Add Chat Transcript 
+* Mohan Kumar N			        03/11/2021	              US:1864079 : Account sections overlap issue 
+* Mohan Kumar N                  03/12/2021                US: US:1942036: Password popup 
+* Joel George			        03/16/2021		           REQ 1895067
+* Mohan Kumar N					03/08/2021		           US-1749564
+* Ritik Agarwal			        03/05/2021		           Add tab for legacy history table
+* Ranadheer Alwal               7/25/2021                  US: 2322406 Added DynamicCustomLinksLcHum Lightning web component 
+* Supriya Shastri               09/06/2021                 Added grey headers to member detail table
+* Ajay Chakradhar               10/07/2021                 US : 2260341 - Account Management - Additional Member ID Fields 
+****************************************************************************************************************************-->
+<template>
+    <lightning-layout multiple-rows="true" class="background-template">
+        <!-- top section -->
+        <lightning-layout-item size="12" class={stickyHeaderCss} if:true={bShowHighlights}>
+            <c-account-detail-highlights-hum s-record-id={recordId} s-record-type-name={recordType}
+                o-user-group={oUserGroup} onclickeventdemographicdetail={handleDemographicClickCustomEvent}
+                onscrolltoview={onScrollToView} acc-legacy-delete={isLegacyDelete}>
+            </c-account-detail-highlights-hum>
+        </lightning-layout-item>
+        <lightning-layout-item size="12">
+            <!--<c-account-detail-quick-find-hum s-layout-name="Account" s-record-type-name={recordType}
+                if:true={recordType}></c-account-detail-quick-find-hum>-->
+            <c-dynamic-custom-links-lc-hum record-id={recordId} object-api-name={objectApiName} page-name="accountDetailTemplateHum"></c-dynamic-custom-links-lc-hum>
+        </lightning-layout-item>
+
+        <lightning-layout class="slds-grid template-full-width">
+            <!-- sidebar -->
+            <lightning-layout-item size="3" medium-device-size="3" if:true={bShowSidebar}
+                class="slds-m-top_x-small slds-p-right_x-small detail-item">
+                <lightning-layout multiple-rows="true">
+                    <lightning-layout-item size="12" medium-device-size="12" if:true={bShowPOA}
+                        class="slds-p-top_x-small slds-p-left_x-small">
+                        <c-account-detail-p-o-a-hum s-record-id={recordId} displayheader={displayHeader} ></c-account-detail-p-o-a-hum>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="12" medium-device-size="12" if:true={bShowAssociatedForm}
+                        class="slds-p-top_x-small slds-p-left_x-small">
+                        <c-account-detail-associated-form-h-u-m oneventaccountdetailpoainfo={handleCustomEvent}
+                            s-record-id={recordId} displayheader={displayHeader} >
+                        </c-account-detail-associated-form-h-u-m>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-layout-item>
+
+            <!-- main region -->
+            <lightning-layout-item class={sMainRegionClass}>
+                <lightning-layout multiple-rows="true">
+                    <lightning-layout-item size="12" medium-device-size="12" class="slds-m-bottom_x-small"
+                        if:true={bShowQuickFind}>
+                        <c-account-detail-quick-links-hum></c-account-detail-quick-links-hum>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="12" medium-device-size="12"
+                        class="slds-m-bottom_x-small slds-p-right_small slds-p-left_small slds-p-top_medium">
+                        <lightning-tabset class="hc-custom-tab-style">
+                            <lightning-tab label={oTabs.policyCaseHistoryInts} value="1" onactive={handleActive}
+                                class="slds-p-bottom_none">
+                                <lightning-layout multiple-rows="true" class="detail-container">
+                                    <lightning-layout-item size="12" medium-device-size="12"
+                                        class="detail-item slds-m-bottom_small">
+                                        <template if:true={bShowPolicyRelatedList}>
+                                            <c-account-detail-policy-hum class="jump-views"  record-id={recordId}
+                                                policies-to-fetch={recordType} s-record-type-name={recordType}
+                                                o-user-group={oUserGroup} show-view-all=true title="Policies">
+                                            </c-account-detail-policy-hum>
+                                        </template>
+                                        <template if:true={bShowAccordianPolicyRelatedList}>
+                                            <c-account-detail-accordian-policy-hum class="jump-views" record-id={recordId}
+                                                s-record-type-name={recordType} o-user-group={oUserGroup} show-view-all=true
+                                                s-record-name={accountName} title="Policies">
+                                            </c-account-detail-accordian-policy-hum>
+                                        </template>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="12" medium-device-size="12"
+                                        class="detail-item slds-m-bottom_small visible-on-top"
+                                        if:true={bShowCaseRelatedList}>
+                                        <c-account-detail-case-history-hum class="jump-views" record-id={recordId}
+                                            s-record-type-name={recordType} o-user-group={oUserGroup} show-view-all=true title="Case History">
+                                        </c-account-detail-case-history-hum>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="12" medium-device-size="12"
+                                        class="detail-item slds-m-bottom_small"
+                                        if:true={bShowInteractionsRelatedList}>
+                                        <c-account-detail-interactions-hum class="jump-views" s-record-id={recordId}
+                                            s-record-type-name={recordType} s-record-name={accountName} show-view-all=true title="Interactions">
+                                        </c-account-detail-interactions-hum>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="12" medium-device-size="12"
+                                        class="detail-item slds-m-bottom_small"
+                                        if:true={bShowTranscriptRelatedList}>
+                                        <c-account-detail-transcripts-hum class="jump-views" s-record-id={recordId}
+                                            s-record-type-name={recordType} title="Transcripts">
+                                        </c-account-detail-transcripts-hum>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </lightning-tab>
+                            <lightning-tab label={oTabs.details} value="2" onactive={handleActive}
+                                if:true={bShowDetails}>
+                                <lightning-layout multiple-rows="true">
+                                    <lightning-layout-item size="12" medium-device-size="12"
+                                        class="slds-m-bottom_x-small">
+                                        <c-account-detail-record-hum s-record-id={recordId}
+                                            s-record-type-name={recordType} o-user-group={oUserGroup}
+                                            o-division-subgroup-result={oDivisionSubgroupResult}
+                                            oneventaccountdetailgroup={handleCustomEventGroupSubdivison}
+                                            b-division-subgroup-flag={bDivisionSubgroupFlag}>
+                                        </c-account-detail-record-hum>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="12" medium-device-size="12"
+                                        class="slds-m-bottom_x-small" if:true={bShowConsumerList}>
+                                        <c-account-detail-consumer-ids-hum s-record-id={recordId}
+                                            s-record-type-name={recordType} o-user-group={oUserGroup}>
+                                        </c-account-detail-consumer-ids-hum>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="12" medium-device-size="12"
+                                        class="slds-m-bottom_x-small" if:true={bShowAccountMemberIdsRelatedList}>
+                                         <c-account-member-ids-card-hum record-id={recordId}>
+                                         </c-account-member-ids-card-hum>
+                                    </lightning-layout-item>
+                                     <lightning-layout-item size="12" medium-device-size="12"
+                                        class="slds-m-bottom_x-small" if:true={bShowDemographics}>
+                                         <c-account-detail-demographics-hum s-record-id={recordId} s-record-result={sDemographicResult}>
+                                         </c-account-detail-demographics-hum>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </lightning-tab>
+                            <lightning-tab label={oTabs.divisionsSubgroups} value="4" onactive={handleActive}
+                                if:true={bShowGroupSubDivision}>
+                                <c-account-detail-subgroups-divisions-hum s-record-id={recordId}
+                                    o-division-subgroup-result={oDivisionSubgroupResult}
+                                    oneventaccountdetailgroupdivision={handleCustomEventGroupSubdivison}
+                                    b-division-subgroup-flag={bDivisionSubgroupFlag}>
+                                </c-account-detail-subgroups-divisions-hum>
+                            </lightning-tab>
+                            <lightning-tab label={oTabs.legacyHistoryTab} value="5" onactive={handleActive} if:true={bLegacyHistoryTable}>
+                              <c-account-legacy-contact-history-hum s-record-id={recordId} show-view-all=true
+                              s-record-type-name={recordType}>
+                              </c-account-legacy-contact-history-hum>
+                            </lightning-tab>
+                        </lightning-tabset>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-layout-item>
+        </lightning-layout>
+    </lightning-layout>
+    <c-generic-modal-hum if:true={bShowModal} buttons-config={buttonsConfig} b-show-modal={bShowModal} 
+    onclose={closeModal} title={labels.AckPopUpTitle_Hum}>
+        <c-question-form-hum slot="content" form-data={questionDetails} is-acknowledge-form></c-question-form-hum>
+    </c-generic-modal-hum>
+</template>

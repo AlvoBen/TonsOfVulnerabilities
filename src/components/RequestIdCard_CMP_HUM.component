@@ -1,0 +1,46 @@
+﻿<!--
+Component Name   : RequestIdCard_CMP_HUM
+Version          : 1.0
+Created Date     : 2/12/2018
+Function         : This component is used to request for Member ID /Debit Cards
+Modification Log :
+* Developer               Code Review                     Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------
+* Rakesh Patni              207348                    02/12/2018           Original Version
+* Subhamay Mandal								      02/18/2019		   REQ - 386033 Display Additional Warning Message on ID Card Mgmt Page (RF)
+* Subhamay Mandal								      04/07/2019		   REQ - 389664 Quality - Update ID Card Mgmt page Informational Message (RF)
+* Amar Gadewar										  05/30/2019		   REQ - 402001 Quality - All Users - Update ID Card Mgmt page Informational Message (CRM)
+* Atia Uzma                                           09/28/2020           User Story 1563575: PR00091574 - MF 1 - Quality - Display updated information messages on the ID Card Management page to reflect accurate guidance as per the revised business process (CRM)
+* Atia Uzma                                           02/25/2021           User Story 1956960: PR00091574 - MF 1 - SF - TECH - On/Off Switch Cleanup for 11/20/2020 , 02/12/2021, 03/05/2021 and 3/19/2021 releases (CRM) 
+* Satyanarayana  Chenna                               04/06/2021           User Story 1918758   PR00094226 - CR AEP readiness - Low Security Issues      
+* ----------------------------------------------------------------------------------------------------------------------------->
+<apex:component > 
+    <apex:attribute name="bMedicareMedicaid" type="Boolean" description="Checking Segment Indicator"/>  
+    <apex:PageMessage strength="2" summary="{!$Label.REMINDCALLERMESSAGE_REQUESTIDCARDSCMP_HUM}" rendered="{! NOT(bMedicareMedicaid)}" severity="Info" />
+    <apex:PageMessage strength="2" summary="{!$Label.REMINDCALLERMESSAGE_REQUEST_IDCARD_HUM}"  rendered="{! (bMedicareMedicaid)}" severity="Info" />  
+
+    <div id="statusImage_div" style="text-align:center; vertical-align: middle;">
+        <img src="/img/loading.gif" />
+        <span class="waitingDescription">{!$Label.HUMPleaseWait}</span>
+    </div>
+    <div id="newIdCardMsg">
+        <apex:PageMessage strength="2" summary="{!$Label.REMINDERMESSAGE_REQUESTIDCARDSCMP_HUM}" severity="Info" />
+    </div>
+    
+    <div id="IdCardMsgL7days" style="display: none;">
+        <apex:PageMessage strength="2" summary="{!$Label.IdCardRequestMaybeInL7Days}" severity="Info" >
+        </apex:PageMessage>
+    </div>
+    <table id="requestCardTable" width="100%" class="table table-striped table-bordered width100 enable_logging">
+        <caption style="display:none;">{!$Label.REQIDCARDSECTION_MEMBERIDCARDS_HUM}</caption>
+    </table>
+    <div id="overlayStyle" class="loadingDivHide">
+		<div class="waitingSearchDiv waitingSearchDivOpacity outerDIVStyle" />
+		<div id="searchingStatus" class="waitingSearchDiv innerDIVStyle">
+			<div class="waitingHolder innermostDIVStyle">
+				<img class="waitingImage" src="/img/loading.gif" />
+				<span class="waitingDescription">{!$Label.HUMPleaseWait}</span>
+			</div>
+		</div>
+	</div>
+</apex:component>

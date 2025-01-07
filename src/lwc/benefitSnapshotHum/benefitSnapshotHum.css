@@ -1,0 +1,15 @@
+.container {
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.container1 {
+    max-height: 140px;
+    overflow-y: auto;
+}
+
+.iconcolor {
+    --lwc-colorTextIconDefault: rgb(1,105,202);
+    cursor: pointer;
+    margin-left: 5px;
+}

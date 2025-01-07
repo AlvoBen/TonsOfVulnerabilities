@@ -1,0 +1,400 @@
+﻿<!--
+Page Name        : ApplicationSearchDetail_VF_HUM
+Version          : 1.0
+Created Date     : 05/03/2019
+Function         : This Page is used to show the Application Search result details
+***********************************************************************************************************************************
+Modification Log:    
+   
+* Developer Name               Review Number              Date                   Description
+*----------------------------------------------------------------------------------------------------------------------------------
+* Syed Mubarak T                	                    05/03/2019              Original Version
+* Syed Mubarak T 										05/15/2019				REQ - 381442 Defect fixes
+* Mohammed Noor                                         07/15/2019				REQ - 403695 - Fix for Incident 8364762  
+* Kiran Kumar B											07/03/2022				User Story - 2568652: Billing- Search Enrollment tab- add 'Billing Payment Option Type' field
+* Ravikanth									            05/18/2023              User Story 4404737: T1PRJ0191994- MF 126, 127- Display Member Race and Ethnicity in CRM Service- ‘Member Application Detail’ page (Classic)
+***********************************************************************************************************************************
+-->
+
+
+<apex:page id="ApplicationSearchDetailPage" controller="ApplicationSearchDetail_C_HUM" tabStyle="Account">
+	<apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+	<apex:includeScript value="/soap/ajax/30.0/connection.js"/>
+    <apex:includeScript value="/support/console/30.0/integration.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.ApplicationSearchDetail_SR_HUM, 'ApplicationSearchDetail_JS_HUM.js')}" />
+    <apex:styleSheet value="{!URLFOR($Resource.ApplicationSearchDetail_SR_HUM, 'ApplicationSearchDetail_CSS_HUM.css')}" />
+    <apex:pageBlock id="pbAppSearchDetail" title="Member Application Detail">
+        <apex:form >
+            <apex:actionFunction action="{!displayDetails}" name="displayDetails" reRender="pbAppSearchDetail" status="buttonStatus1">
+                <apex:param assignTo="{!enrollmentDetails}" name="enrollmentDetails" value=""/>
+            </apex:actionFunction>
+        </apex:form>
+        <apex:pageBlockSection columns="4" id="pbSecMemberDemographics" title="Member Demographics">
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Medicare Claim #</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sMedicareId}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Social Security</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sSolSecurity}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Date Of Birth</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sDOB}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Medicaid #</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sMedicaidId}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Last Name</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sLastName}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >First Name</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sFirstName}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Gender</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sGender}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Member Lang Preference</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sMemberLangPreference}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Permanent Address Apt #</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sPermanentAddress}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >City</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sCity}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >State</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sState}"/>
+            </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData"  rendered="{!appMemRaceAndEthSwitch}">
+                <apex:outputLabel >Race Code</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.raceCd}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData" rendered="{!!appMemRaceAndEthSwitch}">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Zip</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sZip}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >County Name</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sCountyName}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData"  rendered="{!appMemRaceAndEthSwitch}">
+                <apex:outputLabel >Ethnicity Code</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.ethinicityCd}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData" rendered="{!!appMemRaceAndEthSwitch}">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Mailing Address Apt #</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sMailaddr}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >City</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sMailCity}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >State</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sMailSt}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Zip</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sMailZip}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Home Phone</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sHomePh}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Work Phone</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sworkPh}"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection id="pbSecPOA" title="POA" columns="4">
+        	<apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Last Name</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sPOALastName}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >First Name</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sPOAFirstName}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Relationship to Applicant</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sPOARelationType}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Phone Number</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sPOAPhone}"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+         <apex:pageBlockSection id="pbSecBenefitInfo" title="Benefit Information" columns="4">
+         	<apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Contract</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sContractId}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >PBP</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sPlanBenefitPackage}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >OSB Pkg ID</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sOSBPackage}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Group ID</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sGroupId}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >BSN</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sBSN}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Segment ID</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sSegmentId}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Effective Date</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sCovEffDt}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Received Date</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sReceivedDate}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Group Employer ID</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sEmployerId}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Signature Type</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sSignatureType}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Signature Date</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sSignatureDate}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Billing Payment Option</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sPymtOpt}"/>
+            </apex:pageBlockSectionItem>
+			<!-- US 2568652 Changes --> 
+			<apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData" rendered="{!bPaymentOptTypeSwitch}">
+				<apex:outputLabel />
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData" rendered="{!bPaymentOptTypeSwitch}">
+					<apex:outputLabel />
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData" rendered="{!bPaymentOptTypeSwitch}">
+				<apex:outputLabel />
+			</apex:pageBlockSectionItem>
+			<apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData" rendered="{!bPaymentOptTypeSwitch}">
+                <apex:outputLabel >Billing Payment Option Type</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sPymtOptType}"/>
+			</apex:pageBlockSectionItem>
+			
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection id="pbSecAgentInfo" title="Agent Information" columns="4">
+        <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Member Plan Rep</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sSalesRepName}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Agent SSN</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sSalesRepSSN}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Agent Broker Type</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sSalesType}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection id="pbSecPCP" title="Primary Care Physician" columns="4">
+        	<apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Member PCP #</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sPCPNumber}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >PCP Name</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sPCPName}"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection id="pbSecHealthIndictor" title="Health Indicators" columns="4">
+        	<apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Smoker Indicator</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sSmokingIndicator}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >End Stage Renal Disease</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sESRDIndicator}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Disability Indicator</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sDisabledIndicator}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection id="pbSecETC" title="Election" columns="4">
+        	<apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >ETC</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sElectionTypeCd}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >SEP DATE</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sSEPDate}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >SEP Reason</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sSepReasonCode}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection id="pbSecMedEnt" title="Medicare Entitlement" columns="4">
+        	<apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Part A</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sPartAEligibleDate}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel >Part B</apex:outputLabel>
+                <apex:outputText value="{!enrollmentDetailWrapper.sPartBEligibleDate}"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection id="pbSecAppMisc" title="Application Misc." columns="4">
+	        <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+	                <apex:outputLabel >File Date</apex:outputLabel>
+	                <apex:outputText value="{!enrollmentDetailWrapper.sFileDt}"/>
+	            </apex:pageBlockSectionItem>
+	            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+	                <apex:outputLabel >Application Channel</apex:outputLabel>
+	                <apex:outputText value="{!enrollmentDetailWrapper.sApplicationChannel}"/>
+	            </apex:pageBlockSectionItem>
+	            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+	            <apex:outputLabel />
+	            </apex:pageBlockSectionItem>
+	            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+	            <apex:outputLabel />
+	            </apex:pageBlockSectionItem>
+	            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+	                <apex:outputLabel >Processed Date</apex:outputLabel>
+	                <apex:outputText value="{!enrollmentDetailWrapper.sProcDt}"/>
+	            </apex:pageBlockSectionItem>
+	            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+	                <apex:outputLabel >OEC Confirmation</apex:outputLabel>
+	                <apex:outputText value="{!enrollmentDetailWrapper.sOECConfirmationId}"/>
+	            </apex:pageBlockSectionItem>
+	            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+	            <apex:outputLabel />
+	            </apex:pageBlockSectionItem>
+	            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+	            <apex:outputLabel />
+	            </apex:pageBlockSectionItem>
+	            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+	                <apex:outputLabel >Time Stamp</apex:outputLabel>
+	                <apex:outputText value="{!enrollmentDetailWrapper.sCreationTs}"/>
+	            </apex:pageBlockSectionItem>
+	            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+	                <apex:outputLabel >Bar Code</apex:outputLabel>
+	                <apex:outputText value="{!enrollmentDetailWrapper.sBarCodeBase}"/>
+	            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        <apex:actionStatus id="buttonStatus1">           
+            <apex:facet name="start">
+                <div class="waitingSearchDiv waitingSearchDivOpacity"
+                    style="width: 100%; height: 100%; display: block; opacity: 0.99" />
+                <div id="searchingStatus" class="waitingSearchDiv"
+                    style="width: 100%; height: 100%; display: block;">
+                    <div class="waitingHolder" style="top: 300px; width: 110px;">
+                        <img class="waitingImage" src="/img/loading.gif" /> <span
+                            class="waitingDescription">{!$Label.HUMLoadingStatus}</span>
+                    </div>
+                </div>
+            </apex:facet>
+            <apex:facet name="stop" />
+       </apex:actionStatus>
+    </apex:pageBlock>
+	<script>
+    	var uniqID = getUrlVars()["uniqueId"];    	    	
+        window.onload = function(){        
+			if(uniqID != null && uniqID != "undefined" && uniqID != "") {		
+				// Listener to get response		
+				sforce.console.addEventListener('responseAMJSON'+uniqID, responseAMJSONlistener);
+										
+				// Fire Event from Detail page of Search page		
+				sforce.console.fireEvent('requestAMJSON',uniqID);						
+			}
+		}			
+    </script>
+</apex:page>

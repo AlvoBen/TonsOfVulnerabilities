@@ -1,0 +1,141 @@
+﻿<!--
+Page Name        : PharmacyModifyShippingAddress_CMP_HUM 
+Version          : 1.0 
+Created Date     : March 13 2017
+Function         : Component use to display demographic details
+Modification Log :
+* Developer                 Code review         Date                  Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Rajesh Keswani            78316             03/13/2017            Original Version
+* Rajesh Keswani            89095             05/02/2017            REQ - 310759;  Modify Shipping address in Converting Order Edit/create to Subtab
+-------------------------------------------------------------------------------------------------------------------------------->
+
+<apex:component id="modifyShippingComp" controller="Pharmacy_CreateEditOrder_C_HUM">
+    <apex:outputpanel id="refreshModAddressDiv">
+        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!bShowModCusPopFlag}" />
+        <apex:outputPanel styleClass="custPopup topPopUp custpopalign" layout="block" rendered="{!bShowModCusPopFlag}">
+            <div id="addressModTitle" class="titleCSS">
+                <h4>{!$Label.ModifyAddressTitle}</h4>
+                <hr/>
+            </div>
+            <span>{!$Label.ModifyAddressSelect}</span>
+            <div id="shippingAddressTable" class="displayNone width100">
+            <table id="shippingAddressResultTable" class="table table-striped table-bordered ModtableAlign"></table>
+        </div>
+        <br/>
+        <input id="addNewShippingID" type = "radio" name="demo" onchange="addNewAddress();" class="radioCSS"><span class="newModShippingCSS">{!$Label.AddNewModifyAddress}</span></input>
+        <div id="shippingcontainer" class="shippingContainerStyle">
+            <table id="pbsaddressEdit" class="width100">
+                <tr class="tableCss">
+                    <td class="width10">
+                        <div class="alignDropDown">
+                            <label for="status">{!$Label.HUMType}</label>
+                            <div id="typeRequiredCss">
+                              <apex:outputText value="Shipping" styleClass="addWidth90"/>
+                               
+                            </div>
+                        </div>
+                    </td>
+                    <td class="width40">
+                        <div id="errorDiv" class="addressOneCSS">
+                            <label for="status">{!$Label.HumModAddressLineOne}</label>
+                            <div class="reuiredCSS"> 
+                                <input id="modaddressLineOne" type="text" maxlength="60" class="input-sm addWidth120" />
+                                
+                           </div>
+                        </div>
+                        <span id="modaddressLineOneErr"/>
+                    </td>
+                    <td class="width15">
+                        <div class="cityCSS">
+                            <label for="status">{!$Label.HUMSearchMemberCity}</label>
+                            <div class="reuiredCSS">
+                                <input id="modcityFieldId" type="text" maxlength="35" class="input-sm addWidth110" />
+                            </div>
+                        </div>
+                    </td>
+                    <td class="width10">
+                        <div class="alignDropDown">
+                            <label for="status">{!$Label.HUMMemberSearchState}</label>
+                            <div class="reuiredCSS">
+                                <select name="statusValue" aria-controls="addressDetailResultTable" id="modstateId" class="input-sm addWidth75">
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="width10">
+                        <div class="zipCSS">
+                            <label for="status">{!$Label.HUMSearchMemberZip}</label>
+                            <div class="reuiredCSS">
+                                <input id="modzipFieldId" type="text" onkeyup="zipVal(this,event);" class="input-sm addWidth90" maxlength="5" />
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="addlineTwo" class="addressTwoCSS shippingMarginCSS">
+                            <label for="status">{!$Label.HumModAddressLineTwo}</label>
+                            <input id="modaddressLineTwo" type="text" maxlength="60" class="input-sm addWidth120" />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            </div>
+            <br/>
+            <div id="addressEditModMainErrorMsgId" class="displayNone centerAlign"></div>
+            <div id="aadressEditModLoadingImageId" class="loadingImageDivCon displayNone centerAlign">
+                <img src="/img/loading.gif" />
+                <span class="waitingDescription">{!$Label.LOADING_HUM}</span>
+            </div>
+          
+            <apex:commandButton id="saveModBtn" value="Save" onclick="updateShippingAddressSection(); return false;" styleclass="saveBtnCSS" />
+            <apex:commandButton value="Cancel" id="cancelModBtn" onclick="this.disabled=true;" action="{!disableModCusPopUp}" styleclass="cancelBtnCSS" rerender="refreshModAddressDiv" oncomplete="this.disabled=false;"/>
+        </apex:outputPanel>
+
+    </apex:outputpanel>
+    <apex:outputpanel id="confirmModPopUp">
+        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!bConfirmFlag}" />
+        <apex:outputPanel styleClass="custPopup confirmPopCSS" layout="block" rendered="{!bConfirmFlag}">
+            <center class="errorFontCSS">{!$Label.HUMAddressOverrideMsg}</center>
+            <BR/>
+            <BR/>
+            <div id="addressModCommitErrorMsgId" class="displayNone centerAlign"></div>
+            <div id="addressModCommitLoading" class="loadingImageDivCon displayNone centerAlign">
+                <img src="/img/loading.gif" />
+                <span class="waitingDescription">{!$Label.LOADING_HUM}</span>
+            </div>
+            <br/>
+            <apex:commandButton id="saveModBtnConfirm" value="Yes" onclick="modDataForCommitEpost(); return false;" styleclass="saveBtnCSS widthcls" />
+            <apex:commandButton value="No" id="cancelModBtnConfirm"  onclick="disableBtnReturnEditMod();" action="{!cancelModConfirmAddress}" oncomplete="retainEditModPopUp();" styleclass="cancelBtnCSS widthcls" rerender="refreshModAddressDiv,confirmModPopUp" />
+        </apex:outputPanel>
+    </apex:outputpanel>
+    <!-- soft message -->
+     <apex:outputpanel id="softMsgPopUp">
+        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!bsoftMsgFlag}" />
+        <apex:outputPanel styleClass="custPopup confirmPopCSS" layout="block" rendered="{!bsoftMsgFlag}">
+         <div  class="titleCSS">
+                <h4>{!$Label.HUMPharmacyModifyAddressTitle}</h4>
+                <hr/>
+            </div>
+            <center class="errorFontCSS">{!$Label.HUMPharmacyModifyAddressMsg}</center>
+            
+            <BR/>
+            <div id="addressEditModErrorMsgId" class="displayNone centerAlign"></div>
+            <div id="softMsgLoading" class="loadingImageDivCon displayNone centerAlign">
+                <img src="/img/loading.gif" />
+                <span class="waitingDescription">{!$Label.LOADING_HUM}</span>
+            </div>
+            <br/>
+            <apex:commandButton id="softBtnConfirm" value="Yes" onclick="modDataAfterSoftCommitEpost(); return false;" styleclass="saveBtnCSS widthcls" />
+            <apex:commandButton value="No" id="softCancelBtn" onclick="this.disabled = true;" action="{!cancelSoftMsgPopUp}" oncomplete="retainEditModPopUp();this.disabled = false;" styleclass="cancelBtnCSS widthcls" rerender="softMsgPopUp,refreshModAddressDiv" />
+        </apex:outputPanel>
+    </apex:outputpanel>
+    <apex:actionFunction name="showSoftMsg" action="{!openSoftMsgPopUp}" reRender="refreshModAddressDiv,softMsgPopUp"/>
+    <apex:actionFunction name="setPopupFlagToModShippingAddress" action="{!showModCusPopUp}" reRender="refreshModAddressDiv" oncomplete="loadModAddressData();" /> 
+    <apex:actionFunction name="checkModConfirmFlag" action="{!toggleModConfirmFlag}" reRender="refreshModAddressDiv,softMsgPopUp,confirmModPopUp" />
+    <apex:actionFunction name="disableModPopUp" action="{!closeConfirmPopUp}" reRender="refreshModAddressDiv,confirmModPopUp" />
+    <apex:actionFunction name="disableSoftPopUp" action="{!cancelSoftMsgPopUp}" reRender="softMsgPopUp" />
+    <apex:actionFunction name="IncompatibleZipCityMsg" action="{!showZipCityMsg}" reRender="confirmModPopUp,softMsgPopUp,refreshModAddressDiv" oncomplete="showErrorZipCity(); return false;"/>
+    
+</apex:component>

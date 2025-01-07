@@ -1,0 +1,34 @@
+﻿<!--
+LWC Name        : caseTexasLetterComponentHum.html
+Function        : LWC to display close case screen.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Gowthami Thota                                                06/20/2022                   initial version
+-------------------------------------------------------------------------------------------------------------------------------
+-->
+<template>
+    <lightning-record-edit-form record-id={oCaseObject.Id} object-api-name="Case">
+        <div class="slds-grid slds-wrap">
+            <template for:each={TexasForm} for:item="oSection">
+                <div key={oSection.title} class='slds-col slds-size_1-of-1'>
+                    <h3 key={oSection.title} class="slds-p-around_medium slds-m-around_small" style="background: #f5f1f3;
+                padding: 0.5rem !important;">
+                        {oSection.title}</h3>
+
+                    <lightning-layout>
+                        <template for:each={oSection.fields} for:item="field">
+                            <lightning-layout-item key={oSection.title} padding="horizontal-small" size="6">
+                                <lightning-input-field key={field.label} field-name={field.mapping}
+                                    required={field.required}>
+                                </lightning-input-field>
+                            </lightning-layout-item>
+                        </template>
+                    </lightning-layout>
+                </div>
+            </template>
+        </div>
+    </lightning-record-edit-form>
+
+</template>

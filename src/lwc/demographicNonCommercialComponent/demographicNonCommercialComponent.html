@@ -1,0 +1,74 @@
+﻿<!--
+  @File Name          : demographicCommercialComponent.html
+  @Description        : 
+  @Author             : ChangeMeIn@UserSettingsUnder.SFDoc
+  @Group              : 
+  @Last Modified By   : ChangeMeIn@UserSettingsUnder.SFDoc
+  @Last Modified On   : 07-20-2020
+  @Modification Log   : 
+  Ver       Date            Author      		    Modification
+  1.0    4/23/2020   ChangeMeIn@UserSettingsUnder.SFDoc     Initial Version
+-->
+<template>
+    <template if:true={isLoadOverlay}>
+        <div class="du-overlay"></div>
+    </template>
+    <c-error-display-component></c-error-display-component>
+    <lightning-card title={title} icon-name="custom:custom63">
+        <template if:false={isNotRendered}>
+            <div class="slds-m-top_x-small slds-m-bottom_x-small 
+                        slds-col slds-size_2-of-4 top-next-btn-holder-height btn-demograph" 
+                        data-id="topNextBtnHolder">
+                <!-- <lightning-button variant="brand" label="Next" title="Trigger Demographic Update" 
+                        disabled={isFormInvalid}
+                        onclick={handleNextClick} 
+                        class="slds-m-left_x-small"></lightning-button> -->
+            </div>
+        </template>
+        <template if:true={displayDependent.show}>
+            <div>
+                <div class="noteAlt">
+                    {displayDependent.msg}
+                </div>
+            </div>
+        </template>
+        <div class="slds-grid slds-m-top_small slds-m-bottom_small slds-m-left_large slds-m-right_large mm-container">
+            <div class="slds-medium-size_4-of-12 slds-large-size_3-of-12 slds-small-size_12-of-12 mm-left">
+                <c-demographic-display-component></c-demographic-display-component>
+            </div>
+            <div class="slds-medium-size_8-of-12 slds-large-size_6-of-12 slds-small-size_12-of-12 mm-right">
+                <c-demographic-driver-component></c-demographic-driver-component>
+                <!-- <c-demographic-messages-component></c-demographic-messages-component> -->
+                <c-demographic-driven-component></c-demographic-driven-component>
+            </div>
+        </div>
+        <template if:false={isNotRendered}>
+            <div class="slds-m-top_x-small slds-m-bottom_x-small 
+                        slds-col slds-size_2-of-4 top-next-btn-holder-height btn-demograph" 
+                        data-id="topNextBtnHolder">
+                <div class="btn-msg">Click Next after choosing which demographic to update and making Contact or Critical Updates, if applicable</div>    
+                <lightning-button variant="brand" label="Next" title="Trigger Demographic Update" 
+                        disabled={isFormInvalid}
+                        onclick={handleNextClick} 
+                        class="slds-m-left_x-small"></lightning-button>
+                <!-- <lightning-button variant="brand" label={btnName} title="Trigger Demographic Update" 
+                        onclick={handleDummyClick} 
+                        class="slds-m-left_x-small"></lightning-button> -->
+            </div>
+        </template>
+        <!-- <template if:true={displayRouting}>
+            <div>
+                <div class="noteAlt">
+                    {displayMessageModel.routing}
+                </div>
+            </div>
+        </template> -->
+        <c-demographic-loading-component></c-demographic-loading-component>
+        <c-modal-component></c-modal-component>
+        <c-demographic-summary-component></c-demographic-summary-component>
+        <c-demographic-medicare-avf-component></c-demographic-medicare-avf-component>
+        <c-demographic-medicaid-avf-component></c-demographic-medicaid-avf-component>
+        <c-demographic-update-helper></c-demographic-update-helper>
+        <c-demographic-update-finish-component></c-demographic-update-finish-component>
+    </lightning-card>
+</template>

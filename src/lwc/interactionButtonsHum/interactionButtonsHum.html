@@ -1,0 +1,14 @@
+﻿<!--
+LWC Name        : interactionButtonsHum.html
+Function        : LWC to display custom interaction pills
+
+Modification Log:
+* Developer Name                Date                       Description
+* Supriya                       06/04/2021                  US: 2176313 
+****************************************************************************************************************************-->
+<template>
+    <template for:each={interactionPills} for:item="item">
+        <button key={item.text} class={item.cssClass} data-id={item.sType}
+           onclick={onInterPillClick}>{item.text} ({item.iCount})</button>
+     </template>
+</template>

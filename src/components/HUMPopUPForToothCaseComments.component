@@ -1,0 +1,37 @@
+﻿<!--
+Component Name   : HUMPopUPForToothCaseComments
+Version          : 1.0
+Created On       : Feb 12 2014
+Function         : This Component is used as popup to show CaseComments
+
+Modification Log :
+*  Developer            Code Review             Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*  Rajesh Keswani         38381                09/06/2016           Original Version
+
+********************************************************************************************************************************
+-->
+<apex:component controller="HUMPopUPForCaseCommentsController" allowDML="true">
+
+    <apex:attribute name="caseId" type="String" assignTo="{!sCaseId}" required="true" description="" />   
+    <apex:includeScript value="/support/console/30.0/integration.js" /> 
+    
+    <apex:outputPanel id="ComponentRefTooth" styleClass="componentRef"> 
+   
+        <apex:outputText rendered="{!bDateDisplay}" value="">
+        <font class="commentStyle">{!sCaseCommentString} {!sLastModifiedDate}<br/></font>
+              
+        </apex:outputText>
+        <apex:outputText id="CaseCommentTooth" value="" styleClass="wordWrap"> 
+        <script>
+            var scomment ='';
+            var sCommentID = '{!$Component.CaseCommentTooth}' ;
+            var sCaseId = "{!sCaseId}";
+            scomment='{!JSENCODE(sCaseComment)}';
+            CaseCommentTooth(scomment,sCommentID,sCaseId);
+        </script>
+        </apex:outputText>
+        <apex:outputText rendered="{!NOT(ISBLANK(sCurrent_Work_Queue))}" value=""><br/><b>{!$Label.HUMCurrentWorkQueueTH}</b>{!sCurrent_Work_Queue}</apex:outputText>
+    </apex:outputPanel> 
+     
+</apex:component>

@@ -1,0 +1,23 @@
+﻿<apex:page showHeader="false" sidebar="false">
+    <apex:includeLightning />
+    <style>
+        #LightiningComponentid{
+            padding : 25px;
+        }
+    </style>
+    <div id="LightiningComponentid" class="slds-p-around_small" />
+    <script>
+      $Lightning.use("c:displayCaseLoggedInfoAppLWC",function(){
+      $Lightning.createComponent(
+      "c:displayLoggedInfoHum",
+      {
+      attachId:"Classic"+"{!$CurrentPage.parameters.attachId}"
+      },
+      "LightiningComponentid",
+      function(cmp){
+      console.log("Call is success Display Logged Info App Lightning VF");
+      }
+      );
+      });
+    </script>
+</apex:page>

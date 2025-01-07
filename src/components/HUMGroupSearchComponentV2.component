@@ -1,0 +1,303 @@
+﻿<!--
+/*****************************************************************************************************************************************************************
+Apex Class Name : HUMGroupSearchComponentV2
+Version         : 2.0
+Created On      : 04/01/2014
+Function        : This is a custom component showing up on the custom search page for Group search                
+                 
+Modification Log: 
+* Version          Developer Name             Code Review              Date                       Description
+*-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+* 2.0              Chaitanya Kumar/            25262                 07/31/2015                 Code refactoring ( removing abstract layer - HUMSearchFieldHelper)
+                   Harshith Mandya 
+* 2.1              Shreya Choodamani           25262                 07/31/2015                 Implementing Async Webservice Callout              
+*	2.2		           Subhamay Mandal									                 02/01/2017				          Added reset all button	
+* 2.3			         Subhamay Mandal									                 02/13/2017					        REQ - 301404: Update Reset All button
+* 2.4		           Amar Gadewar									                     03/31/2017				          REQ - 305666 - Changing the name of the Reset All button to Clear All Search button (RF)
+* 2.5              Subhamay Mandal	                                 05/11/2017                 REQ - 313449 Provide universal reset button in search section to reset the search page(s) (CRM)
+* 2.6    		       Mithra  Bharadwaj          321316                 01/03/2019                 REQ - 378774 Fix the group serach functionality 
+* 2.7              Deepesh Rao                                       01/29/2019                      REQ-379002 Update Account Name-Group
+* 2.8              Deepesh Rao                333642                 02/01/2019                 Defect 400266 Search Window does not closed, after clicking on the “Select” button
+* 2.9				       Prudhvi Pamarthi                                  02/06/2019                 REQ - 361155 - Not allowing case creation on Legacy Deleted policies
+* 3.0       	     Deepankar Binjola			    341599 				         03/01/2019				          REQ - 386854 The info in the Provider and unkonwn Provider pop up are not cleared
+* 3.1              Mohammed Noor                                     07/15/2019                 REQ - 403695 - Fix for Incident 8364762  
+* 3.2   			     Firoja Begam									                     09/02/2020 				        REQ - 1431988 - Group number is not reflecting in Group Search
+* 3.3 		         Navajit Sarkar						                         02/12/2021		              REQ - ClickToDial for Group
+* 3.4              Ankit Avula                                       08/24/2021                 US2619274 T1PRJ0002980/PR00095219 - Phase 2 - MF06 - Contract Protected Group indicator within Group Search Results page
+* 3.5              Santhi Mandava                                    03/07/2024                 User Story 5303730: T1PRJ0891742 - C01; Consumer Management - Classic VIT Remediation Search pages
+*******************************************************************************************************************************************************************/
+ -->
+ <apex:component controller="HUMGroupSearchControllerV2" allowDML="true" id="groupComponent">
+  <apex:stylesheet value="{!$Resource.CustomSearchCSS}" />
+  <script>
+    var grpNumber = '{!$Component.groupComponent.Grouppgblock.pgblocksection.GroupNumber}';
+    var grpName = '{!$Component.groupComponent.Grouppgblock.pgblocksection.GrpName}';
+    var state = '{!$Component.groupComponent.Grouppgblock.pgblocksection.state}';
+    var SearchFieldsHelpText1 = "{!$Label.HUMGroupSearchFieldsHelpText1}";
+    var SearchFieldsHelpText2 = "{!$Label.HUMGroupSearchFieldsHelpText2}";
+    var SearchFieldsHelpText3 = "{!$Label.HUMGroupSearchFieldsHelpText3}";
+    var ResultHelpText1 = "{!$Label.HUMGroupSearchResultHelpText1}";
+    var ResultHelpText2 = "{!$Label.HUMGroupSearchResultHelpText2}";
+    var HelpTextNonASO = "{!$Label.HUMSearchHelpTextNonASO}";
+    var HelpTextASO = "{!$Label.HUMSearchHelpTextASO}";
+    var unknownGroupAccountPage ='{!$Page.HUMUnknownGroupAccountEdit}';
+    var startTime = '';
+    var startTimeabt = '';
+    var startTimesave = '';
+    
+    function insertGroup(record)
+    {
+    insertExternalGroup(record);
+    }
+
+  </script>
+  <apex:includeScript value="{!URLFOR($Resource.HUMGroupSearchComponent, 'HUMGroupSearchComponent/GroupSearchScript.js')}" />
+  <apex:actionFunction name="methodSearchGroup" action="{!groupsearch}" status="buttonStatus" reRender="groupresults,errorMsgGroup"/>
+  <!--  Current page specific business logic is incorporated into the Javascript file -->
+  <apex:includeScript value="{!URLFOR($Resource.HUMGroupSearchComponent, 'HUMGroupSearchComponent/GroupSearchScript.js')}" />
+  <apex:StyleSheet value="{!URLFOR($Resource.HUMGroupSearchComponent, 'HUMGroupSearchComponent/GroupSearchCSS.css')}" />
+
+  <apex:attribute name="HUMSearchController" type="HUMSearchControllerV2"
+      assignTo="{!searchController}" required="false"
+      description="The controller for the page." />
+  <apex:attribute name="searchName" type="String" assignTo="{!key}"
+      required="false"
+      description="Search Context name ,like , Member ,Group etc" />
+  <apex:attribute name="isSearchPage" type="boolean" assignTo="{!bIsSearchPage}" required="false" description="Is search from default search page" default="true" />
+
+  <!-- Show Error Messages -->
+  <apex:outputpanel id="errorMsgGroup" >
+    <apex:pageMessages escape="true" rendered="{!bIsGroupError}"/>
+  </apex:outputpanel>
+
+  <apex:pageblock mode="edit" title="{!$Label.HUMGroupSearchTitle}"
+      id="Grouppgblock">
+
+    <apex:pageblockButtons location="top">
+      <apex:commandButton id="btn1" action="{!groupsearch}"
+          value="{!$Label.HUMSearchButton}"
+          status="buttonStatus"
+          reRender="groupresults,errorMsgGroup"/>
+      <apex:commandButton value="{!$Label.HUMSearchResetButton}"
+          action="{!reset}" status="buttonStatus" reRender="errorMsgGroup,Grouppgblock" />
+      <apex:commandButton value="{!$Label.HUMGroupSearchInternalButton}"  action="{!unknownGroupSearch}"
+         status="buttonStatus" rendered="{!bIsSearchPage}" reRender="errorMsgGroup,Grouppgblock">
+        <apex:param name="unknown" value="true" assignTo="{!bIsUnknownGroupSearch}"/>
+      </apex:commandButton>
+      <apex:commandbutton rendered="{!bIsSearchPage}" value="{!$Label.HUMGroupSearchUnknownGroupButton}"  onclick="openUnknownGroupAccount();return false;" />
+      <apex:commandButton rendered="{!bIsSearchPage}" value="{!$Label.HUMClearAllSearchBtnLabel}" styleclass="resetAllBtn" status="reset" onclick="getAllNavigationTabs();" />
+    </apex:pageblockButtons>
+    <!-- ? Help Feature in search fields section begin -->
+    <div class="pbSubheader brandTertiaryBgr tertiaryPalette"
+        id="GroupSearchPopUp1">
+      <h3>
+        {!$Label.HUMLabelSearchFields} <img src="{!$Resource.HUMHoverOverQuestionMark}"
+                    onmouseover="openPopSearch();" onmouseout="clearPopSearch();" />
+      </h3>
+    </div>
+    <div id="GroupPopUpSearch" class="styleGrpSearchHelp">
+      <SPAN id='GroupPopUpTextSearch'></SPAN>
+    </div>
+    <!-- ? Help Feature in search fields section end -->
+    <!-- Search Criteria section begin -->
+    <apex:pageBlockSection collapsible="false" id="pgblocksection"
+        columns="1">
+
+      <apex:inputtext value="{!oSearchWrapper.sGroupNumber}" onkeypress="return noGrpEnter(event) ;"
+          id="GroupNumber" maxlength="13"
+          label="{!$Label.HUMGroupSearchLabelGroupNumber}"
+          onfocus="setBordergroup('groupnumber');"
+          onblur="removeBordergroup();" />
+      <apex:inputtext value="{!oSearchWrapper.sGroupName}" id="GrpName"  onkeypress="return noGrpEnter(event);"
+          maxlength="105" label="{!$Label.HUMGroupSearchLabelGroupName}"
+          onfocus="setBordergroup('groupname');" onblur="removeBordergroup();" />
+      <apex:selectlist value="{!oSearchWrapper.sState}"  onkeypress="return noGrpEnter(event);"
+          label="{!$Label.HUMGroupSearchLabelState}" id="State"
+          multiselect="false" size="1" style="width:150px"
+          onfocus="setBordergroup('state');" onblur="removeBordergroup();">
+        <apex:selectoptions value="{!Groupstatevalue}"></apex:selectoptions>
+      </apex:selectlist>
+    </apex:pageBlockSection>
+    <!-- Search Criteria section end -->
+
+    <!-- ? Help Feature in result section begin -->
+    <div class="pbSubheader brandTertiaryBgr tertiaryPalette"
+        id="GroupSearchPopUp" style="">
+      <h3>
+        {!$Label.HUMLabelResult} <img src="{!$Resource.HUMHoverOverQuestionMark}"
+                    onmouseover="openGroupPop();" onmouseout="clearGroupPop();" />
+      </h3>
+    </div>
+    <!-- Defect no - 400754 Start White spacing not proper for result helptext -->
+    <apex:outputPanel id="GroupResultPanelId" rendered="{!bIsSearchPage}">
+      <div id="GroupPopUp" class="stylePanelGroup">
+        <SPAN id='GroupPopUpText'></SPAN>
+      </div>
+    </apex:outputPanel>
+
+    <apex:outputPanel id="GroupResultPanelIdNonSearch" rendered="{!!bIsSearchPage}">
+      <div id="GroupPopUp" class="stylePanelGroup" style="word-spacing: -.15em;">
+        <SPAN id='GroupPopUpText'></SPAN>
+      </div>
+    </apex:outputPanel>
+    <!--Defect no - 400754 end -->
+    <!-- ? Help Feature in result section end -->
+    <apex:pageblocksection id="groupresults" columns="1">
+      <!-- Begin display of results retrieved through query within salesforce  -->
+      <apex:pageblockTable value="{!lstSObjects}" var="record" width="100%"
+              rendered="{!(lstSObjects.size > 0) && (!bExternalResults)}">
+        <apex:column headerValue="Select" width="10%" rendered="{!!bIsSearchPage}">
+          <apex:commandButton value="Select" onclick="populateAccountLookupValuesForAgentGroup('{!record.id}','{!HTMLENCODE(record.Name)}','{!HTMLENCODE(record.RecordtypeId)}');" oncomplete="resetAccLookup();" />
+        </apex:column>
+        <!-- As per the US2619274 added the new column to show the lock icon -->
+        <apex:column headerValue="" width="1%" rendered="{!groupCPDOnOff}">
+            <apex:image value="{!URLFOR($Resource.HumLockIcon_SR_HUM,'Lock_RGB_Gold.png')}" alt="Lock" width="20" height="20" title="{!$Label.US2619274LockMessage}" rendered="{!!mapRecordUserAccess[record.Id]}" />
+        </apex:column>
+        <apex:column headerValue="{!$Label.HUMGroupSearchLabelGroupName}"
+            width="10%" rendered="{!bIsSearchPage}">
+          <!-- The below command link is used for results from within salesforce -->
+          <apex:commandlink onclick="interactionDetails('Group',false,null,'{!record.id}',null,'{!mapRecordHaveAccess[record.Id]}'); return false;" value="{!record.Name}"/>
+        </apex:column>
+        <apex:column headerValue="{!$Label.HUMGroupSearchLabelGroupName}"
+          width="10%" rendered="{!!bIsSearchPage}">
+          {!HTMLENCODE(record.Name)}
+        </apex:column>
+        <apex:column headerValue="{!$Label.HUMGroupSearchLabelGroupId}" 
+            width="10%" rendered="{!!ISBLANK(record.Group_Number__c)}">{!HTMLENCODE(record.Group_Number__c)}</apex:column>
+        <apex:column headerValue="{!$Label.HUMGroupSearchLabelGroupId}"
+            width="10%" rendered="{!ISBLANK(record.Group_Number__c)}">{!HTMLENCODE(record.Source_Customer_Key__c)}</apex:column>   
+        <apex:column headerValue="{!$Label.HUMGroupSearchLabelPlatform}"
+            width="5%">{!HTMLENCODE(record.Source_Platform_Code__c)}</apex:column>
+        <apex:column headerValue="{!$Label.HUMGroupSearchLabelAddress}"
+            width="10%">{!HTMLENCODE(record.BillingStreet)}</apex:column>
+        <apex:column headerValue="{!$Label.HUMGroupSearchLabelGroupPhone}"
+            width="10%"><support:clickToDial number="{!HTMLENCODE(record.Phone)}"/></apex:column>
+        <apex:column headerValue="{!$Label.HUMGroupSearchLabelGroupType}"
+            width="10%">{!HTMLENCODE(record.RecordType.Name)}</apex:column>
+        <apex:column HeaderValue="{!$Label.HUMGroupSearchLabelSelect}"
+            width="5%" rendered="{!bIsSearchPage}">
+          <!-- The below command button is used for results from within salesforce -->
+          <apex:commandbutton rendered="{!!ISBLANK(record.Id)}"
+              onclick="startTime = Date.now();interactionWithDetails('Group',false,null,'{!record.Id}');return false"
+              Value="{!$Label.HUMSearchInteractingWith}" disabled="{!record.ETL_Record_Deleted__c}">
+          </apex:commandbutton>
+        </apex:column>
+        <apex:column HeaderValue="{!$Label.HUMGroupSearchLabelSelect}"
+            width="5%" rendered="{!bIsSearchPage}">
+          <!-- The below command button is used for results from within salesforce -->
+          <apex:commandbutton rendered="{!!ISBLANK(record.Id)}"
+              onclick="startTimeabt = Date.now();interactionAboutDetails('Group',false,null,'{!record.Id}');return false"
+              Value="{!$Label.HUMSearchInteractingAbout}" disabled="{!record.ETL_Record_Deleted__c}">
+          </apex:commandbutton>
+        </apex:column>
+      </apex:pageblockTable>
+      <apex:outputPanel layout="block" styleClass="pSearchShowMore"
+          id="InternalSearch"  rendered="{!(lstSObjects.size > 0) && (!bExternalResults)}">
+        <apex:commandButton action="{!setAccount.first}" value="First"
+            disabled="{!!setAccount.hasPrevious}" reRender="Grouppgblock" />
+        <apex:commandButton action="{!setAccount.previous}" value="Previous"
+            disabled="{!!setAccount.hasprevious}" reRender="Grouppgblock" />
+        <apex:commandButton action="{!setAccount.next}" value="Next"
+            disabled="{!!setAccount.HasNext}" reRender="Grouppgblock" />
+        <apex:commandButton action="{!setAccount.last}" value="Last"
+            disabled="{!!setAccount.hasnext}" reRender="Grouppgblock" />
+        {!setAccount.PageNumber} of {!CEILING(setAccount.ResultSize/setAccount.PageSize)} Pages
+      </apex:outputPanel>
+      <!-- End display of results retrieved through query within salesforce  -->
+
+      <!-- Begin display of results retrieved through integration  -->
+      <apex:actionFunction name="insertExternalGroup" action="{!insertGroupAccount}" rerender="providerResults" oncomplete="getGroupId('{!idGroup}')">
+        <apex:param name="ProviderAccount" assignTo="{!mapOfGroup}" value=""/>
+      </apex:actionFunction>
+      <apex:pageBlockTable value="{!mapRecordset}" var="rec"
+          rendered="{!NOT(ISNULL(mapRecordset)) && iRecordMapSize>0 && bExternalResults}">
+        <apex:column headerValue="Select" width="10%" rendered="{!!bIsSearchPage}">
+          <apex:commandButton value="Select" onclick="populateExternalAccountGroup('{!JSENCODE(mapRecordset[rec].Name)}','{!mapRecordset[rec].RecordtypeId}','{!JSENCODE(mapRecordSetJson[rec])}'); resetComponent(); return false;" />
+        </apex:column>
+        <apex:column headerValue="{!$Label.HUMGroupSearchLabelGroupName}"
+            width="10%" rendered="{!bIsSearchPage}">
+          <!-- The below command link is used for results from integration which need to be upserted in salesforce -->
+          <apex:commandLink rendered="{!ISBLANK(mapRecordset[rec].Id)}"
+              onclick="interactionDetails('Group', true,'{!JSENCODE(mapRecordSetJson[rec])}',null, null); return false;" Value="{!mapRecordset[rec].Name}"/>
+        </apex:column>
+        <apex:column headerValue="{!$Label.HUMGroupSearchLabelGroupName}"
+           width="10%" rendered="{!!bIsSearchPage}">
+          {!HTMLENCODE(mapRecordset[rec].Name)}
+        </apex:column>
+        <apex:column headerValue="{!$Label.HUMGroupSearchLabelGroupId}"
+               width="10%">{!HTMLENCODE(mapRecordset[rec].Group_Number__c)}</apex:column>
+        <apex:column headerValue="{!$Label.HUMGroupSearchLabelPlatform}"
+         width="5%">{!HTMLENCODE(mapRecordset[rec].Source_Platform_Code__c)}</apex:column>
+        <apex:column headerValue="{!$Label.HUMGroupSearchLabelAddress}"
+            width="10%">{!HTMLENCODE(mapRecordset[rec].BillingStreet)}</apex:column>
+        <apex:column headerValue="{!$Label.HUMGroupSearchLabelGroupPhone}"
+            width="10%"><support:clickToDial number="{!HTMLENCODE(mapRecordset[rec].Phone)}"></support:clickToDial></apex:column>
+        <apex:column headerValue="{!$Label.HUMGroupSearchLabelGroupType}"
+            width="10%">{!$Label.HUM_Group_Account_Record_Type}</apex:column>
+        <apex:column HeaderValue="{!$Label.HUMGroupSearchLabelSelect}"
+            width="5%" rendered="{!bIsSearchPage}">
+
+
+          <!-- The below command button is used for results from integration which need to be upserted in salesforce -->
+          <apex:commandbutton rendered="{!ISBLANK(mapRecordset[rec].Id)}"
+              onclick="interactionWithDetails('Group', true,'{!mapRecordSetJson[rec]}',null);return false;"
+              Value="{!$Label.HUMSearchInteractingWith}" disabled="{!mapRecordset[rec].ETL_Record_Deleted__c}">
+          </apex:commandbutton>
+        </apex:column>
+        <apex:column HeaderValue="{!$Label.HUMGroupSearchLabelSelect}"
+     width="5%" rendered="{!bIsSearchPage}">
+          <!-- The below command button is used for results from integration which need to be upserted in salesforce -->
+          <apex:commandbutton rendered="{!ISBLANK(mapRecordset[rec].Id)}"
+               onclick="interactionAboutDetails('Group', true,'{!mapRecordSetJson[rec]}',null);return false;"
+               Value="{!$Label.HUMSearchInteractingAbout}" disabled="{!mapRecordset[rec].ETL_Record_Deleted__c}">
+          </apex:commandbutton>
+        </apex:column>
+      </apex:pageBlockTable>
+
+      <apex:outputPanel layout="block" styleClass="pSearchShowMore"
+          id="otpNav" rendered="{!NOT(ISNULL(mapRecordset)) && iRecordMapSize>0 && bExternalResults}">
+        <apex:commandButton action="{!first}" value="First"
+            disabled="{!!hasprevious}" reRender="Grouppgblock" />
+        <apex:commandButton action="{!previous}" value="Previous"
+            disabled="{!!hasprevious}" reRender="Grouppgblock" />
+        <apex:commandButton action="{!next}" value="Next"
+            disabled="{!!hasnext}" reRender="Grouppgblock" />
+        <apex:commandButton action="{!last}" value="Last"
+            disabled="{!!hasnext}" reRender="Grouppgblock" />
+        {!(iCounter+iPagesize)/iPagesize} of {!CEILING(iRecordMapSize/iPagesize)} Pages
+      </apex:outputPanel>
+      <!-- End display of results retrieved through integration  -->
+      </apex:pageBlockSection>
+      <!-- Results section end -->
+	  <!-- Added for reseting the component on  click of 'X' button -->
+	  <apex:actionStatus id="pleaseWaitIntModal">
+              <apex:facet name="start">
+                <div class="waitingSearchDiv waitingSearchDivOpacity outerPanel" ></div>
+                <div id="searchingStatus" class="waitingSearchDiv innerPanel">
+                  <div class="waitingHolder" style="imageClass">
+                    <img class="waitingImage" src="/img/loading.gif"/>
+                    <span class="waitingDescription">Loading....</span>
+                  </div>
+                </div>
+              </apex:facet>
+              <apex:facet name="stop"/>
+            </apex:actionStatus>
+       <apex:actionFunction action="{!reset}" name="resetAccLookup"  status="pleaseWaitIntModal" reRender="" oncomplete="closeAccPopUp();"/>
+	   <!-- Added for reseting the component on  click of 'X' button -->
+      <apex:actionFunction name="searchGroup" action="{!groupsearch}" status="buttonStatus" reRender="groupresults,errorMsgGroup"/>
+      <apex:actionFunction name="searchGroupSoftPhone" action="{!callfromsoftphone}" status="buttonStatus" reRender="groupresults,errorMsgGroup"/>
+      <apex:actionFunction action="{!reset}" name="resetComponent" reRender="errorMsgGroup,Grouppgblock"/>
+      <apex:actionStatus id="buttonStatus">
+        <apex:facet name="start">
+          <div class="waitingSearchDiv waitingSearchDivOpacity" style="width: 100%; height: 100%; display: block; opacity: 0.99" />
+          <div id="searchingStatus" class="waitingSearchDiv" style="width: 100%; height: 100%; display: block;">
+            <div class="waitingHolder" style="top: 300px; width: 110px;">
+              <img class="waitingImage" src="/img/loading.gif"/>
+              <span class="waitingDescription">{!$Label.HUM_Account_GroupSearch}</span>
+            </div>
+          </div>
+        </apex:facet>
+        <apex:facet name="stop"/>
+      </apex:actionStatus>
+      </apex:pageBlock>
+    </apex:component>

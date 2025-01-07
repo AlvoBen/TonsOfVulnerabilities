@@ -1,0 +1,172 @@
+﻿<!--
+LWC Name        : pharmacyUSPSAddressVerification.html
+Function        : LWC to display USPS Address 
+
+Modification Log:
+* Developer Name                  Date                         Description
+* Swapnali Sonawane               11/01/2022                   US- 3729809 Migration of the UI enhancements in the addresses section.
+*************************************************************************************************************************** -->
+<template>
+    <div class="slds-grid slds-gutters slds-wrap slds-var-m-around_small">
+        <template if:true={showerr}>
+            <div class="slds-col slds-size_12-of-12 slds-p-bottom_medium slds-p-top_x-small">
+                <span>
+                    <div class="slds-text-heading_medium"><b>USPS ADDRESS VERIFICATION</b></div>
+                </span>
+            </div>
+            <div class="slds-col slds-size_6-of-12 slds-p-bottom_x-small">
+                <span>
+                    <div class="slds-text-heading_small"><b>Address entered by you</b></div>
+                </span>
+            </div>
+            <div class="slds-col slds-size_6-of-12 slds-p-bottom_x-small">
+                <span>
+                    <div class="slds-text-heading_small"><b>USPS Recommendation</b></div>
+                </span>
+            </div>
+            <div class="slds-col slds-size_2-of-12">
+                <span>
+                    <lightning-radio-group name="radioGroup" label="" options={addressOptions} value={value}
+                        type="radio" onchange={handleOptionChange}>
+                    </lightning-radio-group>
+                    <div class="slds-text-heading_small slds-m-left_large">{addrtoupdate.AddressLine1}</div>
+                </span>
+            </div>
+            <div class="slds-col slds-size_2-of-12">
+                <span>
+                    <div class="slds-text-body_small slds-text">City</div>
+                    <div class="slds-text-heading_small">{addrtoupdate.City}</div>
+                </span>
+            </div>
+            <div class="slds-col slds-size_2-of-12"></div>
+            <div class="slds-col slds-size_6-of-12">
+                <span class="slds-text-heading_medium" style="color:red">{label.uspsAddressNotConfirmedMsg}</span>
+            </div>
+            <div class="slds-col slds-size_2-of-12 slds-m-top_medium">
+                <span>
+                    <div class="slds-text-body_small slds-m-left_large">Address Line 2</div>
+                    <div class="slds-text-heading_small slds-m-left_large">{addrtoupdate.AddressLine2}</div>
+                </span>
+            </div>
+            <div class="slds-col slds-size--2-of-12 slds-m-top_medium">
+                <span>
+                    <div class="slds-text-body_small">State/Code</div>
+                    <div class="slds-text-heading_small">{addrtoupdate.StateCode}</div>
+                </span>
+            </div>
+            <div class="slds-col slds-size--2-of-12 slds-m-top_medium">
+                <span>
+                    <div class="slds-text-body_small">Zip/Code</div>
+                    <div class="slds-text-heading_small">{addrtoupdate.ZipCode}</div>
+                </span>
+            </div>
+            <div class="slds-col slds-size--2-of-12 slds-m-top_medium">
+            </div>
+            <div class="slds-col slds-size--2-of-12 slds-m-top_medium">
+            </div>
+            <div class="slds-col slds-size--2-of-12 slds-m-top_medium">
+            </div>
+            <div class="slds-col slds-size_12-of-12 slds-float_right slds-m-left_medium slds-m-top_small">
+                <div class="slds-float_right slds-m-right_medium">
+                    <lightning-button label="Cancel" title="Cancel" onclick={handleCancelUSPS}
+                        class="slds-p-right_small">
+                    </lightning-button>
+                    <lightning-button label="Save" variant="brand" title="Save" onclick={handleSave}>
+                    </lightning-button>
+                </div>
+            </div>
+        </template>
+        <template if:true={address}>
+            <div class="slds-col slds-size_12-of-12 slds-p-bottom_x-small slds-p-top_x-small">
+                <span>
+                    <div class="slds-text-heading_medium"><b>USPS ADDRESS VERIFICATION</b></div>
+                </span>
+            </div>
+            <div class="slds-col slds-size_6-of-12 slds-p-bottom_x-small">
+                <span>
+                    <div class="slds-text-heading_small"><b>Address entered by you</b></div>
+                </span>
+            </div>
+            <div class="slds-col slds-size_6-of-12 slds-p-bottom_x-small">
+                <span>
+                    <div class="slds-text-heading_small"><b>USPS Recommendation</b></div>
+                </span>
+            </div>
+            <div class="slds-col slds-size_2-of-12">
+                <span class="slds-text-heading_small">
+                    <lightning-radio-group class="slds-text-heading_small" name="radioGroup" label=""
+                        options={addressOptions} value={value} type="radio" onchange={handleOptionChange}>
+                    </lightning-radio-group>
+                    <div class="slds-text-heading_small slds-m-left_large">{addrtoupdate.AddressLine1}</div>
+                </span>
+            </div>
+            <div class="slds-col slds-size_2-of-12">
+                <span>
+                    <div class="slds-text-body_small">City</div>
+                    <div class="slds-text-heading_small">{addrtoupdate.City}</div>
+                </span>
+            </div>
+            <div class="slds-col slds-size_2-of-12"></div>
+            <div class="slds-col slds-size_2-of-12">
+                <span>
+                    <lightning-radio-group class="slds-text-heading_small" name="radioGroup" label=""
+                        options={USPSAddrsOptions} value={value} type="radio" onchange={handleOptionChange}>
+                    </lightning-radio-group>
+                    <div class="slds-text-heading_small slds-m-left_large">{valaddr.AddressLine1}</div>
+                </span>
+            </div>
+            <div class="slds-col slds-size_2-of-12">
+                <span>
+                    <div class="slds-text-body_small">City</div>
+                    <div class="slds-text-heading_small">{valaddr.City}</div>
+                </span>
+            </div>
+            <div class="slds-col slds-size_2-of-12"></div>
+            <div class="slds-col slds-size_2-of-12 slds-m-top_medium">
+                <span>
+                    <div class="slds-text-body_small slds-m-left_large">Address Line 2</div>
+                    <div class="slds-text-heading_small slds-m-left_large">{addrtoupdate.AddressLine2}</div>
+                </span>
+            </div>
+            <div class="slds-col slds-size--2-of-12 slds-m-top_medium">
+                <span>
+                    <div class="slds-text-body_small">State/Code</div>
+                    <div class="slds-text-heading_small">{addrtoupdate.StateCode}</div>
+                </span>
+            </div>
+            <div class="slds-col slds-size--2-of-12 slds-m-top_medium">
+                <span>
+                    <div class="slds-text-body_small">Zip/Code</div>
+                    <div class="slds-text-heading_small">{addrtoupdate.ZipCode}</div>
+                </span>
+            </div>
+            <div class="slds-col slds-size--2-of-12 slds-m-top_medium">
+                <span>
+                    <div class="slds-text-body_small slds-m-left_large">Address Line 2</div>
+                    <div class="slds-text-heading_small slds-m-left_large">{valaddr.AddressLine2}</div>
+                </span>
+            </div>
+            <div class="slds-col slds-size--2-of-12 slds-m-top_medium">
+                <span>
+                    <div class="slds-text-body_small">State/Code</div>
+                    <div class="slds-text-heading_small">{valaddr.StateCode}</div>
+                </span>
+            </div>
+            <div class="slds-col slds-size--2-of-12 slds-m-top_medium">
+                <span>
+                    <div class="slds-text-body_small">Zip/Code</div>
+                    <div class="slds-text-heading_small">{valaddr.ZipCode}</div>
+                </span>
+            </div>
+            <div class="slds-col slds-size_12-of-12 slds-float_right slds-m-left_medium slds-m-top_small">
+                <div class="slds-float_right slds-m-right_medium">
+                    <lightning-button label="Cancel" title="Cancel" onclick={handleCancelUSPS}
+                        class="slds-p-right_small">
+                    </lightning-button>
+                    <lightning-button label="Save" variant="brand" title="Save" onclick={handleSave}>
+                    </lightning-button>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>

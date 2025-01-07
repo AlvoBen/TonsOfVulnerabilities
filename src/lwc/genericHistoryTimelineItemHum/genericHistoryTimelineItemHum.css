@@ -1,0 +1,34 @@
+.slds-timeline__item_task:before {
+    background: #e7e00a;
+}
+
+.slds-timeline__item_event:before{
+   background: #4BC076;
+}
+
+.customicon{
+    --sds-c-icon-color-background: #969492;
+    --sds-c-icon-color-foreground-default: white;
+    padding:4px
+}
+
+.print{
+    --sds-c-icon-color-background: #88C651;
+    --sds-c-icon-color-foreground-default: white;
+    padding:4px
+}
+
+
+.full-container{
+    width: 100%;
+}
+
+.actionicon{
+    background: #56aadf;
+}
+.webactionicon {
+    width: var(--lwc-squareIconSmallBoundary,1.5rem);
+    height: var(--lwc-squareIconSmallBoundary,1.5rem);
+    line-height: var(--lwc-lineHeightReset,1);
+    padding: 4px;
+}

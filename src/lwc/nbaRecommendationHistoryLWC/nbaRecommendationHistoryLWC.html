@@ -1,0 +1,40 @@
+﻿<!--
+/******************************************************************************************************************
+LWC Name           : nbaRecommendationHistoryLWC.html
+Version            : 1.0
+Function           : This js componennt contains logic to fetch and displayPharmacy Recommendation History information on UI.
+Created On         : 11/05/2020
+Test Class         : NBA_RecommendationHistory_T_HUM
+*******************************************************************************************************************
+Modification Log:
+* Developer Name            Code Review                Date                       Description
+*-------------------------------------------------------------------------------------------------------------------------------
+* Sayali Nemade                                      11/05/2020                Original Version - REQ - 1041220 -- PR00090631 - 
+MF 9 - MVP Ability to modify and store alerts in CRM Service
+*******************************************************************************************************************/
+-->
+<template>
+    <div class="slds-notify__content">
+        </br><h2 class="slds-text-heading_small " style="margin-left: 15px;">Recommendation Name: {recommendationName}</h2>
+    </div> &nbsp;</br>
+	
+	<!-- To Display Recommendation History data in lightning datatable -->
+    <template if:true={bDisplay}>
+        <div style="margin-top:20px; margin-left: 15px; margin-right: 15px; height:800px;">
+        <lightning-datatable 
+                    data={recommList} 
+                    columns={columns}
+                    key-field="Id" 
+                    hide-checkbox-column
+        >
+        </lightning-datatable>
+    </div>
+    </template>
+	
+	</br>
+	<template if:false={bDisplay}>
+		<div class="slds-notify__content">
+			<h2 class="slds-text-heading_small " style="margin-left: 15px;">No records to display.</h2>
+		</div>
+    </template>
+</template>

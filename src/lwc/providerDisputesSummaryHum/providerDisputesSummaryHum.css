@@ -1,0 +1,18 @@
+.slds-box {
+  padding: 0.8rem;
+}
+
+.exampleHolder {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+}
+
+.container {
+  width: 100%;
+}
+
+td {
+    padding-top: .9rem;
+    padding-bottom: .9rem;
+}

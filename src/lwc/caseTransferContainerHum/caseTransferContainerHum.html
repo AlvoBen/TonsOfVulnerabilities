@@ -1,0 +1,78 @@
+﻿<template>
+
+    <template if:true={dbResponse}>
+        <div class="hc-change-owner-modal">
+            <div class="hc-modal-header">
+                <h2 class="slds-modal__title slds-hyphenate slds-text-align_center slds-p-bottom_medium">{displayLabel}
+                </h2>
+            </div>
+
+
+            <div class="hc-modal-content ">
+                <div class="page-error-message slds-m-top_small"></div>
+                <div if:true={showInfoMsges} class="slds-box hc-info-text slds-m-horizontal_medium slds-m-top_small">
+                    <div class="slds-inline_icon_text slds-grid">
+                        <lightning-icon icon-name="utility:info" size="small">
+                        </lightning-icon>
+                        <div class="slds-col slds-align-middle slds-p-left_small">
+                            <p>{guidanceinformationalMsge}<br>
+                                {topicinformationalMsge}</p>
+                        </div>
+                        <lightning-icon icon-name="utility:close" size="x-small" onclick={removeInfoMsgeOnCross}>
+                        </lightning-icon>
+                    </div>
+                </div>
+				<div if:true={showTransferAssistInfo} class="slds-box hc-info-text slds-m-horizontal_medium slds-m-top_small">
+                    <div class="slds-inline_icon_text slds-grid">
+                        <lightning-icon icon-name="utility:info" size="small">
+                        </lightning-icon>
+                        <div class="slds-col slds-align-middle slds-p-left_small">
+                            <p>{showCaseTransferAssistmsg}</p>
+                        </div>
+                    </div>
+                </div>
+                <lightning-layout multiple-rows="true" class="slds-p-vertical_small">
+                    <lightning-layout-item padding="horizontal-small" size="12">
+                        <!---------------------------this is case trnasfer section ------------------------------>
+                        <c-case-transfer-service-dept-hum if:true={dbResponse} service-dept={dbResponse.caseTransfer}
+                            user-populaion-info={dbResponse.caseUserPopulation} o-case-object={dbResponse.caseData}
+                            onselecteduserid={handleSelectedUser} onremoveinfomsg={removeInfoMessage}
+                            onshowinfomsg={showInfoMessage} custom-labels={caseLabels}
+                            b-re-assign-to-creator-called={bReassignToCreator} oncloseform={handleChildCloseForm}
+                            b-re-assign-to-sender-called={bReassignToSender} onfetchuserfieldvalue={handlefetchuserfieldvalue} page-error={pageError}>
+                        </c-case-transfer-service-dept-hum>&nbsp;
+
+                        <!----------------------------this is case comment section ---->
+                        <c-case-transfer-comments-form-hum if:true={dbResponse} o-user-group={oUserGroup}
+                            comment-data={dbResponse.caseCommentModal} o-case-object={dbResponse.caseData} ctci-object={dbResponse.CTCIJunctionData}
+                            oncommentsave={saveComments} reassgin-to-creator={bReassignToCreator} reassign-to-sender={bReassignToSender}>
+                        </c-case-transfer-comments-form-hum>
+
+                        <!-----------------------------this is case G&A section-------------------------->
+                        <c-case-transfer-gna-hum if:true={dbResponse} o-case-object={dbResponse.caseData}
+                            o-user-group={oUserGroup}>
+                        </c-case-transfer-gna-hum>
+
+                        <!------------------this is case Texas section ---------------------------->
+                        <c-case-transfer-texas-hum if:true={dbResponse} o-case-object={dbResponse.caseData}
+                            o-user-group={oUserGroup}>
+                        </c-case-transfer-texas-hum>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+
+
+
+            <div class="slds-modal__footer">
+                <button class="slds-button slds-button_neutral" aria-label="Cancel and close" name="close"
+                    onclick={closeForm}>Cancel</button>
+                <button class="slds-button slds-button_brand" onclick={saveTransferForm} name="save">Save</button>
+            </div>
+        </div>
+    </template>
+
+
+    <template if:true={spinnerVisible}>
+        <lightning-spinner alternative-text="Loading" variant="brand"></lightning-spinner>
+    </template>
+</template>

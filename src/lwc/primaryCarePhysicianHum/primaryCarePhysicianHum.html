@@ -1,0 +1,94 @@
+﻿<!--
+Modification Log:
+* Developer Name                       Date                         Description
+* Jonathan Dickinson                   04/04/2022                   US-3196414
+* Abhishek Mangutkar				   06/15/2022					DF-5124
+* Divya Bhamre                         06/20/2022                   User Story 3369941: MF 18272 - Lightning-PCP Change- Quick Links on Component Page.
+*------------------------------------------------------------------------------------------------------------------------------
+-->
+
+<template>
+    <div>
+        <template if:true={memberId}>
+            <c-generic-component-header iconname="standard:account" iconsize="medium" headerline={pageHeaderName}
+                                        subheaderline={memberId} showloggingicon={showloggingicon} recordid={recId} auto-logging={autoLogging}
+                                        type={pageType} subtype={pageTypeDetail} attachmentkey={personId} attachmentdescription="Enterprise Id">
+            </c-generic-component-header>
+        </template>
+    </div>
+    <div class="slds-m-vertical_small">
+        <c-dynamic-custom-links-lc-hum page-name="Primary Care Physician Lightning" record-id={recId}
+                                       object-api-name="MemberPlan">
+        </c-dynamic-custom-links-lc-hum>
+    </div>
+    <lightning-card>
+        <div class="slds-p-around_medium">
+            <lightning-tabset style="position: relative; top: -20px;">
+                <lightning-tab label="Information">
+                    <template if:true={isDataProcessed}>
+                        <div class="slds-grid slds-grid_align-end">
+                            <div class="slds-col">
+                                <template if:false={isDental}>
+                                    <template if:true={displayUpdateButton}>
+                                        <lightning-button label="PCP Update/Change" variant="brand"
+                                            onclick={navigateToFlow}>
+                                        </lightning-button>
+                                    </template>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="slds-grid slds-gutters slds-var-m-bottom_small">
+                            <div class="slds-text-heading_small slds-col">Active/Future {pageHeaderName}</div>
+                        </div>
+                        <template if:true={hasActivePCP}>
+                            <template for:each={pcpActiveFutureData} for:item="item" for:index="index">
+                                <div key={item.Id} class="slds-m-bottom_medium">
+                                    <c-pcp-information-structure-hum pcppcddata={item}
+                                                                     retrieved-all-phone-numbers-in-parent={retrievedAllPhoneNumbers}
+                                                                     pcppcdtype={pageHeaderName} pcpsection="Active/Future" memberid={memberId}
+                                                                     rowindex={index}></c-pcp-information-structure-hum>
+                                </div>
+                            </template>
+                        </template>
+                        <template if:false={hasActivePCP}>
+                            <template if:true={serviceerror}>
+                                <c-generic-scoped-notification-hum iconname="utility:error"
+                                                                   message={labels.pcpserviceerror}></c-generic-scoped-notification-hum>
+                            </template>
+                            <template if:false={serviceerror}>
+                                <c-generic-scoped-notification-hum iconname="utility:info" message={activePCPMessage}>
+                                </c-generic-scoped-notification-hum>
+                            </template>
+                        </template>
+                        <div class="slds-text-heading_small slds-m-top_small slds-m-bottom_small">Previous {pageHeaderName}</div>
+                        <template if:true={hasPreviousPCP}>
+                            <template for:each={pcpPreviousData} for:item="item" for:index="index">
+                                <div key={item.Id} class="slds-m-bottom_medium">
+                                    <c-pcp-information-structure-hum pcppcddata={item}
+                                                                     retrieved-all-phone-numbers-in-parent={retrievedAllPhoneNumbers}
+                                                                     pcppcdtype={pageHeaderName} pcpsection="Previous" memberid={memberId}
+                                                                     rowindex={index}></c-pcp-information-structure-hum>
+                                </div>
+                            </template>
+                        </template>
+                        <template if:false={hasPreviousPCP}>
+                            <template if:true={serviceerror}>
+                                <c-generic-scoped-notification-hum iconname="utility:error"
+                                                                   message={labels.pcpserviceerror}></c-generic-scoped-notification-hum>
+                            </template>
+                            <template if:false={serviceerror}>
+                                <c-generic-scoped-notification-hum iconname="utility:info" message={previousPCPMessage}>
+                                </c-generic-scoped-notification-hum>
+                            </template>
+                        </template>
+                    </template>
+                    <template if:false={isDataProcessed}>
+                        <div class="spinner-container">
+                            <lightning-spinner variant="brand" size="large"></lightning-spinner>
+                        </div>
+                    </template>
+                </lightning-tab>
+            </lightning-tabset>
+        </div>
+    </lightning-card>
+</template>

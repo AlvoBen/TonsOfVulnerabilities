@@ -1,0 +1,190 @@
+﻿<!--
+  @File Name          : modalComponent.html
+  @Description        : 
+  @Author             : ChangeMeIn@UserSettingsUnder.SFDoc
+  @Group              : 
+  @Last Modified By   : ChangeMeIn@UserSettingsUnder.SFDoc
+  @Last Modified On   : 11-19-2020
+  @Modification Log   : 
+  Ver       Date            Author      		    Modification
+  1.0    3/13/2020   ChangeMeIn@UserSettingsUnder.SFDoc     Initial Version
+-->
+<template>
+    <div class="modal-style" if:true={modalData}>
+      <lightning-card title={title}>
+          <div class="pub-model-container">
+            <tempate if:true={modalData}>
+              <div class="pub-model-cont-div">
+                <tempate if:false={isError}>
+                  <div class="pub-modal-heading-container">
+                    <div class="title-left"><h2><strong>Address entered by you</strong></h2></div>
+                    <div class="title-right"><h2><strong>{modalData.heading}</strong></h2></div>
+                  </div>
+                  <br/>
+                  <div class="pub-modal-data-container">
+                    <template for:each={modalData.dataList} for:item="data">
+                      <div key={data.order}>
+                        <div class="modal-data-cont">
+                          <div class="modal-data-left">
+                            <lightning-formatted-rich-text 
+                              value={data.displayDataLeft}>
+                            </lightning-formatted-rich-text>
+                          </div>
+                          <div class="modal-data-right">
+                            <lightning-formatted-rich-text 
+                              value={data.displayData}>
+                            </lightning-formatted-rich-text>
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                  <div class="pub-modal-btn-container">
+                    <template for:each={modalData.buttons} for:item="button">
+                      <div key={button.order} class={button.btnClass}>
+                        <template if:true={button.display}>
+                          <template if:false={button.internal}>
+                            <lightning-button label={button.label} 
+                                              variant={button.variant}
+                                              onclick={triggerInstructions}
+                                              data-ename={button.dispatchEventName}
+                                              data-name={button.eventName}>
+                            </lightning-button>
+                            <br/>
+                              <template if:true={button.showMessage}>
+                                <lightning-formatted-rich-text 
+                                  value={button.message}>
+                                </lightning-formatted-rich-text>
+                              </template>
+                          </template>
+                          <template if:true={button.internal}>
+                            <lightning-button label={button.label} 
+                                              variant={button.variant}
+                                              onclick={toggleErrorMode}>
+                            </lightning-button>
+                            <br/>
+                            <template if:true={button.showMessage}>
+                              <lightning-formatted-rich-text 
+                                value={button.message}>
+                              </lightning-formatted-rich-text>
+                            </template>
+                          </template>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </tempate>
+                <tempate if:true={isError}>
+                  <div class="modal-data-container">
+                    <div>
+                      <lightning-formatted-rich-text 
+                        value={modalData.error.message}>
+                      </lightning-formatted-rich-text>
+                    </div>
+                  </div>
+                  <div class="modal-btn-container">
+                    <template for:each={modalData.error.buttons} for:item="button">
+                      <div key={button.order} class="modal-btn-div">
+                        <template if:false={button.internal}>
+                          <lightning-button label={button.label} 
+                                            variant={button.variant}
+                                            onclick={triggerInstructions}
+                                            data-ename={button.dispatchEventName}
+                                            data-name={button.eventName}>
+                          </lightning-button>
+                        </template>
+                        <template if:true={button.internal}>
+                          <lightning-button label={button.label} 
+                                            variant={button.variant}
+                                            onclick={toggleErrorMode}>
+                          </lightning-button>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </tempate>
+              </div>
+            </tempate>
+          </div>
+      </lightning-card>
+    </div>
+    <div class="modal-style" if:true={displayModal}>
+      <lightning-card title={title}>
+          <div class="pub-model-container">
+            <tempate if:true={modalPopUpData}>
+              <div class="pub-model-cont-div">
+                <tempate if:false={isError}>
+                  <div class="pub-modal-heading-container">
+                    <div class="title-left">
+                      <h2><strong>Address Entered by you</strong></h2>
+                    </div>
+                    <div class="title-right">
+                      <h2><strong>{modalPopUpData.heading}</strong></h2>
+                    </div>
+                  </div>
+                  <br/>
+                  <div class="pub-modal-data-container">
+                    <template for:each={modalPopUpData.dataList} for:item="data">
+                      <div key={data.order}>
+                        <div class="modal-data-cont">
+                          <div class="modal-data-left">
+                            <!-- <h2><strong>Address Entered</strong></h2> -->
+                            <lightning-formatted-rich-text 
+                              value={data.displayDataLeft}>
+                            </lightning-formatted-rich-text>
+                          </div>
+                          <div class="modal-data-right">
+                            <!-- <h2><strong>{modalPopUpData.heading}</strong></h2> -->
+                            <lightning-formatted-rich-text 
+                              value={data.displayData}>
+                            </lightning-formatted-rich-text>
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                  <div class="pub-modal-btn-container">
+                    <template for:each={modalPopUpData.buttons} for:item="button">
+                      <div key={button.order} class={button.btnClass}>
+                        <template if:false={button.internal}>
+                          <lightning-button label={button.label} 
+                                            variant={button.variant}
+                                            onclick={processBtnClick}
+                                            data-ename={button.dispatchEventName}
+                                            data-name={button.eventName}
+                                            data-order={button.order}>
+                          </lightning-button>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </tempate>
+                <tempate if:true={isError}>
+                  <div class="pub-modal-errdata-container">
+                    <div>
+                      <lightning-formatted-rich-text 
+                        value={modalPopUpData.error.message}>
+                      </lightning-formatted-rich-text>
+                    </div>
+                  </div>
+                  <div class="pub-modal-btn-container">
+                    <template for:each={modalPopUpData.error.buttons} for:item="button">
+                      <div key={button.order} class="pub-modal-btn-div">
+                        <template if:false={button.internal}>
+                          <lightning-button label={button.label} 
+                                            variant={button.variant}
+                                            onclick={processBtnClick}
+                                            data-ename={button.dispatchEventName}
+                                            data-name={button.eventName}>
+                          </lightning-button>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </tempate>
+              </div>
+            </tempate>
+          </div>
+      </lightning-card>
+    </div>
+</template>

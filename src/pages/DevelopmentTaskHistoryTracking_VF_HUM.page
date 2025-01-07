@@ -1,0 +1,70 @@
+﻿<!--
+Page Name        : DevelopmentTaskHistoryTracking_VF_HUM.page
+Version          : 1.0
+Created On       : 2018
+Function         : VF page to display burndown chart and table for ideal and remaining hours for the sprint
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Santhosh Ganji                                       11/01/2018                   Original Version
+****************************************************************************************************************************
+-->
+<apex:page standardcontroller="Sprint__c" extensions="DevlopmentTaskController_C_HUM" id="BurndownChart" sidebar="false" showHeader="false">
+   
+   <apex:pageBlock title="Sprint Burndown">
+       
+       <h1 style="display:block">Use Case</h1>
+       
+       <apex:pageBlockSection >
+           <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="{!TotalHrs}"/> 
+ 
+                 <apex:outputLabel value="Total Hours estimated at Sprint Planning "/>
+           </apex:pageBlockSectionItem>
+       </apex:pageBlockSection> 
+       <apex:pageBlockSection >                     
+           <apex:pageBlockSectionItem >
+                 <apex:outputLabel value="{!SprintData.Total_Story_Points__c}"/>
+                 <apex:outputLabel value="SPs taken into Sprint "/>
+           </apex:pageBlockSectionItem>
+       </apex:pageBlockSection>
+       
+       <table>
+        
+        <tr><td> 
+         <div Class="outputPn1">
+         <apex:pageBlockTable styleClass="pageBlock1" value="{!ListWrapper}" var="DailyData">
+           <apex:column styleClass="colomn1">
+               <apex:facet name="header">Day In Sprint</apex:facet>
+               {!DailyData.Days}
+           </apex:column>
+           <apex:column styleClass="colomn1">
+               <apex:facet name="header">Ideal Hours Remaining</apex:facet>
+               <apex:outputText value="{0, number, 00}">
+                 <apex:param value="{!DailyData.IdealHrs}"/>
+               </apex:outputText>
+           </apex:column>
+           <apex:column styleClass="colomn1">
+              <apex:facet name="header">Actual Hours Remaining</apex:facet>
+              <apex:outputText value="{0, number, 00}">
+                <apex:param value="{!DailyData.RemainingHrs}"/>
+              </apex:outputText>
+           </apex:column>
+         </apex:pageBlockTable>
+         </div>
+         </td><td style="border:1px solid black">
+          <h1 style="text-align:center;font-size:24px;display:block">{!SprintData.Name}</h1>
+          <apex:chart data="{!ListWrapper}" height="400" width="700" name="Burndown chart">
+            <apex:legend position="right"/>
+            <apex:axis type="Numeric" position="left" fields="IdealHrs,RemainingHrs"  title="Hours Remaining"/>
+            <apex:axis type="Category" position="bottom" fields="Days" title="Day In Sprint"/>
+            <apex:lineSeries axis="left" yField="IdealHrs" xField="Days" markerType="cross" markerFill="#6BAE4A" strokeColor="6BAE4A"/>
+            <apex:lineSeries axis="left" yField="RemainingHrs" xField="Days" markerType="circle" markerFill="#1919ff" strokeColor="1919ff"/>
+          </apex:chart>
+         </td>
+         </tr></table>
+        
+   </apex:pageBlock>
+        
+</apex:page>

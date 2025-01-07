@@ -1,0 +1,29 @@
+﻿<!--
+Page Name        : CertificateRedirect_VF_HUM
+Version          : 1.0
+Created On       : 4th May 2016
+Function         : VF page to redirect to Certificates
+Modification Log: 
+* Developer Name           Code Review                 Date                     Description
+-------------------------------------------------------------------------------------------------------------------------
+* Sharan Shanmugam           27081                    05/04/2016                Original Version
+* Sharan Shanmugam           28021                    05/20/2016                Defect 226893 : Added Refdate variable to be passed in MBE Request
+* Vishal Verma               29581                    06/07/2016                Defect 226893 : Removed the webservice call implementation.
+* Prudhvi Pamarthi           171453               01/22/2018                  REQ - 328929 Fix for HUMExceptionHelper: DML 
+****************************************************************************************************************************
+-->
+<apex:page id="thePage" tabStyle="Policy_Member__c" showHeader="false" sidebar="false" controller="CertificateRedirect_C_HUM" doctype="html-5.0" >
+    <apex:includeScript value="/support/console/35.0/integration.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.CERTIFICATE_REDIRECT_SR_HUM, 'CERTIFICATE_REDIRECT_SR_HUM/CERTIFICATE_REDIRECT_SR_JS_HUM.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.CERTIFICATE_REDIRECT_SR_HUM, 'CERTIFICATE_REDIRECT_SR_HUM/CERTIFICATE_REDIRECT_SR_CSS_HUM.css')}"/>
+    <div id="LoadingSpinner" ><img class="waitingImage" src="/img/loading.gif" /> <span class="waitingDescription">{!$Label.LOADING_HUM}</span> </div>
+    <script type="text/javascript">
+        // Variable to hold URL string from the controller which will be opened in a new window
+        var redirectURL = '{!sURL}';    
+        window.onload=closeTab();
+    </script> 
+    <apex:form id="form"> 
+    <!-- For Constructor Related exception -->
+    <c:HUMConstructorExceptionComponent errorLogs="{!listErrorLogs}" />
+    </apex:form>
+</apex:page>

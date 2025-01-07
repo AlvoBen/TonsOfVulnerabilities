@@ -1,0 +1,113 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 10;
+}
+
+.slds-button_reset{
+    font-size:12px;
+}
+
+.chat-event-message{
+    padding-left: 15%;
+    padding-right: 15%;
+}
+
+.account-context{
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    color: #009EDB;
+    text-transform: uppercase;
+    padding: 12px;
+}
+
+.member_plan-context{
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    color: #009EDB;
+    text-transform: uppercase;
+    padding: 12px;
+}
+
+.acct-name{
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    
+}
+
+.reset-warning{
+    position: sticky;
+    align-items: center;
+    height:32px;
+    width:100%;
+    background-color: #FFB75D;
+}
+
+.reset-warning-text{
+    color:#080707;
+    /* Body 1 / Regular • Roboto */
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 32px; /* 150% */
+}
+
+.reset-warning-text-old{
+    color:#080707;
+    font-feature-settings: 'clig' off, 'liga' off;
+    /* Body 1 / Regular • Roboto */
+    font-family: Roboto;
+    font-size: 16px;
+    font-style: normal;
+
+}
+
+.header{
+    position: sticky;
+    height: 50px;
+}
+
+.header-account-details{
+    color:#195594;
+    font-weight: bold;
+}
+
+.button-grid{
+    align-items: center;
+}
+
+.chat-body{
+    position: absolute;
+    overflow: auto;
+    top: 100px;
+    bottom: 48px;
+    width: 100%;
+}
+
+.chat-body-reset-warning{
+    position: absolute;
+    overflow: auto;
+    top: 127px;
+    bottom: 48px;
+    width: 100%;
+}
+
+.input-footer{
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: rgb(235, 235, 235);
+    padding: 8px 8px 8px 8px;
+}
+
+.input-has-error{
+    border:1px solid red;
+    border-radius: 5px;
+}
+
+.send-icon{
+    height: 42.8px;
+    width: 42.8px;
+}

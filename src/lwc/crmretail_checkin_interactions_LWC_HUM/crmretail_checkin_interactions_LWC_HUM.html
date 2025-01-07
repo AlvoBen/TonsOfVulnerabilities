@@ -1,0 +1,23 @@
+﻿<template>    
+    <lightning-card>
+        <div if:true={showSearchBox} class="sfront-search_grid">
+            <template if:true={showSearchType}>
+            <div class="searchBarAndName">
+               <lightning-combobox
+                name="SearchFilter"
+                variant= "label-hidden"
+                value={value}
+                options={options}
+                onchange={handleSearchFilterChange} style= "width:100px"  ></lightning-combobox> 
+                <div>
+                    <lightning-input data-id="searchBar" class="searchBarWithName" type="search" variant="label-hidden" label="" placeholder ={placeholderText} value={searchText}  onchange={handleSearchBox}></lightning-input>
+                </div>
+            </div>
+            </template>
+            <template if:false={showSearchType}>
+                <lightning-input data-id="searchBar" class="searchBarWithoutName" type="search" variant="label-hidden" label="" placeholder ={placeholderText} value={searchText}  onchange={handleSearchBox}></lightning-input>
+            </template>
+        </div>
+        <c-crmretail_lightning_datatable_-l-w-c_-h-u-m data-id="checkin" result={result} onreloadinteractions={reloadInteractions} columns={columns}></c-crmretail_lightning_datatable_-l-w-c_-h-u-m>
+    </lightning-card>
+</template>

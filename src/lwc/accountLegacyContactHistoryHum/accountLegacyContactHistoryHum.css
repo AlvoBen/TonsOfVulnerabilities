@@ -1,0 +1,12 @@
+.history-warn-msg {
+    font-style: italic;
+}
+
+.range-fields {
+    max-width: 190px;
+}
+
+.full-container {
+    height: 100%;
+    width: 100%;
+}

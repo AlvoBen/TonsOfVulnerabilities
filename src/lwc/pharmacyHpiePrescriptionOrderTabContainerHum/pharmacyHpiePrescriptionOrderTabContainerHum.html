@@ -1,0 +1,42 @@
+﻿<!--
+Function        : LWC to callout HPIE Integration methods from apex .
+
+Modification Log:
+* Developer Name                  Date                         Description
+****************************************************************************************************************************
+* Nirmal Garg                    07/18/2022                 user story 4861950: T1PRJ0870026 - HPIE/CRM - C12 Mail Order Management - Pharmacy - "Details" Tab - Lightning - Patient APIUS-3975339 Change - RTI Icon Display Logic
+* Atul Patil                    07/28/2023                  user story 4861950: T1PRJ0870026 - HPIE/CRM - C12 Mail Order Management - Pharmacy - "Details" Tab - Lightning - Patient API
+* Swapnali Sonawane              10/23/2023                 US - 5058187 Pharmacy Edit Order
+* Jonathan Dickinson             03/01/2024                 User Story 5058187: T1PRJ1295995 - (T1PRJ0870026)- MF 27409 HPIE/CRM SF - Tech - C12 Mail Order Management - Pharmacy - "Prescriptions & Order summary" tab - "Edit Order'
+*****************************************************************************************************************************-->
+<template>
+    <div class="slds-var-p-top_xxx-small">
+        <lightning-tabset variant="scoped">
+            <lightning-tab label="Prescriptions" value="0" class="slds-p-bottom_none">
+                <lightning-layout class="detail-container">
+                    <lightning-layout-item size="12" medium-device-size="12"
+                        class="detail-item slds-var-m-bottom_small">
+                        <c-pharmacy-hpie-prescriptions-hum onrefreshpresdata={handlePrescRefresh}
+                                                           finance-details={financeDetails} preference-details={preferenceDetails}
+                                                           enterprise-id={enterpriseId} user-id={userId} demographics-details={demographicsDetails}
+                                                           record-id={recordId} onordercreditcardsave={handleCreditCardSave} oncalldemographics ={handleCallDemographics} oncallpreference={handleCallPreference} onlognoteadded={handleLogNoteAdded} acc-data={accData}>
+                        </c-pharmacy-hpie-prescriptions-hum>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-tab>
+            <lightning-tab label="Order Summary" value="1" class="slds-p-bottom_none">
+                <lightning-layout class="detail-container">
+                    <lightning-layout-item size="12" medium-device-size="12"
+                        class="detail-item slds-var-m-bottom_small">
+                        <c-pharmacy-hpie-orders-hum prescriptions={totalPrescriptions} record-id={recordId} acc-data={accData}
+                                                    preference-details={preferenceDetails} user-id={userId} enterprise-id={enterpriseId}
+                                                    demographics-details={demographicsDetails} finance-details={financeDetails}
+                                                    oncalldemographics ={handleCallDemographics} onordercreditcardsave={handleCreditCardSave}
+                                                    onlognoteadded={handleLogNoteAdded}>
+                        </c-pharmacy-hpie-orders-hum>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-tab>
+        </lightning-tabset>
+    </div>
+</template>

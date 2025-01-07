@@ -1,0 +1,238 @@
+﻿<!--
+Page Name        : HUMQAATemplates
+Version          : 1.0
+Created Date     : Jul 28 2014
+Function         : This Page is used to display the QAA Case Action details.
+**************************************************************************************************************************************************************************************************
+
+Modification Log: 
+
+* Developer Name        Code Review                     Date                       Description
+*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* Vivek Batham              17352                    07/28/2014                   Original Version
+* Shreya Choodamani         18164                    09/25/2014                   Added Action Status as per defect#155416.0001
+* Santhi Mandava            23304                    05/22/2015                   Updated script to include unsaved changes popup.
+* Santhi Mandava            24209                    06/22/2015                   Updated script to resolve unsaved changes popup in save button click.
+* Santhi Mandava            71723                    02/16/2017                   Moved page code to two different components. 
+                                                                                  These components will be displayed based on user's enhanced QAA permission.
+* Santhi Mandava            87365                    04/26/2017                   Moved component code to this page. Enhanced QAA page will be visible to all users.
+* Prudhvi Pamarthi                                   02/24/2020                   US#849244 CA Ticket 8963843 Fix - QAA Process-Edit button still appears when Case Status equals closed
+* Kavya Bondada                                     04/14/2021                  User Story 2187149: T1PRJ0001827 - MF 1 - Quality - Auto route QAA cases to the G&A team (CRM)
+* Pinky Vijur                                        07/14/2023                   User Story 4641503: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Case Edit & Detail (Group 1)
+************************************************************************************************************************************************************************************************-->
+<apex:page controller="HUMQAATemplateController">
+    <apex:includeScript value="/support/console/31.0/integration.js" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" id="datatablesJS" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}" id="datatablesJS1" />
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}" id="datatablesCSS" />
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}" id="datatablesCSS1" />
+    <apex:includeScript value="{!URLFOR($Resource.QAAProviderDetails_JS_HUM, '/QAAProviderDetails_JS_HUM/QAAProviderDetails.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.HUMQAATemplates, '/HUMQAATemplates/HUMQAATemplatesCSS.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.HUMQAATemplates, 'HUMQAATemplates/HUMQAATemplateJS.js')}" />
+    <apex:includeScript value="{!$Resource.HUMUnSavedChangesJS}" />
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CSS/HoverOver.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.QAAProviderDetails_JS_HUM, '/QAAProviderDetails_JS_HUM/QAAProviderDetailsCSS.css')}" />
+
+    <apex:form id="frm">
+        <script>
+            window.onload = testSetTabUnsavedChanges('QAA');
+        </script>
+        <apex:outputPanel id="op1" style="font-size:12px;">
+            <apex:outputPanel id="pnlPageMsgs">
+                <apex:pageMessages escape="false" rendered="{!isErrorExist}" />
+            </apex:outputPanel>
+            <apex:pageBlock id="pbView" rendered="{!loadView == $Label.HUMPreXViewTypeView}">
+                <apex:pageBlockButtons >
+                    <apex:commandButton styleClass="btn" style="width: 50px;" id="editId" value="{!$Label.HUMEditBtn}" disabled="{!isDisabled}" oncomplete="editAction(sWrittenComplaintVal);" rerender="frm" />
+                </apex:pageBlockButtons>
+                <apex:pageblocksection id="pbSec" columns="1">
+                    <apex:pageblocktable value="{!dispCaseResponses}" var="res" >
+                        <apex:column style="align:left; width:50%;">
+                            <apex:outputPanel rendered="{!res.Case_Question__r.Question_Type__c != $Label.HUMCOBLinkType}">
+                                <apex:outputField html-class="View_Fields_{!res.Process_Question__c}" value="{!res.Process_Question__c}" />
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!res.Case_Question__r.Question_Type__c == $Label.HUMCOBLinkType}">
+                                <apex:outputLink value="{!res.Case_Question__r.Display_text__c}">{!res.Process_Question__c}</apex:outputLink>
+                            </apex:outputPanel>
+                        </apex:column>
+                        <apex:column style="align:left; width:50%;">
+                            <apex:outputtext value="{!res.Process_Question_Response__c}" />
+                            <apex:outputpanel >
+                                <div class="mouseOverInfoOuter" onfocus="addMouseOver(this)" onmouseover="addMouseOver(this)" tabindex="10" style="display: {!IF((res.Case_Question__r.Help_Text__c !=''),'','none')}">
+                                    <img src="/s.gif" alt="" class="infoIcon" title="" />
+                                    <div class="mouseOverInfo" style="display: none; opacity: -0.19999999999999996; left: 20px;">{!res.Case_Question__r.Help_Text__c}</div>
+                                </div>
+                            </apex:outputpanel>
+                        </apex:column>
+                    </apex:pageblocktable>
+                </apex:pageblocksection>
+            </apex:pageBlock>
+            <apex:pageBlock id="pb1" rendered="{!loadView == $Label.HUMPreXViewTypeEdit}">
+                <apex:pageBlockButtons >
+                    <apex:commandButton id="saveId" value="{!$Label.HUMSaveBtn}" oncomplete="checkCloseTab();" />
+                    <apex:commandButton id="cancelId" value="{!$Label.HUMCancel}" action="{!cancel}" oncomplete="returnToMainTab(true);" />
+                </apex:pageBlockButtons>
+                <apex:outputPanel id="pnlQuestions">
+                    <apex:pageBlockSection dir="LTR" columns="1" title="Process Type: QAA Process" collapsible="false" id="PgSection1">
+                        <apex:pageblocktable value="{!lstVisibleQuestionsList}" var="Question">
+                            <apex:column style="border-color:white;border-bottom-width:0px;">
+                                <apex:panelgrid columns="2" border="0" width="100%" columnClasses="colStyle1,colStyle2" rendered="{!Question.boolDisplayQuestion}">
+                                    <apex:outputPanel style="align:left;">
+                                        <apex:outputPanel rendered="{!Question.questionRec.Question_Type__c != $Label.HUMCOBLinkType}">
+                                            <apex:outputField value="{!Question.questionRec.Question_Label__c}" />
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!Question.questionRec.Question_Type__c == $Label.HUMCOBLinkType}">
+                                            <apex:outputLink style="color:blue;" value="{!Question.questionRec.Display_text__c}">{!Question.questionRec.Question_Label__c}</apex:outputLink>
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+                                    <apex:outputpanel style="align:left;">
+                                        <apex:outputfield rendered="{!(Question.questionRec.Question_Type__c == $Label.HUMCOBOutputTextType && Question.boolDisplayQuestion)}" value="{!Question.questionRec.Display_text__c}" />
+                                        <apex:inputfield onblur="removeBGCol();" onclick="setBGCol(this);" html-class="{!Question.sClassName}" rendered="{!(Question.questionRec.Question_Type__c == $Label.HUMCOBTextType && Question.boolDisplayQuestion)}" value="{!Question.questionRec.Display_text__c}" />
+                                        <apex:inputfield html-class="{!Question.sClassName}" rendered="{!(Question.questionRec.Question_Type__c == $Label.HUMCOBDateQuestionType && Question.boolDisplayQuestion)}" value="{!Question.questionRec.Display_text__c}" />
+                                        <apex:inputTextArea html-class="{!Question.sClassName}" rendered="{!(Question.questionRec.Question_Type__c == $Label.HUMCOBTextAreaType && Question.boolDisplayQuestion)}" rows="4" cols="100" value="{!Question.questionRec.Display_Text_Area__c}" />
+                                        <apex:inputfield html-class="{!Question.sClassName}" rendered="{!(Question.questionRec.Question_Type__c == $Label.HUMCOBCheckboxType && Question.boolDisplayQuestion)}" value="{!Question.questionRec.Display_Checkbox__c}" />
+                                        <apex:selectlist onclick="setBGCol(this);" onblur="removeBGCol();" html-class="{!Question.sClassName}" rendered="{!(Question.questionRec.Question_Type__c == $Label.HUMCOBDropDownType && Question.boolDisplayQuestion)}" value="{!Question.sSelectedDropDownOption}" size="1">
+                                            <apex:selectoptions value="{!Question.lstDropdownOptions}"/>
+                                            <apex:actionsupport action="{!reCalculatePageQuestions}"  oncomplete="setProviderFieldProperties(this);drawTable();" event="onchange" rerender="pnlQuestions,pnlProviderDetails" status="RenderStatusQAA">
+                                                <apex:param value="{!Question.questionRec.Question_Label__c}" name="labelName" assignTo="{!sQuestionLabelName}" />
+                                                <apex:param value="{!Question.sSelectedDropDownOption}" name="responseValue" assignTo="{!sResponseValue}" />
+                                            </apex:actionsupport>
+                                        </apex:selectlist>
+                                        <apex:outputpanel >
+                                            <div class="mouseOverInfoOuter" onfocus="addMouseOver(this)" onmouseover="addMouseOver(this)" tabindex="10" style="display: {!IF(Question.questionRec.Help_Text__c !='','','none')}">
+                                                <img src="/s.gif" alt="" class="infoIcon" title="" />
+                                                <div class="mouseOverInfo" style="display: none; opacity: -0.19999999999999996; left: 20px;">{!Question.questionRec.Help_Text__c}</div>
+                                            </div>
+                                        </apex:outputpanel>
+                                        <apex:outputPanel >
+                                            <apex:outputPanel rendered="{!Question.questionRec.Question_Label__c== ''}">
+                                                <apex:commandButton id="clearId" value="Clear" oncomplete="clearProviderDetails();" status="RenderStatusQAA" />
+                                                <apex:commandButton id="searchId" value="Search" oncomplete="searchProvider();" status="RenderStatusQAA" />
+                                            </apex:outputPanel>
+                                        </apex:outputPanel>
+                                    </apex:outputpanel>
+                                </apex:panelgrid>
+                            </apex:column>
+                        </apex:pageblocktable>
+
+                    </apex:pageBlockSection>
+                </apex:outputPanel>
+                <apex:outputPanel id="pnlProviderDetails" style="font-size:12px;">
+                    <apex:outputPanel rendered="{!isProviderDetailsPresent}">
+                        <apex:outputText value="Provider Search Results" style="font-weight: bold;margin-left: 40%;color: black;"></apex:outputText>
+                        <apex:outputPanel id="pnlResults">
+                            <apex:pageMessages escape="false" rendered="{!bSizeException}"></apex:pageMessages>
+                        </apex:outputPanel>
+                        <div class="container-fluid" style="background:white;">
+                            <div class="row no-gutter">
+                                <div class="col-xs-12 ">
+                                    <div class="table-responsive" id="tableId">
+                                        <table id="providerDetailsTable" class="table table-striped table-bordered  table-hover responsive nowrap enable_logging" cellspacing="0" style="width: 100%; font-size : 12px">
+                                            <caption></caption>
+                                            <thead>
+                                                <tr>
+                                                    <th title="First Name">First Name</th>
+                                                    <th title="Last Name">Last Name</th>
+                                                    <th title="Provider or Facility/Group Name">Provider or Facility/Group Name</th>
+                                                    <th title="">
+                                                        <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea">
+                                                            <apex:commandLink onclick="javascript:void(O);" html-log_this="false">
+                                                                <apex:image id="lnkImg" style="margin-top: 1px; margin-left: 1px; height: 14px;" styleClass="imgMargin hoverimagesize" value="{!$Resource.HUMHoverOverQuestionMark}" />
+                                                                <apex:outputPanel styleClass="hoverfontstyle">Doing business as</apex:outputPanel>
+                                                            </apex:commandLink>
+                                                        </apex:outputPanel>
+                                                        DBA Name
+                                                    </th>
+                                                    <th title="Tax ID">Tax ID</th>
+                                                    <th title="NPI">NPI</th>
+                                                    <th title="Address">Address</th>
+                                                    <th title="City">City</th>
+                                                    <th title="State">State</th>
+                                                    <th title="Zip Code">Zip Code</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <apex:repeat value="{!lstProviderAccounts}" var="item" id="dataTableBodyId">
+                                                    <tr>
+                                                        <td>{!item.sFirstName}</td>
+                                                        <td>{!item.sLastName}</td>
+                                                        <td>{!item.sFirstName + ' ' +item.sLastName}</td>
+                                                        <td>{!item.sDBA}</td>
+                                                        <td><div class="truncate-ellipsis" title="{!item.sTaxID}"><span>{!item.sTaxID}</span></div></td>
+                                                        <td>{!item.sNPI}</td>
+                                                        <td>{!item.sAddress}</td>
+                                                        <td>{!item.sCity}</td>
+                                                        <td>{!item.sState}</td>
+                                                        <td>{!item.sPostalCode}</td>
+                                                    </tr>
+                                                </apex:repeat>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+            </apex:pageBlock>
+            <apex:actionStatus id="RenderStatusQAA">
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv waitingSearchDivOpacity" style="width: 100%; height: 300%; display: block; opacity: 0.59;"></div>
+                    <div id="00B80000007AEEH_searching" class="waitingSearchDiv" style="width: 100%; height: 300%; display: block;">
+                        <div class="waitingHolder" style="top: 150px; width: 110px;">
+                            <img class="waitingImage" src="/img/loading.gif" />
+                            <span class="waitingDescription" style="font-weight:bold; color:Black;">{!$Label.HUMLoadingStatus}</span>
+                        </div>
+                    </div>
+                </apex:facet>
+                <apex:facet name="stop" />
+            </apex:actionStatus>
+            <!-- Minimum Script which has to be present, else page will break -->
+            <script>
+
+        var tId;
+        var currentTabID;
+        //var isSuccess;
+        var bAutoRouteQAACase = {!JSENCODE(IF(bAutoRouteQAA, 'true', 'false'))};
+        var selectedCaseId = '{!JSENCODE(casObj.Id)}';
+        function returnToMainTab(isCancel,isSuccess ) {
+            tId = '{!sTabId}';
+            if(isSuccess  || isCancel){
+                resetTabUnsavedChanges();
+            }
+            
+            if(isSuccess && bAutoRouteQAACase){
+                
+                sendAutoRouteMessage();
+                
+            	
+            }
+        }
+            </script>
+        </apex:outputPanel>
+        
+        <apex:actionfunction name="checkCloseTab" action="{!saveAction}" rerender="pnlQuestions,pnlPageMsgs" oncomplete="setValidationRules();enableDisableProviderFields(isProviderDetailsDisabled);returnToMainTab(false,{!bIsSuccess});" status="RenderStatusQAA" />
+        <c:HUMConstructorExceptionComponent errorLogs="{!lstLogErrors}" />
+        <apex:actionFunction name="searchProvider" action="{!searchProvider}" oncomplete="drawTable();" rerender="pnlProviderDetails,pnlPageMsgs" status="RenderStatusQAA" />
+        <apex:actionFunction name="populateProviderDetails" action="{!populateProviderDetails}" oncomplete="enableDisableProviderFields(true);" rerender="pnlQuestions,pnlResults" status="RenderStatusQAA">
+            <apex:param name="providerData" value="" />
+        </apex:actionFunction>
+        <apex:actionFunction name="clearProviderDetails" action="{!clearProviderDetails}" oncomplete="drawTable();setValidationRules();enableDisableProviderFields(false);" rerender="pnlProviderDetails,pnlQuestions,pnlResults,pnlPageMsgs" status="RenderStatusQAA" />
+        <apex:actionFunction name="sendProviderDetailsToClass" action="{!getProviderDetailsFromPage}" rerender="view">
+            <apex:param name="sproviderDetails" value="" />
+        </apex:actionFunction>
+        <apex:actionFunction name="editAction" action="{!editAction}" oncomplete="isThisInViewMode = true; getProviderData();" rerender="frm" status="RenderStatusQAA">
+            <apex:param name="sWrittenComplaintVal" value="" />
+        </apex:actionFunction>       
+        
+        <div style="display:none">
+         <apex:pageBlock >
+            <apex:pageblocktable value="{!lstDropDownWrapperQuestions}" var="Item">
+                <apex:column style="border-color:white;border-bottom-width:0px;">
+                    <apex:inputfield label="{!Item.questionRec.Question_Label__c}" html-class="{!Item.sClassName}" value="{!Item.questionRec.Display_text__c}" />
+                </apex:column>
+            </apex:pageblocktable>
+             </apex:pageBlock>
+        </div>
+    </apex:form>
+</apex:page>

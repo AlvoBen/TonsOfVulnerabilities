@@ -1,0 +1,83 @@
+﻿<!--
+Component Name   : InquiryTask_CMP_HUM.component
+Version          : 1.0
+Created On       : 08/31/2020 
+Function         : VF Component to display Inquiry Task Details 
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*----------------------------------------------------------------------------------------------------------------------------
+* Riya Agarwal							              09/07/2020          REQ - 1338123 - PR00090723 - MF 3 - CCP GCP Archived Inquiry Details Page - Task List Section
+****************************************************************************************************************************-->
+<apex:component Controller="InquiryDetails_C_HUM">
+<apex:includescript value="{!URLFOR($Resource.InquiryTaskDetails_SR_HUM,'/InquiryTaskDetailsJS.js')}" id="InqTaskDetailsJS"/>
+  <style>
+        .displayNone
+        {
+        display : none;
+        }
+
+        td.details-control {
+        background: url({!URLFOR($Resource.ClaimDetails_JS_HUM,'/PlusImage.png')}) no-repeat center center;
+        background-size: 25px 25px;
+        cursor: pointer;
+        }
+
+        tr.odd.shown td.details-control {
+        background: url({!URLFOR($Resource.ClaimDetails_JS_HUM,'/MinusImage.png')}) no-repeat center center;
+        background-size: 27px 27px;
+        }
+        tr.even.shown td.details-control {
+        background: url({!URLFOR($Resource.ClaimDetails_JS_HUM,'/MinusImage.png')}) no-repeat center center;
+        background-size: 27px 27px;
+        }
+
+        .truncate-ellipsis-MTV{
+        display:table;
+        table-layout:fixed;
+        width:100%;
+        white-space:pre-wrap;
+        }
+
+        .pagination>li>a, .pagination>li>span {
+        text-decoration: none !important;
+        }
+        
+        tr.bordered {
+        border-bottom: 1px solid #DCDCDC;
+}
+
+        table.dataTable.nowrap th, table.dataTable.nowrap td {
+        white-space: inherit!IMPORTANT; 
+
+}
+        tr.header{
+        white-space: nowrap!IMPORTANT;
+        }
+        .colorlink a{
+		color :#3333ff; !important
+		}
+      </style>
+
+      <div class="col-xs-12 " >
+       <div class="table-responsive" id="taskDetailsDiv">
+                       <table id="taskDetails" class="table table-striped table-bordered table-hover nowrap compact colorlink enable_logging" cellspacing="0" >
+                          <caption style="display:none;">Task List</caption>
+                          <thead>
+                            <tr class="header">
+                            <th style="padding-left:30px"></th>
+                          <th title = "Task Id">Task Id</th>
+                          <th title = "Created On">Created On</th>
+                          <th title = "Age">Age</th>
+                          <th title = "Action">Action</th>
+                          <th title = "Result">Result</th>
+                          <th title = "Short Desc">Short Desc</th>
+                          <th title = "Status">Status</th>
+                          <th title = "Date Due">Date Due</th>
+                          <th title = "Date Closed">Date Closed</th>
+                          </tr>
+                          </thead>
+                        </table>
+                      </div>
+                       </div> 
+</apex:component>

@@ -1,0 +1,1367 @@
+﻿<!--
+/******************************************************************************************************************
+LWC Name           : PharmacyRXClaimDetails_CMP_HUM.html
+Version            : 1.0
+Function           : This js component contains logic to fetch and displayPharmacy Rx Claims Detail information on UI.
+Created On         : July 24 2020
+*******************************************************************************************************************
+Modification Log:
+* Developer Name            Code Review                Date                       Description
+*-------------------------------------------------------------------------------------------------------------------------------
+* Ranadheer Goud                                     07/24/2020                 Original Version - REQ - 1151554 -- PR00094920- MF 1- Rx Claims- Pharmacy (Rx) Claim Details page (RxXP)
+*******************************************************************************************************************/
+-->
+<template>
+    <template if:true={displayErrorMessage}>
+        <div class="slds-notify_container " style="z-index:100002">
+            <div class="slds-notify slds-notify_toast slds-theme_error" role="status">
+                <span class="slds-assistive-text">error</span>
+                <span class="slds-icon_container slds-icon-utility-error slds-m-right_small slds-no-flex slds-align-top"
+                    title="Description of icon when needed">
+                    <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#error"></use>
+                    </svg>
+                </span>
+                <div class="slds-notify__content">
+                    <h2 class="slds-text-heading_small ">An error occurred retrieving Pharmacy RX Claim Detail for this
+                        Member. Please try again. If this error continues, contact Help Desk.</h2>
+                </div>
+                <div class="slds-notify__close">
+                    <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close"
+                        onclick={hideError}>
+                        <lightning-icon icon-name="utility:close" size="small" variant="inverse"> </lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </template>
+    <template if:true={displayNoDataMessage}>
+        <div class="slds-notify_container " style="z-index:100002">
+            <div class="slds-notify slds-notify_toast slds-theme_error" role="status">
+                <span class="slds-assistive-text">error</span>
+                <span class="slds-icon_container slds-icon-utility-error slds-m-right_small slds-no-flex slds-align-top"
+                    title="Description of icon when needed">
+                    <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#error"></use>
+                    </svg>
+                </span>
+                <div class="slds-notify__content">
+                    <h2 class="slds-text-heading_small ">No records to display.</h2>
+                </div>
+                <div class="slds-notify__close">
+                    <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close"
+                        onclick={hideError}>
+                        <lightning-icon icon-name="utility:close" size="small" variant="inverse"> </lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </template>
+    <div class="headerSection slds-p-around_medium"
+        style="position:fixed;background-color:white;top:0;z-index:100001;width:100%">
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_2-of-12 slds-p-horizontal_medium">
+                <a class="ClaimDetail" name="Claim Detail" onclick={gotoTarget}>Claim Detail</a>
+            </div>
+            <div class="slds-col slds-size_2-of-12 slds-p-horizontal_medium">
+                <a class="Errors" name="Errors and Messages" onclick={gotoTarget}>Errors and Messages</a>
+            </div>
+            <div class="slds-col slds-size_2-of-12 slds-p-horizontal_medium">
+                <a class="Pricing" name="Pricing" onclick={gotoTarget}>Pricing</a>
+            </div>
+            <div class="slds-col slds-size_2-of-12 slds-p-horizontal_medium">
+                <a class="Benefits" name="Benefits" onclick={gotoTarget}>Benefits</a>
+            </div>
+            <div class="slds-col slds-size_2-of-12 slds-p-horizontal_medium">
+                <a class="DrugInformation" name="Drug Information" onclick={gotoTarget}>Drug Information</a>
+            </div>
+            <div class="slds-col slds-size_2-of-12 slds-p-horizontal_medium">
+                <a class="MedicalPartD" name="Medicare Part D" onclick={gotoTarget}>Medicare Part D</a>
+            </div>
+
+        </div>
+    </div>
+    <div class="slds-builder-header_container slds-builder-header" style="width:100%;height:100px;">
+        <div class="slds-builder-header__item" style="margin-top:40px;">
+            <div class="slds-builder-header__item-label slds-media slds-media_center">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-utility-builder slds-current-color">
+                        <lightning-icon class="slds-media__body" style="margin-top: 10px;"
+                            icon-name="utility:summarydetail" alternative-text="New note" title="New note">
+                        </lightning-icon>
+                    </span>
+                </div>
+                <div class="slds-media__body slds-m-top_small">Pharmacy (Rx) Claim Details: {memberName}
+                    <div class="slds-media__body">
+                        <span>
+                            {data.ClaimId}
+                        </span>
+                    </div>
+
+                </div>
+                <div class="slds-media__body slds-float_right slds-m-top_x-small" style="margin-left: 750px;">
+                    <h3 style="font-size: medium;">
+                        Status
+                    </h3>
+                    <span>
+                        ({data.ClaimStatus})
+                    </span>
+
+                </div>
+                <!--<lightning-button class="slds-media__body slds-m-top_large slds-m-left_small"  variant="base" label="Navigate Back" onclick={navigateBack}></lightning-button>-->
+            </div>
+        </div>
+    </div>
+
+    <lightning-accordion class="Accordian" active-section-name={activeSections} allow-multiple-sections-open>
+        <lightning-accordion-section class="ClaimDetail" name="Claim Detail" label="Claim Detail">
+            <lightning-accordion class="slds-accordion slds-m-left_none slds-m-right_none slds-m-bottom_none"
+                active-section-name={claimOpenSections} allow-multiple-sections-open>
+                <lightning-accordion-section label="Claim Information"
+                    class="slds-m-left_none slds-m-right_none slds-m-bottom_none" style="background-color:#d8edff;"
+                    name="ClaimInformation">
+                    <div style="background-color:#ffff; box-shadow: 0 0 6px;">
+                        <table class="slds-table slds-no-row-hover slds-table_cell-buffer slds-table_bordered">
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b class="" style="margin-right: 10px;">Status</b>
+                                    <span>{data.ClaimStatus}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Pharmacy ID</b>
+                                    <span>{data.PharmacyNPI}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Pharmacy Qlfr</b>
+                                    <!-- <span></span>-->
+                                    <span if:true={data.RxClaimPharmacy}>{data.RxClaimPharmacy.PharmacyNABP}</span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Rx #</b>
+                                    <span>{data.RxNumber}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">POS #</b>
+                                    <span>{data.POSNumber}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Claim #</b>
+                                    <span>
+                                        <lightning-formatted-url value={data.ClaimId} tooltip="This is ClaimId"
+                                            label={data.ClaimId} target="_blank"></lightning-formatted-url>
+
+                                    </span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Date Filled</b>
+                                    <span>{DateFilled}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Date Written</b>
+                                    <span>{DateWritten}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Date Reversed</b>
+                                    <span>{DateFilled}</span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Date Added</b>
+                                    <span>{DateAdded}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Time Added</b>
+                                    <span>{TimeAdded}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Date Updated</b>
+                                    <span>{DateUpdatedId}</span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Time Updated</b>
+                                    <span>{TimeUpdated}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Rx Origin</b>
+                                    <span>{data.RxOrigin}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Source</b>
+                                    <span>{data.ClaimSource}</span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Version</b>
+                                    <span>{data.Version}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;"></b>
+                                    <span></span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;"></b>
+                                    <span></span>
+                                </th>
+                            </tr>
+
+                        </table>
+
+
+                    </div>
+
+                </lightning-accordion-section>
+                <lightning-accordion-section class="slds-p-left_none slds-p-right_none slds-p-bottom_none"
+                    style="background-color:#d8edff;" label="Drug/Override Information" name="DrugInformation">
+                    <div class=" slds-form_horizontal slds-form slds-grid slds-wrap slds-m-left_none slds-m-right_none slds-m-bottom_none "
+                        style="background-color:#ffff; box-shadow: 0 0 6px;">
+                        <table class="slds-table slds-no-row-hover slds-table_cell-buffer slds-table_bordered">
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">NDC</b>
+                                    <span>{NDC}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Label Name</b>
+                                    <!--<span></span>-->
+                                    <span if:true={data.RxClaimDrug}>{data.RxClaimDrug.DrugName}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Generic Name</b>
+                                    <!--<span> </span>-->
+                                    <span if:true={data.RxClaimDrug}>{data.RxClaimDrug.GenericName}</span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Days Supply</b>
+                                    <span>{data.RxDaySupply}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Quantity</b>
+                                    <span>{data.RxQuantity}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">DAW</b>
+                                    <span>{data.DispenseAsWritten}</span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">New/Refill</b>
+                                    <span>{data.FillNumber}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Compound</b>
+                                    <!--<span></span>-->
+                                    <span if:true={data.RxClaimDrug}>{data.RxClaimDrug.CompoundDosageIndicator}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Drug Discount</b>
+                                    <span>{data.DrugDiscountIndicator}</span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Specialty Drug Flag</b>
+                                    <span if:true={data.RxClaimDrug}>{data.RxClaimDrug.SpecialtyDrugIndicator}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Restricted Authorization Number</b>
+                                    <span>{data.RestrictedAuthorizationNumber}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Pre-Authorization Number</b>
+                                    <span>{data.PreAuthorizationNumber}</span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Customized Authorization Number</b>
+                                    <span>{data.CustomisedAuthorizationNumber}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Prior Authorization Number Submitted</b>
+                                    <span>{data.PriorAuthorizationNumberSubmitted}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Clinical Support ID</b>
+                                    <span>{data.ClinicalSupportId}</span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Submission Clarification Code</b>
+                                    <span>{data.SubmissionClarificationoCode}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Other Coverage</b>
+                                    <span>{data.OtherCoverage}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Post Pay 2</b>
+                                    <span>{data.PostPay2}</span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Post Pay 3</b>
+                                    <span>{data.PostPay3}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Post Pay 4</b>
+                                    <span>{data.PostPay4}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;"></b>
+                                    <span></span>
+                                </th>
+                            </tr>
+
+                        </table>
+
+                    </div>
+                </lightning-accordion-section>
+                <lightning-accordion-section class="slds-p-left_none slds-p-right_none slds-p-bottom_none"
+                    style="background-color: #d8edff;" label="Claim Pricing Information" name="ClaimPricingInformation">
+                    <div class="slds-m-left_none slds-m-right_none slds-m-bottom_none"
+                        style="background-color:#ffff; box-shadow: 0 0 6px;">
+                        <table class="slds-table slds-no-row-hover slds-table_cell-buffer slds-table_bordered">
+                            <tr class="slds-line-height_reset">
+                                <th class="t1" scope="col">
+                                    <b style="margin-right: 10px;">Plan Paid</b>
+                                    <span if:true={data.NetPaidAmount}>${data.NetPaidAmount}</span>
+                                </th>
+                                <th class="t2" scope="col">
+                                    <b style="margin-right: 10px;">Patient Paid</b>
+                                    <span if:true={data.MemberResponsibleAmount}>${data.MemberResponsibleAmount}</span>
+                                </th>
+                                <th class="t3" scope="col">
+                                    <b style="margin-right: 10px;">AWP Cost</b>
+                                    <span if:true={AWP_TOT_AMT}>${AWP_TOT_AMT}</span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">MAC Ingr Cost</b>
+                                    <span if:true={PHAR_INGR_COST_AMT}>${PHAR_INGR_COST_AMT}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">U&amp;C Amount</b>
+                                    <span if:true={UC_AMT}>${UC_AMT}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">WAC Amount</b>
+                                    <span if:true={WAC_INGRD_COST_AMT}>${WAC_INGRD_COST_AMT}</span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Price Source</b>
+                                    <span>{data.PriceSource}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Sub Ingr Cost</b>
+                                    <span if:true={data.SubIngrCost}>${data.SubIngrCost}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Dispense Fee</b>
+                                    <span if:true={DISPENSE_FEE}>${DISPENSE_FEE}</span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Sales Tax</b>
+                                    <span if:true={RX_SALES_TAX_AMT}>${RX_SALES_TAX_AMT}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Incentive Amount</b>
+                                    <span if:true={data.IncentiveAmount}>${data.IncentiveAmount}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Copay</b>
+                                    <span if:true={data.CopayAmount}>${data.CopayAmount}</span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Total</b>
+                                    <span if:true={PHAR_TOTAL_PAID_AMT}>${PHAR_TOTAL_PAID_AMT}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;"></b>
+                                    <span></span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;"></b>
+                                    <span></span>
+                                </th>
+                            </tr>
+
+
+                        </table>
+
+                    </div>
+                </lightning-accordion-section>
+                <lightning-accordion-section class="slds-p-left_none slds-p-right_none slds-p-bottom_none"
+                    style="background-color:#d8edff;" label="Pharmacy/Prescriber Information"
+                    name="PharmacyInformation">
+                    <div class=" slds-form_horizontal slds-form slds-grid  slds-m-left_none slds-m-right_none slds-m-bottom_none "
+                        style="background-color:#ffff; box-shadow: 0 0 6px;">
+                        <table class="slds-table slds-no-row-hover slds-table_cell-buffer slds-table_bordered">
+                            <tr class="slds-line-height_reset">
+                                <th class="t1" scope="col">
+                                    <b style="margin-right: 10px;">Pharmacy Name</b>
+
+                                    <span if:true={data.RxClaimPharmacy}>{data.RxClaimPharmacy.PharmacyName}</span>
+                                </th>
+                                <th class="t2" scope="col">
+                                    <b style="margin-right: 10px;">Address</b>
+                                    <span>{Address}</span>
+                                </th>
+                                <th class="t3" scope="col">
+                                    <b style="margin-right: 10px;">City</b>
+                                    <!--<span></span>-->
+                                    <span if:true={data.RxClaimPharmacy}>{data.RxClaimPharmacy.PharmacyCity}</span>
+
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">State</b>
+                                    <span></span>
+                                    <span if:true={data.RxClaimPharmacy}>{data.RxClaimPharmacy.PharmacyState}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Zip</b>
+                                    <span></span>
+                                    <span if:true={data.RxClaimPharmacy}>{data.RxClaimPharmacy.PharmacyZipCode}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Phone</b>
+                                    <span>{Phone}</span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Affiliation</b>
+                                    <span>{data.Affiliation}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Chain</b>
+                                    <span>{data.Chain}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Pharmacy Network</b>
+                                    <span>{data.PharmacyNetwork}</span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Prescriber ID</b>
+                                    <!--<span></span>-->
+                                    <lightning-formatted-url if:true={data.RxClaimPharmacy}
+                                        value={data.RxClaimPrescriber.PrescriberId} tooltip="This is Prescriber Id"
+                                        label={data.RxClaimPrescriber.PrescriberId} target="_blank">
+                                    </lightning-formatted-url>
+                                    <!--<span if:true={data.RxClaimPharmacy} >{data.RxClaimPrescriber.PrescriberId}</span>  -->
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Prescriber Qlfr</b>
+                                    <!--<span></span> -->
+                                    <span
+                                        if:true={data.RxClaimPharmacy}>{data.RxClaimPrescriber.PrescriberIdQualifier}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b style="margin-right: 10px;">Prescriber Name</b>
+                                    <!--<span></span>-->
+                                    <span if:true={data.RxClaimPharmacy}>{data.RxClaimPrescriber.PrescriberName}</span>
+                                </th>
+                            </tr>
+
+
+                        </table>
+
+                    </div>
+                </lightning-accordion-section>
+
+            </lightning-accordion>
+        </lightning-accordion-section>
+        <lightning-accordion-section class=" Errors slds-p-left_none slds-p-right_none slds-p-bottom_none"
+            style="border-top:2.5px rgb(0, 112, 210) solid;" name="Errors and Messages" label="Errors & Messages">
+            <lightning-accordion active-section-name={errorOpenSections} allow-multiple-sections-open
+                style="background-color:#d8edff; box-shadow: 0 0 6px;">
+                <lightning-accordion-section label="Errors" name="Errors">
+                    <lightning-datatable hide-checkbox-column key-field="Action" data={data.Errors}
+                        columns={errorColumn}>
+                    </lightning-datatable>
+                </lightning-accordion-section>
+                <lightning-accordion-section label="Additional Messages" name="AdditionalMessages">
+                    <lightning-datatable hide-checkbox-column key-field="id" data={data.AdditionalMessages}
+                        columns={additionalMessagesColumn}>
+                    </lightning-datatable>
+                </lightning-accordion-section>
+                <lightning-accordion-section label="Claim DUR Messages" name="ClaimDURMessage">
+                    <lightning-datatable hide-checkbox-column key-field="id" data={data.ClaimDURMesage}
+                        columns={ClaimDURMesagesColumn}>
+                    </lightning-datatable>
+                </lightning-accordion-section>
+            </lightning-accordion>
+        </lightning-accordion-section>
+        <lightning-accordion-section class="Pricing slds-p-left_none slds-p-right_none slds-p-bottom_none"
+            style="border-top:2.5px rgb(0, 112, 210) solid;" name="Pricing" label="Pricing">
+
+            <table class="slds-table slds-no-row-hover slds-table_cell-buffer slds-table_bordered">
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+						<lightning-icon icon-name="utility:add" class="slds-float_left slds-p-horizontal_x-small"
+							size="xx-small" onclick={togglePricing} if:false={isExpanded}></lightning-icon>
+						<lightning-icon icon-name="utility:dash" class="slds-float_left slds-p-horizontal_x-small"
+							size="xx-small" onclick={togglePricing} if:true={isExpanded}></lightning-icon>
+						<b class="slds-float_left">Total Patient Pay</b>
+						<b class="slds-float_right">$0</b>
+					</th>
+					<th class="slds-col slds-border_right slds-size_3-of-12 ">
+						<b class="slds-float_left">Total Plan Paid</b>
+						<b class="slds-float_right">$0</b>
+					</th>
+					<th class="slds-col slds-border_right slds-size_2-of-12 ">
+						<b class="slds-float_left">Total Other Payer</b>
+						<b class="slds-float_right">$0</b>
+					</th>
+					<th class="slds-col slds-border_right slds-size_3-of-12 ">
+						<b  class="slds-float_left">Total Rx Cost</b>
+						<b class="slds-float_right ">$0</b>
+					</th>
+				</tr>
+			</table>
+
+            <table if:true={isExpanded} class="slds-table slds-no-row-hover slds-table_cell-buffer slds-table_bordered">
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add"
+                            class="slds-float_left slds-m-left_xxx-small" size="xx-small"></lightning-icon>
+
+                        <span class="slds-float_left slds-m-left_xxx-small">Base Copay Amount</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left">&nbsp;&nbsp;&nbsp;Ingredient Cost</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left">&nbsp;&nbsp;Other payer</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left">&nbsp;&nbsp;&nbsp;Ingredient Cost</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <span class="slds-float_left">+ Base Coinsurance Amount</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left">+ Dispense Fee</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <b class="slds-float_left slds-m-left_x-small">Total Other Payer</b>
+                        <b class="slds-float_right">$0</b>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left">+ Dispense Fee</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <span class="slds-float_left">+ Amount Applied to Periodic Deductible</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left">+ Incentive Amount</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left">+ Incentive Amount</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <span class="slds-float_left">+ Amount Exceeded Processed Benefit Max</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left">+ Other Paid Amount</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left">+ Other Paid Amount</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <span class="slds-float_left">+ Amount Attributed to Processor Fee</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+
+                        <span class="slds-float_left">+ Flat Sales Tax</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left">+ Flat Sales Tax</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <span class="slds-float_left">+ Amount Attributed to Sales Tax</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left">+ Percentage Sales Tax</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left">+ Percentage Sales Tax</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <span class="slds-float_left">+ Amount Attributed to Coverage Gap</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left">- Total Patient Pay</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <b class="slds-float_left">Total Rx Cost</b>
+                        <b class="slds-float_right">$0</b>
+                    </th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <span class="slds-float_left">+ Health Plan Funded Amount</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left">- Total Other Payer Amount</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">$0</span>
+                    </th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <span class="slds-float_left">+ Member Paid Difference</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <b class="slds-float_left">Total Plan Paid</b>
+                        <b class="slds-float_right">$0</b>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">$0</span>
+                    </th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <span class="slds-float_left">&nbsp;&nbsp;&nbsp;Attributed to Network Selection</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">$0</span>
+                    </th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <span class="slds-float_left">&nbsp;&nbsp;&nbsp;Attributed to Brand Drug</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">$0</span>
+                    </th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <span class="slds-float_left">&nbsp;&nbsp;&nbsp;Attributed to Non-Preferred Formulary</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">$0</span>
+					</th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <span class="slds-float_left">&nbsp;&nbsp;&nbsp;Attributed to Non-Preferred Formulary
+                            Brand</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">$0</span>
+                    </th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <b class="slds-float_left slds-p-horizontal_xx-small">Total Patient Pay</b>
+                        <b class="slds-float_right">$0</b>
+
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">$0</span>
+                    </th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <span class="slds-float_left">- HRA Amount</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">$0</span>
+                    </th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <span class="slds-float_left">- FSA Amount</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">$0</span>
+					</th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <span class="slds-float_left">- HSA Amount</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">$0</span>
+                    </th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <span class="slds-float_left">- ADJ Amount</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">$0</span>
+                    </th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <span class="slds-float_left">- SPAP Amount</span>
+                        <span class="slds-float_right">$0</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">$0</span>
+                    </th>
+                </tr>
+                <tr class="slds-line-height_reset">
+                    <th class="slds-col slds-border_right slds-border_left slds-size_4-of-12 ">
+                        <lightning-icon style="visibility: hidden;" icon-name="utility:add" class="slds-float_left"
+                            size="xx-small"></lightning-icon>
+                        <b class="slds-float_left">Total Member Paid to Pharmacy</b>
+                        <b class="slds-float_right">$0</b>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_2-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">NULL</span>
+                    </th>
+                    <th class="slds-col slds-border_right slds-size_3-of-12 ">
+                        <span class="slds-float_left" style="visibility: hidden;">NULL</span>
+                        <span class="slds-float_right" style="visibility: hidden;">$0</span>
+                    </th>
+                </tr>
+
+            </table>
+
+
+        </lightning-accordion-section>
+        <lightning-accordion-section class="Benefits slds-p-left_none slds-p-right_none slds-p-bottom_none"
+            style="border-top:2.5px rgb(0, 112, 210) solid;" name="Benefits" label="Benefits">
+            <lightning-accordion class=" slds-m-left_none slds-m-right_none slds-m-bottom_none"
+                active-section-name={benefitsOpenSections} allow-multiple-sections-open>
+                <lightning-accordion-section label="General/ Member"
+                    class="slds-p-left_none slds-p-right_none slds-p-bottom_none" style="background-color:#d8edff;"
+                    name="GeneralMember">
+                    <div class=" slds-form_horizontal slds-form slds-grid  slds-m-left_none slds-m-right_none slds-m-bottom_none "
+                        style="background-color:#ffff; box-shadow: 0 0 6px;">
+                        <table class="slds-table slds-no-row-hover slds-table_cell-buffer slds-table_bordered">
+                            <tr class="slds-line-height_reset">
+                                <th>
+                                    <b>Case ID</b>
+                                    <span>{data.CaseId}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b>HICN</b>
+                                    <span>{data.HICN}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b>Copay Field Used</b>
+                                    <span>{data.CopayFieldUsed}</span>
+                                </th>
+                            </tr>							
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b>Tier Level</b>
+                                    <span>{data.ClaimTier}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b>Formulary Indicator</b>
+                                    <span>{data.FormularyIndicator}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b>Place of Service</b>
+                                    <span>{data.PlaceOfService}</span>
+                                </th>
+                            </tr>							
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b>Patient Residence</b>
+                                    <span>{data.PatientResidence}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b>Pharmacy Service Type</b>
+                                    <span>{data.PharmacyServiceType}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b>LICS Code</b>
+                                    <span>{data.LICSCode}</span>
+                                </th>
+                            </tr>							
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b>LICS Effective Date</b>
+                                    <span>{data.LICSEffectiveDate}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b>Free First Fill</b>
+                                    <span>{data.FreeFirstFill}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b>Cost Share Reduction</b>
+                                    <span>{data.CostShareReduction}</span>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                    <lightning-datatable data={data.DeductibleMessages} columns={deductibleMessageColumn} key-field="DM"
+                        hide-checkbox-column show-row-number-column>
+                    </lightning-datatable>
+
+
+                </lightning-accordion-section>
+                <lightning-accordion-section label="Applied Amounts"
+                    class="slds-p-left_none slds-p-right_none slds-p-bottom_none" style="background-color:#d8edff;"
+                    name="AppliedAmounts">
+                    <div class=" slds-form_horizontal slds-form slds-grid slds-wrap slds-m-left_none slds-m-right_none slds-m-bottom_none "
+                        style="background-color:#ffffff; box-shadow: 0 0 6px;">
+                        <table class="slds-table slds-no-row-hover slds-table_cell-buffer slds-table_bordered">
+                            <tr class="slds-line-height_reset">
+                                <th>
+                                    <b>Member Deductible</b>
+                                    <span>{data.DedPaidAmount}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b>Plan Deductible</b>
+                                    <span>{data.PlanDeductible}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <span></span>
+                                    <span></span>
+                                </th>
+                            </tr>							
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b>Deductible Excluded</b>
+                                    <span>{data.DeductibleExcluded}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b>TrOOP</b>
+                                    <span>{TROOP_APPLY_AMT}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b></b>
+                                    <span></span>
+                                </th>
+                            </tr>							
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b>Non-TrOOP</b>
+                                    <span >{data.NonTrOOP}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b> LICS</b>
+                                    <span>{data.LISAmount}</span>
+                                </th>
+                                <th class=""  scope="col">
+                                    <b></b>
+                                    <span></span>
+                                </th>
+                            </tr>                            
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b>Other TrOOP</b>
+                                    <span>{OTH_TROOP_AMT}</span>                                    
+                                </th>
+                                <th class=""  scope="col">
+                                    <b></b>
+                                    <span></span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b></b>
+                                    <span></span>
+                                </th>
+                            </tr>
+                        </table>
+
+                    </div>
+                    <lightning-datatable data={data.RxClaimBSQData} columns={BenefitStageDetailseColumn}
+                        key-field="BenefitStageQualifier" hide-checkbox-column>
+                    </lightning-datatable>
+                </lightning-accordion-section>
+                <lightning-accordion-section label="Balances"
+                    class="slds-p-left_none slds-p-right_none slds-p-bottom_none" style="background-color:#d8edff;"
+                    name="Balances">
+                    <div class=" slds-form_horizontal slds-form slds-grid slds-wrap slds-m-left_none slds-m-right_none slds-m-bottom_none "
+                        style="background-color:#ffffff; box-shadow: 0 0 6px;">
+                        <table class="slds-table slds-no-row-hover slds-table_cell-buffer slds-table_bordered">
+                            <tr class="slds-line-height_reset">
+                                <th>
+                                    <b>Spending Account Remaining</b>
+                                    <span>{data.SpendingAccountRemaining}</span>
+                                </th>
+                                <th class="t2" scope="col">
+                                    <b>Remaining Benefit</b>
+                                    <span>{data.RemainingBenefit}</span>
+                                </th>
+                                <th class="t3" scope="col">
+                                    <span></span>
+                                    <span></span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <b>Accumulated Deductible</b>
+                                    <span>{data.AccumulatedDeductible}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b>Remaining Deductible</b>
+                                    <span>{data.RemainingDeductible}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b></b>
+                                    <span></span>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </lightning-accordion-section>
+            </lightning-accordion>
+        </lightning-accordion-section>
+
+        <lightning-accordion-section class=" DrugInformation slds-p-left_none slds-p-right_none slds-p-bottom_none"
+            style="border-top:2.5px rgb(0, 112, 210) solid;" name="Drug Information" label="Drug Information">
+            <lightning-accordion class=" slds-m-left_none slds-m-right_none slds-m-bottom_none"
+                active-section-name={drugInformationOpenSections} allow-multiple-sections-open>
+                <lightning-accordion-section label="Drug Indicators/ Drug Classes"
+                    class="slds-p-left_none slds-p-right_none slds-p-bottom_none" style="background-color:#d8edff;"
+                    name="DrugIndicatorsOrDrugClasses">
+                    <div class=" slds-form_horizontal slds-form slds-grid slds-wrap slds-m-left_none slds-m-right_none slds-m-bottom_none "
+                        style="background-color:#ffff; box-shadow: 0 0 6px;">
+                        <table class="slds-table slds-no-row-hover slds-table_cell-buffer slds-table_bordered">
+                            <tr class="slds-line-height_reset">
+                                <th>
+                                    <b>GCN</b>
+                                    <!--<span></span>-->
+                                    <span if:true={data.RxClaimDrug}>{data.RxClaimDrug.GCN}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b>HICL Sequence Number</b>
+                                    <span>{data.HICLSequenceNumber}</span>
+                                </th>
+                                <th class="t3" scope="col">
+                                    <span></span>
+                                    <span></span>
+                                </th>
+                            </tr>							
+                            <tr class="slds-line-height_reset">
+                                <th class="t2" scope="col">
+                                    <b>DEA Code</b>
+                                    <span>{data.DEACode}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b>Manufacturer</b>
+                                    <span>{data.Manufacturer}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b></b>
+                                    <span></span>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+
+                </lightning-accordion-section>
+                <lightning-accordion-section label="Dosing/Route"
+                    class="slds-p-left_none slds-p-right_none slds-p-bottom_none" style="background-color:#d8edff;"
+                    name="DosingRoute">
+                    <div class=" slds-form_horizontal slds-form slds-grid slds-wrap slds-m-left_none slds-m-right_none slds-m-bottom_none "
+                        style="background-color:#ffff; box-shadow: 0 0 6px;">
+                        <table class="slds-table slds-no-row-hover slds-table_cell-buffer slds-table_bordered">
+                            <tr class="slds-line-height_reset">
+                                <th>
+                                    <b>Dosage Strength</b>
+                                    <span>{data.DosageStrength}</span>
+                                </th>
+								<th class="" scope="col">
+                                    <b>Dosage Form Code</b>
+                                    <span>{data.DosageFormCode}</span>
+                                </th>                                
+                                <th class="t3" scope="col">
+                                    <span></span>
+                                    <span></span>
+                                </th>
+                            </tr>
+                            <tr class="slds-line-height_reset">
+                                <th class="t2" scope="col">
+                                    <b>Unit of Measure</b>
+                                    <span></span>
+                                    <span if:true={data.RxClaimDrug}>{data.RxClaimDrug.UnitOfMeasure}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b>Package Size</b>
+                                    <span>{data.PackageSize}</span>
+                                </th>
+                                <th class="" scope="col">
+                                    <b></b>
+                                    <span></span>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </lightning-accordion-section>
+            </lightning-accordion>
+        </lightning-accordion-section>
+        <lightning-accordion-section class=" MedicalPartD slds-p-left_none slds-p-right_none slds-p-bottom_none"
+            style="border-top:2.5px rgb(0, 112, 210) solid;" name="Medicare Part D" label="Medicare Part D">
+            <div class=" slds-form_horizontal slds-form slds-grid slds-wrap slds-m-left_none slds-m-right_none slds-m-bottom_none "
+                style="background-color:#ffff; box-shadow: 0 0 6px;">
+				 <table class="slds-table slds-no-row-hover slds-table_cell-buffer slds-table_bordered">
+                    <tr class="slds-line-height_reset">
+                        <th>
+                            <b>Alternate Business Flag</b>
+                            <span>{data.AlternateBusinessFlag}</span>
+                        </th>
+                        <th class="" scope="col">
+                            <b>Non-TrOOP Elig/PLRO Amt</b>
+                            <span>{PLRO_AMT}</span>
+                        </th>
+                        <th class="" scope="col">
+                            <b>Total Covered Drug Cost</b>
+                            <span>{data.TotalCoveredDrugCost}</span>
+                        </th>
+                    </tr>
+                    <tr class="slds-line-height_reset">
+                        <th class="" scope="col">
+                            <b>Gross Drug Cost Above Out of Pocket Threshold</b>
+                            <span>{data.GrossDrugCostAboveOutofPocketThreshold}</span>
+                        </th>
+                        <th class="" scope="col">
+                            <b>LICS Effective Date</b>
+                            <span>{data.LICSEffectiveDate}</span>
+                        </th>
+                        <th class="" scope="col">
+                            <b>MTM Effective Date</b>
+                            <span>{data.MTMEffectiveDate}</span>
+                        </th>
+                    </tr>
+                    <tr class="slds-line-height_reset">
+                        <th class="" scope="col">
+                            <b>Place of Service</b>
+                            <span>{data.PlaceofService}</span>
+                        </th>
+                        <th class="" scope="col">
+                            <b>Plan Type</b>
+                            <span>{data.PlanType}</span>
+                        </th>
+                        <th class="" scope="col">
+                            <b>Transition Letter</b>
+                            <span>{data.TransitionClaimCode}</span>
+                        </th>
+                    </tr>
+                    <tr class="slds-line-height_reset">
+                        <th class="t2" scope="col">
+                            <b>TrOOP Eligible Flag</b>
+                            <span>{data.TrOOPEligibleFlag}</span>
+                        </th>
+                        <th class="" scope="col">
+                            <b>Other TrOOP Amount</b>
+                            <span>{data.OtherTrOOPAmount}</span>
+                        </th>
+                        <th class="" scope="col">
+                            <b>Reported Gap Discount</b>
+                            <span>{COV_GAP_AMT}</span>
+                        </th>
+                    </tr>
+                    <tr class="slds-line-height_reset">
+                        <th class="" scope="col">
+                            <b>Gross Drug Cost Below Out of Pocket Threshold</b>
+                            <span>{data.GrossDrugCostBelowOutofPocketThreshold}</span>
+                        </th>
+                        <th class="" scope="col">
+                            <b>LICS Amount</b>
+                            <span>{data.LICSAmount}</span>
+                        </th>
+                        <th class="" scope="col">
+                            <b>Institutional Code</b>
+                            <span>{data.InstitutionalCode}</span>
+                        </th>
+                    </tr>
+                    <tr class="slds-line-height_reset">
+                        <th class="" scope="col">
+                            <b>Patient Location Code</b>
+                            <span>{data.PatientLocationCode}</span>
+                        </th>
+
+                        <th class="" scope="col">
+                            <b>Supplemental Indicator</b>
+                            <span>{data.SupplementalIndicator}</span>
+                        </th>
+
+                        <th class="" scope="col">
+                            <b>Transition Code</b>
+                            <span>{data.TransitionClaimCode}</span>
+                        </th>
+					</tr>
+                    <tr class="slds-line-height_reset">
+                        <th class="t3" scope="col">
+                            <b>TrOOP Applied Amount</b>
+                            <span>{TROOP_APPLY_AMT}</span>
+
+                        </th>
+                        <th class="" scope="col">
+                            <b>TrOOP Accumulation Amount</b>
+                            <span>{TOT_TROOP_ACCUM_AMT}</span>
+                        </th>
+                        <th class="" scope="col">
+                            <b>FDA Def Status</b>
+                            <span>{data.FDADefStatus}</span>
+                        </th>
+					</tr>
+                    <tr class="slds-line-height_reset">
+                        <th class="" scope="col">
+                            <b>Free First Fill Indicator</b>
+                            <span>{data.FreeFirstFillIndicator}</span>
+                        </th>
+                        <th class="" scope="col">
+                            <b>LICS Code</b>
+                            <span>{data.LICSCode}</span>
+                        </th>
+                        <th class="" scope="col">
+                            <b>MTM Code</b>
+                            <span>{data.MTMCode}</span>
+                        </th>
+                    </tr>
+                    <tr class="slds-line-height_reset">
+                        <th class="" scope="col">
+                            <b>Institutional Effective Date</b>
+                            <span>{data.InstitutionalEffectiveDate}</span>
+                        </th>
+                        <th class="" scope="col">
+                            <b>Patient Residence</b>
+                            <span>{data.PatientResidence}</span>
+                        </th>
+                        <th class="" scope="col">
+                            <b>Processed as Indicator</b>
+                            <span>{data.ProcessedAsIndicator}</span>
+                        </th>
+                    </tr>
+                </table>
+			</div>
+        </lightning-accordion-section>
+    </lightning-accordion>
+</template>

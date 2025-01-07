@@ -1,0 +1,15 @@
+.slds-modal__container {
+  max-width: 60rem !important;
+  width: 60% !important;
+}
+
+.exampleHolder {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+}
+
+.message {
+  font-style: italic;
+}

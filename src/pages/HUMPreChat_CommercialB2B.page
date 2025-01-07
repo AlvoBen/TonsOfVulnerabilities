@@ -1,0 +1,220 @@
+﻿<!--
+Page Name        : HUMPreChat_CommercialB2B
+Version          : 1.0 
+Created Date     : 09/03/2020
+Function         : This page is pre-chat survey form. Which is filled in by user before chat is initiated.
+Modification Log :
+*   Modification ID     Developer               Code Review             Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   1.0                 Akshay Pai                                    08/20/2020             Original           
+-------------------------------------------------------------------------------------------------------------------------------->
+<apex:page controller="HUMPreChatController_CommercialB2B" id="thePage" showheader="false" standardStyleSheets="false"  action="{!initVariable}">
+    <!-- Loading CSS files received from digital team for Humana view standards -->
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/base.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/framework.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/global.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/global1.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/humanacom.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/humanacom1.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/lib.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/styles.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/tools.css')}"/> 
+    
+    <!-- Loading jQuery toolkit as per VF standards -->
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />  
+    <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>{!$Label.HUMPreChat}</title>
+    </head>
+    <body>
+     
+    <form id="theform" method="post">
+        <div class="row">
+            <div class="small-glass-container">
+                <div class=" columns x1 eighteen">
+                    <div class="row">
+                        <div class="eighteen columns x1">
+                            <div class="lifeblock-heading">
+                                <h1 class="link-list-heading lifeblock core-green bl-tail tl-br-curve" tabindex="0">
+                                    <span class="content">{!$Label.HUMChatLabel}</span>
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="small-glass-container" id="preChat">
+            
+                            <div id="statusImageHUMPrechat" style="display: Block;">
+                                <div id="displayLoadingMsg" class="row" style="display: Block;">
+                                    <div class="seventeen columns x1-left">
+                                        <p class="x1">{!$Label.HUMThankYouMsg_SkipPreChat}</p>
+                                    </div>
+                                </div>                            
+                                <!-- This block will render a spinner image to indicate table loading in the UI -->
+                                <div class="loadingSectionStyle" style="padding-left: 40%;">
+                                    <img src="/img/loading.gif" />
+                                    <span class="waitingDescription"> {!$Label.LOADING_HUM}</span>
+                                </div>
+                            </div>
+                            
+                            <div id="prechatform" class="row" style="display: none;">
+                                <div class="eighteen columns x1-left">   
+                                    <div id="chatAvailable">
+                                        <div class="row">
+                                                                                     
+                                            <input name="liveagent.prechat:BotTranscript" type="hidden" value="" id="BotTranscriptDecrypt" />
+                                            <input name="liveagent.prechat:ChatType" type="hidden" value="{!sChatType }" id="ChatTypeValue" />
+                                            <input name="liveagent.prechat.save:ChatType" type="hidden" value="Chat_Type__c"/> 
+                                            
+                                            <input name="liveagent.prechat.save:Plan Name" type="hidden" value="Category__c"/>
+                                            <input name="liveagent.prechat:Category" type="hidden" value="CategoryValue" id="CategoryValue" />
+                                            <input name="liveagent.prechat.save:Category" type="hidden" value="Subject__c"/>
+                                            <input name="liveagent.prechat.save:Issue" type="hidden" value="Issue__c"/>
+                                            <input name="liveagent.prechat:URL" id="testURI" type='hidden' value=""/>
+                                            <input name="liveagent.prechat.save:URL" type="hidden" value="URL__c"/>
+                                            <input name="liveagent.prechat:AccountId" id='accountid' type='hidden' value=""/>
+                                            <input name="liveagent.prechat:InteractionId" id='interactionid' type='hidden' value=""/>
+                                            <input name="liveagent.prechat:InteractionName" id='interactionname' type='hidden' value=""/>
+                                            <input name="liveagent.prechat.findorcreate.map:Account" type="hidden" value="Id,AccountId"/>                                           
+                                            <input name="liveagent.prechat.findorcreate.saveToTranscript:Account" type="hidden" value="Account"/>                                           
+                                            <input name="liveagent.prechat.findorcreate.map.doFind:Account" type="hidden" value="Id,true"/>                                         
+                                            <input name="liveagent.prechat:customAccountId" type="hidden" id="customAccountId" value=""/>
+                                            <input name="liveagent.prechat.save:customAccountId" type="hidden" value="AccountId__C"/>
+                                            <input name="liveagent.prechat:SecChatID" id='secchatid' type='hidden' value=""/>
+                                            <input name="liveagent.prechat.findorcreate.map:Interaction__c" type="hidden" value="Id,InteractionId"/>
+                                            <input name="liveagent.prechat.findorcreate.saveToTranscript:Interaction__c" type="hidden" value="Interaction__c"/>
+                                            <input name="liveagent.prechat.findorcreate.map.doFind:Interaction__c" type="hidden" value="Id,true"/>
+                                          
+                                            <input name="liveagent.prechat.findorcreate.map:LiveChatTranscript" type="hidden" value="Secondary_Chat_ID__c,SecChatID"/>
+                                            <input name="liveagent.prechat.findorcreate.map.doFind:LiveChatTranscript" type="hidden" value="Secondary_Chat_ID__c,true"/>
+                                            <input name="liveagent.prechat.save:SecChatID" type="hidden" value="Secondary_Chat_ID__c"/> 
+                                            <input name="liveagent.prechat:sLSessionID" id="sLSessionID"  type="hidden" value=""/>                                         
+                                            <input name="liveagent.prechat:deployment_id" id='depId' type='hidden' value="{!sWebChatVarMap['DeploymentID'].value__c}"/>
+                                            <input name="liveagent.prechat:org_id" id='comId' type='hidden' value="{!sWebChatVarMap['CompanyID'].value__c}"/>
+                                            <input name="liveagent.prechat.findorcreate.displayToAgent:sLSessionID" type= "hidden" value= "false" />
+                                            <input name="liveagent.prechat.findorcreate.displayToAgent:AccountId" type= "hidden" value= "false" />
+                                            <input name="liveagent.prechat.findorcreate.displayToAgent:InteractionId" type= "hidden" value= "false" />
+                                            <input name="liveagent.prechat.findorcreate.displayToAgent:customAccountId" type= "hidden" value= "false" />
+                                            <input name="liveagent.prechat:SelBtnId" type="hidden" id="SelButttonID" value=""/>
+                                            <input name="liveagent.prechat.findorcreate.displayToAgent:SelBtnId" type= "hidden" value= "false" />
+                                            <input name="liveagent.prechat.findorcreate.displayToAgent:SecChatID" type= "hidden" value= "false" />
+                                            <input name="liveagent.prechat.findorcreate.displayToAgent:deployment_id" type= "hidden" value= "false" />
+                                            <input name="liveagent.prechat.findorcreate.displayToAgent:org_id" type= "hidden" value= "false" />
+
+                                            <!-- To hide the details from details page for agent-->
+                                            <input name="liveagent.prechat.findorcreate.displayToAgent:BotTranscript" type= "hidden" value= "false" />
+                                            <input name="liveagent.prechat.findorcreate.displayToAgent:Classification" type= "hidden" value= "false" />
+                                            <input name="liveagent.prechat.findorcreate.displayToAgent:Intent" type= "hidden" value= "false" />
+                                            <input name="liveagent.prechat.findorcreate.displayToAgent:PolicyMember" type= "hidden" value= "false" />
+                                            <input name="liveagent.prechat.findorcreate.displayToAgent:CTCI" type= "hidden" value= "false" />  
+                                            <input name="liveagent.prechat.findorcreate.displayToAgent:CaseRecordType" type= "hidden" value= "false" />  
+                                                                                        
+                                            <input id='intMemberId'  type='hidden' value=""/>
+
+                                            <input name="liveagent.prechat:Skill Name" type="hidden" value="" id="SkillNameLabel" />
+
+                                            <input type="hidden" name="liveagent.prechat:Case Origin" id="caseOrigin" /> 
+                                            <input type="hidden" name="liveagent.prechat:Case Type" id="caseType" />
+                                            <input type="hidden" name="liveagent.prechat:InteractingWithType" id="interactingWithType" />
+                                            <input type="hidden" name="liveagent.prechat:Classification" id="Classification" /> 
+                                            <input type="hidden" name="liveagent.prechat:Intent" id="Intent"/>
+                                            <input type="hidden" name="liveagent.prechat:PolicyMember" id="PolicyMember" /> 
+                                            <input type="hidden" name="liveagent.prechat:CTCI" id="CTCI"/>
+                                            <input type="hidden" name="liveagent.prechat:CaseRecordType" id="CaseRecordType" /> 
+                                             <input type="hidden" name="liveagent.prechat.findorcreate.map:Case" value="ChatKey__c,SecChatID;Origin,Case Origin;Interacting_With__c,AccountId;AccountId,AccountId;Interacting_With_Type__c,InteractingWithType;Interacting_About_Type__c,InteractingWithType;Type,Case Type;Classification_Id__c,Classification;Intent_Id__c,Intent;Policy_Member__c,PolicyMember;CTCI_List__c ,CTCI;RecordTypeId,CaseRecordType" />
+                                            <input type="hidden" name="liveagent.prechat.findorcreate.map.doCreate:Case" value="ChatKey__c,true;Origin,true;Interacting_With__c,true;AccountId,true;Interacting_With_Type__c,true;Interacting_About_Type__c,true;Type,true;Classification_Id__c,true;Intent_Id__c,true;Policy_Member__c,true;CTCI_List__c,true;RecordTypeId,true" />
+                                            <input type="hidden" name="liveagent.prechat.findorcreate.saveToTranscript:Case" value="Case" />
+                                            <input type="hidden" name="liveagent.prechat.findorcreate.showOnCreate:Case" value="true" /> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="memberNotFound">
+                            <div class="thirteen columns x1-left">
+                                <div class="row">
+                                    <div style="margin-right: 10px;">
+                                        <h4 style="color: black!IMPORTANT;">{!$Label.HUMCommercialB2BLabel_1}</h4>
+                                        <p class="x1"><span>{!$Label.HUMCommercialB2BLabel_2}</span><br/>
+                                        <span>{!$Label.HUMCommercialB2BLabel_3}</span><br/>
+                                        <span>{!$Label.HUMCommercialB2BLabel_4}</span></p>
+                                        <br/>
+                                        <span class="link-tertiary" onclick="javascript:window.close();">{!$Label.HPCloseWindow}</span>
+                                    </div>                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="chatButtonNotFound">
+                            <div class="thirteen columns x1-left">
+                                <div class="row">
+                                    <div style="margin-right: 10px;">
+                                    <h4 style="color: black!IMPORTANT;">{!$Label.HUMChatButtonNotFound}</h4>
+                                        <p class="x1"><span>{!$Label.HUMCommercialB2BLabel_2}</span><br/>
+                                        <span>{!$Label.HUMCommercialB2BLabel_3}</span><br/>
+                                        <span>{!$Label.HUMCommercialB2BLabel_4}</span></p>
+                                        <br/>
+                                        <span class="link-tertiary" onclick="javascript:window.close();">{!$Label.HPCloseWindow}</span>
+                                    </div>                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    </body>
+      <apex:includeScript value="{!URLFOR(sWebChatVarMap['DeploymentJS'].value__c)}"/> 
+      <apex:includeScript value="{!URLFOR(sWebChatVarMap['PreChatJS'].value__c)}"/>
+      <apex:includeScript value="{!URLFOR($Resource.HUMLiveAgent_CommercialB2B,'/library/HUMPreChat.js')}"/> 
+      <script type="text/javascript">
+            
+		//default actions to hide error blocks & terms of use blocks
+		  jQuery('#memberNotFound').hide();
+		  jQuery('#chatButtonNotFound').hide();
+						
+		  var sDecryptBotTranscript = document.getElementById("BotTranscriptDecrypt");
+		  var jsClassification = document.getElementById('Classification'); 
+		  var jsIntent = document.getElementById('Intent');              
+		  var jsPolicyMember = document.getElementById('PolicyMember'); 
+		  var jsCTCI = document.getElementById('CTCI');   
+		  var jsCaseRecordType = document.getElementById('CaseRecordType');     
+		  
+		  var sskillName = '{!skillName}';
+		  var schatBtnName = '{!chatBtnName}';               
+
+		  //global Dom elements to be used in the functionlity in JS resource
+		  var sSecChatID = document.getElementById('secchatid');
+		  var sSecondary_Chat_Id = '{!sSecondary_Chat_Id}';
+		  document.getElementById('secchatid').value = sSecondary_Chat_Id ;
+		  var sSelbtnId = document.getElementById('SelButttonID');
+		  var sCategoryValue = document.getElementById("CategoryValue");
+		  var sLSessionIDEle = document.getElementById("sLSessionID");
+		  var sUr = document.getElementById("testURI");
+		  var sAccountId = document.getElementById('accountid');              
+		  var sIntId = document.getElementById('interactionid');
+		  var sIntMemberId = document.getElementById('intMemberId');
+		  var sInteractionName = document.getElementById('interactionname');
+		  var sTheForm = document.forms["theform"];
+		  var stheFormToSubmit = document.getElementById("theform");
+		  var sCustomAccountId = document.getElementById('customAccountId');
+		  var sRemotingTarget = '{!$RemoteAction.HUMPreChatController_CommercialB2B.findAccountByCustomerId}';
+
+		  //Variables used for displaying skill name
+		  var sSkillNameLabel = document.getElementById('SkillNameLabel');              
+		  
+		  var sInteractingWithType = document.getElementById('interactingWithType');
+		  var sCaseOrigin = document.getElementById('caseOrigin'); 
+		  var sCaseType = document.getElementById('caseType');
+		  /**
+		  As Live Agent API Does not work when we include it in the Static resource, hence
+		  we have kept the live agent and event firing related code on the page.
+		  Rest event handlers and remoting methods are moved in static resource.
+		  */
+		  //liveagent preChatInit initialization
+		  liveagent.details.preChatInit("{!sWebChatVarMap['LiveChatURL'].value__c}", 'detcall');
+
+		  //liveagent initialization
+		  liveagent.init("{!sWebChatVarMap['LiveChatURL'].value__c}","{!sWebChatVarMap['DeploymentID'].value__c}","{!sWebChatVarMap['CompanyID'].value__c}", false, true);
+		</script>
+</apex:page>

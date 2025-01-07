@@ -1,0 +1,259 @@
+﻿<!--
+LWC Name        : accountDetailHighlightsHum.html
+Function        : LWC to display Highlights section on account details pages.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Pradeep Dani                  12/18/2020                Original Version (azure # 1648022)
+* Arpit Jain			           02/12/2021         		  Click To Dial
+* Supriya Shastri               02/23/2021                    address field modification
+* Mohan Kumar N                 03/02/2021                     US #: 1749525
+* Joel George			           03/16/2021		           REQ 1895067
+* Joel George			           03/22/2021		           Added logic to check for member records
+* Supriya Shastri               03/23/2021                 US-1999420
+* Mohan kumar N                 03/08/2021                  US-1749564
+* Supriya                       04/26/2021                  US-1464401
+* Supriya                       06/04/2021                  US: 2176313
+* Aishwarya Pawar               10/19/2021                  REQ-268408, REQ-2684091 and REQ- 2684061
+* Aishwarya Pawar			    10/27/2021		           DF 3979 Fix
+* Mohan                         10/27/2021                US: 2440592
+* Vardhman Jain                 10/21/2021                  US:2098890- Account Management - Group Account - Launch Member Search
+* Supriya Shastri				01/13/2021					US-2954236
+* Abhishek Mangutkar	 		05/09/2022				   	US-2871585
+* Supriya Shastri				03/16/2021				    US-1985154
+* Nilanjana Sanyal				03/09/2022					US-2498215 - Saperating the icon display in a common component commonHighlightPanelIconHum
+* Muthu kumar					06/17/2022					DF-5050
+* Aishwarya Pawar               07/14/2022                 REQ-3318229
+* Muthukumar                    09/08/2022                 US-3279519 update plan demographic
+* Santhi Mandava                11/01/2022                 US:3813238 Displaying Update plan demographics button
+* Nirmal Garg                	01/04/2023                 DF-6907
+* Manohar Billa                 02/16/2023                 US:3272618 - Verify Demographics changes for QS
+* Manohar Billa                 02/20/2023                 REQ - US4179702        Guidance Alert for QS
+* Jonathan Dickinson            03/31/2023                User Story 4414983: T1PRJ0865978 - Next Best Action- Move the Existing alerts on Person Account & Plan Member to right hand side
+*Deepakkumar Khandelwal		    06/30/2023				  US_4742449_ T1PRJ0865978 - INC2384724/Contact Handling Alert Icon is displayed even when there are no contact handling alerts for that member. 
+*Hima Bindu Ramayanam			07/12/2023				  User Story 4802575: T1PRJ0865978 - INC2410933/Consumer/Toggling between Person Account tabs displays information from 'other' tab
+* Muthukumar					08/16/2023				  User Story 4879230: T1PRJ0865978 - INC2430109 / Missing Residential Address on Person Account Page
+* Vardhman Jain                 10/20/2023                   US-5009031 update Commercial demographic
+****************************************************************************************************************************-->
+<template>
+	<template if:true={oDetails}>
+		<div class="highlights-panel">
+			<lightning-record-view-form record-id={recordId} object-api-name="Account" onload={handleLoad}>
+				<div class="slds-page-header slds-page-header_record-home">
+					<div class="highlights-container">
+						<div class="slds-page-header__row slds-grid_vertical-align-center">
+							<div class="slds-page-header__col-title">
+								<div class="slds-media">
+									<div class="slds-media__figure">
+										<lightning-icon icon-name={oDetails.object.icon.name} size={oDetails.object.icon.size}
+														slot="icon">
+										</lightning-icon>
+									</div>
+									<div class="slds-media__body">
+										<div class="slds-page-header__name">
+											<div class="slds-page-header__name-title">
+												<h1>
+													<span>{oDetails.object.name}</span>
+													<span class="slds-page-header__title slds-truncate slds-text-heading_medium slds-m-top_x-small">
+														<b>{sName}</b>
+														<span style="display:none">
+															<lightning-output-field field-name={oDetails.recodDetail.mapping}
+																					variant="label-hidden">
+															</lightning-output-field>
+														</span>
+													</span>
+												</h1>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="slds-page-header__col-actions">
+								<div class="slds-page-header__controls">
+									<div class="slds-page-header__control action-button-col">
+										<div>
+											<div class="slds-grid slds-wrap slds-grid_align-end">
+												
+												<c-generic-alerts-view-hum 
+												record-id={recordId} 
+												account-page-name={sRecordTypeName}
+												 class="gbo-alert"
+												 oncontactevent={handlecontactevent}
+												 ></c-generic-alerts-view-hum>
+
+												<template if:true={bShowVerifyButton}>
+													<template if:true={bShowDemographics}>
+														<lightning-icon icon-name="utility:warning" size="small"
+																		alternative-text="Warning!" title="Warning" variant="error"
+																		class="slds-p-horizontal_medium">
+														</lightning-icon>
+													</template>
+													<lightning-button variant="brand-outline" name="verify"
+																	  label={labels.HUM_Verify_Demographics} onclick={verifyDemographicsData}>
+													</lightning-button>
+												</template>
+												<template if:true={bShowUpdateDemographicsBtn}>
+													<template if:false={bShowUpdateCommercialDemographicsBtn}>
+													<lightning-button variant="brand-outline" name="updatePlanDemographic"
+													label="Update Plan Demographics" onclick={updatePlanDemographic}>
+												</lightning-button>
+													</template>
+												</template>
+												<template if:true={bSwitch5009031}>
+												<template if:true={bShowUpdateCommercialDemographicsBtn}>
+													<template if:false={bShowUpdateDemographicsBtn}>
+													<lightning-button variant="brand-outline" name="updateCommercialDemographic"
+													label="Update Commercial Demographics" onclick={updateCommercialDemographic}>
+												</lightning-button>
+													</template>
+												</template>
+												</template>
+												<template if:true={bSwitch5009031}>
+												<template if:true={bShowUpdateDemographicsBtn} >
+													<template if:true={bShowUpdateCommercialDemographicsBtn}>
+														<lightning-button-menu label="Update Plan Demographics" alternative-text="Show menu" variant="border-Outline" onselect={handleOnselect}>
+															<lightning-menu-item value="Commercial" label="Commercial"></lightning-menu-item>
+															<lightning-menu-item value="Retail" label="Retail"></lightning-menu-item>
+														</lightning-button-menu>
+													</template>
+												</template>
+												</template>
+												<template if:true={bSpinner}>
+													<lightning-spinner size="medium" variant="brand" alternative-text="Loading"
+													class="hc-generic-spinner"></lightning-spinner>
+												</template>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="slds-grid slds-grid_align-spread slds-page-header__row slds-grid_vertical-align-center">
+							<div class="icons-container slds-grid">
+								<!--2498215:Implementation for Icon display-->
+								<!--<template for:each={memberIcons} for:item="item">
+								   <div key={item.sIconName}
+								   class="member-icons slds-p-top_medium slds-grid slds-p-right_large slds-is-relative">
+									  <image key={item.sIconName} src={item.sDocumentId} class="icon-member"></image>
+									  <c-custom-tooltip-hum key={item.sIconName} help-text={item.sIconLabel}>
+									  </c-custom-tooltip-hum>
+								   </div>
+								</template>-->
+								<!--Added to pass member icon list to the child component-->
+								<c-common-highlight-panel-icon-hum member-icons={memberIcons} hlimit={hLimit}></c-common-highlight-panel-icon-hum>
+							</div>
+							<div class="slds-grid">
+								<template if:true={showInteractions}>
+									<c-interaction-buttons-hum s-record-id={recordId} oninteractionnavigate={onInterPillClick} oninterbtnevt={onInterBtnEvt}
+																 s-page-name="Member Account" s-plan-id="">
+									</c-interaction-buttons-hum>
+								</template>
+								<!--Start added check US:2098890- Account Management - Group Account - Launch Member Search -->
+								<template if:true={bShowMemberSearch}>
+								<div class="slds-no-flex">
+									<lightning-button label={labels.HUMMemberSearch}
+													  class="slds-float_right slds-align-bottom"
+													  onclick={navitageToMemberSearch}>
+									</lightning-button>
+								</div>
+								</template>
+							<!--End addedcheck  US:2098890- Account Management - Group Account - Launch Member Search -->
+								<!--RTI component-->
+								<template if:true={showRTISection}>
+									<div class="slds-is-relative slds-m-left_medium">
+										<c-rti-icon-hum record-id={recordId} recordtype={sRecordTypeName}></c-rti-icon-hum>
+									</div>
+								</template>
+								<!--Logging component-->
+								<template if:true={showLoggingIcon}>
+									<div class="slds-float_right slds-m-left_medium">
+										<c-lightning-logging-component-hum record-id={recordId} related-field={sName} auto-logging={autoLogging} type="Account"
+																		   subtype="Account Details" attachmentkey={personid}
+																		   attachmentdescription="Enterprise Id">
+										</c-lightning-logging-component-hum>
+									</div>
+								</template>
+								<!---->
+							</div>
+
+						</div>
+					</div>
+
+					<div class="slds-page-header__row slds-page-header__row_gutters" onclick={handleLogging}>
+						<div class="slds-page-header__col-details">
+							<div class="slds-grid slds-page-header__detail-row slds-p-top_none slds-p-bottom_none">
+								<template for:each={oDetails.recodDetail.fields} for:item='detail'>
+									<lightning-layout-item padding="around-small"
+														   class="slds-page-header__detail-block slds-col link-item-width slds-is-relative" key={detail.label}>
+										<div class="slds-truncate field-title logthis" title={detail.label} data-id={detail.label} data-donotlog={detail.donotlog}><b>{detail.label}</b></div>
+										<div class="slds-truncate" if:false={detail.bIsCustom}>
+											<lightning-output-field class="details-text-wrap slds-show_inline-block" field-name={detail.mapping}
+																	variant="label-hidden" data-value={detail.label}>
+											</lightning-output-field>
+											<span if:true={detail.copyToClipBoard}>
+												<c-custom-tooltip-hum class="slds-show_inline-block" onclick={copyToBoard} align="left" data-field={detail.mapping}
+																	  icon-type=true help-text={labels.HUM_Copy_Clipboard} icon-position=true></c-custom-tooltip-hum>
+											</span>
+										</div>
+										<span if:true={detail.bIsCustom}>
+											<span if:true={detail.bAge} data-value={detail.label}>{iAge}</span>
+											<span if:true={detail.bRecordTypeName} data-value={detail.label}>{sRecordTypeName}</span>
+											<div if:true={detail.bAddress} class="details-text-wrap">
+												{detail.value}
+												<c-custom-tooltip-hum if:true={detail.copyToClipBoard} class="slds-show_inline-block" align="left" data-address=true
+																	  onclick={copyToBoard} data-field={detail.value} icon-type=true help-text={labels.HUM_Copy_Clipboard}
+																	  icon-position=true></c-custom-tooltip-hum>
+											</div>
+											<div if:true={detail.mAddress} class="details-text-wrap">
+												<lightning-formatted-rich-text value={mAddress} data-value={detail.label}>
+												</lightning-formatted-rich-text>
+													<c-custom-tooltip-hum if:true={mAddress} class="slds-show_inline-block" align="left" data-address=true
+																		  onclick={copyToBoard} data-field={mAddress} icon-type=true help-text={labels.HUM_Copy_Clipboard}
+																		  icon-position=true></c-custom-tooltip-hum>
+											</div>
+											<div if:true={detail.rAddress} class="details-text-wrap">
+												<lightning-formatted-rich-text value={rAddress} data-value={detail.label}>
+												</lightning-formatted-rich-text>
+													<c-custom-tooltip-hum if:true={rAddress} class="slds-show_inline-block" align="left" data-address=true
+																		  onclick={copyToBoard} data-field={rAddress} icon-type=true help-text={labels.HUM_Copy_Clipboard}
+																		  icon-position=true></c-custom-tooltip-hum>
+											</div>
+											<span if:true={detail.bTaxIds}>
+												<lightning-formatted-rich-text value={sTaxIds} data-value={detail.label}></lightning-formatted-rich-text>
+												<c-custom-tooltip-hum if:true={bTaxIdViewAll} link-type=true link-text="View All"
+																	  help-text={sTaxIdHover}></c-custom-tooltip-hum>
+											</span>
+											<span if:true={detail.bIsWork}>
+												<lightning-click-to-dial value={sOtherphone} data-value={detail.label}>
+												</lightning-click-to-dial>
+												<c-custom-tooltip-hum if:true={detail.copyToClipBoard} class="slds-show_inline-block" align="left" onclick={copyToBoard}
+																	  data-field={detail.mapping} icon-type=true help-text={labels.HUM_Copy_Clipboard} icon-position=true>
+												</c-custom-tooltip-hum>
+											</span>
+											<span if:true={detail.bIsHome}>
+												<lightning-click-to-dial value={sHomephone} data-value={detail.label}>
+												</lightning-click-to-dial>
+												<c-custom-tooltip-hum if:true={detail.copyToClipBoard} class="slds-show_inline-block" align="left" onclick={copyToBoard}
+																	  data-field={detail.mapping} icon-type=true help-text={labels.HUM_Copy_Clipboard} icon-position=true>
+												</c-custom-tooltip-hum>
+											</span>
+											<span if:true={detail.bIsPhone}>
+												<lightning-click-to-dial value={sphone} data-value={detail.label}>
+												</lightning-click-to-dial>
+											</span>
+										</span>
+									</lightning-layout-item>
+								</template>
+							</div>
+						</div>
+					</div>
+				</div>
+			</lightning-record-view-form>
+		</div>
+	</template>
+	<c-generic-modal-hum if:true={bShowModal} buttons-config={buttonsConfig} b-show-modal={bShowModal}
+						 onclose={closeModal} title={labels.AckPopUpTitle_Hum}>
+		<c-question-form-hum slot="content" form-data={questionDetails} is-acknowledge-form></c-question-form-hum>
+	</c-generic-modal-hum>
+</template>

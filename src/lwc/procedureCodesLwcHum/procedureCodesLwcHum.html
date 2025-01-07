@@ -1,0 +1,92 @@
+﻿<template>
+	<template if:false={noData}>
+	   <legend style="font-size: 15px;">
+			  <b>Procedure Codes</b>
+	   </legend>
+	   <div class="slds-m-top_xx-small slds-m-bottom_xx-small">
+	   </div>
+	   <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" aria-label="Procedure Codes">
+	   <thead>
+			  <tr class="slds-line-height_reset">
+			  <th class="" scope="col">
+			  <div class="slds-truncate" title="Code">Code
+			  </div>
+			  </th>
+			  <th class="" scope="col">
+			  <div class="slds-truncate" title="Description" >Description
+			  </div>
+			  </th>
+			  <th class="" scope="col">
+			  <div class="slds-truncate" title="Requesting Units">Requesting Units
+					 <lightning-helptext style="margin-left: 2px;margin-top:-4px;" content="The number of units requested when the Authorization/Referral was initially built"> </lightning-helptext>
+			  </div>
+			  </th>
+			  <th class="" scope="col">
+			  <div class="slds-truncate" title="Authorized Units">Authorized Units
+					 <lightning-helptext style="margin-left: 2px;margin-bottom: 4px;" content="The number of units authorized as directed by Market Guides. Medical Coverage Policies, or the result of a clinical review and can differ from the Requesting Units"> </lightning-helptext>
+			  </div>
+			  </th>
+			  <th class="" scope="col">
+			  <div class="slds-truncate" title="Type of Units">Type of Units
+					 <lightning-helptext style="margin-left: 2px;margin-bottom: 4px;" content="Describes the requested authorized units: Days of Rental, Months of Rental, Procedure, Purchase Item, Number of Visits. Doses of Medication, Days. Hours"> </lightning-helptext>
+			  </div>       
+			  </th>
+			  <th class="" scope="col">
+			  <div class="slds-truncate" title="Status">Status
+			  </div>       
+			  </th>
+			  </tr>
+	   </thead>
+	   <tbody>
+			  <template for:each={procedureRows} for:item="row">
+					 <tr class="slds-hint-parent" key={row.Code} onclick={handleLogging}>
+					<td data-label="Code" scope="row">
+						 <div class="slds-truncate logthis" title="Code" data-logid={generateLogId} data-id="Code">
+							<div data-value={row.sProcedureCode}> {row.sProcedureCode}</div>
+						 </div>
+					</td>
+					<td data-label="Description">
+						 <div class="slds-truncate logthis" title="Description"
+						  style="word-wrap: break-word;white-space: break-spaces ;" data-logid={generateLogId} data-id="Description">
+							<div data-value={row.sProcedureDescription}> {row.sProcedureDescription}</div>
+						 </div>
+					</td>
+					 <td data-label="Requesting Units">
+                            <div class="slds-truncate logthis" title="RequestingUnits" data-logid={generateLogId} data-id="Requesting Units">
+                                <!--{row.Visit.RequestedUnits}-->
+                            <div data-value={row.sProcedureRequestingUnits}>{row.sProcedureRequestingUnits}</div>
+                            </div>
+                     </td>
+					 <td data-label="Authorized Units">
+                            <div class="slds-truncate logthis" title="AuthorizedUnits" data-logid={generateLogId} data-id="Authorized Units">
+                                <!--{row.Visit.ApprovedUnits}-->
+                            <div data-value={row.sProcedureAuthorizedUnits}>{row.sProcedureAuthorizedUnits}</div>    
+                            </div>
+                        </td>
+					 <td data-label="Type of Units">
+                            <div class="slds-truncate logthis" title="TypeofUnits" data-logid={generateLogId} data-id="Type of Units">
+                                <!--{row.Visit.TypeOfUnits}-->
+                            <div data-value={row.sProcedureTypeofUnits}>{row.sProcedureTypeofUnits}</div>
+                            </div>
+                     </td>
+					<td data-label="Status">
+                            <div class="slds-truncate logthis" title="Status" data-logid={generateLogId} data-id="Status">
+                                <!--{row.Status}-->
+                            <div data-value={row.sProcedureStatus}>{row.sProcedureStatus}</div>
+                            </div>
+                     </td>
+					 </tr>
+			  </template>
+	   </tbody>
+	   </table>
+	</template>
+	<template if:true={noData}>
+		<div class="slds-align_absolute-center">
+			<c-search-no-result-hum
+				no-result-message="No matching records found"
+				message-with-icon="true"
+			>
+			</c-search-no-result-hum>
+		</div>
+	</template>
+</template>

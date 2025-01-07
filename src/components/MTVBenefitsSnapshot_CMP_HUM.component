@@ -1,0 +1,34 @@
+﻿<!--
+Component Name   : MTVBenefitsSnapshot_CMP_HUM.component
+Version          : 1.0
+Created On       : 02/05/2020 
+Function         : VF Component to display Benefits Snapshot table in MTV Benefits Verification Page 
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Prasanthi Kandula                                  02/05/2020                   Original version
+ * Trina Ghosh										  05/19/2020				   User Story 1070690 : Code Refactoring and optimization
+ **************************************************************************************************************************** -->
+<apex:component controller="MTVBenefitVerification_C_HUM">
+
+    <apex:stylesheet value="{!URLFOR(  $Resource.BenefitsSnapshotV2_SR_HUM, 'BenefitsSnapshotV2_CSS_SR_HUM.css')}" /> 
+    
+    <apex:includeScript value="{!URLFOR($Resource.MTVBenefitsSnapshot_SR_HUM, 'MTVBenefitsSnapshot_JS_HUM.js')}" /> 
+    
+    <!-- This block will render a spinner image to indicate table loading in the UI -->         
+        
+        <div class="loadingSectionStyle" id="statusImageBenefitsSnapshot">
+            <img src="/img/loading.gif" />
+            <span class="waitingDescription"> {!$Label.LOADING_HUM}</span>
+        </div>
+        <!-- This block will render a table using jQuery during the page load -->
+        <div id="responseErrorsBenefitsSnapshot" class="errorMsg" />
+        <div style="font-size:12px;" id="theMainFormBenefitsSnapshot" styleClass="formStyle">
+            <table id="benefitsSnapshot" class="table table-striped table-bordered width100 dataTable no-footer display enable_logging" title="{!$Label.Benefits_Snapshot_Label}">
+                <caption style="display:none;padding:0;margin:0;">Benefit Snapshot</caption>
+            </table>
+        </div>
+    
+    
+</apex:component>

@@ -1,0 +1,18 @@
+﻿<!------------------------------------------------------------------------------------------------------------------------------------
+Page Name        : QueueViewDelete_VF_HUM
+Version          : 1.0 
+Created Date     : 06/14/2016
+Function         : This VF page is used to show error message while deleting QV record
+Modification Log :
+*   Developer         Code Review       Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Sharan Shanmugam                  06/14/2016            Original Version
+--------------------------------------------------------------------------------------------------------------------------------------->
+<apex:page standardController="Queue_View__c" tabStyle="Queue_View__c">
+<apex:form >
+<apex:pageblock >
+<apex:pageMessage severity="Warning" title="Error" summary="{!$Label.WORKQUEUE_APP_QVDELETEERROR_HUM}"> </apex:pageMessage>
+<apex:commandButton action="{!URLFOR($Action.Queue_View__c.view,Queue_View__c.id)} " value="{!$Label.WORKQUEUE_APP_BACKTOQV_HUM}"/>
+</apex:pageblock>
+</apex:form>
+</apex:page>

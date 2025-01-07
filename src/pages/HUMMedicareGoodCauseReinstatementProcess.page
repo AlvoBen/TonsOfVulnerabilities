@@ -1,0 +1,47 @@
+﻿<!--
+Page Name        : HUMMedicareGoodCauseReinstatementProcess
+Version          : 1.0 
+Created Date     : October 10th , 2017       
+Controller Class : HUMMedicareReinstatProcessController
+
+*Modification Log :
+* Developer              Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Pallavi R              141064            10/13/2017            Original Version
+* Amar Gadewar                             06/18/2019           REQ - 399975 - AHT - All Users - Move buttons on the flows to the center of the page (RF)
+* Subhamay Mandal						   07/22/2019           REQ - 404464 - AHT - All Users - Move buttons on the flows to the center of the page (CRM)
+* Vinay Lingegowda                         03/19/2020           US-857398 AHT/Quality - Medicare Good Cause Reinstatement Template Auto Routing and AHT Updates (CRM)
+* Jasmeen Shangari                         04/21/2021           Checkmarx fixes Azure ID - 2163309
+*********************************************************************************************************************************-->
+<apex:page standardController="Case" extensions="HUMMedicareReinstatProcessController">
+  <apex:includeScript value="/support/console/31.0/integration.js" />
+  <apex:includeScript value="{!$Resource.HUMUnSavedChangesJS}"/>
+  <apex:stylesheet value="{!$Resource.HUMFlowsWordWrap}"/>
+  <script >
+        
+        window.onload =   testSetTabUnsavedChanges('Medicare Good Cause Reinstatement');   
+  </script>
+  <apex:outputpanel >
+    <style type="text/css">
+        .FlowPageBlockBtns {
+            text-align: left !important;
+        }
+    </style>
+  </apex:outputpanel>
+  <br/>
+    <apex:outputLabel value="{!$Label.HUMMediGoodCauseReinstatementForm}" style="font-size:16px;font-weight:bold;"/>
+  <br/>
+  <flow:interview id="MGCR" name="Medicare_Good_Cause_Reinstatement_Flow"   rerender="MGCR" rendered="{!bSubmissionPres}"  finishLocation="{!FinishPage}">
+        <apex:param name="WhoId" value="{!sSelectedCaseId}"/>
+        <apex:param name="WhatType" value="Case"/>
+        <apex:param name="TemplateSubmissionId" value="{!SubmissionId}"/>
+        <apex:param name="GCRPersonNameParam" value="{!gcrPersonName}"/>
+        <apex:param name="GCRRelationshipParam" value="{!gcrRelationship}"/>
+ </flow:interview>
+ <flow:interview id="MGCR1" name="Medicare_Good_Cause_Reinstatement_Flow" rerender="MGCR1" rendered="{!!bSubmissionPres}"  finishLocation="{!FinishPage}">
+        <apex:param name="WhoId" value="{!sSelectedCaseId}"/>
+        <apex:param name="WhatType" value="Case"/>
+        <apex:param name="GCRPersonNameParam" value="{!gcrPersonName}"/>
+        <apex:param name="GCRRelationshipParam" value="{!gcrRelationship}"/>
+    </flow:interview>
+</apex:page>

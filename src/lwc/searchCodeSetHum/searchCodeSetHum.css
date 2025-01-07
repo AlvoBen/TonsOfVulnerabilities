@@ -1,0 +1,12 @@
+td {
+      padding-top: .9rem;
+      padding-bottom: .9rem;
+  }
+
+.slds-cell-fixed {
+    background-color: lightgrey;
+}
+
+.slds-table--header-fixed_container {
+    background-color: lightgrey;
+}

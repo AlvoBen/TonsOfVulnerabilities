@@ -1,0 +1,130 @@
+﻿<!--
+Page Name        : PharmacyCaseComment_VF_HUM.page
+Version          : 1.0
+Created On       : April 25, 2017
+Function         : VF page to display create Case Comments 
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Vishal Verma              87024                   04/25/2017                   Original Version 
+* Rajesh Keswani            97817                   05/30/2017                   REQ - 320329: ePost call for Case Comment for Humana Pharmacy
+* Vishal Verma 				114200          	    07/27/2017				           REQ - 323542 : Exception handling 
+* Pallavi Shewale									02/10/2021			   	    User Story 1669828 - PR00094226 - CR AEP readiness -Research - Critical Security Issues
+* Shaik Mujeebur Rahaman                                04/29/2022                US-3213649 T1PRJ0272548 - SF Legacy API Retirement Upgrade API Version for Integrationjs Pharmacy
+* Shaik Mujeebur Rahaman                            06/08/2022                   User Story 3366863: T1PRJ0010888 - MF [1] - Rebranding- Update text references from "Humana Pharmacy" to "Mail Order Pharmacy" - Main Page & Case Comments
+****************************************************************************************************************************-->
+<apex:page tabStyle="Case" StandardController="Case" Extensions="PharmacyCaseComment_C_HUM" id="pharmacyCCPage" action="{!fetchCaseComments}">
+    <apex:includeScript value="/support/console/54.0/integration.js" />
+    <script src="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"></script> 
+    <apex:includeScript value="{!URLFOR($Resource.PharmacyCaseComment_SR_HUM, 'PharmacyCaseComment_SR_HUM/PharmacyCaseComment_JS_HUM.js')}" />
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.PharmacyCaseComment_SR_HUM, 'PharmacyCaseComment_SR_HUM/PharmacyCaseComment_CSS_HUM.css')}" />
+    
+    <script type="text/javascript">
+		<!-- Please do not change this line as it breaks the JS tables. -->
+//dont enable P9 Critical Fix	    $j = jQuery.noConflict(true);
+	    var logNotes = '{!$RemoteAction.PharmacyCaseComment_C_HUM.sendRequestLogNotes}';
+        var sNetworkUserid = '{!JSENCODE($User.Network_User_Id__c)}';
+        var enterpriseID = '{!JSENCODE(objCase.Account.Enterprise_ID__c)}';
+        var caseID = '{!Case.Id}';
+        var recordId = '{!JSENCODE(Case.AccountId)}';
+        var typeValue = '{!JSENCODE($CurrentPage.parameters.type)}';
+  	</script>
+    <apex:form id="pharmacyCCPform">
+        <div class="sectionheader">
+            <apex:sectionheader title="Comments" subtitle="Case {!objCase.CaseNumber}" help="https://help.salesforce.com/articleView?id=case_comments_edit.htm&siteLang=en_US&type=0" />
+        </div>
+        <apex:outputPanel id="noRecordError" Styleclass="displayNone">
+    	    <apex:PageMessage Summary="{!$Label.PHARMACY_EPOST_DOWNMSG}" severity="Error" Strength="3" />
+        <apex:pagemessages />
+	    </apex:outputPanel>
+	    <apex:outputPanel id="failError" Styleclass="displayNone">
+	    	<apex:PageMessage Summary="{!$Label.PHARMACY_EPOST_FAILMSG}" severity="Error" Strength="3" />
+	        <apex:pagemessages />
+	    </apex:outputPanel>
+        <apex:pageBlock title="Case Comment Edit" id="pharmacyCCPb" mode="Edit">
+
+            <apex:pageblockButtons >
+                <apex:commandButton id="saveCCId" value="Save" onclick="logNotestoEpost(); return false;" />
+                <apex:commandButton id="cancelCCId" value="Cancel" onclick="closeSubTabCase(); return false;" />
+            </apex:pageblockButtons>
+            <apex:pageBlockSection columns="1" title="Case Details" collapsible="false">
+
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel Value="Subject" for="caseSubject" />
+                    <apex:outputText value="{!objCase.Subject}" id="caseSubject" />
+                </apex:pageblockSectionItem>
+
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel Value="Description" for="caseDescription" />
+                    <apex:outputText value="{!objCase.Description}" id="caseDescription" />
+                </apex:pageblockSectionItem>
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection columns="2" title="Comment Details" collapsible="false" id="pharmacyCCPbs">
+                <apex:actionRegion renderRegionOnly="true">
+                    <apex:outputpanel id="hiddenCode">
+                        <apex:pageblockSectionItem id="pharmacyCCPbsi1">
+                            <apex:inputHidden value="{!sCodeHidden}" id="pharmacyCCCode" />
+                        </apex:pageblockSectionItem>
+                    </apex:outputpanel>
+                </apex:actionRegion>
+                
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel Value="Mail Order Pharmacy Log Code" for="pharmacyCCBody" /> 
+                   <apex:outputPanel >
+                    <div class="requiredCss" id="logId">
+                    <apex:selectList value="{!sCode}" size="1" id="LogCodeID">
+                        <apex:selectOptions value="{!CaseCommentOptions}" />
+                        <apex:actionSupport event="onchange" action="{!populateHiddentVal}" rerender="hiddenCode" />
+                    </apex:selectList>
+                     </div>
+                 </apex:outputPanel>   
+                </apex:pageblockSectionItem>
+					
+				<apex:pageBlocksectionItem >
+				<apex:outputpanel > </apex:outputpanel>
+		        	<apex:outputPanel styleClass="reminderMessage">
+		        		<br/><apex:outputText value="{!$Label.CaseReminderMessageCommentsHPLine1_CASE_HUM}" />
+		                <br/><apex:outputText value="{!$Label.CaseReminderMessageCommentsHPLine2_CASE_HUM}" />
+		        	</apex:outputPanel>
+	        	</apex:pageBlocksectionItem>
+                <apex:pageblockSectionItem id="pharmacyCCPbsi2">
+                    <apex:outputLabel Value="Comment" for="pharmacyCCBody" />
+                    <apex:outputPanel >
+                    <div class="requiredCss">
+                    <apex:inputTextArea value="{!sCaseCommentBody}"  id="pharmacyCCBody" label="{!$Label.case_comments}" html-maxlength="1900" rows="8" cols="75"/>
+                    <BR/>Limit:  1900 Characters
+               		</div>
+               		</apex:outputPanel>
+                </apex:pageblockSectionItem>
+				
+            </apex:pageBlockSection>
+            <div id="OMSErrorMsgId" class="displayNone centerAlign"></div>
+				<div id="CCLoadingImageId" class="centerAlign displayNone">
+				    <img src="/img/loading.gif" />
+				    <span class="waitingDescription">{!$Label.LOADING_HUM}</span>
+				</div>
+
+        </apex:pageBlock>
+
+        <apex:pageBlock title="Case Comments">
+
+            <apex:outputpanel rendered="{!bHasComments}">
+                <apex:pageBlockTable value="{!lstCaseComment}" var="comment">
+                    <apex:column headerValue="Comment">
+                        <apex:outputText escape="false" value="{!JSENCODE(comment.commentText)}" style="font-size: 11px;" />
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:outputpanel>
+            <apex:outputpanel rendered="{! !bHasComments}">
+                <apex:outputText value="{!$Label.HUMNo_records_to_display}"/>
+            </apex:outputpanel>
+        </apex:pageBlock>
+        <apex:actionfunction name="saveCCAndClose" action="{!saveCaseComments}" oncomplete="closeSubTabCase();" />
+        <apex:actionfunction name="saveCC" action="{!saveCaseComments}" rerender="CCLoadingImageId" />
+        <apex:actionFunction name="commitSaveComment" action="{!saveHPCaseComment}"  rerender="abs" oncomplete="document.getElementById('CCLoadingImageId').style.display = 'none';" >
+	   <apex:param name="redirectFlag" value="" />
+	   </apex:actionFunction>
+    </apex:form>
+</apex:page>

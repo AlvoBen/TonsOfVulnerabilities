@@ -1,0 +1,186 @@
+﻿<!--*****************************************************************************************************************************
+LWC Name : homeDiscussionFeed_LWCCommunity_HUM.html
+Function    : This LWC component uses to display the feed items on community home page
+
+Modification Log:
+Developer Name           Code Review              Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Nitaj Titans                                   08/03/2021                   Original Version
+*******************************************************************************************************************************-->
+<template>
+    <div>
+         <template if:true={isLoading}>
+             <lightning-spinner alternative-text="Loading" variant="brand" size="medium">
+             </lightning-spinner>
+         </template>
+    </div>
+    <div if:true={isCompVisible}>
+     <lightning-card title="Discussion Feed" class="card-container" if:false={isGuestUser}>
+         <div class="slds-grid slds-grid_vertical-align-end slds-grid_align-spread slds-p-around_small">
+             <div class="slds_align-left">
+                 <lightning-combobox options={latestFeedOptions}
+                                     onchange={handleSortItemChange}
+                                     value={sortByValue}
+                                     name={label.sortByLabel}
+                                     label={label.sortByLabel}
+                                     placeholder={label.selectLabel}>
+                 </lightning-combobox>
+             </div>
+ 
+             <div class="right-actions slds-grid slds-grid_align-end slds-grow">
+                 <div class="slds-form-element slds-m-right_x-small">
+                     <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left-right search-input">
+                         <lightning-icon class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default"
+                                         icon-name="utility:search" size="x-small" alternative-text="icon"></lightning-icon>
+                         <input type="text" id="text-input-id-1" placeholder={label.searchLabel} class="slds-input"
+                                onkeyup={handleKeyUp}
+                                value={inputValue}/>
+                         <button if:true={clearIconFlag} class="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
+                                 title="Clear" onclick={resetData}>
+                             <lightning-icon class="slds-button__icon slds-icon-text-light" icon-name="utility:clear" size="x-small"
+                                             alternative-text="icon"></lightning-icon>
+                         </button>
+                     </div>
+                 </div>
+ 
+                 <lightning-button-menu alternative-text="Show menu"
+                                        icon-name="utility:filterList" class="slds-m-right_x-small"
+                                        onselect={handleFilteration}
+                                        menu-alignment="right">
+                     <template for:each={feedOptions} for:item="action">
+                         <lightning-menu-item label={action.label}
+                                              value={action.value}
+                                              key={action.label}
+                                              class="slds-dropdown_right"
+                                              prefix-icon-name="utility:"
+                                              data-id={action.value}>
+                         </lightning-menu-item>
+                     </template>
+                 </lightning-button-menu>
+ 
+                 <button title="refresh" type="button" class="slds-button slds-button_icon slds-button_icon-border"
+                         onclick={handleRefresh}>
+                     <lightning-icon icon-name="utility:refresh" size="x-small"
+                                     alternative-text="icon"></lightning-icon>
+                 </button>
+             </div>
+         </div>
+         <div if:true={hasNoData} class="slds-box nocontent-section">
+             <p>
+                 <strong>{label.noFeedLabel}</strong><br />
+                 {label.noContentLabel}
+             </p>
+         </div>
+         <div class="slds-feed">
+             <ul class="slds-feed__list">
+                 <template for:each={feedItemList} for:item="item">
+                     <li class="slds-feed__item" key={item.recordId}>
+                         <article class="slds-post">
+                             <header class="slds-post__header slds-media">
+                                 <div class="slds-media__body">
+                                     <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                         <p><span style="color:blueviolet;">{item.userName} </span> -- <span><Strong>{item.feedType}</Strong></span></p>
+                                     </div>
+                                     <p class="slds-text-body_small">
+                                         {item.createDate}
+                                     </p>
+                                 </div>
+                             </header>
+                             <div class="slds-post__content slds-text-longform">
+                                 <p>
+                                     {item.body}
+                                 </p>
+                             </div>
+                             <footer class="slds-post__footer">
+                                 <ul class="slds-post__footer-actions-list slds-list_horizontal">
+                                     <li class="slds-col slds-item slds-m-right_medium">
+                                         <button if:false={item.liked} title="Like this item" class="slds-button_reset slds-post__footer-action"
+                                                 aria-pressed="false" name="Like" onclick={submitOrRemoveFeedLike} data-id={item.recordId}>
+                                             <lightning-icon class="slds-icon slds-icon_small slds-icon-text-default"
+                                                             icon-name="utility:like"
+                                                             size="x-small"
+                                                             alternative-text="icon"></lightning-icon>{label.likeLabel}
+                                         </button>
+                                         <button if:true={item.liked} title="Already Liked" class="slds-button_reset slds-post__footer-action"
+                                                 aria-pressed="false" name="Liked" data-button-liked={item.recordId} onclick={submitOrRemoveFeedLike} data-id={item.recordId}>
+                                             <lightning-icon class="slds-icon slds-icon_small slds-icon-text-default"
+                                                             icon-name="utility:like"
+                                                             size="x-small"
+                                                             alternative-text="icon"></lightning-icon>{label.likedLabel}
+                                         </button>
+                                     </li>
+                                     <li class="slds-col slds-item slds-m-right_medium">
+                                         <button if:true={item.commentType} title="Comment on this item" class="slds-button_reset slds-post__footer-action"
+                                                 data-id={item.recordId} onclick={handleCommentSection}>
+                                             <lightning-icon class="slds-icon slds-icon_small slds-icon-text-default"
+                                                             icon-name="utility:comments"
+                                                             size="x-small"
+                                                             alternative-text="icon"></lightning-icon>{label.commentLabel}
+                                         </button>
+                                         <button if:false={item.commentType} title="Comment on this item" class="slds-button_reset slds-post__footer-action"
+                                                 data-id={item.recordId} onclick={handleCommentSection}>
+                                             <lightning-icon class="slds-icon slds-icon_small slds-icon-text-default"
+                                                             icon-name="utility:comments"
+                                                             size="x-small"
+                                                             alternative-text="icon"></lightning-icon>{label.answerLabel}
+                                         </button>
+                                     </li>
+                                 </ul>
+                             </footer>
+                         </article>
+                         <div class="slds-feed__item-comments">
+                             <div class="slds-p-horizontal_medium slds-p-vertical_x-small">
+                                 {item.LikeCount} {label.peopleLikedLabel}
+                             </div>
+                         </div><br/>
+                         <div class="slds-feed__item-comments">
+                             <div if:true={item.showMoreCommentBox} class="slds-p-horizontal_medium slds-p-vertical_x-small slds-grid">
+                                 <button if:false={item.hideComments} data-id={item.recordId} class="slds-button_reset slds-text-link" onclick={handleMoreOrHideComments}>{label.moreCommentsLabel}</button>
+                                 <button if:true={item.hideComments} class="slds-button_reset slds-text-link" onclick={handleMoreOrHideComments}>{label.hideCommentsLabel}</button>
+                                 <span class="slds-text-body_small slds-col_bump-left">{item.showCommentCount} of {item.commentCount}</span>
+                             </div>
+                             <ul>
+                                 <template for:each={item.commentWrapperList} for:item="cmnt">
+                                     <li key={cmnt.commentRecordId}>
+                                         <article class="slds-comment slds-media slds-hint-parent">
+                                             <div class="slds-media__body">
+                                                 <header class="slds-media slds-media_center">
+                                                     <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                                         <p class="slds-truncate" title="user name" style="color:blueviolet;">
+                                                             {cmnt.commentUserName}
+                                                         </p>
+                                                     </div>
+                                                 </header>
+                                                 <div class="slds-comment__content slds-text-longform">{cmnt.commentBody}</div>
+                                                 <footer>
+                                                     <ul class="slds-list_horizontal slds-has-dividers_right slds-text-body_small">
+                                                         <li class="slds-item">{cmnt.commentCreatedDate}</li>
+                                                     </ul>
+                                                 </footer>
+                                             </div>
+                                         </article>
+                                     </li>
+                                 </template>
+                             </ul>
+                             <div data-comment-section='commentTextArea'
+                                  data-comment-sectionarea={item.recordId} class="slds-media slds-comment slds-hint-parent">
+                                 <div class="slds-media__body">
+                                     <div class={expandTextarea} data-comment='commentTextArea' data-comment-area={item.recordId} style="min-height:0rem;background-color: rgb(247 247 247);border:none;">
+                                         <textarea class="slds-publisher__input slds-input_bare slds-text-longform textarea-section"
+                                                   placeholder={label.writeCommentLabel}
+                                                   onclick={handleCommentClick} data-text='commentText' data-id={item.recordId} data-text-area={item.recordId}></textarea>
+                                         <div class="slds-publisher__actions slds-grid slds-grid_align-spread slds-align_right">
+                                             <button class="slds-button slds-button_brand comment-button" data-id={item.recordId} onclick={submitComment}>Comment</button>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                     </li>
+                 </template>
+             </ul>
+             <lightning-button if:true={showViewMore} label={label.viewmoreLabel} onclick={handleMoreFeeds} class="slds-m-left_x-small slds-align_absolute-center"></lightning-button>
+         </div>
+     </lightning-card>
+    </div>
+ </template>

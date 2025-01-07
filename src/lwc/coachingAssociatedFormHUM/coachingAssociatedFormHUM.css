@@ -1,0 +1,49 @@
+.my-icon {
+    padding: 0rem;    
+}
+
+.doc-type-tooltip {
+    bottom: 0.2rem;
+}
+
+.heading-green {
+    color: #04844B;
+}
+
+.icon-margin {
+    margin-left: -16px;
+}
+
+.text-wrap {
+    word-break: break-word;
+}
+
+.dropdown-width {
+    width: max-content;
+}
+
+.no-result-message {
+    background-color: #ECECEC;
+}
+
+.exapandable-associated .slds-icon-standard-account  {
+    background-color: #04844B;
+}
+
+
+.pwd-options-list {
+    width: max-content;
+    top: 70%;
+    left: 60%;
+}
+
+.gear-icon {
+    display: flex;
+    justify-content: end;
+    flex: 1;
+}
+.pwd-options-list[c-coachingAssociatedFormHUM_coachingAssociatedFormHUM] {
+    width: max-content;
+    top: 70%;
+    left: 80%;
+}

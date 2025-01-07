@@ -1,0 +1,40 @@
+﻿<!--
+HTML        : pharmacyBenefitsAndAuthorizationsTabHum
+Version              : 1.0
+Created On           : 10/14/2021
+Function             : Component to display to pharmacy benefits and authorization details
+
+Modification Log:
+* Developer Name                    Date                         Description
+* Nirmal Garg                       10/14/2021                   Original Version
+* Vishal Shinde                      08/28/2023                  US- 4833055-User Story 4833055 Mail Order Management: Pharmacy - Iconology- Authorization (Lightning)
+*------------------------------------------------------------------------------------------------------------------------------
+*-->
+<template>
+    <div class="slds-var-p-top_xxx-small">
+        <lightning-tabset variant="scoped">
+            <lightning-tab label="Authorizations" value="0"
+                           class="slds-p-bottom_none">
+                <lightning-layout class="detail-container">
+                    <lightning-layout-item size="12" medium-device-size="12"
+                                           class="detail-item slds-var-m-bottom_small">
+                        <c-pharmacy-authorizations-hum enterprise-id={enterpriseId}
+                                                       record-id={recordId} calledfrompharmacy={calledfrompharmacy}
+						                               pharmacy-authorizations={pharmacyAuthorizations} 
+                                                       pharm-auth-service-error={pharmAuthServiceError}
+						       ></c-pharmacy-authorizations-hum>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-tab>
+            <lightning-tab label="Benefits" value="1"
+                           class="slds-p-bottom_none">
+                <lightning-layout class="detail-container">
+                    <lightning-layout-item size="12" medium-device-size="12"
+                                           class="detail-item slds-var-m-bottom_small">
+                        <c-pharmacy-benefits-hum account-id={accountId} pharmacy-member-details={pharmacyMemberDetails}></c-pharmacy-benefits-hum>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-tab>
+        </lightning-tabset>
+    </div>
+</template>

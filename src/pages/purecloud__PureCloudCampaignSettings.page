@@ -1,0 +1,54 @@
+﻿<apex:page sidebar="false" showHeader="false" controller="purecloud.PCFeatureController">
+    <apex:outputPanel rendered="{!campaignManagementEnabled}">
+        <apex:includeLightning />
+        <apex:slds />
+        <apex:includeScript value="{!$Resource.purecloud__jquery}"/>
+        <link href="{!URLFOR($Resource.PureCloudStaticResources, 'stylingResources/css/customCallCenterSettings.css')}" rel="stylesheet" />
+        <script type="text/javascript"> var sessionId = '{!$Api.Session_Id}';</script>
+        <script>
+            $Lightning.use("purecloud:PureCloudCampaignLightningOutApp", function() {
+                
+                $Lightning.createComponent("purecloud:PCCampaignSettings", { sessionId: sessionId}, "lightning", function(cmp) {
+                    // Handle navigation to the PC Credentials page
+                    $A.eventService.addHandler({
+                        event: 'force:navigateToURL',
+                        handler: function(event) {
+                            window.location.href = '{!URLFOR("/apex/PureCloudIntegrationsSharedSettings")}';
+                            if (window.parent && window.parent.changeSelectedMenu) {
+                                window.parent.changeSelectedMenu('Shared Settings');
+                            }
+                        }
+                    });
+                    
+                    $('#spinner-container').remove();
+                });
+                
+            });
+        </script>
+        <style>
+
+            body {
+                padding: 20px;
+            }
+            
+        </style>
+
+        <apex:sectionHeader title="Genesys Cloud for Salesforce" subtitle="Campaign Management"/>
+
+        <div id="spinner-container">
+            <div class="slds-spinner_container">
+              <div role="status" class="slds-spinner slds-spinner--large slds-spinner--brand">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+              </div>
+            </div>
+        </div>
+
+        <div id="lightning" />
+
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!!campaignManagementEnabled}">
+        <h1>This feature is disabled.</h1>
+    </apex:outputPanel>
+</apex:page>

@@ -1,0 +1,133 @@
+﻿<!--
+File Name        : loggingExistingCaseModalHum.html
+Version          : 1.0 
+Created Date     : 01/04/2022   
+Function         : Lightning Web Component used to display Existing Cases and logging
+Modification Log :
+* Developer                          Date                  Description
+*************************************************************************************************
+* Kiran Bhuvanagiri                 01/04/2022            User Story 2759501: Original Version
+* Kiran Bhuvanagiri					05/23/2022			  User Story 2882456: Case Documentation for Demographic Updates (CRMS) 
+************************************************************************************************** -->
+
+
+<template>
+    <!--Use template if:true to display/hide popup based on isModalOpen value-->
+    <template if:true={isModalOpen}>
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+            aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container" style="height:40rem">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                        title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                            size="small"></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Existing Case
+                    </h2>
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <span>
+                                <lightning-input id="caseNumberField" name="caseNumberField" value={caseNumberInput}
+                                    label="Case Number" onchange={handleInputChange}></lightning-input>
+                            </span>
+                        </div>
+                        <div class="slds-col">
+                            <span>
+                                <lightning-input id="startDate" type="date" name="startDate" label="Start Date" value={startDateInput} onchange={handleInputChange}>
+                                </lightning-input>
+                            </span>
+                        </div>
+                        <div class="slds-col">
+                            <span>
+                                <!--(value, onchange)-->
+                                <lightning-input id="endDate" type="date" name="endDate" label="End Date" value={endDateInput} onchange={handleInputChange}></lightning-input>
+                            </span>
+                        </div>
+                        <div class="slds-col"  style="padding-top:1.5rem;">
+                            <span>
+                                <lightning-button variant="brand" label="Search" title="Search" onclick={handleSearch} class="slds-m-left_x-small"></lightning-button>
+                            </span>
+                        </div>
+                        <div class="slds-col"  style="padding-top:1.5rem;">
+                            <span>
+                                <lightning-button variant="brand" label="Clear Filters" title="Clear Filters" onclick={handleClearFilters} class="slds-m-left_x-small"></lightning-button>
+                            </span>
+                        </div>
+                    </div>
+                     <div class="slds-notify slds-notify_alert slds-alert_warning" style="margin-top: 1.0rem" role="alert" if:true={bShowWarningMessage}>
+                        <span class="slds-assistive-text">warning</span>
+                        <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Warning">
+                            <lightning-icon icon-name="utility:warning" size="small" variant="inverse"> </lightning-icon>
+                        </span>
+                        <h2>{sMessageContent}</h2>
+                    </div> 
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <lightning-datatable key-field="id" data={recordsToDisplay} columns={columns}
+                        default-sort-direction={defaultSortDirection} sorted-direction={sortDirection} onrowselection={handleRowSelection}
+                        sorted-by={sortedBy} onsort={onHandleSort} max-row-selection="1" is-loading={isLoading}>
+                    </lightning-datatable>
+                </div>
+               
+                <!-- Modal/Popup Box LWC footer starts here -->
+                <footer class="slds-modal__footer" style="display:flex;">
+                    
+                    <div class="slds-float_left">
+                        <lightning-combobox variant="label-inline" style="width:20rem;" label="Show Entries" value={showEntriesValue} options={entriesOptions} onchange={handleSetEntriesChange}></lightning-combobox>
+                    </div>
+                    <div class="slds-align_absolute-center">
+                        <lightning-button
+                            variant="brand"
+                            title="previous"
+                            class="slds-p-horizontal_small"
+                            label="Previous"
+                            icon-name="utility:chevronleft"
+                            icon-position="left"
+                            disabled={prevBtnDisabled}
+                            onclick={processMe}>
+                        </lightning-button>
+                        <template if:false={hideNumberButton}>
+                            <lightning-button
+                            label="1"
+                            onclick={processMe}>                                
+                        </lightning-button> 
+                        <p >......</p>
+                        <template iterator:it={pageList}> 
+                            <lightning-button           
+                                key={it.value}
+                                label={it.value}
+                                onclick={processMe}>
+                            </lightning-button> 
+                        </template> 
+                        <p >......</p>
+                        <lightning-button
+                            label={totalPages}
+                            onclick={processMe}>
+                        </lightning-button>
+                        </template>
+                        <lightning-button
+                            variant="brand"
+                            title="last"
+                            class="slds-p-horizontal_small"
+                            label="Next"
+                            icon-name="utility:chevronright"
+                            icon-position="right"
+                            disabled={nextBtnDisabled}
+                            onclick={processMe}>
+                        </lightning-button>
+                    </div> 
+                    <div class="slds-float_right">
+                        <button class="slds-button slds-button_neutral" onclick={closeModal} title="Cancel">Cancel</button>
+                        <button class="slds-button slds-button_brand" onclick={submitDetails} disabled={disableSave} title="Log">Save & Log</button>
+                    </div>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

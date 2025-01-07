@@ -1,0 +1,84 @@
+﻿<!--
+Component Name   : TaskHeirarchyTask_CMP_HUM.component
+Version          : 1.0
+Created On       : 09/13/2016
+Function         : VF Component to display Task Heirarchy on task Detail Page
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Avinash Choubey           40794 	                   09/13/2016                    Original version
+ * Avinash Choubey           42221 	                   10/03/2016            		 added getTaskComment method REQ - 252573
+ * Avinash Choubey                 		           	   10/13/2016           		 added fix for Defect 244136
+ * Avinash Choubey           43537             		   10/14/2016          		  	 Changes made for REQ 288714
+ * Mithra Bharadwaj                                    05/10/2021                 US#2089563 Sonar Qube Changes
+ * Tharun Madishetti                                  07/14/2023         US-4647041: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Logging & Tasks (Group 1)
+  **************************************************************************************************************************** 
+ -->
+<apex:component controller="TaskHeirarchyTask_C_HUM" >
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}"/>
+  <apex:attribute id="parentCaseId" name="parentCaseId" description="Parent Case ID" type="String" required="true"></apex:attribute>
+  <apex:attribute id="parentTaskId" name="parentTaskId" type="string" description="Parent Task ID" required="true"/>
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/TREEGRID_SR_HUM/styles.css')}"/>
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/TREEGRID_SR_HUM/jquery.treegrid.css')}"/>
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}"/>
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}"/>
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CSS/HoverOver.css')}"/>
+  <apex:includescript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.treegrid.js')}" / >
+  <apex:includeScript value="{!URLFOR($Resource.TASKHEIRARCHY_TASK_SR_HUM,'TaskHeirarchyTask_SR_JS_HUM.js')}"/>
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.TASKHEIRARCHY_TASK_SR_HUM, 'TaskHeirarchyTask_SR_CSS_HUM.css')}"/>
+
+  <div class="Maindiv" id="mainDivId">
+    <Table>
+      <tr><td  width= "8%"> <a id="expandAllLink" onclick=" expAll(); return false " class="linkStyle AnchorTag">{!$Label.Expand_All_link}</a>  </td>
+        <td width="20%"> <a id="collapseAllLink" onclick=" colAll();" class="linkStyle AnchorTag">{!$Label.Collapse_All_Link}</a></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      </table>
+
+      <table class="tree MaintableStyle table table-striped table-bordered table-hover nowrap compact"  id="taskHeirarchyTable"  cellspacing="0" >
+        <thead>
+          <tr>
+            <th class="MainTableHeader" >{!$Label.HumTaskNumber}</th>
+            <th class="MainTableHeader">{!$Label.HumTaskType}</th>
+            <th class="MainTableHeader">{!$Label.HumDueDate}</th>
+            <th class="MainTableHeader">{!$Label.HumStatus}</th>
+            <th class="MainTableHeader">{!$Label.HumPriority}</th>
+            <th class="MainTableHeader">{!$Label.HumAgeSinceCreated}</th>
+            <th class="MainTableHeader">{!$Label.HUMDateTimeOpen}</th>
+            <th class="MainTableHeader">{!$Label.HUMDateTimeClosed}</th>
+            <th class="MainTableHeader">{!$Label.HumTaskOwner}</th>
+            <th class="MainTableHeader">{!$Label.HumOwnerQueue}</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  <div id="PopUp" class="arrow_box wordWrap">
+    <apex:outputPanel id="ComponentRef" styleClass="componentRef">
+      <apex:outputText id="TaskComemnt" value="" styleClass="wordWrap">
+        <script>
+          var scomment ='';
+          var sCommentID = '{!$Component.TaskComemnt}' ;
+          scomment='{!JSENCODE(sTaskComment)}';
+          taskComment(scomment,sCommentID);
+        </script>
+      </apex:outputText>
+
+    </apex:outputPanel>
+  </div>
+  <apex:actionFunction name="callFunAF" action="{!getComments}" reRender="ComponentRef" oncomplete="onCompleteOfAF('{!JSENCODE(sTaskId)}');">
+    <apex:param name="taskId" value=""/>
+  </apex:actionFunction>
+  <script type="text/javascript">
+    var parentTaskId ='{!JSENCODE(parentTaskId)}';
+    var parentCaseId ='{!JSENCODE(parentCaseId)}';
+    var currentTaskID ='';
+    var currentTaskNumber='';
+    var  sGetTaskTreeDetailsRemote = '{!$RemoteAction.TaskHeirarchyTask_C_HUM.getTreeDetails}';
+    getTaskHeirarchyTask();
+
+  </script>
+</apex:component>

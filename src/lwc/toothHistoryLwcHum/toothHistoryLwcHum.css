@@ -1,0 +1,23 @@
+.blackIcon {
+    --sds-c-icon-color-foreground-default: white;
+    --sds-c-icon-color-foreground: white;
+    --sds-c-icon-color-background: white;
+    border-color: blue;
+}
+
+:host {
+    --slds-c-button-brand-color-border: blue;
+}
+
+.my-class:hover {
+    --sds-c-icon-color-foreground-default: #009cdb;
+}
+
+.my-classHover lightning-icon{
+    visibility: hidden;
+}
+
+.my-classHover:hover lightning-icon{
+    visibility:visible;
+    --sds-c-icon-color-foreground-default: #009cdb;
+}

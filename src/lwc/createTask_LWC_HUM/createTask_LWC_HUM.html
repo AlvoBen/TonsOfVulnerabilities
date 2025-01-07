@@ -1,0 +1,227 @@
+﻿<!--*******************************************************************************************************************************
+LWC JS Name : CreateTask_LWC_HUM.html
+Function    : This used to create new task on case page and dependent task on task page
+
+Modification Log: 
+Developer Name           Code Review                      Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Shailesh Bagade                                        22/06/2022                  initial version 
+* Raj Paliwal											 17/02/2023					 US: 4163250 -Task Type (Notification) NEW Task
+* Vishal Shinde 										 17/02/2023					 US: 4184082 -Task Type (Notification) EDIT Task
+* Prasuna Pattabhi 										 08/24/2023					 US: 4412371 - Market Credentialing Task Fields
+* Prasuna Pattabhi 										 09/08/2023					 US: 4412371 - Demo Comments Implemented
+*********************************************************************************************************************************-->
+<template>
+    <article class="maxheight">
+    <template if:false={hideFooterHeader}>
+        <div if:false={hideFooterHeader} class="modal-header slds-modal__header slds-size_1-of-1">
+            <h4 class="title slds-text-heading--medium">{headerLabel}</h4>
+        </div>
+    </template>
+    <div class="slds-modal__content slds-p-around--x-small slds-align_absolute-center slds-size_1-of-1 slds-is-relative">
+        <form onclick={dropdownhide} style="overflow:hidden;">
+            <div if:true={showErrorMsges} style="color: white;background: #c23934;margin: 0px !important;" class="page-error-message slds-box hc-info-text slds-m-horizontal_medium slds-m-top_small">Review the error on this page</div>
+            <div if:true={showErrorMsgesMCDProvider} class="mcd-error-message slds-m-top_small slds-m-bottom_small"><p class="slds-col slds-align-middle slds-p-left_small" style="color:#c23934; font-size: 13px;">{CredentialingErrorMsg}</p></div>
+            <template if:true={showSpinner}>
+                <lightning-spinner size="medium" alternative-text="Loading"></lightning-spinner>
+            </template>
+            <lightning-layout multiple-rows="true" >
+            <lightning-layout-item padding="horizontal-small" size="12" class="slds-p-horizontal_xx-small">
+                <lightning-formatted-text class="slds-text-title_bold" value="Task Information" ></lightning-formatted-text>
+            </lightning-layout-item>       
+            <lightning-layout-item padding="horizontal-small" size={medicareSize} class="slds-p-horizontal_xx-small">
+                <lightning-combobox dropdown-alignment="auto" name="status"  class="status mandatory" value={sStatus} onchange={handleOnChange} options={statusOptions} label='Status' data-id='status'>                    
+                </lightning-combobox>
+            </lightning-layout-item>
+            <lightning-layout-item padding="horizontal-small" size={medicareSize} class="slds-p-horizontal_xx-small">
+                <lightning-combobox name="taskType" class="taskType mandatory" onchange={handleOnChange} field-level-help="'Work Task' is selected when case resolution is dependent on task completion. 'Notification Task' is selected when case resolution is not dependent on task completion." dropdown-alignment="auto" value={sType}  options={taskTypeOptions} label='Task Type' data-id='taskType'>                    
+                </lightning-combobox>                
+            </lightning-layout-item>            
+            
+            <template if:true={sMedicareId}>
+                <lightning-layout-item  class="slds-p-horizontal_xx-small" size={medicareSize} >
+                        <p class="field-title">
+                            <lightning-formatted-text class="slds-text-title" value="Medicare Id" ></lightning-formatted-text>
+                        </p>
+                        <lightning-formatted-text class="slds-form-element__static slds-truncate" value={sMedicareId} ></lightning-formatted-text>                       
+                </lightning-layout-item>
+            </template>
+            <template if:true={CallbackRequestedBool}>
+                <div style="padding-bottom: 5px;"></div>
+                <lightning-layout-item padding="horizontal-small" size="12" class="slds-p-horizontal_xx-small">
+                    <lightning-formatted-text class=" slds-text-title slds-p-right_x-small slds-form-element__label" value="CallBack Requested?"></lightning-formatted-text>
+                </lightning-layout-item>
+                <lightning-layout-item padding="horizontal-small" size="6" class="slds-p-horizontal_xx-small">
+                    <lightning-layout multiple-rows="true">
+                        <lightning-layout-item size="2" class="slds-col">
+                            <lightning-radio-group 
+                                name="callbackRequested"
+                                label=""
+                                options={CallbackRequestedOptions}
+                                value={sCallbackRequested}
+                                data-id='callbackRequested'
+                                type="radio"
+                                onchange={handleOnChange}
+                                class="callbackRequested">
+                            </lightning-radio-group>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="2" class="slds-col">
+                            <lightning-radio-group
+                                name="callbackRequested" 
+                                label=""
+                                options={CallbackRequestedOptions1}
+                                value={sCallbackRequested}
+                                data-id='callbackRequested'
+                                type="radio"
+                                onchange={handleOnChange}
+                                class="callbackRequested">
+                            </lightning-radio-group>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </lightning-layout-item>
+            </template>
+            <lightning-layout-item padding="horizontal-small" size="12" class="slds-p-horizontal_xx-small slds-m-top--x-small">
+                <lightning-formatted-text  class="slds-text-title_bold" value="Task Transfer"></lightning-formatted-text>
+            </lightning-layout-item>  
+            <lightning-layout-item padding="horizontal-small" size="6" class="slds-p-horizontal_xx-small">
+                <lightning-combobox dropdown-alignment="auto" name="serviceCenter" class="serviceCenter mandatory" placeholder="---None---" value={sServiceCenter} onchange={handleOnChange} options={lstServiceCenter} label='Service Center' data-id='serviceCenter'>
+                </lightning-combobox>
+            </lightning-layout-item>
+            <lightning-layout-item  padding="horizontal-small" size="6" class="slds-p-horizontal_xx-small">
+                <lightning-combobox dropdown-alignment="auto" name="deparment" class="deparment mandatory"  value={sDepartment} placeholder="---None---" onchange={handleOnChange} options={lstDepartment} label='Department' data-id='department'>
+                </lightning-combobox>
+            </lightning-layout-item>
+            <lightning-layout-item padding="horizontal-small" size="6" class="slds-p-horizontal_xx-small">
+                <lightning-combobox dropdown-alignment="auto"  name="topic" class="topic" disabled={isTopicDisabled} value={sTopic} placeholder="Select a Topic" onchange={handleOnChange} options={lstTopic} label='Topic' data-id='topic'>
+                </lightning-combobox>
+            </lightning-layout-item>
+            <lightning-layout-item padding="horizontal-small" size="6" class="slds-p-horizontal_xx-small">
+                <c-custom-lookup-hum two-char-search-enabled = "true" scope-values={sUser}  selected-work-queue={queueName} onuserselect={handleOnChange} object-name="User" field-name="Name" label="User" data-id='user' placeholder="Search user" icon-name="standard:user"></c-custom-lookup-hum>
+            </lightning-layout-item>
+            <lightning-layout-item padding="horizontal-small" size="12" class="slds-p-horizontal_xx-small slds-m-top--x-small">
+                <lightning-formatted-text  class="slds-text-title_bold" value="Additional Information"></lightning-formatted-text>
+            </lightning-layout-item> 
+            <lightning-layout-item padding="horizontal-small" size="6" class="slds-p-horizontal_xx-small">
+                <lightning-combobox dropdown-alignment="auto" name="priority" class="priority mandatory" value={sPriority} onchange={handleOnChange} options={priorityOptions} label='Priority' data-id='priority'>
+                </lightning-combobox>
+            </lightning-layout-item>
+            <lightning-layout-item padding="horizontal-small" size="6" class="slds-p-horizontal_xx-small">                
+                <lightning-input type="date" name="dueDate" label="Due Date" onchange={handleOnChange} placeholder="Select date" value={sDueDate} class="dueDate" data-id="dueDate" date-style="short">
+                </lightning-input>
+            </lightning-layout-item>
+            <template if:true={showMCDProviderFields}>
+                <lightning-layout-item padding="horizontal-small" size="6" class="slds-p-horizontal_xx-small">
+                    <lightning-combobox dropdown-alignment="auto" field-level-help="Select the Credentialing Task being accomplished" name="credentialingTask" value={credentialingTask} onchange={handleOnChange} options={credentialingTaskPicklist} label='Credentialing Task' data-id="credentialingTask" class="credentialingTaskCls">
+                    </lightning-combobox>
+                </lightning-layout-item>
+                <lightning-layout-item padding="horizontal-small" size="6" class="slds-p-horizontal_xx-small">                
+                    <lightning-input type="date" field-level-help="Select the Credentialing Task Completion date" name="credentialingTaskCompletionDate" label="Task Completion Date" onchange={handleOnChange} placeholder="Select date" value={credentialingTaskCompletionDate} data-id="credentialingTaskCompletionDate" date-style="short" class="credentialingTaskCompletionDateCls">
+                    </lightning-input>
+                </lightning-layout-item>
+            </template>
+            <template if:true={CallbackRequestedBool}>
+                    <lightning-layout-item padding="horizontal-small" size="6" class="slds-p-horizontal_xx-small">
+                        <lightning-combobox dropdown-alignment="auto" name="timeZone"  class="timeZone" disabled={isTimeDisabled} placeholder="--None--" value={sTimeZone} onchange={handleOnChange} options={TimeZoneOptions} label='Callback Time Zone' data-id='timeZone' input="true">                    
+                        </lightning-combobox>
+                    </lightning-layout-item>
+                    <lightning-layout-item padding="horizontal-small" size="6" class="slds-p-horizontal_xx-small">
+                    </lightning-layout-item>
+                    <lightning-layout-item padding="horizontal-small" size="6" class="slds-p-horizontal_xx-small">                        
+                        <div class="slds-form-element">
+                            <div class="slds-form-element__control">
+                              <div class="slds-combobox_container">
+                                <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" aria-expanded="true" aria-haspopup="listbox">
+                                    <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                                        <lightning-input 
+                                            type="text" 
+                                            class="sCallBackSlotStartTime" 
+                                            label="Callback Slot Start Time" 
+                                            name="sCallBackSlotStartTime" 
+                                            data-id="sCallBackSlotStartTime" 
+                                            value={sCallBackSlotStartTime}  
+                                            onclick={dropdownBool} 
+                                            onchange={handleOnChange} 
+                                            disabled={isTimeDisabled} >
+                                        </lightning-input>
+                                    </div>
+                                    <div if:true={startTimeDropdownBoolean} class="slds-dropdown_length-5 slds-dropdown_fluid slds-popover" role="listbox" style="background-color:white;border-radius:5px;">
+                                        <ul class="slds-listbox slds-listbox_vertical"  role="presentation">
+                                            <template for:each={time} for:item="ele" for:index="ItemIndex">
+                                                <div key={ele.Id} role="presentation" class="slds-listbox__item">
+                                                    <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option" onclick={timefun}>
+                                                    <span class="slds-media__figure slds-listbox__option-icon"></span>
+                                                    <span class="slds-media__body">
+                                                        <li class="slds-truncate" role="option" onchange={handleOnChange} data-id="sCallBackSlotStartTime" data-value={ele.label}>{ele.label}</li>
+                                                    </span>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </ul>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                    </lightning-layout-item>
+                    <lightning-layout-item padding="horizontal-small" size="6" class="slds-p-horizontal_xx-small">
+                        <div class="slds-form-element">
+                            <div class="slds-form-element__control">
+                              <div class="slds-combobox_container">
+                                <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" aria-expanded="true" aria-haspopup="listbox">
+                                    <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                                        <lightning-input 
+                                            type="text" 
+                                            class="sCallBackSlotEndTime" 
+                                            label="Callback Slot End Time" 
+                                            name="sCallBackSlotEndTime" 
+                                            data-id="sCallBackSlotEndTime" 
+                                            value={sCallBackSlotEndTime}
+                                            onclick={dropdownBool} 
+                                            onchange={handleOnChange} 
+                                            disabled={isTimeDisabled}>
+                                        </lightning-input>
+                                    </div>
+                                    <div if:true={endTimeDropdownBoolean} class="slds-dropdown_length-5 slds-dropdown_fluid slds-popover" role="listbox" style="background-color:white;border-radius:5px;">
+                                        <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                            <template for:each={time} for:item="ele" for:index="ItemIndex">
+                                                <div key={ele.Id} role="presentation" class="slds-listbox__item">
+                                                    <div class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small" role="option" onclick={timefun1}>
+                                                    <span class="slds-media__figure slds-listbox__option-icon"></span>
+                                                    <span class="slds-media__body">
+                                                        <li class="slds-truncate" role="option" data-id="sCallBackSlotEndTime" onchange={handleOnChange} data-value={ele.label}>{ele.label}</li>
+                                                    </span>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </ul>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                    </lightning-layout-item>
+            </template>
+            <lightning-layout-item padding="horizontal-small" size="12" class="slds-p-horizontal_xx-small">
+                <lightning-textarea name="TaskComment" maxlength={inputLength} onchange={handleOnChange} value={sComment} label="Task Comment" data-id="comment" ></lightning-textarea>
+            </lightning-layout-item>
+            </lightning-layout>
+        </form>
+    </div>
+    
+    <template if:false={hideFooterHeader}>
+        <div class="modal-footer slds-modal__footer slds-size_1-of-1">
+            <lightning-button variant="neutral" label="Cancel" onclick={onCancelClick} class="slds-m-left_xx-small"></lightning-button>
+            <lightning-button variant="brand" label="Save" onclick={onSaveClick} class="slds-m-left_xx-small"></lightning-button>
+        </div>
+    </template>
+
+    <!-- </lightning-quick-action-panel>			   -->
+    <c-generic-modal-hum if:true={showActionModal} b-show-modal={showActionModal} title='Unsaved Changes'
+        buttons-config={buttonsConfig} oncontinue={onContinueClick} oncloseoverlay={onUnsavedCancelClick}
+        overlay-class="slds-modal__container slds-backdrop_open">
+        <div slot="content" class="slds-p-horizontal_x-large slds-p-bottom_medium slds-align_absolute-center">
+            You will lose any unsaved changes. Are you sure you want to continue? 
+        </div>
+    </c-generic-modal-hum>
+    </article>  
+</template>

@@ -1,0 +1,140 @@
+﻿<apex:page sidebar="false" controller="purecloud.PCFeatureController">
+    <apex:includeScript value="{!$Resource.purecloud__jquery}"/>
+    <link href="{!URLFOR($Resource.PureCloudStaticResources, 'stylingResources/css/customCallCenterSettings.css')}" rel="stylesheet" />
+    
+    <script type="text/javascript">
+
+        $(document).ready(function () {        
+            $('.side-nav-menu li .link').on('click', function (e) {
+                var $link = $(this);
+                changeSelectedLink($link);
+                $('iframe').attr('src', $link.attr('data-src'));
+            });
+        }); 
+
+        function changeSelectedLink($link) {
+            $('.side-nav-menu li .link').removeClass('selected');
+            $link.addClass('selected');
+        }
+
+        window.changeSelectedMenu = function (menuText) {
+            var $link = $('.side-nav-menu li .link').filter(function () { 
+                return $(this).text() == menuText; 
+            });
+            if ($link.length) {
+                changeSelectedLink($link);
+            }            
+        };
+
+    </script>
+    <style> 
+        html, html body.sfdcBody  {
+            padding: 0;
+            margin: 0;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+        .noSidebarCell {
+            padding: 0;
+            position: static;
+        }
+        #contentWrapper {
+            height: 90%;
+            height: calc(100% - 170px);
+        }
+        body .bodyDiv .outerNoSidebar {
+            height: 100%;
+            padding: 0;
+        }
+        #container {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            font-size: 1.1em;
+            background-color: #fff;
+        }
+        #left {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 230px;
+            overflow: hidden;
+        }
+        #right {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 230px;
+            border-left: 1px solid rgb(216, 221, 230);
+        }
+        .side-nav-header {
+            height: 50px;
+            line-height: 50px;
+            padding-left: 1rem;
+            color: rgba(0, 0, 0, 0.4);
+            text-transform: uppercase;
+        }
+        .side-nav-menu {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            color: rgb(22, 50, 92);
+        }
+        .side-nav-menu li {
+            padding: 0;
+            margin: 0;
+            height: 50px;
+            line-height: 50px;
+        }
+        .side-nav-menu li .link {
+            display: block;
+            text-decoration: none;
+            padding: 0 12px 0 20px;
+            border-left: 5px solid transparent;
+            cursor: pointer;
+        }
+        .side-nav-menu li .link:hover {
+            background-color: rgb(244, 246, 249);
+        }
+        .side-nav-menu li .link.selected {
+            color: rgb(0, 112, 210);
+            background-color: rgb(240, 248, 252);
+            border-left: 5px solid rgb(0, 112, 210);
+        }
+        #right iframe {
+            height: 100%;
+            width: 100%;
+            border: none;
+        }
+    </style>
+    <div id="container">
+        <div id="left">
+            <div class="side-nav-header">Call Center</div>
+            <ul class="side-nav-menu">
+                <li><span data-src="/apex/CustomCallCenterSettings" class="link selected">Client Settings</span></li>
+            </ul>
+            <apex:outputPanel rendered="{!emailRoutingEnabled}">
+                <div class="side-nav-header">Integrations</div>
+                <ul class="side-nav-menu">
+                    <li><span data-src="/apex/PureCloudIntegrationsSharedSettings" class="link">Shared Settings</span></li>
+                </ul>
+                <ul class="side-nav-menu">
+                    <li><span data-src="/apex/PureCloudEmailRoutingSettings" class="link">Routing of Salesforce Emails</span></li>
+                </ul>
+                <ul class="side-nav-menu">
+                    <li><span data-src="/apex/PureCloudCampaignSettings" class="link">Campaign Management</span></li>
+                </ul>
+            </apex:outputPanel>
+        </div>
+        <div id="right">
+            <iframe src="/apex/CustomCallCenterSettings" scrolling="auto"></iframe>
+        </div>
+    </div>
+</apex:page>

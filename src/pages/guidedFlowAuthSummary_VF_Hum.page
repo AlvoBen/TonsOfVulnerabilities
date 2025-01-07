@@ -1,0 +1,44 @@
+﻿<!--/******************************************************************************************************************************
+Apex Class Name  : guidedFlowAuthSummary_LC_Hum
+Version          : 1.0
+Created Date     : 24th Feb 2022
+Function         : Test Class for guidedFlowAuthSummary_LC_Hum
+Test Class       :
+Modification Log :
+*  Developer              Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------
+*  Pinky Vijur                          05/11/2022            Original Version
+********************************************************************************************************************************/---->
+
+
+<apex:page id="idGuidedPage" >
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+  <apex:includeScript value="/support/console/35.0/integration.js"/>
+  <apex:includescript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.GuidedProcess_SR_HUM,'/GuidedProcess_SR_HUM/UnsavedGuidedProcessJS_SR_HUM.JS')}"/>
+
+
+
+  <apex:includeLightning />
+
+  <div id="LightningComponentid" />
+  <!-- the Id of div tag which will be used to render your LWC component  -->
+  <script>
+    $Lightning.use("c:procedureCodeSearchAppHum", function() {
+    $Lightning.createComponent("c:procedureCodeSearchHum",
+    {
+    MemberName : '{!$CurrentPage.parameters.MemberName}',
+    BirthDate: '{!$CurrentPage.parameters.Birthdate}',
+    MemberID : '{!$CurrentPage.parameters.MemberID}',
+    recordId : '{!$CurrentPage.parameters.ID}',
+    Phone : '{!$CurrentPage.parameters.Phone}'
+
+    },
+    "LightningComponentid", // the Id of div tag where your component will be rendered
+    function(cmp) {
+    console.log('Calling the LWC Component');
+    });
+    });
+
+  </script>
+</apex:page>

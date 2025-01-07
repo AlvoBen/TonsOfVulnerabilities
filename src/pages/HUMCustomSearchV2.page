@@ -1,0 +1,289 @@
+﻿<!--
+Page Name        : HUMCustomSearchV2
+Version          : 1.0 
+Created Date     : MAY 26 2014
+Function         : Main Search page which contains components pertaining to Member,Provider,Agent,Group,SearchEnrollment,Interaction Log
+                   Also contains logic to route softphone routing (Javascript in static resource)
+Modification Log :
+*   Modification ID     Developer            Code Review    Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*           1.0        Manish Kumar                         07/27/2015            Original Version 1.0
+*           1.1        Subhamay Mandal                      02/13/2017            Added action function for reset all method
+*           1.2        Subhamay mandal                      02/17/2017            Added action function to merge Interaction With, About and open Account detail page
+*           1.3        Amar Gadewar                         02/28/2017            REQ 301549 - Inject UEM URL Scripts 
+*    		1.4        Subhamay Mandal	                    05/11/2017            REQ - 313449 Provide universal reset button in search section to reset the search page(s) (CRM) 
+*    	    1.5        Subhamay Mandal	                    05/11/2017            REQ - 313453 interacting with and about need to be one button and open the account page (CRM)
+*           1.6        Subhamay Mandal                      06/15/2017            REQ - 322577 Ability to distinguish and highlight the correct record from all available Provider record when multiple lines return in the Search Results(CRM)
+* 	        1.7 	   Subhamay Mandal					    07/03/2017			  REQ - 320598 Ability to distinguish and highlight the correct record from all available record when multiple lines return in the Member Search Results(CRM)
+*           1.8        Asish Behera                         01/11/2018            REQ - 350394 Keyboard shortcut ALT+R implemented to reset the search page.
+*           1.9        Asish Behera                         02/28/2018            REQ - 354473 Limit/disable multiple clicks on "interacting with and about" button after the first click on creating an interaction(CRM)  
+*           1.10       Asish Behera                         03/13/2018            REQ - 357441 Remove rapidforce permission check
+*           1.11       Pallavi R              201881        03/20/2018            REQ - 357639 SF - TECH- MA Post Search Functionality
+*           1.12       Pallavi R                            06/05/2018            REQ - 363592 - Rollback Resolution Search tab Changes
+*           1.13       Amol Patil                           09/06/2018            REQ - 373386 - Display Password Prior to Interaction Being Created
+*	        1.14	   Satyam Malviya		  299404		10/18/2018			  Fixed for Defect # 386515
+*	        1.15	   Satyam Malviya		  299404		10/26/2018			  Fixed for Defect # 388944
+*           1.16       Satyam Malviya         302629        10/29/2018            Defect fix fir 389247 - REQ-350633 Account password notification screen reappears after clicking Save and New log button
+*           1.17       Asish Behera                         11/09/2018            REQ - 378894 User Voice Implementation (RF)
+*           1.18       Subhamay Mandal                      05/02/2019            REQ - 395551, REQ - 396404 Quality – MIR – Ability for CSR Supervisor to get a view/dashboard of the Cases owned by their team members that are nearing SLA/Over SLA (RF)
+* 			1.19	   Subhamay Mandal						05/28/2019			  REQ - 399325 Fixed layout on Search page with MIR bar
+*           1.20       Navajit Sarkar                       02/12/2021             REQ - 1726012 ClickTODial
+*           1.21       Atia Uzma                            03/25/2021            User Story 1898796: T1PRJ0001827 - MF 1 - RF Clean Up (RF)
+*           1.22       Moshitha Gunasekaran                 04/21/2021            US#2163329 - Removed PopulateUnknownMemberDetails method for checkmarx issues
+*           1.23                Ankit A                      08/10/2021            User story -2153743 : Adding Get Interaction Button in the Interaction Log Section and Fetching the Latest Interactions
+*           1.24       Sahil Verma                          09/02/2021            US-2230000 - Save and Continue button Functionality added
+*           1.25       Amar Gadewar                         10/05/2021            User Story 2737406: T1PRJ0001827 - MF 1 - AHT - Ability to Save and Create Interaction in single click on the Unknown Member Account (RF)
+*           1.26       Navajit Sarkar/Sahil Verma           02/17/2022             US#2191493 - SFDC_Caller Type population
+*           1.27       Santhi Mandava                       03/07/2024             User Story 5303730: T1PRJ0891742 - C01; Consumer Management - Classic VIT Remediation Search pages           
+-------------------------------------------------------------------------------------------------------------------------------->
+
+<apex:page cache="false" controller="HUMSearchControllerV2" docType="html-5.0" id="thePage"  sidebar="false" showheader="true">     
+    <apex:includeScript value="/support/console/38.0/integration.js"/>
+    <apex:includeScript value="/support/api/38.0/integration.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.HUMCustomSearchV2, 'HUMCustomSearch/main.js')}" />
+    <apex:outputText rendered="{!$Label.US1426106SwicthLabel == 'Y'}">
+        <apex:StyleSheet value="{!URLFOR($Resource.HUMCustomSearchV2, 'HUMCustomSearch/body.css')}" />
+    </apex:outputText>
+    <!-- <style type="text/css">  
+        /*US1426106 Fix*/      
+        body {
+            overflow-y: hidden;
+        }
+    </style> -->
+    <apex:StyleSheet value="{!URLFOR($Resource.HUMCustomSearch, 'HUMCustomSearch/main.css')}" />
+    <!-- Forms starts here -->
+    <apex:form id="formID">
+
+        <c:HUMActionStatusComponent />
+        <!-- This is Apex:tab panel which shows different search tabs -->
+        <div id="designDiv">
+			<c:CRMCaseNotification_CMP_AHT_HUM rendered="{!$Permission.MemberIssueResolution_HUM}"/>
+            <apex:outputpanel id="forReRender">
+                <apex:tabPanel id="tabPanel" inactiveTabClass="inactiveTab" switchType="client" tabClass="activeTab" value="{!sTabToBeFocussed}">
+                    <apex:tab id="memberSearch" label="Member Search" name="MemberSearch">
+                        <c:HUMMemberSearchComponentV2 HUMSearchController="{!this}" id="memberSearchComponent" searchName="Member" showGNACallCatergoryAlert="{!showCallCatergoryAlert}"></c:HUMMemberSearchComponentV2>
+                    </apex:tab>
+                    <apex:tab id="providerSearch" label="Provider Search" name="ProviderSearch">
+                        <c:HUMProviderSearchComponentV2 HUMSearchController="{!this}" id="provdiderSearchComponent" searchName="Provider"></c:HUMProviderSearchComponentV2>
+                    </apex:tab>
+                    <apex:tab id="grpSearch" label="Group Search" name="GroupSearch">
+                        <c:HUMGroupSearchComponentV2 HUMSearchController="{!this}" id="groupSearchComponent" searchName="Group"></c:HUMGroupSearchComponentV2>
+                    </apex:tab> 
+                    <apex:tab id="agencySearch" label="Agency/Broker Search" name="AgencyBrokerSearch">
+                        <c:HUMAgencyBrokerSearchComponentV2 HUMSearchController="{!this}" id="agencySearchComponent" searchName="Agency"></c:HUMAgencyBrokerSearchComponentV2>
+                    </apex:tab>
+                    <apex:tab id="searchEnroll" label="Search Enrollment" name="SearchEnrollment">
+                        <c:HumMemberSearchEnrollmentComponentV2 HUMSearchController="{!this}" id="memberSearchEnrollment" searchName="Enrollment"></c:HumMemberSearchEnrollmentComponentV2>
+                    </apex:tab>
+                     <apex:tab rendered="true" id="benifitVerification" label="MTV Benefit Verification" name="MTV Benefit Verification">
+                        <c:MTVBenefitVerification_CMP_HUM id="benefitVerification" ></c:MTVBenefitVerification_CMP_HUM>
+                    </apex:tab>
+                </apex:tabPanel>
+            </apex:outputpanel>
+        </div>
+         
+        <!-- Search Panel End -->
+        <!-- Interaction log section starts here ---- -->
+        <div id="footer">
+            <apex:outputPanel id="ft">
+            <!--US#2191493 - SFDC_Caller Type population-->
+                <script>               
+                    var interactingWith='{!JSENCODE(interactionLogController.oFetchInteraction.Interacting_With_type__c)}';
+                </script> 
+                <apex:actionregion > 
+                    <apex:actionFunction action="{!populateInteractionWithAndAboutDetails}" name="interactionWithAndAboutDetails" oncomplete="endtimeabt = Date.now(); if ({!AND(Switch_2230000,isGenesysUser==true)}){openIntSavedPopup();phoneBookCallerTypeUpdate(interactingWith);return false;}else{redirectToMemberDetail();}fireInteractingWith();fireInteractingAbout();" reRender="ft,errorMsgAgency,errorMsgGroup,errProviderSearchMsgs,errMemSearchMsgs,forChangeInqAbt" status="buttonStatus">
+                        <apex:param assignTo="{!strSearchContextName}" name="searchConext" value="" />
+                        <apex:param assignTo="{!bIsDataFromExternalSystem}" name="isFromExternalSystem" value="" />
+                        <apex:param assignTo="{!strJsonAccObject}" name="accObj" value="" />
+                        <apex:param assignTo="{!strInteractionWithID}" name="interactingWithID" value="" />
+                        <apex:param assignTo="{!strInteractionAboutId}" name="interactingAboutID" value="" />
+                        <apex:param assignTo="{!strInteractionID}" name="interactingID" value="" />
+                        <apex:param name="recordReadAccess" value="" />
+                        <apex:param assignTo="{!sConsumerIDList}" name="intConsumerTaxIds" value="" />
+                        <apex:param assignTo="{!sMemberAccType}" name="intMemType" value="" />                       
+                    </apex:actionFunction>
+                    <!-- Apex Action function called on click of Interacting About button in component -->
+                    <apex:actionFunction action="{!populateInteractionAboutDetails}" name="interactionAboutDetails" oncomplete="endtimeabt = Date.now();  fireInteractingAbout();" reRender="ft,errorMsgAgency,errorMsgGroup,errProviderSearchMsgs,errMemSearchMsgs,forChangeInqAbt" status="buttonStatus">
+                        <apex:param assignTo="{!strSearchContextName}" name="searchConext" value="" />
+                        <apex:param assignTo="{!bIsDataFromExternalSystem}" name="isFromExternalSystem" value="" />
+                        <apex:param assignTo="{!strJsonAccObject}" name="accObj" value="" />
+                        <apex:param assignTo="{!strInteractionAboutId}" name="interactingAboutID" value="" />
+                        <apex:param assignTo="{!sConsumerIDList}" name="intAbtConsumerTaxIds" value="" />
+                        <apex:param assignTo="{!sMemberAccType}" name="intAbtMemType" value="" />                       
+                    </apex:actionFunction>
+                    <!-- Apex Action function called on click of Interacting With button in component -->
+                    <apex:actionFunction action="{!populateInteractionWithDetails}" name="interactionWithDetails" onComplete="endtime = Date.now(); fireInteractingWith();" reRender="ft,errorMsgAgency,errorMsgGroup,errProviderSearchMsgs,errMemSearchMsgs" status="buttonStatus">
+                        <apex:param assignTo="{!strSearchContextName}" name="searchConext" value="" />
+                        <apex:param assignTo="{!bIsDataFromExternalSystem}" name="isFromExternalSystem" value="" />
+                        <apex:param assignTo="{!strJsonAccObject}" name="accObj" value="" />
+                        <apex:param assignTo="{!strInteractionWithID}" name="interactingWithID" value="" />
+                        <apex:param assignTo="{!sConsumerIDList}" name="intwithConsumerTaxIds" value="" />
+                        <apex:param assignTo="{!sMemberAccType}" name="intWithMemType" value="" />
+                    </apex:actionFunction>
+                    <!-- Apex Action function called on click of Record Link button in component -->
+                    <apex:actionFunction action="{!populateInteractionDetails}" name="interactionDetails" onComplete="redirectToMemberDetail();" reRender="tstpopup,ft,pbms,errorMsgAgency,errorMsgGroup,errProviderSearchMsgs,errMemSearchMsgs"  status="buttonStatus">
+                        <apex:param assignTo="{!strSearchContextName}" name="searchConext" value="" />
+                        <apex:param assignTo="{!bIsDataFromExternalSystem}" name="isFromExternalSystem" value="" />
+                        <apex:param assignTo="{!strJsonAccObject}" name="accObj" value="" />
+                        <apex:param assignTo="{!strInteractionID}" name="interactingID" value="" />
+                        <apex:param assignTo="{!sConsumerIDList}" name="RecordConsumerTaxIds" value="" />
+                        <apex:param name="recordReadAccess" value="" />
+                        <apex:param assignTo="{!sMemberAccType}" name="intMemType" value="" /> 
+                    </apex:actionFunction>
+                    <apex:actionFunction action="{!switchTab}" name="switchTab" onComplete="prepopulate();" rerender="formID" status="buttonStatus">
+                        <apex:param assignTo="{!sMemberID}" name="mId" value="" />
+                    </apex:actionFunction>
+					<!-- Apex Action function called on click of Acknowledge button on Password PopUp  -->
+					<apex:actionFunction action="{!closeAckPopup}" name="closePopUpOnClear" reRender="ackPopup" status="buttonStatus"> </apex:actionFunction>
+                   <c:HUMCustomInteractionComponentV2 HUMSearchController="{!this}" id="intComp"></c:HUMCustomInteractionComponentV2> 
+                </apex:actionregion>
+            </apex:outputPanel>
+        </div>
+        
+        <!-- INteraction Log section ENds Here -->
+        <apex:actionFunction action="{!softPhoneRoutingSearch}" name="softPhoneCallAction" rerender="formID" status="buttonStatus" onComplete="routeToSearch()">
+            <apex:param assignTo="{!transferJsonObject}" name="softPhoneJsonString" value="" />
+        </apex:actionFunction>
+        <!-- Added as part of unathenticate and authenticate call interaction method -->
+        <apex:actionFunction action="{!softPhoneRoutingSearch}" name="softPhoneCallActionchild" rerender="formID" status="buttonStatus" onComplete="routeToSearch()">
+        </apex:actionFunction>
+        <!--  Start of Unknown Account functionality -->
+        <apex:actionRegion >
+            <apex:actionFunction action="{!populateUnknownAccountDetail}" name="populateUnknownAccount" rerender="errormsg,enrollmentResults" status="buttonStatus" onComplete="createAndLaunchInteraction()">
+                <apex:param assignTo="{!strSearchContextName}" name="searchContextName" value="Member" />
+                <apex:param assignTo="{!idUnknownAccount}" name="memberAccountID" value="" />
+            </apex:actionFunction>
+
+            <apex:actionFunction action="{!populateUnknownAccountDetail}" name="populateUnknownProvider" rerender="providerResults,errProviderSearchMsgs" status="buttonStatus">
+                <apex:param assignTo="{!strSearchContextName}" name="searchContextName" value="Provider" />
+                <apex:param assignTo="{!idUnknownAccount}" name="providerAccountID" value="" />
+            </apex:actionFunction>
+
+            <apex:actionFunction action="{!populateUnknownAccountDetail}" name="populateUnknownGroup" rerender="errorMsgGroup,groupresults" status="buttonStatus">
+                <apex:param assignTo="{!strSearchContextName}" name="searchContextName" value="Group" />
+                <apex:param assignTo="{!idUnknownAccount}" name="groupAccountID" value="" />
+            </apex:actionFunction>
+
+            <apex:actionFunction action="{!populateUnknownAccountDetail}" name="populateUnknownAgent" rerender="agencyResults,errorMsgAgency" status="buttonStatus">
+                <apex:param assignTo="{!strSearchContextName}" name="searchContextName" value="Agency" />
+                <apex:param assignTo="{!idUnknownAccount}" name="agencyAccountID" value="" />
+            </apex:actionFunction>
+        </apex:actionRegion>
+        <!-- End of unknown account functionality -->
+        <apex:outputPanel id="tstpopup">
+        <apex:outputPanel styleClass="popupBackgroundNew" layout="block" rendered="{!bPopUp}"/>
+            <apex:outputPanel styleClass="custPopupNew" layout="block" rendered="{!bPopUp}">
+                <apex:pageBlock >
+                <apex:outputText value="{!$Label.HUMNoInteractionCreated}" />
+                <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Yes" onclick="callCloseAndOpenAccount();return false;"/>
+                <apex:commandButton value="No" onclick="callClosePopup();return false;"/>
+                </apex:pageBlockButtons>
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        <!-- popup on click of Save and Continue button -->
+        <apex:outputPanel id="saveAndContPopUp">
+        <apex:outputPanel styleClass="popupBackgroundNew" layout="block" rendered="{!bPopUp}"/>
+            <apex:outputPanel styleClass="custPopupNew" layout="block" rendered="{!bPopUp}">
+                <apex:pageBlock >
+                <apex:outputText value="{!$Label.HUMInteractionSaved}" />
+                <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Ok" onclick="openAccountOnSaveAndContinue();return false;"/>
+                </apex:pageBlockButtons>
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:outputPanel>
+		  <apex:actionFunction action="{!showAckPopup}" name="aShowAckPopup"  reRender="ackPopup,refreshDisplayPopupId" immediate="true" oncomplete="saveWithoutPopup();" status="buttonStatus">
+                <apex:param assignTo="{!sInteractionAbout}" name="accountsId" value=""/>
+                <apex:param assignTo="{!interactionFlag}" name="interactionFlag" value=""/>
+                <apex:param assignTo="{!mapRecordHaveAccess}" name="mapRecordHaveAccess" value=""/>
+            </apex:actionFunction>
+            
+        <!-- Panel for popup to show pass and security details-->
+       <div id="outerPopupDiv"> 
+        <apex:outputPanel id="ackPopup">
+         <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!bAckDisplayPopup}"/> 
+           <apex:outputPanel styleClass="ackCustPopup" layout="block" rendered="{!bAckDisplayPopup}">            
+             <div class="ackUpperDiv">
+                  <apex:outputLabel value="" id="acknLabel" style="font-size: 12px;padding-left:5px;" >{!$Label.AckPopUpTitle_Hum}</apex:outputLabel>
+             </div>
+                 <div class="ackMidDiv">
+                 <br/>
+                      <div style="font-size: 12px;padding-left:5px;"><apex:outputLabel id="textLabel" value="">{!$Label.AckPupUpPassText_Hum}</apex:outputLabel></div><br/>
+                      <div Class="ackLabelCss"><span class="lablePassword">{!$Label.AckPopUpPassLabel_Hum} </span><span class="valuePassword">{!pass}</span></div><br/>
+                      <div style="font-size: 12px;padding-left:5px;">{!$Label.AckPopUpQAText_HUm}</div><br/>
+                      <div style="font-size: 12px;padding-left:5px;padding-right:5px;"><span class="lablePassword">{!$Label.AckPopUpQuestionLabel_Hum} </span><span class="valuePassword">{!secQuestion}</span></div>
+                      <div style="font-size: 12px;padding-left:5px;padding-right:5px;"> <span class="lablePassword">{!$Label.AckPopUpAnswerLabel_Hum} </span><span class="valuePassword">{!secAns}</span></div>
+                      <div>
+                          <table border="0" cellspacing="0" cellspadding="0"  class="ackButton">
+                              <tr>
+                                <td><apex:commandButton value="{!$Label.AckPopUpButtonLabel_Hum}" onClick="saveInteraction();" oncomplete="FlushPasswordInformation();" reRender="ackPopup"/>
+                                </td>
+                              </tr>
+                          </table>                                                    
+                      </div>
+                  </div>
+              <div class="ackLowerDiv">
+               </div>
+            </apex:outputPanel>
+        </apex:outputPanel>
+       </div>
+        <apex:outputPanel id="refreshDisplayPopupId">
+        <script>
+                var bPopupFlag = "{!bAckDisplayPopup}";
+        </script>
+        </apex:outputPanel>
+		 <apex:actionFunction name="closeP" action="{!closePopup}" rerender="tstpopup" status="buttonStatus" />
+        <apex:actionFunction name="closePandOpenAccount" action="{!closePopup}" rerender="tstpopup,ft" oncomplete="redirectToMemberDetail();" status="buttonStatus"/>
+        <!-- Save and Continue button functionality-->
+        <apex:actionFunction name="saveContPopup" action="{!saveAndContPopup}" rerender="saveAndContPopUp" status="buttonStatus" />
+        <apex:actionFunction name="closeIntSavedPopup" action="{!closePopup}" rerender="saveAndContPopUp,ft" oncomplete="redirectToMemberDetailSaveAndContinue();" status="buttonStatus" />
+        <apex:outputPanel id="refreshMemberID">
+            <script>
+                // store strID
+                var strMID = '{!JSENCODE(sMemberID)}';
+                var searchesToTrigger ='{!JSENCODE(searchTypesJson)}';
+            </script>
+        </apex:outputPanel>
+        
+        <apex:actionStatus id="buttonStatus" onstart="disableButtons(true)" onstop="disableButtons(false)" >
+            <apex:facet name="start">
+                <div class="waitingSearchDiv waitingSearchDivOpacity" style="width: 100%; height: 130%; display: block; opacity: 0.99" />
+                <div id="searchingStatus" class="waitingSearchDiv" style="width: 100%; height: 100%; display: block;">
+                    <div class="waitingHolder" style="top: 300px; width: 110px;cursor:pointer;">
+                        <img class="waitingImage" src="/img/loading.gif" /> <span class="waitingDescription">Loading...</span>
+
+                    </div>
+                </div>
+            </apex:facet>
+            <apex:facet name="stop" />
+        </apex:actionStatus>
+        <apex:actionFunction action="{!resetAll}" name="closeAndReset" status="buttonStatus"/>
+      <apex:inputHidden id="idpasswordpopup" value="{!bAckDisplayPopup}"/>
+      <apex:inputHidden id="idQuestion" value="{!secQuestion}"/>
+      <apex:inputHidden id="idPassword" value="{!pass}"/>
+      <apex:inputHidden id="idAnswer" value="{!secAns}"/>
+    </apex:form>
+    <script type="text/javascript">
+      var endtime = '';
+      var endtimeabt = '';
+      var endtimesave = '';
+      var sInteractingAboutTemp = '';
+      var sInteractingWithAboutFlag = '';
+      var switch2230000 = {!Switch_2230000};
+      //Store SSN DOM ID
+      var domID = "{!$Component.thePage.formID.memberSearchEnrollment.searchEnrollComp.pbMemberSearchEnrl.pbsSearchCrit.ssn}";
+      var isGenesysUserVal = {!isGenesysUser};
+      //Avoid any Conflict with other libraries
+//dont enable P9 Critical Fix      var j$ = jQuery.noConflict();
+        jQuery.noConflict(); //added this line to avoid prototypejs conflict
+      //Flag to check if search is intialized
+      var isSearchIntialized = true;
+
+      //Append load function to existing onloads
+      jQuery(window).on('load', onLoadSearchEvents);
+    </script>
+	<support:clickToDial number=""/>
+        </apex:page>

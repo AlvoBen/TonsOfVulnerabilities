@@ -1,0 +1,64 @@
+﻿<!--
+Page Name        : MedicareDisenrollment_VF_HUM
+Version          : 1.0 
+Created Date     : Aug 20 2020              
+Controller Class : MedicareDisenrollment_C_HUM
+
+*Modification Log :
+* Developer              Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+Jayesh Solanki                              08/20/2020           Original version. 
+*********************************************************************************************************************************-->
+
+<apex:page standardController="Case" extensions="MedicareDisenrollment_C_HUM">
+       <apex:stylesheet value="{!$Resource.HUMFlowsTextWrap}"/>
+       <apex:includeScript value="/support/console/31.0/integration.js" />
+       <apex:includeScript value="{!$Resource.HUMUnSavedChangesJS}"/>
+       <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY,'jquery.min.js')}"/>
+       <script>
+		    window.onload = testSetTabUnsavedChanges($Label.MedicareDisenrollment_HUM);
+            var selectedcasenumber = '{!JSENCODE(sCaseNumber)}';     
+        </script>
+        <apex:outputpanel >
+             <style type="text/css">
+                .FlowPageBlockBtns {
+                    text-align: left !important;
+                }
+            </style>
+       </apex:outputpanel>
+    <apex:outputpanel id="ScriptPanel" >
+        <script>
+            if(jQuery("span[id$='SummaryScreen']").length || jQuery("span[id$='SectionA_ScrnP4']").length || 
+               jQuery("span[id$='MES_Scenario1']").length || jQuery("span[id$='SectionA2_ScrnP7']").length || 
+               jQuery("span[id$='Srn8']").length || jQuery("span[id$='OSB_Scenario']").length || 
+               jQuery("span[id$='ScrnP10']").length || jQuery("span[id$='NotSectionA_ScrnP11']").length || 
+               jQuery("span[id$='GuidanceSreen11']").length || jQuery("span[id$='ReasonForCancellatopn_Scrn12']").length || 
+               jQuery("span[id$='ReasonForCancellatopn_Scrn13']").length || jQuery("span[id$='SectionA2_ScrnP14']").length || jQuery("span[id$='ReinstatementGuidance16']").length || 
+               jQuery("span[id$='Srn17']").length || jQuery("span[id$='Srn18']").length || jQuery("span[id$='ReasonForCancellatopn_Scrn19']").length || 
+               jQuery("span[id$='SummaryScrn15']").length || jQuery("span[id$='NotSectionA_ScrnP5']").length){
+                if (jQuery("input[id$='nextAjax']").length) {
+                		jQuery("input[id$='nextAjax']").val('Finish');
+                }
+            }
+        	var sendMessage = function sendMessage(result) {            
+            var tabId = result.id;
+            sforce.console.fireEvent('CleanUpInvalidTemplatePAR',tabId);
+            };    
+            sforce.console.getEnclosingTabId(sendMessage);
+        </script>       
+    </apex:outputpanel>
+    
+         <br/>
+         <apex:outputLabel value="Medicare CE and Sp Election DE Process" style="font-size:16px;font-weight:bold;"/>
+         <br/>
+         <flow:interview id="DAC" name="Medicare_Disenrollment" finishLocation="{!$Page.HUMCloseFlow}" rerender="DAC,ScriptPanel" rendered="{!bSubmissionPres}">
+           <apex:param name="WhoId" value="{!sSelectedCaseId}"/>
+             <apex:param name="WhatType" value="Case"/>
+             <apex:param name="SID" value="{!SubmissionId }"/>   
+         </flow:interview>
+
+         <flow:interview id="DAC1" name="Medicare_Disenrollment" finishLocation="{!$Page.HUMCloseFlow}" rerender="DAC,ScriptPanel" rendered="{!!bSubmissionPres}">
+             <apex:param name="WhoId" value="{!sSelectedCaseId}"/>
+             <apex:param name="WhatType" value="Case"/>            
+         </flow:interview>
+ </apex:page>

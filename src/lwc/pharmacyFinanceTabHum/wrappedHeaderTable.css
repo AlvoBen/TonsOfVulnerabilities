@@ -1,0 +1,7 @@
+.wrapped-header-datatable .slds-table .slds-th__action .slds-truncate{
+    max-width: 100%;
+    height:auto;
+    overflow: hidden;
+    text-overflow: unset;
+    white-space: pre-line;
+}

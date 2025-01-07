@@ -1,0 +1,3 @@
+﻿<apex:page standardStylesheets="false" showHeader="false">
+  <c:appomni_auth />
+</apex:page>

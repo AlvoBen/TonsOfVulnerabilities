@@ -1,0 +1,47 @@
+﻿<!--
+Page Name        : MemberIDCardStatus_CMP_HUM
+Version          : 2.0 
+Created Date     : 2/12/2018
+Function         : This component is used to display status of the Member ID Cards/Debit Cards
+Modification Log :
+* Developer               Code Review                     Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Rakesh Patni             207348                        02/12/2018           Original Version 
+* Rajesh Keswani           207348                        04/02/2018           Possibility to show entries based on Parent records 
+* Pradeep Dani             220731                        05/04/2018           Code Refactoring
+* Sunil Kumar Reddy Y									 06/03/2020			  User Story 1110896: Added on/off switch and rapidforce permission variables.
+* Prasanthi Kandula                                      02/01/2021           US-1669849 SonarQube critical security fixes  
+* Atia Uzma                                              07/12/2021           User Story 2451411: T1PRJ0001827 - MF 1 - Quality - Highlight last 7 days request on ID Card Management page (CRM)
+* Atia Uzma                                              08/05/2021           User Story 2551785: T1PRJ0001827 - MF 1 - SF - TECH - On/Off switch cleanup for 8/20/21 Release (CRM)
+* Atia Uzma                                              09/21/2021           User Story 2696519: T1PRJ0001827 - MF 1 - AHT - Arrange the requests in ID Card Status section from Newest to Oldest 
+* Tharun Madishetti										 07/14/2023           US-4635103: T1PRJ0891742 - VIT19761200 - TECH - Data Table Upgrade - Ugrade Moment.js Usage (Group 1)
+* --------------------------------------------------------------------------------------------------------------------------- -->
+<apex:component controller="MemberIdCards_C_HUM">  
+	<apex:includeScript value="{!URLFOR($Resource.MemberIDCardStatus_SR_HUM, '/MemberIDCardStatus_JS_HUM.js')}" />
+	<link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.MemberIDCardStatus_SR_HUM,'/MemberIDCardStatus_CSS_HUM.css')}" />
+	<apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/Moment-2.29.4/moment.min.js')}" />	
+	<apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/Sorting/datetime-moment.js')}" />
+	<script>
+	   var sParChildRecords = '{!$RemoteAction.MemberIdCards_C_HUM.getMemberLevelDetails}';
+       var isRCCUser = {!JSENCODE(IF($Permission.CRMS_684_Medicare_Customer_Service_Access,"true", "false"))};
+	   var bRapidForceUser = {!JSENCODE(IF($Permission.RapidForceUser_AHT_HUM,"true", "false"))};
+	   var bIdCardStatusSortSwitch = {!JSENCODE(IF(bIdCardSortSwitch,"true", "false"))};
+    </script>
+	
+	<div id="infoMessage">
+    	<apex:PageMessage strength="2" summary="{!$Label.INFOMESSAGE_MEMBERIDCARDS_HUM}" severity="Info"/>
+    </div>
+	<div id="noRecordsMessage" style="display:none;">
+    	<apex:PageMessage strength="2" summary="{!$Label.NORECORDSMESSAGE_GROUPIDCARDS_HUM}" severity="Info"/>
+    </div>  
+    <div id="MemStatusErrorId" class="displayNone">
+	   <apex:PageMessage strength="2" summary="{!$Label.RETRIEVINGERRORMESSAGE_MEMBERIDCARDS_HUM}" severity="error"/>
+	</div>
+	<div id="MemStatusImage_div" style="text-align:center; vertical-align: middle;">
+	   <img src="/img/loading.gif" />
+	   <span class="waitingDescription">Please wait...</span>
+	</div>
+    <table id="IdCardTable" class="table table-striped table-bordered table-hover nowrap compact enable_logging accordion_log" cellspacing="0">
+	   <caption style="display:none;">{!$Label.CARDSTATUSSECTION_MEMBERIDCARDS_HUM}</caption>
+	</table>  
+</apex:component>

@@ -1,0 +1,93 @@
+﻿<!--
+Component        : Pharmacy Member Adjustment
+Version          : 1.0
+Created On       : 11/07/2023
+Function         : Component to display to pharmacy member adjustments
+
+Modification Log:
+* Developer Name                       Date                        Description
+* Monali Jagtap                       18/08/2023                   US-4943744 T1PRJ0870026 MF27456 HPIE/CRM -C12 Mail Order Management-Pharmacy-Finance tab-Lightning/Classic
+* Monali Jagtap                       30/08/2023                   DF-8028
+* Vishal Shinde                        10/10/2023                 User Story 5002422- Mail Order Management; Pharmacy - identify Error Messaging and parameters (Lightning)
+------------------------------------------------------------------------------------------------------------------------------
+-->
+<template>
+    <lightning-card>
+        <div class="slds-grid slds-grid_align-spread">
+            <h3>
+                <span class="slds-page-header__title slds-truncate"
+                      title="Member Adjustment">
+                    Member Adjustment
+                </span>
+            </h3>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-m-top_small slds-wrap">
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_6-of-12">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <c-generic-date-selector dlabel="Start Date" dhelptext={labels.pharmacyGetOrderMessage} dkeyname="StartDate"
+                                                     dminvalue={sMinDate} onsenddatedata={handleDateChange} dvalue={sStartDate}
+                                                     dmaxvalue={sMaxDate}>
+                            </c-generic-date-selector>
+                        </div>
+                        <div class="slds-col">
+                            <c-generic-date-selector dlabel="End Date" dhelptext={labels.pharmacyGetOrderMessage} dkeyname="EndDate"
+                                                     onsenddatedata={handleDateChange} dvalue={sEndDate} dmaxvalue={sMaxDate}>
+                            </c-generic-date-selector>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <template if:true={loaded}>
+            <template if:true={bAdjustmentPresent}>
+                <div class="slds-col slds-size_1-of-1">
+                    <div class="slds-grid slds-grid_align-end">
+                        <div class="slds-col">
+                            <span>{filteredcount} of {totalCount} item(s)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-m-top_small slds-wrap">
+                    <div class="slds-grid full-container slds-is-relative slds-p-horizontal_none table-container full-container slds-scrollable_y"
+                         style="min-height: 100px; max-height: 305px; overflow: auto"
+                         onscroll={handleScroll}>
+                        <lightning-datatable key-field="id"
+                                             columns={columns}
+                                             data={filteredAdjustments}
+                                             hide-checkbox-column="true"
+                                             sorted-by={sortedBy}
+                                             onsort={onHandleSort}
+                                             sorted-direction={sortedDirection}
+                                             min-column-width="160"
+                                             enable-infinite-loading
+                                             onloadmore={loadMoreData}>
+                        </lightning-datatable>
+                    </div>
+                </div>
+            </template>
+            <template if:false={bAdjustmentPresent}>
+                <template if:false={financeServiceError}>
+                        <div class="slds-col slds-size_1-of-1 slds-m-top_small slds-wrap">
+                            <c-generic-scoped-notification-hum iconname="utility:info"
+                                                            message="No Adjustments are available for selected member.">
+                            </c-generic-scoped-notification-hum>
+                        </div>
+                </template>
+                <template if:true={financeServiceError}>
+                        <div class="slds-grid slds-grid_align-spread">
+                            <div class="slds-col slds-size_1-of-1 slds-m-vertical_small">
+                            <c-generic-scoped-notification-hum iconname="utility:error" message={message} type="error">
+                            </c-generic-scoped-notification-hum>
+                            </div>
+                        </div>
+                </template>
+            </template>
+        </template>
+        <template if:false={loaded}>
+            <lightning-spinner alternative-text="Loading...."></lightning-spinner>
+        </template>
+    </lightning-card>
+</template>

@@ -1,0 +1,229 @@
+﻿<!--
+/*
+LWC Name        : PharmacyPrescriptionsDetailHum.html
+Function        : LWC to display pharmacyPrescriptionDetailHum.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*
+* Swapnali Sonawane               01/20/2023                   US- 4146078 Mail Order Pharmacy- Address/Close the gaps identified during user testing. - 1
+****************************************************************************************************************************/
+-->
+<template>
+        <template if:true={detail}>
+            <div class="slds-box slds-theme_alt-inverse slds-card slds-has-bottom-magnet" style="width: 900px; width: height;border-radius: 4px;">
+            <lightning-layout multiple-rows="true">
+                <lightning-layout-item size="12">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_11-of-12">
+                            <p class="headervalues">{drugName}</p>
+                        </div>
+                        <div class="slds-col slds-size_1-of-12">
+                            <span style="cursor:pointer; color:white; font-size: small;"
+                            class="slds-text-heading_medium slds-float_right slds-p-vertical_xx-small slds-p-horizontal_small"
+                            onclick={handleCloseClick}>X</span>
+                        </div>
+                    </div>
+                </lightning-layout-item>
+                <lightning-layout-item size="12">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-6">
+                                  <lightning-layout multiple-rows="true">
+                                      <lightning-layout-item size="12">
+                                          <p class="header">RX</p>
+                                      </lightning-layout-item>
+                                      <lightning-layout-item size="12">
+                                        <p class="headervalues">{detail.RXNumber}</p>
+                                    </lightning-layout-item>
+                                  </lightning-layout>
+                                </div>
+                                <div class="slds-col slds-size_1-of-6">
+                                    <lightning-layout multiple-rows="true">
+                                        <lightning-layout-item size="12">
+                                            <p class="header">Auto Refill Eligible</p>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="12">
+                                            <p class="headervalues">{detail.AutoRefillEligible}</p>
+                                        </lightning-layout-item>
+                                    </lightning-layout>
+                                </div>
+                                <div class="slds-col slds-size_1-of-6">
+                                    <lightning-layout multiple-rows="true">
+                                        <lightning-layout-item size="12">
+                                            <p class="header">Days Supply</p>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="12">
+                                            <p class="headervalues">{detail.DaysSupply}</p>
+                                        </lightning-layout-item>
+                                    </lightning-layout>
+                                </div>
+                                <div class="slds-col slds-size_1-of-6">
+                                    <lightning-layout multiple-rows="true">
+                                        <lightning-layout-item size="12">
+                                            <p class="header">Controlled</p>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="12">
+                                            <p class="headervalues">{detail.ControlledRX}</p>
+                                        </lightning-layout-item>
+                                    </lightning-layout>
+                                </div>
+                                <div class="slds-col slds-size_1-of-6">
+                                    <lightning-layout multiple-rows="true">
+                                        <lightning-layout-item size="12">
+                                            <p class="header">Last Fill</p>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="12">
+                                            <p class="headervalues">{detail.LastFillDate}</p>
+                                        </lightning-layout-item>
+                                    </lightning-layout>
+                                </div>
+                                <div class="slds-col slds-size_1-of-6">
+                                    <lightning-layout multiple-rows="true">
+                                        <lightning-layout-item size="12">
+                                            <p class="header">Next Fill</p>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="12">
+                                            <p class="headervalues">{detail.NextFillDate}</p>
+                                        </lightning-layout-item>
+                                    </lightning-layout>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning-layout multiple-rows="true">
+                                <lightning-layout-item size="12">
+                                    <p class="header">Dispensed Drug</p>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="12">
+                                    <p class="headervalues slds-wrap">{detail.DispensedDrug}</p>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </div>
+                    </div>
+                </lightning-layout-item>
+                <lightning-layout-item size="12">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_10-of-12">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-6">
+                                  <lightning-layout multiple-rows="true">
+                                      <lightning-layout-item size="12">
+                                          <p class="header">Status</p>
+                                      </lightning-layout-item>
+                                      <lightning-layout-item size="12">
+                                        <p class="headervalues">{detail.Status}</p>
+                                    </lightning-layout-item>
+                                  </lightning-layout>
+                                </div>
+                                <div class="slds-col slds-size_1-of-6">
+                                    <lightning-layout multiple-rows="true">
+                                        <lightning-layout-item size="12">
+                                            <p class="header">Auto Refill Enrolled</p>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="12">
+                                            <p class="headervalues">{detail.AutoRefillEnrolled}</p>
+                                        </lightning-layout-item>
+                                    </lightning-layout>
+                                </div>
+                                <div class="slds-col slds-size_1-of-6">
+                                    <lightning-layout multiple-rows="true">
+                                        <lightning-layout-item size="12">
+                                            <p class="header">Quantity</p>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="12">
+                                            <p class="headervalues">{detail.Quantity}</p>
+                                        </lightning-layout-item>
+                                    </lightning-layout>
+                                </div>
+                                <div class="slds-col slds-size_1-of-6">
+                                    <lightning-layout multiple-rows="true">
+                                        <lightning-layout-item size="12">
+                                            <p class="header">Consent</p>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="12">
+                                            <p class="headervalues">{detail.Consent}</p>
+                                        </lightning-layout-item>
+                                    </lightning-layout>
+                                </div>
+                                <div class="slds-col slds-size_1-of-6">
+                                    <lightning-layout multiple-rows="true">
+                                        <lightning-layout-item size="12">
+                                            <p class="header">Refill Remaining</p>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="12">
+                                            <p class="headervalues">{detail.RefillsRemaining}</p>
+                                        </lightning-layout-item>
+                                    </lightning-layout>
+                                </div>
+                                <div class="slds-col slds-size_1-of-6">
+                                    <lightning-layout multiple-rows="true">
+                                        <lightning-layout-item size="12">
+                                            <p class="header">Expiration</p>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="12">
+                                            <p class="headervalues">{detail.ExpirationDate}</p>
+                                        </lightning-layout-item>
+                                    </lightning-layout>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning-layout multiple-rows="true">
+                                <lightning-layout-item size="12">
+                                    <p class="header">Written Drug</p>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="12">
+                                    <p class="headervalues slds-wrap">{detail.WrittenDrug}</p>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </div>
+                    </div>
+                </lightning-layout-item>
+                <lightning-layout-item size="12" class="slds-border_top slds-m-top_xx-small">
+                    <div class="slds-col slds-size_10-of-12">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-3">
+                                <lightning-layout multiple-rows="true">
+                                    <lightning-layout-item size="12">
+                                        <p class="header">Prescriber Information</p>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="12">
+                                        <p class="headervalues slds-wrap">{detail.PrescriberInformation}</p>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3">
+                                <lightning-layout multiple-rows="true">
+                                    <lightning-layout-item size="12">
+                                        <p class="header">Prescriber's Phone</p>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="12">
+                                        <p class="headervalues slds-wrap"><lightning-formatted-phone value={detail.Phone} disabled></lightning-formatted-phone></p>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3">
+                                <lightning-layout multiple-rows="true">
+                                    <lightning-layout-item size="12">
+                                        <p class="header">Prescriber's Fax</p>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="12">
+                                        <p class="headervalues slds-wrap"><lightning-formatted-phone value={detail.Fax} disabled></lightning-formatted-phone></p>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </div>
+                        </div>
+                    </div>
+                </lightning-layout-item>
+                <lightning-layout-item size="12">
+                    <lightning-layout-item size="12" padding="around-small">
+                        <lightning-button class="slds-float_right"  label="Add to Order"  disabled={addOrderEnable} onclick={handleAddOrderClick}></lightning-button>
+                    </lightning-layout-item>
+                </lightning-layout-item>
+            </lightning-layout>
+            </div>
+        </template>
+ 
+    </template>

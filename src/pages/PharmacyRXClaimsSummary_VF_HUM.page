@@ -1,0 +1,66 @@
+﻿<!--
+Page Name        : PharmacyRXClaimsSummary_VF_HUM
+Version          : 1.0 
+Created Date     : July 14 2020
+Function         : Page to display Pharmacy RX Claim Summary data.
+Modification Log :
+*   Developer                  Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Shailesh Mali                                 07/14/2020           Original Version. REQ - 891651 -- PR00094920- MF 1- Rx Claims- Pharmacy (Rx) Claims Summary page (RxXP) 
+-------------------------------------------------------------------------------------------------------------------------------->
+
+<apex:page controller="PharmacyRXClaimsSummary_C_HUM">
+    <apex:includeLightning ></apex:includeLightning>    
+    <apex:includeScript value="/support/console/40.0/integration.js" />
+	<apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" id="datatablesJS" />	
+	  
+
+    <br/><div id ="ClaimLightningDataTable"></div>       
+       
+    
+    <script>
+    var policyMemberId = "{! $CurrentPage.parameters.id}";
+    var memberGenKey = "{!JSENCODE(sMemberGenKey)}"; 
+    var policyStartDate = "{!JSENCODE(spolicyStartDate)}"; 
+    var policyEndDate = "{!JSENCODE(spolicyEndDate)}"; 
+    var memberName ="{!JSENCODE(sMemName)}";
+    var URL ='';
+    var title = 'Claim Detail Page';
+    var claimDetailSwitch = "{!claimDetailSwitchOnOff}"; 
+
+    var openSubtab = function openSubtab(result) {
+        var primaryTabId = result.id;
+        sforce.console.openSubtab(primaryTabId , URL, true,title, null);
+    };
+    function handleRow(event){
+        URL = '/apex/PharmacyRXClaimDetails_VF_HUM?ClaimID='+event.getParam("ClaimID")+'&AuthorizationNumber='+event.getParam("AuthorizationNumber")+'&memberName='+memberName;
+        title ='Pharmacy (Rx) Claim Details';
+        sforce.console.getEnclosingPrimaryTabId(openSubtab);
+    }
+    
+    $Lightning.use("c:RxDesktopCustomLightningApp", function(){
+        $Lightning.createComponent(
+            "c:pharmacyRXClaimSummaryAura",
+            {"memberGenKey":memberGenKey,"policyStartDate":policyStartDate,"policyEndDate":policyEndDate},
+            "ClaimLightningDataTable",
+            function(){
+                if(claimDetailSwitch == 'true')
+                	$A.eventService.addHandler({event:"c:PharmacyRxClaimsSummaryRowClickEvent",handler:handleRow});
+            });
+    });
+    
+    jQuery(document).ready(function() {        
+        sforce.console.setTabTitle("Pharmacy (Rx) Claim Summary: " + memberName);
+    });		
+		 jQuery(document).mouseover(function(event)
+            {
+                var clickedElement = event.target;	               
+                if(clickedElement.nodeName == "LIGHTNING-BASE-FORMATTED-TEXT")
+                	clickedElement.title = clickedElement.value ;
+                if( clickedElement.nodeName == "LIGHTNING-FORMATTED-DATE-TIME")
+                    clickedElement.title =clickedElement.outerText;
+            });		
+   
+    </script>
+    
+</apex:page>

@@ -1,0 +1,80 @@
+﻿<!--
+Page Name        : PharmacyRxAccessBenefits_VF_HUM
+Version          : 1.0 
+Created Date     : July 24 2020
+Function         : Page to display Pharmacy RX KMDocumentServiceREST service document data.
+Modification Log :
+*   Developer                  Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Suraj Patil     				                   05/06/2021           REQ - 1003582 - 1011772 - 1694036
+* Ravikanth Samudrala                              04/26/2022           3324565-T1PRJ0272548 - SF Legacy API Retirement Upgrade API Version for Integrationjs Pharmacy Benefits & Authorizations
+-------------------------------------------------------------------------------------------------------------------------------->
+<apex:page lightningStylesheets="true"  controller="PharmacyRXAccessBenefits_C_HUM"> 
+    <apex:includeLightning ></apex:includeLightning>    
+    <apex:includeScript value="/support/console/54.0/integration.js" id="integrationJS"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" id="datatablesJS" />
+    
+     <div id="LoadingImageId" class="loadingImageDivCon centerAlign displayNone">
+          <img src="/img/loading.gif" /> 
+          <span class="waitingDescription">{!$Label.LOADING_HUM}</span>
+     </div>
+    <div id="LightingDataTable" style="font-size: 13px;"></div>
+    
+    <style>
+        .loadingImageDivCon 
+        {
+            width:100%; 
+            text-align:center; 
+            padding: 4px;
+            margin-top: 5%
+        }
+        .centerAlign
+        {
+            text-align: center;
+        }
+    </style>
+    
+    <script>    
+        var fileCountVar;
+        var singleFileUrlVar;
+        var pdfFile;
+        var policyMemberId = "{! $CurrentPage.parameters.id}";   
+        var PolicyMemberName = "{! $CurrentPage.parameters.PolicyMemberName}";
+        var MentorHomeURL = "{!JSENCODE(MentorHomeURL)}";
+		
+          $Lightning.use("c:RxDesktopCustomLightningApp", function(){        
+            $Lightning.createComponent(           
+                "c:pharmacyRxAccessBenefitsLWC", 
+                {"policyMemberIdVar":policyMemberId, "PolicyMemberNameVar":PolicyMemberName, "MentorHomeURLVar":MentorHomeURL},
+                "LightingDataTable",
+                function(cmp){ 
+                    jQuery("[id$='LoadingImageId']")[0].style.display = 'none';  
+                });
+        });
+        
+        document.addEventListener("openfile", function(event){
+            fileCountVar = event.detail.data;
+            singleFileUrlVar = event.detail.url;
+            if(fileCountVar == 1){
+                windowOpen(singleFileUrlVar);   
+             }         
+        });
+        
+        
+        function windowOpen(singleFileUrlVar)
+        {
+            window.open(singleFileUrlVar,'_blank');
+            sforce.console.getFocusedSubtabId(closeSubtab);
+        }
+        
+        var closeSubtab = function closeSubtab(result) {
+            //Now that we have the primary tab ID, we can close it
+            var tabId = result.id;
+            sforce.console.closeTab(tabId);
+        };
+        
+        jQuery(document).ready(function() {        
+            sforce.console.setTabTitle("Benefit Grid: "+PolicyMemberName );          
+        });     
+    </script>
+</apex:page>

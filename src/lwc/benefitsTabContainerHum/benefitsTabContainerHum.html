@@ -1,0 +1,119 @@
+﻿<!--
+LWC Name        : benefitSearchHum.html
+Function        : LWC to display benefit search details;
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Nirmal Garg                     03/17/2022                   initial version - US - 3035939
+* Swapnali Sonawane               07/12/2022                   US-3312671 -  Benefits-  Lightning Build of Medical Plan: Logging for Accums
+* Kalyani Pachpol                 07/28/2022                   US- 3613352
+* Divya Bhamre                    07/28/2022                   US- 3581984
+* Jonathan Dickinson		      08/15/2022		           US- 3699864
+* Divya Bhamre                    08/29/2022                   DF - 6024
+* Divya Bhamre                    01/20/2023                   US - 4119977
+* Aishwarya Pawar                 03/01/2023                   US - 4286514
+* Vishal Shinde                   06/09/2023                   US -4542629
+* Sagar G                         08/05/2023                   US - 4534112
+* Suraj Patil                     05/09/2023                   US#4542585 Dental Plan - Tooth History
+* Raj Paliwal                     05/19/2023                   US: 4542567 Dental Plan Information
+* Vishal Shinde                   05/22/2023                   US: 4542608 Dental Plan - Reimbursement tool link
+* Abhishek Mangutkar              05/23/2023                   US#4557903
+* Abhishek Mangutkar              06/01/2023                   US - 4556179 - Dental Plan - Dental Waiting Periods
+* Kalyani Pachpol                 06/01/2022                   US- 4654362 - Dental Plan Search
+* Apurva Urkude                   06/05/2023                   US- 4654062
+* Atul Patil						06/14/2023					US-4648135
+* Kinal Mangukiya			      07/21/2023				   US - 47054833	
+****************************************************************************************************************************-->
+<template>
+	<div class="slds-grid slds-grid_vertical">
+		<div>
+			<c-generic-component-header iconname="standard:contact" iconsize="medium" headerline={benefitType}
+										subheaderline={memberName} recordid={recordId} auto-logging={autoLogging} type="Benefits"
+										subtype="Benefits and Accumulators" showloggingicon={showloggingicon} attachmentkey={policyExternalId}
+										attachmentdescription="Policy ExternalID" headerfields={headerfields} showalerticon={showalerticon} member-id={accountId} other-page-name="Benefits and Accumulators">
+			</c-generic-component-header>
+		</div>
+		<div class="slds-col slds-p-vertical_medium">
+			<c-dynamic-custom-links-lc-hum page-name="Benefits Lightning Page" record-id={recordId}
+										   object-api-name="MemberPlan">
+			</c-dynamic-custom-links-lc-hum>
+		</div>
+		<div class="slds-col slds-p-vertical_medium">
+			<div class="slds-media__body slds-card__body_inner">
+				<lightning-card>
+					<lightning-tabset style="position:relative;top: -30px;" class="slds-m-left_medium">
+						<template if:true={isMedical}>
+							<lightning-tab label="Snapshot">
+								<c-benefit-snapshot-hum producttype={producttype} memberplanname={memberName} record-id={recordId}
+														pberesponse={PBEResponse} message={message} serviceerror={serviceerror}>
+								</c-benefit-snapshot-hum>
+							</lightning-tab>
+							<lightning-tab label="Riders">
+								<c-benefits-policy-rider-hum pberesponse={PBEResponse} is-dental={isDental} message={message} serviceerror={serviceerror} memberplanname={memberName}>
+								</c-benefits-policy-rider-hum>
+							</lightning-tab>
+							<lightning-tab label="Benefits Search">
+								<c-benefits-search-hum pberesponse={PBEResponse} is-medical={isMedical} is-dental={isDental} platform-code={platformCode} mem-name={memberName}
+													   product-id={productId} message={message} serviceerror={serviceerror}>
+								</c-benefits-search-hum>
+							</lightning-tab>
+
+							<lightning-tab label="Summary">
+								<c-benefits-summary-tab-hum record-id={recordId} ongbedata={callGBEService} onmbedata={callMBEService}
+															pberesponse={PBEResponse} member-plan-data={MemberPlanData} message={message} serviceerror={serviceerror}>
+								</c-benefits-summary-tab-hum>
+							</lightning-tab>
+							<lightning-tab label="Accumulators">
+								<c-benefits-accums-tab-container-hum record-id={recordId} mem-id={memberName}>
+								</c-benefits-accums-tab-container-hum>
+							</lightning-tab>
+						</template>
+						<template if:true={isDental}>
+							<lightning-tab label="Snapshot" if:true={SnapShotswitch}>
+								<c-benefit-snapshot-hum producttype={producttype} memberplanname={memberName} recordid={recordId}
+														pberesponse={PBEResponse} message={message} serviceerror={serviceerror}>
+								</c-benefit-snapshot-hum>
+							</lightning-tab>
+							<lightning-tab label="Riders">
+								<c-benefits-policy-rider-hum memberplanname={memberName} is-dental={isDental} pberesponse={PBEResponse} message={message} serviceerror={serviceerror}>
+								</c-benefits-policy-rider-hum>
+							</lightning-tab>
+							<lightning-tab label="Benefits Search">
+								<c-benefit-search-dental-hum recordid={recordId} pberesponse={PBEResponse} platform-code={platformCode} product-id={productId}
+									message={message} serviceerror={serviceerror} mem-name={memberName} memberplanname={memberName}
+									pbe-service={pbeService}>
+								</c-benefit-search-dental-hum>
+							</lightning-tab>
+							<lightning-tab label="Waiting Periods">
+								<c-benefits-waiting-period-hum mberesponse={MBEData} message={message}
+								serviceerror={serviceerror} onmbedata={callMBEService} memberplanname={memberName}></c-benefits-waiting-period-hum>
+							</lightning-tab>
+							<lightning-tab label="Tooth History" if:true={toothhistoryswitch}>
+								<c-tooth-History-Lwc-Hum recordid={recordId} memberplanname={memberName}>
+								</c-tooth-History-Lwc-Hum>
+							</lightning-tab>
+							<lightning-tab label="Accumulators">
+								<c-benefits-accums-tab-container-hum record-id={recordId} mem-id={memberName}>
+								</c-benefits-accums-tab-container-hum>
+							</lightning-tab>
+							<lightning-tab label="Summary">
+								<c-benefits-summary-tab-hum record-id={recordId} is-dental={isDental} onmbedata={callMBEService} ongbedata={callGBEService}  s-group-number={sGroupNumber}
+															pberesponse={PBEResponse} member-plan-data={MemberPlanData} message={message} serviceerror={serviceerror}>
+								</c-benefits-summary-tab-hum>
+							</lightning-tab>
+							<lightning-tab label="Reimbursement Limit" if:true={ReimbursementSwitch}>
+								<c-benefits-reimbursement-limit-hum pberesponse={PBEResponse}>
+								</c-benefits-reimbursement-limit-hum>
+							</lightning-tab>
+							<lightning-tab label="Plan Information" if:true={planInformationSwitch}>
+								<c-benefits-dental-plan-information-hum recordid={recordId} memberplanname={memberName}>
+								</c-benefits-dental-plan-information-hum>
+							</lightning-tab>
+						</template>
+					</lightning-tabset>
+				</lightning-card>
+			</div>
+		</div>
+	</div>
+</template>

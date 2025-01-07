@@ -1,0 +1,36 @@
+.c-container {   
+    margin: 1px 0 1px 0;
+}
+
+.header-column {
+    white-space: normal;
+    max-width: 95%;
+}
+.field-title {
+    font-size: .75rem;
+    line-height: 1.25;
+}
+
+.hr-style {
+    max-width: 80%;
+    margin-top: 10px !important;
+    margin-right: 10px !important;
+    margin-bottom: 10px !important;
+}
+
+.hr-style-last {    
+    margin-bottom: 0px !important;
+    max-width: 80%;
+    margin-top: 10px !important;
+    margin-right: 10px !important;
+}
+
+.tooltip-position {
+    position: relative;
+    bottom: 0.25rem;
+}
+
+.text-no-wrap {
+    max-width: 80%;
+    white-space: normal;
+}

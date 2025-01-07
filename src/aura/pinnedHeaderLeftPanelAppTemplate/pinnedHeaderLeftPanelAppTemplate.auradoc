@@ -1,0 +1,6 @@
+<aura:documentation>
+	<aura:description>Custom App Page template</aura:description>
+	<aura:example name="PinnedHeaderLeftPanelAppTemplate" ref="PinnedHeaderLeftPanelAppTemplate" label="Label">
+		Pinned Header Custom page template
+	</aura:example>
+</aura:documentation>

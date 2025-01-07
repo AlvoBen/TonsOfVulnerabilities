@@ -1,0 +1,138 @@
+﻿<!-- /*******************************************************************************************************************************
+LWC JS Name : mtvRemarksLcHum.HTML
+Function    : This HTML serves as UI to mtvRemarksLcHum
+
+Modification Log: 
+Developer Name           Code Review                      Date                         Description
+*--------------------------------------------------------------------------------------------------------------------------------
+Sathish Babu                                           06/01/2022                    User story 3662197
+Apurva Urkude                                          01/24/2023                    Defect Fix-7020
+*********************************************************************************************************************************/ -->
+<template>
+    <lightning-card title="MTV Remarks">
+            <lightning-layout if:false={bNoData}>
+                <lightning-layout-item size="8" style="padding-top: 10px; margin-left:15px" >
+                    {noOfRecords} item(s) Displayed    
+                </br>
+                </lightning-layout-item>
+            </lightning-layout>
+            <template if:false={bNoData}>
+                <div class="slds-m-left_medium">
+            </div>
+            <div class="slds-p-left_x-small slds-p-right_small">
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-label="MTV Remarks">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th class="" scope="col" style="width:16rem">
+                                <div class="slds-truncate" title="sRemarkEntityType">Entity Type
+                                    <lightning-icon
+                                    onclick={updateColumnSorting}
+                                    icon-name={eTypesorticonHandler}
+                                    alternative-text="Entity Type"
+                                    size="xx-small"
+                                    class="my-icon  slds-m-left_small "></lightning-icon>
+                                </div>
+                            </th>
+                            <th class="" scope="col" style="width:16rem">
+                                <div class="slds-truncate" title="sRemarkIdentifier">Identifier
+                                    <lightning-icon
+                                    onclick={updateColumnSorting}
+                                    icon-name={identifiersorticonHandler}
+                                    alternative-text="Identifier"
+                                    size="xx-small"
+                                    class="my-icon  slds-m-left_small "></lightning-icon>
+                                </div>
+                            </th>
+                            <th class="" scope="col" style="width:16rem">
+                                <div class="slds-truncate" title="sRemarkCreationTimestamp">Create Date
+                                    <lightning-icon
+                                    onclick={updateColumnSorting}
+                                    icon-name={dateSortIconHandler}
+                                    alternative-text="Create Date"
+                                    size="xx-small"
+                                    class="my-icon  slds-m-left_small "></lightning-icon>
+                                </div>
+                            </th>
+                            <th class="" scope="col" style="width:16rem">
+                                <div class="slds-truncate" title="sRemarkType">Type
+                                    <lightning-icon
+                                    onclick={updateColumnSorting}
+                                    icon-name={sTypesortHandler}
+                                    alternative-text="Type"
+                                    size="xx-small"
+                                    class="my-icon  slds-m-left_small "></lightning-icon>
+                                </div>
+                            </th>
+                            <th class="" scope="col" style="width:16rem">
+                                <div class="slds-truncate" title="sRemarkCategory">Category
+                                    <lightning-icon
+                                    onclick={updateColumnSorting}
+                                    icon-name={sCategorysortHandler}
+                                    alternative-text="Category"
+                                    size="xx-small"
+                                    class="my-icon  slds-m-left_small "></lightning-icon>
+                                </div>
+                            </th>
+                            <th class="" scope="col" style="width:16rem">
+                                <div class="slds-truncate" title="sRemarkExtendedText">Text
+                                    <lightning-icon
+                                    onclick={updateColumnSorting}
+                                    icon-name={sTextsortHandler}
+                                    alternative-text="Text"
+                                    size="xx-small"
+                                    class="my-icon  slds-m-left_small "></lightning-icon>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={mtvData.data} for:item="lst">
+                            <tr class="slds-hint-parent" key={lst.sRemarkIdentifier} onclick={handleLogging}>
+                                <td data-label="Entity Type">
+                                    <div class="slds-truncate logthis" data-id="Entity Type" data-logid={generateLogId}>
+                                        <div data-value="Entity Type">{lst.sRemarkEntityType}</div>
+                                    </div>
+                                </td>              
+                                <td data-label="Identifier">
+                                    <div class="slds-truncate logthis" data-id="Identifier" data-logid={generateLogId}>
+                                        <div data-value="Identifier">{lst.sRemarkIdentifier}</div>
+                                    </div>
+                                </td>
+                                <td data-label="Create Date">
+                                    <div class="slds-truncate logthis" data-id="Create Date" data-logid={generateLogId}>
+                                        <div data-value="Create Date">{lst.sRemarkCreationTimestamp}</div>
+                                    </div>
+                                </td>
+                                <td data-label="Type">
+                                    <div class="slds-truncate logthis" data-id="Type" data-logid={generateLogId}>
+                                        <div data-value="Type">{lst.sRemarkType}</div>
+                                    </div>
+                                </td>
+                                <td data-label="Category">
+                                    <div class="slds-truncate logthis" data-id="Category" data-logid={generateLogId}>
+                                        <div data-value="Category">{lst.sRemarkCategory}</div>
+                                    </div>
+                                </td>
+                                <td >
+                                    <div class="slds-truncate logthis" data-label="Text" data-value={lst.sRemarkExtendedText} data-id="Text" data-logid={generateLogId}>
+                                        <div class="slds-cell-wrap">{lst.sRemarkExtendedText}</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+
+        </template>
+        <template if:true={bNoData}>
+            <div class="slds-align_absolute-center">
+                <c-search-no-result-hum
+                    no-result-message={noDataMsg}
+                    message-with-icon="true"
+                ></c-search-no-result-hum>
+            </div>
+        </template>
+	
+    </lightning-card>
+</template>

@@ -1,0 +1,172 @@
+﻿<!--
+Page Name        : GroupContactsList_CMP_HUM
+Created Date     : 05/20/2021
+Function         : Visualforce component to display the Group Contacts List from EPICC.
+Modification Log :
+*Version   Developer          Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------
+*1.0	   Ankit Avula						      05/20/2021		   US2067694: T1PRJ0022885 - MF 8 - Display Small Group Contacts on Group Contact tab in CRM Service
+* 2.0      Ajay Chakradhar                        06/22/2021           REQ - 1755455 - Performance Improvement
+* Pinky Vijur                                     07/14/2023           User Story 4647074: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Account, Policy Member, Policy, ID Card, & RTI (Group 1)
+-------------------------------------------------------------------------------------------------------------------------------- -->
+
+<apex:component controller="GroupContactsList_C_HUM" allowDML="true">
+ 
+<apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/FixedHeader-3.3.2/js/dataTables.fixedHeader.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/FixedColumns-4.2.2/js/dataTables.fixedColumns.js')}" />
+    
+    
+
+    <style>
+    td.details-control {
+        background: url({!URLFOR($Resource.ClaimDetails_JS_HUM,'/PlusImage.png')}) no-repeat center center;
+        cursor: pointer;
+    }
+    tr.shown td.details-control {
+        background: url({!URLFOR($Resource.ClaimDetails_JS_HUM,'/MinusImage.png')}) no-repeat center center;
+    }
+    .innerTable {
+    	width: 100%;
+    	table-layout: fixed;
+	}
+    </style>
+    
+    <apex:attribute name="GroupAccId" assignTo="{!groupId}" description="Group Contacts List" type="String" required="true"/>
+    
+
+    <apex:form id="grpFormId">
+        <apex:actionStatus id="pleaseWaitWhile">
+      		<apex:facet name="start">
+                <div class="waitingSearchDiv waitingSearchDivOpacity" style="width: 100%; height: 100%; display: block; opacity: 0.90" ></div>
+                <div id="searchingStatusCaseHistory" class="waitingSearchDiv" style="width: 100%; height: 100%; display: block;">
+                  <div class="waitingHolder" style="top: 300px; width: 110px;">
+                    <img class="waitingImage" src="/img/loading.gif"/>
+                    <span class="waitingDescription">Loading....</span>
+                  </div>
+                </div>
+              </apex:facet>
+            <apex:facet name="stop"/>
+    	</apex:actionStatus>
+        <script >
+        function format ( d ) {
+    
+                return '<table cellpadding="5" cellspacing="0" border="0" class= "innerTable">'+
+                    '<tr>'+
+                    	'<td style="white-space: initial;" width="12%;"><b>Address:</b></td>'+
+                        '<td style="white-space: initial;" width="12%;">'+d.AddressInfo.AddressLine1 +' '+ d.AddressInfo.AddressLine2 +' '+ d.AddressInfo.AddressLine3+'</td>'+
+                    	'<td> </td>'+
+                    	'<td><b>City:</b></td>'+
+                        '<td>'+d.AddressInfo.City+'</td>'+
+                    	'<td> </td>'+
+                    	'<td><b>Phone:</b></td>'+
+                        '<td>'+d.PhoneInfo.PhoneNumber+'</td>'+
+                    	'<td> </td>'+
+	                    '<td><b>Ext:</b></td>'+
+                        '<td>'+d.PhoneInfo.Extension+'</td>'+
+                    	'<td> </td>'+
+                    '</tr>'+
+                    '<tr>'+
+                    	'<td><b>State:</b></td>'+
+                        '<td>'+d.AddressInfo.State+'</td>'+
+                    	'<td> </td>'+
+                    	'<td style="white-space: initial;" width="12%;"><b>Zip Code:</b></td>'+
+                        '<td>'+d.AddressInfo.Zip+'</td>'+
+                    	'<td> </td>'+
+                    	'<td><b>Email:</b></td>'+
+                        '<td>'+d.EmailInfo.EmailAddress+'</td>'+
+                    	'<td> </td>'+
+                    	'<td style="white-space: initial;" width="12%;"><b>Email Status:</b></td>'+
+                        '<td>'+d.EmailInfo.EmailStatus+'</td>'+
+                    	'<td> </td>'+
+                    '</tr>'+
+                    '<tr>'+
+                    	'<td colspan=9> </td>'+
+                    	'<td><b>Fax:</b></td>'+
+                        '<td>'+d.PhoneInfo.FaxNumber+'</td>'+
+                    	'<td> </td>'+
+                    '</tr>'+
+                '</table>';
+            }
+		</script>
+        
+ 	<apex:actionfunction name="grpContactsLoad" rerender="pgMsg,dataTableContainer" action="{!startAssignmentListRequest}" status="pleaseWaitWhile" />
+    <apex:actionfunction name="grpContactsClose" rerender="pgMsg,dataTableContainer" action="{!closeSection}" status="pleaseWaitWhile" />    
+    
+    <apex:pageMessages id="pgMsg"></apex:pageMessages>
+    
+    <apex:outputPanel id="dataTableContainer" > 
+        <apex:outputPanel >
+			<apex:image id="rightIcon" value="/apexpages/slds/latest/assets/icons/utility/right_60.png" height="15" width="15" onclick="grpContactsLoad();" rendered="{!!isLoaded}" />
+            <apex:image id="downIcon" value="/apexpages/slds/latest/assets/icons/utility/down_60.png" height="15" width="15" onclick="grpContactsClose();" rendered="{!isLoaded}"  />
+            <h6><b>Group Contacts</b></h6>
+        </apex:outputPanel><br/>
+       <!-- <apex:outputPanel rendered="{!!isLoaded}">
+            <input type='button' value = "Click" onclick="grpContactsLoad();"/>
+        </apex:outputPanel> -->
+        <apex:outputPanel rendered="{!!(asstListInfo.assignmentServiceResponse != null && asstListInfo.assignmentServiceResponse.size > 0) && isLoaded}">
+            <br/>No group contacts available in EPICC
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!(asstListInfo.assignmentServiceResponse != null && asstListInfo.assignmentServiceResponse.size > 0) && isLoaded}">
+            <br/>
+            <script>
+            	var jsondata = JSON.parse('{!JSENCODE(asstListInfoJson)}');
+                
+                console.log('testConsole',jsondata); 
+                
+                var table = $('#grpConTable').DataTable( {
+                  "data" : jsondata.assignmentServiceResponse,
+                  "searching": false,
+                  "pageLength": 5,
+                  "lengthMenu": [ 5, 10 ],
+                  "lengthChange": false,
+                  "order": [[2, "asc"]],
+                  "columns": [
+                      {
+                            "className":      'details-control',
+                            "orderable":      false,
+                            "data":           null,
+                          	"defaultContent": ''
+                      },
+                      { "data" : "ContactInfo.FirstName"},
+                      { "data" : "ContactInfo.LastName" },
+                      { "data" : "ContactInfo.Suffix" },
+                      { "data" :  function (row) { return row.LevelInfo.LevelName + ' ' + row.ContactTypeInfo.ContactTypeName; }},
+                      { "data" : "DivisionInfo.DivisionDisplayName" }
+                   ]
+                });
+            $('#grpConTable tbody').on('click', 'td.details-control', function () {
+                    var tr = $(this).closest('tr');
+                    var row = table.row( tr );
+             
+                    if ( row.child.isShown() ) {
+                        // This row is already open - close it
+                        row.child.hide();
+                        tr.removeClass('shown');
+                    }
+                    else {
+                        // Open this row
+                        row.child( format(row.data()) ).show();
+                        tr.addClass('shown');
+                    }
+                } );
+            </script>
+            <table id="grpConTable" style="width:100%" class="display table table-striped table-bordered table-hover nowrap compact" cellspacing="0">
+                
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Suffix</th>
+                        <th>Contact Type</th>
+                        <th>Division</th>
+                        
+                    </tr>
+                </thead>
+                
+            </table>
+        </apex:outputPanel>
+        
+  </apex:outputPanel>
+  </apex:form>
+</apex:component>

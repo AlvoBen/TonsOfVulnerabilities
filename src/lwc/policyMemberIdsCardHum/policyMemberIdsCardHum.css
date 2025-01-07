@@ -1,0 +1,7 @@
+.message {
+    display: flex;
+    margin-top: -30px;
+    z-index: 1;
+    position: absolute;
+    margin-left: 450px;
+}

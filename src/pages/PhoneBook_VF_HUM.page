@@ -1,0 +1,350 @@
+﻿<!--***********************************************************************************************************************************
+* VF Page Name     : PhoneBook_VF_HUM 
+* Version          : 1.0
+* Created Date     : 22nd January, 2021
+* Function         : CRM Search Integration
+* Test Class       : 
+****************************************************************************
+* Modification Log:
+* Developer Name                             Code Review #           Date                 Description
+*---------------------------------------------------------------------------------------------------------------------------------
+* Rashmi Patil/Isha Gupta/Shreya Agrawal                            01/22/2021            Original Version
+* Nikhil Malhotra/Ekta Bist											02/25/2021			  Implementing Softpohone logging.
+* Shreya Agrawal/Isha Gupta											01/30/2021			  PhoneBook Implementation	
+* Shreya Agrawal/Isha Gupta											07/13/2021            MF2- US-2357061  IVR End Call or Transfer – IVR Call Data End Agent Session
+* Shreya Agrawal/Isha Gupta											07/16/2021            MF5- US-2230090  IVR Call Transfer passing Interaction Data
+* Shreya Agrawal													08/03/2021            MF1- US-2484219  Phonebook Secure Payment UI Controls( PBS- eBilling) MF1
+* Isha Gupta													    08/03/2021            US 2484206  T1PRJ0036776_Phonebook Secure Payment UI Controls (E-post, Pharmacy)MF1
+* Isha Gupta												        08/03/2021            US-2484212  T1PRJ0036776_Phonebook Secure Payment UI Controls(CBIS) MF1
+* Sahil Verma												        08/03/2021            US-2484363  T1PRJ0036776_New Payment Option Displayed (MF5)
+* Sahil Verma                                                       10/28/2021            US-2704685  T1PRJ0036776_SFDC_Enhance the validations on the ‘Card Billing Name’
+* Harshada Kamble                                                   08/19/2022            User Story 3653389: PCC Genesys Migration - Transfer to Provider Survey
+* Harshada Kamble                                                   02/03/2023            US 3980680: T1PRJ0036776: RxE - Save Campaign name and keycode to CRM interactions
+* Harshada Kamble                                                   02/03/2023            US 3979946: T1PRJ0036776: PCC VOC Survey Transfer Identification 
+* Sivaprakash Rajendran                                             04/27/2023            US 4040542: T1PRJ0036776: Enterprise - Caller Type Population with Phonebook - Classic (Genesys)
+* Harshada Kamble                                                   06/22/2023            User Story 4696940: T1PRJ0036776: Classic - Multi-member transfer call handling
+**********************************************************************************************************************************-->
+<apex:page controller="PhoneBook_C_HUM" docType="html-5.0" lightningStyleSheets="true" showHeader="true">       
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+        <apex:slds />
+        <apex:includeScript value="/support/console/50.0/integration.js"/>
+        <apex:includeScript value="{!URLFOR($Resource.PhoneBook_SR_HUM, 'PhoneBook_JS_HUM.js')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.PhoneBook_SR_HUM, 'PhoneBook_CSS_HUM.css')}" />
+        <div class="slds-scope" id="maindiv">
+            <apex:form id="mainform">
+                <apex:outputPanel rendered="{!bSwitchPhonebookTabs}">
+                    <div id="icons" style="text-align:right;margin-right: 40px;padding-top: 15px;">
+                        <img id="changePbColor" src="{!URLFOR($Resource.Phonebook_Img_HUM, 'Phonebook_Img_Hum/PhoneBook_grey.png')}" style="padding-right: 5px;" width="30" height="30" alt="PhoneBook" onclick="displayPhoneBook()"/>
+                        <img id="changeSpColor" src="{!URLFOR($Resource.Phonebook_Img_HUM, 'Phonebook_Img_Hum/SecurePay_grey.png')}" width="30" height="30" alt="Secure Pay" onclick="displaySecurePay()"/>
+                    </div>
+                </apex:outputPanel>
+                <apex:pageBlock id="contacts_list">
+                    <div id="phoneBookTab">
+                    <apex:outputPanel id="msgid"  >
+                    <apex:pageMessages ></apex:pageMessages>
+                    </apex:outputPanel>
+                        <apex:outputPanel id="allPanel">
+                            <div class="slds-form-element callerType" style="display:inline-block;width:49%;vertical-align:baseline">
+                                <label class="slds-form-element__label" for="callerTypePhoneBookID">Caller Type:</label>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-select_container">
+                                        <apex:pageBlockSection columns="1" id="CallerTypeSec">
+                                            <apex:selectList value="{!CallerType}" size="1" styleClass="slds-select" disabled="{!callerTypeDisable}">
+                                                <apex:actionSupport event="onchange" action="{!displayFilteredDefaultQueues}" reRender="rules,Defaultphonebook,searchForPhoneBookId">
+                                                </apex:actionSupport>
+                                                <apex:selectOptions value="{!CallerTypes}" />
+                                            </apex:selectList>
+                                        </apex:pageBlockSection>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="phonebook slds-form-element">
+                                <label class="slds-form-element__label">Phone Book:</label>
+                                <br/>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-select_container">
+                                        <apex:pageBlockSection columns="1">
+                                            <apex:selectList value="{!phoneBookSelected}" size="1" styleClass="slds-select" html-placeholder="select6" id="phonebooknames">
+                                                <apex:actionSupport event="onchange" action="{!displayphBookRules}" reRender="phonebook,rules,Defaultphonebook,searchForPhoneBookId">
+                                                </apex:actionSupport>
+                                                <apex:selectOptions value="{!phoneBookNamesList}" />
+                                            </apex:selectList>
+                                        </apex:pageBlockSection>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-form-element slds-m-top_small searchContainer">
+                                <label class="slds-form-element__label" for="searchForPhoneBookId" style="width:25%;vertical-align:top;font-weight:bold">Search For:</label>
+                                <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left" style="display:inline-block;width:73%">
+                                    <svg class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" aria-hidden="true">
+                                        <use xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#search"></use>
+                                    </svg>
+                                    <apex:pageBlockSection columns="1">
+                                        <apex:pageBlockSectionItem >
+                                            <apex:input html-placeholder="{!if(bSwitchCallReasonCode==true,placeholderVal,'Queue Name')}" styleclass="slds-input" value="{!searchParam}" id="searchForPhoneBookId">
+                                                <apex:actionSupport event="onkeyup" action="{!searchRules}" reRender="rules,isDefaultPhoneBook,Defaultphonebook">
+                                                </apex:actionSupport>
+                                            </apex:input>
+                                        </apex:pageBlockSectionItem>
+                                    </apex:pageBlockSection>
+                                </div>
+                            </div>
+                            <apex:actionRegion >
+                                <div style="max-height:200px;overflow:auto">
+                                    <apex:outputPanel id="rules">
+                                        <apex:pageBlockTable value="{! phBookTransferList }" var="ph" styleClass="slds-table slds-table_bordered" id="phonebook"
+                                                            style="width:100%" rendered="{!isnotDefaultPhoneBook}">
+                                            <apex:column style="width:25px">
+                                                <input type="radio" name="group1" value="{! ph.TransferNumber }" onclick="if({!isCallNotConnected} == true){calldisp(this.value);}else{callInfo.tfn=this.value;calldispDef(this.value);}"
+                                                    />
+                                            </apex:column>
+                                            <apex:column headerValue="Queue Name" value="{! ph.QueueName }" style="white-space:pre-wrap;" />
+                                            <apex:column headerValue="Info" style="white-space:pre-wrap;">
+                                                <apex:commandButton value="" rerender="dummy" style="display:none !important" />
+                                                <apex:commandButton value="Info" action="{!showPopup}" rerender="additonalInfoModal">
+                                                    <apex:param name="uniTransferNumber" value="{!ph.TransferNumber}" assignTo="{!uniqueTransferNumber}" />
+                                                </apex:commandButton>
+                                            </apex:column>
+                                        </apex:pageBlockTable>
+                                        <apex:pageBlockTable value="{! defaultTransferList }" var="ph" styleClass="slds-table slds-table_bordered" id="Defaultphonebook"
+                                                            style="width:100%" rendered="{!isDefaultPhoneBook}">
+                                            <apex:column style="width:25px">
+                                                <input type="radio" name="group1" value="{! ph.TransferNumber }" onclick="callInfo.tfn=this.value;calldispDef(this.value)"
+                                                    />
+                                            </apex:column>
+                                            <apex:column headerValue="Call Reason" value="{! ph.CategoryCd }" style="white-space:pre-wrap;" rendered="{!bSwitchCallReasonCode}" />
+                                            <apex:column headerValue="Queue Name" value="{! ph.QueueName }" style="white-space:pre-wrap;" rendered="{!!bSwitchCallReasonCode}"/>
+                                            <apex:column headerValue="Info" style="white-space:pre-wrap;">
+                                                <apex:commandButton value="" rerender="dummy" style="display:none !important" />
+                                                <apex:commandButton value="Info" action="{!showPopup}" rerender="additonalInfoModal">
+                                                    <apex:param name="defaultUniTransferNumber" value="{!ph.TransferNumber}" assignTo="{!deafultUniqueTransferNumber}" />
+                                                </apex:commandButton>
+                                            </apex:column>
+                                        </apex:pageBlockTable>
+                                    </apex:outputPanel>
+                                </div>
+                            </apex:actionRegion>
+                            <div class="slds-form-element slds-m-top_small dialNumber">
+                                <label class="slds-form-element__label" for="dial_number" style="width:25%;vertical-align:top;font-weight:bold">Number:</label>
+                                <div class="slds-form-element__control" style="display:inline-block;width:40%">
+                                    <apex:pageBlockSection columns="1">
+                                        <apex:pageBlockSectionItem >
+                                            <apex:outputPanel id="callPanel">
+                                                <apex:outputPanel rendered="{!AND(isShowBox,isCallConnected,isCallNotConnected==false)}">
+                                                <apex:inputHidden value="{!numberVal}" id="id-number-variable"/>
+                                                <input type="text" id="inputbox" oninput="onInputHandler();" value="{!numberVal}" placeholder="123456789" style="width:90%" styleClass="number-variable" maxlength="10"/>
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!AND(isShowBox,isCallConnected,isCallNotConnected==false)}" id="errorid" style="color:rgb(0, 112, 210);font-size:0.75rem;margin-top:0.125rem;display:block;font-style:bold" >
+                                                    <p >
+                                                        {!errorMessage}   
+                                                    </p>
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!AND(isCallNotConnected,isShowClickToDial)}">
+                                                        <support:clickToDial number="{!numberVal}" id="supportdial" />
+                                                        <script>
+                                                        var clickToDialEl = document.querySelector('[id$="supportdial"]');
+                                                        if(clickToDialEl) clickToDialEl.addEventListener("click", (e) => {sforce.console.setCustomConsoleComponentVisible(false);});
+                                                        </script>
+                                                    </apex:outputPanel>
+                                            </apex:outputPanel>
+                                        </apex:pageBlockSectionItem>
+                                    </apex:pageBlockSection>
+                                </div>
+                            </div>
+                            <div class="transferButton">
+                                <apex:pageBlockSection columns="2" id="transferButtons">
+                                    <apex:pageBlockSectionItem >
+                                        <apex:commandButton disabled="{!enableConsultTransfer}" immediate="true" onclick="initConsultTransfer() ;return false;" rerender="dummyConsulttransfer"
+                                                            value="Consult Transfer" styleclass="slds-button slds-button_brand" />
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        <apex:commandButton disabled="{!enableBlindTransfer}" immediate="true" onclick="initBlindTransfer() ;return false;" rerender="dummytransferblind"
+                                                            value="Blind Transfer" styleclass="slds-button slds-button_brand" />
+                                    </apex:pageBlockSectionItem>
+                                    <apex:outputPanel rendered="{!AND(bSwitchSurveyTransfer,isSurveyButtonVisible,isCRMSPCCPermissionSetUser)}">
+                                        <apex:outputPanel style="border-left-width: 2px;padding-left: 50px;margin-left: 45px;">
+                                            <apex:pageBlockSectionItem >
+                                                <apex:commandButton immediate="true" onclick="initSurveyTransfer() ;return false;" rerender="dummysurveytransferblind"
+                                                    value="VOC Survey Transfer" styleclass="slds-button slds-button_brand"/>
+                                            </apex:pageBlockSectionItem>
+                                        </apex:outputPanel>
+                                </apex:outputPanel>
+                                </apex:pageBlockSection>
+                                <support:clickToDial number=""/>
+                            </div>
+                        </apex:outputPanel>
+                    </div>
+                    <apex:outputPanel id="callConnect">
+                        <apex:outputPanel rendered="{!isCallConnected}"></apex:outputPanel>
+                    </apex:outputPanel>
+                    <div id="SecurePayTab" title="Secure Transfer" >
+                        <apex:outputPanel rendered="{!bSwitchPhonebookTabs}">
+                            <div style="font-weight: 700;padding-bottom: 25px;" >
+                                <header>Secure Transfer</header>
+                            </div>
+                        </apex:outputPanel>
+                        <apex:outputPanel id="SecurePaySecId" rendered="{!bSwitchSecurePay}">
+                            <div class="slds-form-element callerType" style="display:inline-block;width:40%;vertical-align:baseline">
+                                <label class="slds-form-element__label">Secure Payments</label>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-select_container">
+                                        <apex:pageBlockSection columns="1">
+                                            <apex:selectList disabled="{!callerTypeDisable}" value="{!PaymentTypeSelected}" size="1" styleClass="slds-select" html-placeholder="select"  onchange="securePaymentHandler();return false;" id="securePayment">
+                                                    <apex:selectOptions value="{!SecurePaymentTypes}" />
+                                            </apex:selectList>
+                                        </apex:pageBlockSection>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cardBillingName slds-form-element" style="width:50%">
+                                <label class="slds-form-element__label" style="margin-left:1%">Card Holder Name</label>
+                                <br/>
+                                <div class="slds-form-element__control">
+                                    <div style="width:100%">
+                                        <apex:pageBlockSection columns="2">
+                                            <apex:input styleclass="slds-input" size="1" id="firstName" html-placeholder="First Name" style="font-size:12px; Padding-Left:8px; width:108%"></apex:input>
+                                            <apex:input styleclass="slds-input" size="1" id="lastName" html-placeholder="Last Name" style="font-size:12px; Padding-Left:8px;Margin-Left:27%; width:105%" ></apex:input>
+                                        </apex:pageBlockSection>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="Padding-Top:10px; Padding-Left:86px">
+                                <apex:pageBlockSection >
+                                    <apex:pageBlockSectionItem >
+                                        <apex:commandButton id="secureTransferButton" immediate="true" onclick="initSecureTransfer() ;return false;" rerender="dummyConsulttransfer"
+                                                                    value="Secure Transfer" styleclass="slds-button slds-button_brand" style="width:170%" />
+                                    </apex:pageBlockSectionItem>
+                                </apex:pageBlockSection>
+                            </div>
+                        </apex:outputPanel>
+                    </div>
+                </apex:pageBlock>
+
+                <!-- Modal pop-up window to display the phonebook entry details -->
+                <apex:outputPanel id="additonalInfoModal">
+                    <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopup}" />
+                    <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopup}">
+                        <div>
+                            <apex:commandButton styleClass="infoCloseButton" image="{!URLFOR('/img/func_icons/closeSprite16.gif')}" action="{!closePopup}"
+                                rerender="additonalInfoModal" />
+                        </div>
+                        <div style="clear: both">
+                            <apex:pageBlock >
+                                <apex:pageBlockSection columns="1">
+                                    <apex:repeat value="{!if(phBookTransferListSelected != '',phBookTransferListSelected,defaultPhBookTransferListSelected)}"
+                                                 var="ph" id="transferList">
+                                        <apex:outputText label="Transfer Number" id="TransferNumber" value="{!ph.TransferNumber}"/>
+                                        <apex:outputText label="Shareable Number" id="tollFreeNumebr" value="{!if(phBookTransferListSelected != '',ph.ShareableNumber,ph.ShareableTollFree)}"/>
+                                        <apex:outputText label="Hours of Operation" id="hoursOperation" value="{!ph.OperatingHours}" />
+                                        <apex:outputText label="Notes" id="notes" value="{!ph.Notes}" />
+                                    </apex:repeat>
+                                </apex:pageBlockSection>
+                            </apex:pageBlock>
+                        </div>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                <!-- below output panel is used to render the manual transfer updated value!! -->
+                <apex:outputPanel id="manualTransfer">
+                    <script type="text/javascript">
+                    var isManualTransferval= '{!isManualTransfer}';
+                    </script>
+                </apex:outputPanel>
+                <apex:outputPanel id="refreshVar">
+                    <script type="text/javascript">
+                      aboutIdVal = '{!aboutIdVal}';
+                      isTransferredCall = {!isTransferredCall};
+                      interactionIdVal = '{!interactionIdVal}';
+                      autoInteractionIDvalue = '{!autoInteractionIDvalue}';
+                    </script>
+                </apex:outputPanel>
+                <apex:outputPanel id="outboundcall">
+                <script type="text/javascript">
+                    var OBInteractionSwitchVar = {!bSwitchOBInteraction};
+                    var disablePopOutSwitchVar = {!bSwitchDisablePopOut};
+                    var holdPopupAlertSwitchVar = {!bSwitchHoldPopup};
+                    var holdtimer = {!HoldTimerPopup};
+                    var phonebookTabSwitchVar = {!bSwitchPhonebookTabs};
+                    var updateCampaignNameAndKeycode ={!updateCampaignNameAndKeycodeSwitch};
+                    var updateInteractionAttribute ={!updateInteractionAttributeSwitch};
+                    var callerTypePopulationSwitch = {!callerTypePopulationSwitch}; //US#4040542-Added for Caller Type Population with Phonebook.
+                    var callTransferSwitchvalue = {!callTransferSwitch};
+                </script>
+            </apex:outputPanel>
+               <apex:actionRegion >
+                    <apex:actionFunction name="getcallDataWebService" oncomplete="afterCallData('{!searchPageURl}');" action="{!getDataFromWebService}" reRender="refreshVar">
+                        <apex:param assignTo="{!uuidataValue}" name="uuidataValue" id="uuidataValueId" value=""></apex:param>
+                        <apex:param assignTo="{!callActionInt}"  name="callActionInt" id="callActionIntId" value="" ></apex:param>
+                        <apex:param assignTo="{!callLogInfoInt}"  name="callLogInfoInt" id="callLogInfoIntId" value="" ></apex:param>
+                        <apex:param assignTo="{!reasonInt}"  name="reasonInt" id="reasonIntId" value="" ></apex:param>
+                        <apex:param assignTo="{!idval}" name="idval" id="idvalId" value=""></apex:param>
+                        <apex:param assignTo="{!isRefreshedval}" name="isRefreshedval" id="isRefreshedvalId" value=""></apex:param>
+                        <apex:param assignTo="{!calllogattributes}" name="calllogattributes" value=""></apex:param>
+                    </apex:actionFunction>
+                    <apex:actionFunction name="getcallDataWebServicemultipleTabs" oncomplete="afterCallDataMultipleTabs('{!searchPageURl}');" action="{!getDataFromWebServiceMultipleTabs}"
+                    reRender="refreshVar">
+                        <apex:param assignTo="{!uuidataValue}" name="uuidataValue" id="uuidataValueId2" value=""></apex:param>
+                        <apex:param assignTo="{!callActionInt}" name="callActionInt" id="callActionIntId2" value=""></apex:param>
+                        <apex:param assignTo="{!callLogInfoInt}" name="callLogInfoInt" id="callLogInfoIntId2" value=""></apex:param>
+                        <apex:param assignTo="{!reasonInt}" name="reasonInt" id="reasonIntId2" value=""></apex:param>
+                        <apex:param assignTo="{!idval}" name="idval" id="idvalId2" value=""></apex:param>
+                        <apex:param assignTo="{!isRefreshedval}" name="isRefreshedval" id="isRefreshedvalId2" value=""></apex:param>
+                    </apex:actionFunction>
+                    <apex:actionFunction name="createLogData" action="{!createRecord}" reRender="">
+                        <apex:param assignTo="{!callAction}"  name="callAction" id="callActon" value="" ></apex:param>
+                        <apex:param assignTo="{!callInfoLog}"  name="callInfoLog" id="callInfoLog" value="" ></apex:param>
+                        <apex:param assignTo="{!callLogType}"  name="callLogType" id="callLogType" value="" ></apex:param>
+                        <apex:param assignTo="{!SPExtrnlId}"  name="SPExtrnlId" id="SPExtrnlId" value="" ></apex:param>
+                        <apex:param assignTo="{!reason}"  name="reason" id="reason" value="" ></apex:param>
+                        <apex:param assignTo="{!category}"  name="category" id="category" value="" ></apex:param>
+                          <apex:param assignTo="{!uuidataValue}" name="uuidataValue" id="uuidataValueId1" value=""></apex:param>
+                    </apex:actionFunction>
+                    <apex:actionFunction name="calldisp" action="{!callDisplay}" reRender="callPanel,inputbox,errorid,supportdial,transferButtons,manualTransfer">
+                        <apex:param assignTo="{!numberVal}" name="phoneNum" id="id1" value=""></apex:param>
+                    </apex:actionFunction>
+                    <apex:actionFunction name="calldispDef" action="{!callDisplayDef}" reRender="callPanel,inputbox,errorid,supportdial,transferButtons,manualTransfer">
+                        <apex:param assignTo="{!numberVal}" name="phoneNum" id="id2" value=""></apex:param>
+                    </apex:actionFunction>
+                    <apex:actionFunction name="doInit" action="{!AllPhoneBookRules}" reRender="phonebooknames,phonebook,rules,Defaultphonebook,inputbox,errorid,supportdial,CallerTypeSec,callPanel,transferButtons,searchForPhoneBookId,SecurePaySecId,securePayment,outboundcall"  oncomplete="initHandler();"/>
+                    <apex:actionFunction name="CallConnected" action="{!onCallConnected}" oncomplete="DefaultPhoneBook();" reRender="phonebooknames,phonebook,rules,Defaultphonebook,inputbox,supportdial,txt2,CallerTypeSec,callPanel,transferButtons,searchForPhoneBookId,callConnect,errorid,additonalInfoModal,securePayment"/>
+                    <apex:actionFunction name="DefaultPhoneBook" action="{!fetchDefaultPhoneBookRules}" reRender="msgid,Defaultphonebook,inputbox,transferButtons,rules,searchForPhoneBookId,callPanel,errorid"/>
+                    <apex:actionFunction name="CallDisconnected" action="{!onCallDisconnected}" oncomplete="Reassign();" reRender="msgid,phonebook,CallerType,rules,Defaultphonebook,inputbox,errorid,supportdial,txt2,CallerTypeSec,callPanel,transferButtons,callConnect,phonebooknames,searchForPhoneBookId,additonalInfoModal,securePayment"/>
+                    <apex:actionFunction name="Reassign" action="{!reAssignVar}" reRender="CallerTypeSec,phonebook,inputbox,errorid,supportdial,txt2,callPanel,callConnect,phonebooknames,searchForPhoneBookId,securePayment"/>
+                    <apex:actionFunction name="callTransfer" action="{!OnCallTransfer}" oncomplete="onCompleteCallTransfer()" reRender="searchForPhoneBookId,msgid,phonebooknames,rules,Defaultphonebook,additonalInfoModal">
+                    <apex:param assignTo="{!ParamsValueOnCallTransfer}" name="ParamsOnCallTransfer" id="ParamsOnCallTransferId" value=""></apex:param>
+                    </apex:actionFunction>
+                    <apex:actionFunction name="onCompleteCallTransfer" reRender="searchForPhoneBookId,phonebooknames,rules,Defaultphonebook">
+                    </apex:actionFunction>
+                     <apex:actionFunction name="onOutBoundCallConnect" action="{!onOutBoundCallConnect}" oncomplete="onCompleteOBCallTransfer()" reRender="inputbox,errorid,supportdial,callPanel,transferButtons,searchForPhoneBookId,phonebooknames" />
+                     <apex:actionFunction name="onCompleteOBCallTransfer"  reRender="inputbox,errorid,supportdial,callPanel,transferButtons,searchForPhoneBookId,phonebooknames,rules"/>
+                    <apex:actionFunction name="enableTransferButtonsOnPaste" action="{!refreshbuttons}"  rerender="transferButtons,manualTransfer">
+                         <apex:param assignTo="{!numberVal}"  name="temp"  value="" ></apex:param>
+                    </apex:actionFunction>
+                    <!--US#2191493 - SFDC_Caller Type population-->
+                    <apex:actionFunction name="upateCallerType"  action="{!updateCallerTypeVal}" reRender="CallerTypeSec,rules,Defaultphonebook,searchForPhoneBookId">
+                        <apex:param assignTo="{!interactingWithVal}" name="intWithType" value=""></apex:param>
+                    </apex:actionFunction>
+                </apex:actionRegion>
+            </apex:form>
+        </div>
+         <!-- this snippet has been added here as it was not working from static resource-->
+        <script type="text/javascript">
+            window.onload = function () {   displayPhoneBook();doInit();   };
+            window.$Label = window.$Label || {};
+            $Label.Hold_Popup_HUM = '{!JSENCODE($Label.Hold_Popup_HUM)}';
+            var updateInteractionInfoAction = '{!$RemoteAction.PhoneBook_C_HUM.updateInteractionInfoToIVR}';
+            var fetchPolicyMemberData = '{!$RemoteAction.PhoneBook_C_HUM.fetchPolicyMemberData}';
+            var SecurePaySuccessMsgVal = '{!($Label.PhoneBook_SecurePay_SUCCESS_HUM)}';
+            var SecurePayFailureMsgVal = '{!($Label.PhoneBook_SecurePay_FAILURE_HUM)}';
+            var createAutoInteractionOnOB = '{!$RemoteAction.PhoneBook_C_HUM.createAutoInteractionOnOB}';
+            var secureFlowId = '{!secureFlowId}';
+            var SurveyTransferNo = '{!SurveyTransferNo}';
+            var phonebookGrey  = "{!URLFOR($Resource.Phonebook_Img_HUM, 'Phonebook_Img_Hum/PhoneBook_grey.png')}";
+            var phonebookGreen = "{!URLFOR($Resource.Phonebook_Img_HUM, 'Phonebook_Img_Hum/PhoneBook_Green.png')}";
+            var securepayGrey  = "{!URLFOR($Resource.Phonebook_Img_HUM, 'Phonebook_Img_Hum/SecurePay_grey.png')}";
+            var securepayGreen = "{!URLFOR($Resource.Phonebook_Img_HUM, 'Phonebook_Img_Hum/SecurePay_Green.png')}";
+            var getCallerTypeForPhoneBook = '{!$RemoteAction.PhoneBook_C_HUM.getCallerTypeForPhoneBook}'; //US#4040542-Added for Caller Type Population with Phonebook.
+        </script>
+    </html>
+</apex:page>

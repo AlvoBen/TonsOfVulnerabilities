@@ -1,0 +1,327 @@
+﻿<!--
+Page Name        : Pharmacy_VF_HUM.page
+Version          : 1.0
+Created On       : 2016
+Function         : VF page to display Pharmacy detail information
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Rajesh Keswani             57637                  12/20/2016                 Original Version
+* Rajesh Keswani             58175                  01/22/2017                 Implementation of REQ - 296652 - Order Summary details from getOrder EPostRX
+* Rajesh Keswani             58348                  01/27/2017                 Implementation of REQ - 296662 - View Address
+* Avinash Choubey            59057                  01/17/2017                 Added Allergies and Health Conditions component REQ 29114
+* Shiva Pasumarty            60234                  02/02/2017                 OMS Log Notes Req# REQ - 272225
+* Rajesh Keswani             65358                  02/20/2017                 Removing controller from OMS section.
+* Rajesh Chandgothia         70352                  02/14/2017                 Member prescription Req# REQ - 296752
+* Rajesh Chandgothias        70818                  02/24/2017                 Defect 258965,258968 added plan type from policy member
+* Rajesh Keswani             74090                  02/20/2017                 REQ - 296729 Edit Demographic Section error messages.
+* Sharan Shanmugam           74899                  03/08/2017                 Added order detail js and css on the page as part of REQ - 296650
+* Rajesh Keswani             74554                  03/10/2017                 REQ - 299426 Add and Edit Address.
+* Rajesh CG                  75938                  03/06/2017                 Req- 296651 Edit Order
+* Rajesh Keswani             78299                  03/23/2017                 REQ - 300050 Add Prescription to the order
+* Rajesh Keswani             78316                  03/23/2017                 REQ - 300052 Modify Shipping address
+* Rajesh CG                  75938                  03/06/2017                 Req- 296651 Edit Order
+* Vishal Verma                                      03/22/2017                 REQ - 296926 : Added MTM Indicator
+* Rajesh Keswani             82973                  03/24/2017                 REQ - 302791: pharmacy offline service mode
+* Sumit Pharande             80478                  03/30/2017                 REQ - 296719 : UI Layout
+* Rajesh Chandgothia         82476                  04/06/2017                 REQ - 301571 : Member Prescription section-- color indicator
+* Sumit Pharande             86623                  04/21/2017                 REQ-296719- Fixed Position of floating Links
+* Sumit Pharande             88737                  05/02/2017                 Defect Fix 277341.0001
+* Rajesh Keswani             112036                 07/20/2017                 Implementation of REQ - 323389 - adding networkId in service request
+* Sharan Shanmugam                                  07/27/2017                 REQ - 323542 : Exception handling
+* Shreya Choodamani                                 08/11/2017                 REQ - 326235 :  Changes to make the side panel collapse
+* Prudhvi Pamarthi           171453                 01/22/2018                 REQ - 328929 Fix for HUMExceptionHelper: DML 
+* Pallavi Ravishankar        215883                 04/12/2018                 REQ - 323439 - CaseHistoryDatatable - changed reference to reusable component as part of Resolution Project.
+* Praveen Kumar Parimi       241298                 06/08/2018                 REQ - 366102 - CA Incident #7345396 - Fix the Special char issue in the name for the page to load.
+* Rakesh Patni               273785                 08/20/2018                 REQ-363507
+* AshokKumar Nutalapati      316839                 12/11/2018                 REQ - 377485: Changes made to access the Custom Permiccsion 'RXRFUser_HUM' for RX RapidForce users.
+* Praveen Kumar Parimi       318033                 12/10/2018                 Added Jquery reference for the Direct URL Defects.
+* Kiran Bhuvanagiri                                 02/22/2019                 REQ - 382713: Update Link Side Panel Margins on Humana Pharmacy Page to Reduce Horizontal Scrolling 
+* Prathyu Tushar             345726                 03/22/2019                 REQ - 388195: Extend Order Summary Table to Full Width of Page (RxRF)
+* Kiran Kumar                348609                 04/03/2019                 REQ - 386031: Update Floating Navigation Links on the Humana Pharmacy Page (RxRF)
+* Prathyu Tushar             353134                 04/25/2019                 Defect #412898.0001, keyword search not working properly while left panel collapsed.
+* Prudhvi Pamarthi           352254                 05/03/2019                 REQ - 396331 Fix for CA Ticket - 8167342
+* Prathyu Tushar             357723                 05/30/2019                 REQ - 396165: Extend Order Summary Table to Full Width of Page (CRMS) (ID# 5) to Main steam
+* Yogesh Gupta										05/28/2019				   REQ - 400046 Add error Message for member not found
+* Kiran Kumar                358341                 06/06/2019                 Defect 421416 Fix Floating Navigation links spacing issue 
+* AshokKumar Nutalapati      359912          		07/03/2019                 REQ - 396168 - Update Floating Navigation Links on the Humana Pharmacy Page (CRMS)
+* Lakshmi Madduri									10/30/2019				   Added input hidden variable for pharmacy benefits
+* Satyam Malviya                                    12/31/2019                 Defect 453442 - P9 - HP page - Calendar icons not displaying 
+* AshokKumar Nutalapati								12/06/2019				   REQ - 408319 Disable 'Create Order' Button When HP Page Accessed from Legacy Deleted Policy (RxRF)
+* Kiran Kumar										06/01/2020				   REQ - 1050513 Change Formatting of 'Balance Due' Field on Humana Pharmacy Page (RxRF)
+* Sayali Nemade                                     6/3/2020                   DF - 828 For same members it shows consistent link (RxNova / InComm)
+* Ashok Kumar Nutalapati                        	06/22/2020           	   REQ - 1000087 Log 'Invoice Request' Guided Process to Case (RxRF) 
+* Himalay Patel										06/24/2020				   REQ - 939039: Access the 'Invoice Request' Guided Process
+* Himalay Patel									 	01/15/2021 				   REQ - 1500779 Display Expired and Expiring Soon Credit Card Icon (RxRF)
+* Himalay Patel									 	01/29/2021 				   DF - 2341 Fix -  1500779_Page Header of Humana pharmacy page  is not displayed as per  CRM  UI standards  when expired credit card or expiring soon credit card Icon is displayed.
+* Himalay Patel									    03/16/2021 		           REQ - 1711424: Display Expired and Expiring Soon Credit Card Icon (CRMS) (ID# 131)
+* AshokKumar Nutalapati   							07/12/2021           	   REQ - 1907149 T1PRJ0002517 - MF 2 - Display Icon When Pharmacy Authorization on File (RxRF) (ID# 131)
+* Nirmal Garg										07/28/2021				   REQ-1801186  Adding Unified search component
+* Aaron Speakman                                    08/20/2021                 User Story 2421627: T1PRJ0002517 - MF 2 - Updating Addresses That Apply to More Than One Address Type (RxRF) (ID# 91)
+* AshokKumar Nutalapati   							09/02/2021           	   REQ - 2611682 T1PRJ0002517 - MF 2 - Display Icon When Pharmacy Authorization on File (CRMS) (ID# 131)
+* Nirmal Garg										09/16/2021				   Added browser logic for coveo
+* Kiran Bhuvanagiri 		                        09/30/2021           	   REQ - 2507884 T1PRJ0002517 - MF 2 - Case Documentation for Demographic Updates (RXRF) (ID# 35a)
+* Ashok Kumar Nutalapati                        	09/30/2021           	   REQ - 2593758 T1PRJ0002517 - MF 2 - New case button, create case, & open new case in a subtab (RXRF) (ID# 35b)
+* Ashok Kumar Nutalapati                        	11/02/2021           	   REQ - 2762008 - New Address LWC Mainstream
+* Pinky Vijur                                       12/01/2021                 REQ - 2846597: T1PRJ0002736 - 2021 MF6 - Security- TECH - SF - OSA Library Verify JQuery Bootsrap or Angular methods are working fine in Pharmacy Components       
+* Kiran Bhuvanagiri                  				01/04/2022           	   User Story 2759501: Case Documentation for Address Changes: UI Updates New/ Existing Case  (RxRF)
+* Shaik Mujeebur Rahaman                                04/29/2022                US-3213649 T1PRJ0272548 - SF Legacy API Retirement Upgrade API Version for Integrationjs Pharmacy
+* Ashok Kumar Nutalapati                        	05/20/2022                 REQ - 3074356 T1PRJ0200895 - MF 5 - TECH - Switch Clean Up - Switch Clean Up - Display Icon When Pharmacy Authorization on File (CRMS) (ID# 131)
+* Shaik Mujeebur Rahaman                          06/08/2022                 User Story 3366863: T1PRJ0010888 - MF [1] - Rebranding- Update text references from "Humana Pharmacy" to "Mail Order Pharmacy" - Main Page & Case Comments
+* Pinky Vijur                                     01/20/2023                 3172071	T1PRJ0891339 - MF 5 - TECH - Pharmville Decommissioning - Custom Permission Usage
+* Tharun Madishetti                               07/14/2023                  US-4647281: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Pharmacy (Group 1)
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+
+<apex:page id="thePage" tabStyle="Policy_Member__c" showHeader="true" sidebar="false" controller="Pharmacy_C_HUM" >
+   <apex:form >
+		<input type="hidden" value="" id="PharmacyBenefits"/>
+   </apex:form>
+  <apex:includeScript value="/support/console/54.0/integration.js"/> 
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery-ui.min.js')}"/> 
+  <apex:includeScript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/Bootstrap/dist/js/bootstrap.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/DataTables-1.13.4/js/jquery.dataTables.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/DataTables-1.13.4/js/dataTables.bootstrap.min.js')}" />
+
+  <link rel="stylesheet" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}" />
+  <link rel="stylesheet" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/Bootstrap-3.3.7/css/bootstrap.min.css')}" />
+  <link rel="stylesheet" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/DataTables-1.13.4/css/dataTables.bootstrap.min.css')}" />
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}" />
+  
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_JQUERY, 'jquery-ui.min.css')}" />
+  
+  <apex:includeScript value="{!URLFOR($Resource.Pharmacy_SR_HUM, 'Pharmacy_JS_HUM.js')}"/>
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMCustomSearch, 'HUMCustomSearch/main.css')}" />
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.Pharmacy_SR_HUM, 'Pharmacy_CSS_HUM.css')}"/>
+       <style type="text/css">
+            .glyphicon {
+                color: #16325c;
+                cursor: pointer;
+            }
+           
+        </style>
+  <script type="text/javascript">
+    <!-- Please do not change this line as it breaks the JS tables. -->
+    //dont enable P9 Critical Fix    $j = jQuery.noConflict(true);
+    var dPlantype = "{!JSENCODE(objPolMem.Product_Type__c)}";
+    var dEffectiveDate = "{!JSENCODE(objPolMem.Effective_Date__c)}";
+    var dTerminationDate = "{!JSENCODE(objPolMem.End_Date__c)}";
+    var enterpriseID = "{!JSENCODE(objPolMem.Member__r.Enterprise_ID__c)}";
+    var omsRemote = '{!$RemoteAction.Pharmacy_C_HUM.invokeOMSLogNotes}';
+    var pharmacyRemoteAction = '{!$RemoteAction.Pharmacy_C_HUM.invokeGetMemberService}';
+    var memberPrescriptionRemote = '{!$RemoteAction.Pharmacy_C_HUM.invokeEpostMemberPrescription}';
+    var createEditOrderRequest = '{!$RemoteAction.Pharmacy_C_HUM.invokecreateEditOrderDetail}';
+    sforce.console.setTabTitle('Mail Order Pharmacy: {!JSENCODE(objPolMem.Member__r.Name)}');
+    var hoverImageIcon = '{!JSENCODE($Resource.HUMHoverOverQuestionMark)}';
+    var MTMFlag = '{!bShowMTMSection}';
+    var netWorkId = '{!JSENCODE($User.Network_User_Id__c) }';
+    var recordId = "{!JSENCODE(objPolMem.Member__c)}";
+    //Member not found error message
+    var PMemErrorMsg="{!$Label.Pharmacy_Mem_Not_found}";
+    var legacyDelete = {!objPolMem.ETL_Record_Deleted__c};
+    var bPharmacyUser = '{!bPharmacyuser}';
+    var pharmacyBenefitsRemoteAction = '{!$RemoteAction.Pharmacy_C_HUM.invokeGetpAuthService}';
+    var bSwitchLightningAddress = {!JSENCODE(IF( bSwitchLightningAddress, 'true', 'false'))};
+    var policyId = "{!JSENCODE(objPolMem.Id)}";
+    let primaryAccountTabID = '';
+    if(enterpriseID != null && enterpriseID != undefined && recordId != null && recordId != undefined) invokeRemoteActionPharmacyGetpAuthDetails(enterpriseID,recordId);
+    if(enterpriseID != null && enterpriseID != undefined)  invokeRemoteActionPharmactGetmemberDetails(enterpriseID);
+
+    jQuery(document).ready(function ()
+    {
+    checkStickyLinkHeight();
+    setFocusOnLoad();
+    });
+    function setFocusOnLoad()
+    {
+    document.getElementById('{!$Component.thePageBlockSectionDemographics}').focus();
+    }
+    jQuery(window).resize(function (){
+      checkStickyLinkHeight();
+    });
+    
+    //Added to update address data for changes made in the Lightning Address component
+    document.addEventListener("updateDemographics", function (event) {
+      displayDemographic(event.detail, true, '0');
+      refreshAddressData(event.detail.Address);
+    });
+	
+	document.addEventListener("openNewCaseFromAddress", function (event) {
+	  openNewCaseFromAddress(event.detail.id, event.detail.number, event.detail.comment, primaryAccountTabID);
+	});
+	
+	document.addEventListener("openExistingCaseFromAddress", function (event) {
+      openExistingCaseFromAddress(event.detail.id, event.detail.number, event.detail.comment, primaryAccountTabID);
+    });
+  </script>
+  
+  <apex:outputPanel >
+    <input type="hidden" value="{!objPolMem.Id}" id="recordId" />
+    <input type="hidden" value="" id="emailAddress" />
+    <input type="hidden" value="" id="altAddress" />
+    <input type="hidden" value="" id="billAddress" />
+    <input type="hidden" value="" id="shipAddress" />
+    <input type="hidden" value="" id="permAddress" />
+  </apex:outputPanel>
+
+  <!-- Moved the change from dividing the page into 1 table, to making 2 div tags and added the collapsiblesidepanel component -->
+  <div id="leftPanel" style="width:16%; display:inline-flex;">
+    <div id="column1" class="Links" >
+      <c:DynamicCustomLinks_CMP_HUM DynamicLinkController="{!this}"/>
+    </div>
+    <div id="collapsePanel">
+      <c:CollapsibleSidePanel_CMP_HUM leftPanelID="leftPanel" leftCMPID="column1" rightPanelID="rightPanel" collapsePanelID="collapsePanel" jqueryVariable="jQuery"/>
+    </div>
+  </div>
+
+  <apex:outputPanel >
+    <div id="rightPanel">
+      <div id="pharmacySection" class="pgcon">
+        <apex:outputPanel styleClass="floatingLinks,fixedDiv sticky" id="floatLinkId">
+          <c:PharmacyFloatingLinks_CMP_HUM id="flotingLinksCompId" memberID="{!objPolMem.name}" bShowMTMSection="{!bShowMTMSection}"/>
+        </apex:outputPanel>
+		<apex:outputPanel id="pcoveo" rendered="{!bCoveoUser}">
+			<div style="padding: 34px 0px 0px!important;margin-top: 20px;margin-bottom:-23px !important" >
+				<c:UnifiedSearch_CMP_HUM id="uniId" policyMemberId="{!objPolMem.Id}" PageNameToPass="Humana Pharmacy" />
+			</div>		
+		</apex:outputPanel>
+        <div id="PharmacyPageHeader" style="padding: 15px 0px 0px!important;">
+          <apex:sectionheader title="{!$Label.HUMPharmacyTitle}" subtitle="{!objPolMem.name}"/>
+        </div>
+
+        <apex:form id="creditCardIcon">
+            <apex:actionFunction name="ProcessCreditCard" reRender="pnlIcons" oncomplete="getMemberIconStatus();" >
+              <apex:param name="ExpiredCard" assignTo="{!bExpiredCreditCard}" value="" />
+              <apex:param name="ExpiringSoonCard" assignTo="{!bExpiringSoonCreditCard}" value="" />
+			  <apex:param name="Authorization" assignTo="{!bPharmacyAuth}" value="" />
+            </apex:actionFunction>
+              <c:MemberIcons_CMP_HUM RecordId="{!objPolMem.id}" Expired="{!bExpiredCreditCard}" ExpiringSoon="{!bExpiringSoonCreditCard}" Authorization="{!bPharmacyAuth}" ParentPageName="Humana Pharmacy"></c:MemberIcons_CMP_HUM> 
+        </apex:form>
+        
+        <apex:form >
+          <apex:pageBlock mode="maindetail" id="pbPharmacy">
+            <!-- humana pharmacy to show member not found message -->
+            <apex:outputPanel id="errorMsgMemberNotFoundPanel"/>
+            <!-- For Constructor Related exception -->
+            <c:HUMConstructorExceptionComponent errorLogs="{!lstLogErrors}" />
+
+            <!-- humana pharmacy off line mode message -->
+            <apex:outputPanel id="offlineModeMsgId" Styleclass="displayNone">
+              <apex:PageMessage Summary="{!$Label.HUMPharmacyOfflineModeMsg}" severity="INFO" Strength="3" />
+              <apex:pagemessages />
+            </apex:outputPanel>
+
+            <!-- humana pharmacy Demographics Section -->
+            <a id="linkPharmacyDemographicDetails" name="Demographics"></a>
+            <apex:pageBlockSection collapsible="true" columns="1" title="{!$Label.Pharmacy_Demographics}" id="thePageBlockSectionDemographics">
+              <c:PharmacyDemographic_CMP_HUM id="pharmacyDemographicDetails" />
+            </apex:pageBlockSection>
+
+            <!-- humana pharmacy Medication Therapy Management Section -->
+            <a id="linkPharmacyMtmEligibility" name="Medication Therapy Management"></a>
+            <apex:pageBlockSection rendered="{!bShowMTMSection}" collapsible="true" columns="1" title="Medication Therapy Management (MTM) Eligibility" id="thePageBlockSectionMTM">
+              <c:PharmacyMTMEligibility_CMP_HUM id="pharmacyMtmEligibility" />
+            </apex:pageBlockSection>
+
+            <!-- humana pharmacy Addresses Section -->
+            <a id="linkPharmacyAddressComp" name="Addresses"></a>
+            <apex:pageBlockSection collapsible="true" columns="1" title="Addresses" id="thePageBlockAddress">
+              <apex:outputPanel id="classicAddress" rendered="{!NOT(bSwitchLightningAddress)}">
+                <c:PharmacyViewAddress_CMP_HUM id="pharmacyAddressComp" />
+              </apex:outputPanel>
+              <apex:outputPanel id="lightningAddress" rendered="{!bSwitchLightningAddress}">
+                <apex:includeLightning />
+              
+                <div id="LightningAddressDivId" style="max-width: 500px; zoom:1.3;"></div>
+              
+                <script>       
+					let interactionId='';
+					var primaryTabPageId = function primaryTabPageId(result) {
+						primaryAccountTabID = result.id;
+						sforce.console.getPageInfo(primaryAccountTabID , showPrimaryPageInfo);
+					};
+
+					sforce.console.getEnclosingPrimaryTabId(primaryTabPageId);
+					var showPrimaryPageInfo = function (result) {
+						var obj = JSON.parse(result.pageInfo);
+						if(obj.url.includes("&interactionId=")){
+							interactionId = obj.url.split("&interactionId=")[1].substring(0,18);
+												
+							$Lightning.use(
+							"c:PharmacyAddress_LCMP_HUM",
+								function () {
+								  $Lightning.createComponent(
+									"c:pharmacyAddressHum",
+									{ "enterpriseId": enterpriseID, "networkId": netWorkId, "recordId": recordId, "policyId": policyId, "interactionId": interactionId},
+									"LightningAddressDivId"
+								  );
+								}
+							);
+						} else{
+							$Lightning.use(
+							"c:PharmacyAddress_LCMP_HUM",
+								function () {
+								  $Lightning.createComponent(
+									"c:pharmacyAddressHum",
+									{ "enterpriseId": enterpriseID, "networkId": netWorkId, "recordId": recordId, "policyId": policyId},
+									"LightningAddressDivId"
+								  );
+								}
+							);
+						} 
+					};
+				</script>
+              </apex:outputPanel>
+            </apex:pageBlockSection>
+
+            <!-- humana pharmacy Case History Section -->
+            <a id="linkPharmacyCaseHistory" name="CaseHistory"></a>
+            <apex:pageblocksection id="thePageBlockCaseHis" title="Case History" collapsible="true" columns="1"  >
+              <c:PharmacyCaseHistory_CMP_RT_HUM id="pharmacyCaseHistory" />
+            </apex:pageblocksection>
+
+            <!-- humana pharmacy OMSNotes Section -->
+            <a id="linkPharmacyOMSNotesDetails" name="OMSNotes"></a>
+            <apex:pageBlockSection collapsible="true" columns="1" title="{!$Label.Pharmacy_OMS_Originated_Notes}" id="thePageBlockSectionOMSNotes">
+              <c:Pharmacy_OMS_Originated_Notes_CMP_HUM id="pharmacyOMSNotesDetails" />
+            </apex:pageBlockSection>
+
+            <!-- humana pharmacy Order Summary Section -->
+            <a id="linkPharmacyOrderSummaryComp" name="OrderSummary"></a>
+            <apex:pageBlockSection collapsible="true" columns="1" title="Order Summary" id="thePageBlockSectionOrderSummary">
+              <c:PharmacyOrderSummary_CMP_HUM id="pharmacyOrderSummaryComp"  />
+            </apex:pageBlockSection>
+
+            <!-- humana pharmacy Member Prescription Section -->
+            <a id="linkPharmacyMemberPrescriptionComp" name="Member Prescription"></a>
+            <apex:pageBlockSection collapsible="true" columns="1" title="Member's Prescriptions" id="thePageBlockSectionMemberPharmacy">
+              <c:PharmacyMemberPrescription_CMP_HUM id="pharmacyMemberPrescriptionComp"  />
+            </apex:pageBlockSection>
+
+            <!-- humana pharmacy Health Conditions and Allergies Section -->
+            <a id="linkPharmacyAllergyComp" name="Health Conditions and Allergies"></a>
+            <apex:pageBlockSection collapsible="true" columns="1" title="{!$Label.Health_Con_and_Allergies}" id="thePageBlockSectionAllergies">
+              <c:PharmacyAllergyAndHcondition_CMP_HUM id="pharmacyAllergyComp"  />
+            </apex:pageBlockSection>
+            <apex:outputPanel id="futureDate">
+              <input type="hidden" id="futureDatedID"/>
+            </apex:outputPanel>
+          </apex:pageBlock>
+        </apex:form>
+      </div>
+    </div>
+  </apex:outputPanel>
+ 
+  <apex:includeScript value="{!URLFOR($Resource.PharmacyEditDemographic_SR_HUM,'PharmacyEditDemographic_JS_HUM.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.PharmacyAddress_HUM,'PharmacyEditAddAddress_JS_HUM.js')}" />
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.PharmacyAddress_HUM,'PharmacyEditAddAddress_CSS_HUM.css')}" />
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.PharmacyOrderDetail_SR_HUM, 'PharmacyOrderDetail_SR_HUM/PharmacyOrderDetail_CSS_HUM.css')}" />
+  <apex:includeScript value="{!URLFOR($Resource.PharmacyOrderDetail_SR_HUM, 'PharmacyOrderDetail_SR_HUM/PharmacyOrderDetail_JS_HUM.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.PharmacyADDPrescription_SR_HUM,'PharmacyAddPrescription_JS_HUM.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.PharmacyModifyShippingAddress_SR_HUM,'PharmacyModifyShippingAddress_JS_HUM.js')}" />
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.PharmacyADDPrescription_SR_HUM,'PharmacyAddPrescription_CSS_HUM.css')}" />
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.PharmacyModifyShippingAddress_SR_HUM,'PharmacyModifyShippingAddress_CSS_HUM.css')}" />
+  <apex:includeScript value="{!URLFOR($Resource.Collapsible_RightConsole_SR_HUM, '/js/CollapsibleRightConsolePharmacy.js')}" />
+</apex:page>

@@ -1,0 +1,61 @@
+﻿<!--
+Page Name        : HUMMedicarePartDRedeterProcess
+Version          : 1.0 
+Created Date     : May 19 2015               
+Controller Class : HUMMedicarePartDRedeterProcessController
+
+*Modification Log :
+* Developer              Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Santhi Mandava                             05/19/2014           Original version.
+* Harshith Mandya                            05/29/2015           Added Process Name - line no 20
+* Vijaya Koriprolu                           11/20/2018           Added functionality to allow multiple claims process
+* Prathyu Tushar          324032             01/02/2019           REQ - 380419 Auto route cases for part D redetermination
+* Amar Gadewar                               06/18/2019           REQ - 399975 - AHT - All Users - Move buttons on the flows to the center of the page (RF)
+* Subhamay Mandal							 07/22/2019           REQ - 404464 - AHT - All Users - Move buttons on the flows to the center of the page (CRM)
+* Mohammed Noor                              06/04/2020           CR674 - US1034977 and US1035031 changes
+* Jasmeen Shangari                           04/21/2021           Checkmarx fixes Azure ID - 2163309
+*********************************************************************************************************************************-->
+<apex:page standardController="Case" extensions="HUMMedicarePartDRedeterProcessController">
+  <apex:includeScript value="/support/console/31.0/integration.js" />
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY,'jquery.min.js')}"/>
+  <apex:includeScript value="{!$Resource.HUMUnSavedChangesJS}"/>
+  <script>
+    window.onload = testSetTabUnsavedChanges('Medicare Part D');
+    
+	var selectedCaseId = '{!sSelectedCaseId}';
+	var addPartDEventFlag = true;  //set the default value as true to fire the event from summary page
+  </script>
+    <apex:outputpanel >
+    <style type="text/css">
+       .FlowPageBlockBtns {
+           text-align: left !important;
+       }
+   </style>
+  </apex:outputpanel>
+  <apex:outputPanel id="scriptPanelPartD">    
+    <script>                       
+        var sendMessage = function sendMessage(result) {            
+            var tabId = result.id;
+			//send the current tabId in the event message, so on case detail/edit page the listeners can be added for this tab closure.
+            sforce.console.fireEvent('caseMPDREvent'+selectedCaseId,tabId);
+        };
+        
+		//check if the flow screen is on Summary page and then fire the event
+        if(jQuery("span[id$='ReviewScreen2Details_0_0']").length && addPartDEventFlag)
+        {          
+          sforce.console.getEnclosingTabId(sendMessage);
+          addPartDEventFlag = false;
+        }
+    </script>
+  </apex:outputPanel>
+  <br/>
+  <apex:outputLabel value="{!$Label.HUMMedicarePartD}" style="font-size:16px;font-weight:bold;"/>
+  <br/>
+  <flow:interview id="MEA" name="Medicare_Part_D_Redetermination_Request" finishLocation="{!FinishPage}" rerender="MEA,scriptPanelPartD">
+    <apex:param name="CaseId" value="{!sSelectedCaseId}"/>
+    <apex:param name="UserId" value="{!$User.Id}"/>
+    <apex:param name="WhatType" value="Case"/>
+    <apex:param name="tempSubmissionOwnerId" value="{!sSubmissionOwnerId}"/>
+  </flow:interview>
+</apex:page>

@@ -1,0 +1,129 @@
+.gamf_activity{
+
+  width:100%;
+}
+.gamf_heading{
+
+  font-family: FSHumana;
+  font-size: 18px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.5;
+  letter-spacing: normal;
+  color: #414042;
+}
+
+.gamf_subheader{
+  font-family: FSHumana;
+  font-size: 14px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.43;
+  letter-spacing: normal;
+  color: #414042;
+  margin-left: 3%;
+  padding-top: 2%;
+}
+
+.activity-card {
+  width: 45%;
+  height: auto;
+  border: solid 1px #cbccce;
+  margin-right: 9%;
+  margin-bottom: 6%;
+}
+
+.card-header{
+  padding: 10px 15px;
+  font-family: FSHumana;
+  font-size: 18px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.5;
+  letter-spacing: normal;
+  color: #414042;
+}
+
+.card-content{
+  padding: 10px 15px;
+  padding-bottom: 21%;
+  font-family: FSHumana;
+  font-size: 14px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.29;
+  letter-spacing: normal;
+  color: #4a7729;
+}
+
+.card-content-only{
+
+  padding: 10px 15px;
+  padding-bottom: 10%;
+  font-family: FSHumana;
+  font-size: 14px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.29;
+  letter-spacing: normal;
+  color: #4a7729;
+}
+.card_likes-only{
+  margin-right: 23%;
+  padding:12px 14px;
+  text-align: center;
+  font-family: FSHumana;
+  font-size: 14px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.43;
+  letter-spacing: normal;
+  color: #414042;
+
+}
+
+.border-card{
+  border: 0.03rem solid #cbccce;
+}
+.card_likes{
+  margin-right: 7%;
+  padding:12px 14px;
+  text-align: center;
+  font-family: FSHumana;
+  font-size: 14px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.43;
+  letter-spacing: normal;
+  color: #414042;
+}
+div.card-content span,div.card-content-only span,p.card-content span{
+    font-weight: bold;
+  }  
+
+@media only screen and (max-width: 768px) and (min-width: 300px){ 
+
+  .gamf_subheader{
+    padding-top: 5%;
+  }
+.flexwrap{
+  flex-direction: column;
+}
+.activity-card {
+  width: 100%;
+  height: auto;
+}
+.gamf_heading{
+  font-weight: normal;
+  }
+  div.card-content span,div.card-content-only span,p.card-content span{
+    font-weight: bold;
+  }
+}

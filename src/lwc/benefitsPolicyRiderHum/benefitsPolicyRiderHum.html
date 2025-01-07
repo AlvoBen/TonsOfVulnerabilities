@@ -1,0 +1,91 @@
+﻿<!--
+Component        : benefitsPolicyRiderHum.html
+Version          : 1.0
+Created On       : 26/05/2022
+Function         : Component to display to benefit PolicyRider information
+
+
+* Developer Name                       Date                         Description
+* Divya Bhamre                       26/05/2022                     US-3017471
+* Aishwarya Pawar               	 03/01/2023                     US - 4286514
+* Kinal Mangukiya                    05/25/2023                     US-4588646
+* Kinal Mangukiya                    07/21/2023                     US-4705833
+*------------------------------------------------------------------------------------------------------------------------------
+-->
+
+
+
+<template>
+    <article class="slds-brand-band slds-card slds-card_boundary headerBottomBorder forceRelatedListCardDesktop">
+        <div class="slds-page-header--object-home slds-page-header_joined slds-page-header slds-shrink-none test-headerRegion forceListViewManagerHeader">
+            <header class=" slds-card__header slds-grid slds-p-right_none slds-media slds-media_center slds-has-flexi-truncate hc-align-header slds-p-around_none slds-m-bottom_none">
+                <div class="slds-media__figure">
+                    <lightning-icon icon-name="standard:record"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <template if:true={isDental}>
+                        <h2 class="slds-card__header-title"> Dental Policy Riders ({formatTotalCount})</h2>
+                    </template>
+                    <template if:false={isDental}>
+                        <h2 class="slds-card__header-title"> Medical Policy Riders ({formatTotalCount})</h2>
+                    </template>
+                </div>
+            </header>
+        </div>
+        <div style="overflow-x: auto">
+            <template if:true={loaded}>
+                <template if:false={serviceerror}>
+                    <div class="slds-table--header-fixed_container">
+                        <div class="slds-scrollable_y container" data-id="tablediv" onscroll={handleScroll}>
+                            <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered slds-table--header-fixed">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <template for:each={columns} for:item="col">
+                                            <th class="slds-is-resizable slds-is-sortable slds-cell-fixed" scope="col"
+                                                key={col.label}>
+                                                <div class="slds-p-top_x-small slds-wrap slds-cell-fixed slds-m-left_x-small"
+                                                     style="width: 100%;">
+                                                    {col.label}
+                                                </div>
+                                            </th>
+                                        </template>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template if:true={dataFound}>
+                                        <template for:each={filteredRiderList} for:item="rl" for:index="index">
+                                            <tr key={rl.index} class="slds-hint-parent" onclick={handleLogging}>
+                                                <td class="logthis" width="50%">
+                                                    <div class="slds-wrap" title="Name"> {rl.name}</div>
+                                                </td>
+                                                <td class="logthis" width="50%">
+                                                    <div class="slds-wrap" title="Description">{rl.Description}</div>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </template>
+                                    <template if:false={dataFound}>
+                                        <tr>
+                                            <td data-label="label" colspan=2 style="text-align: center;">
+                                                {labels.HUMNoRecords}
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </template>
+                <template if:true={serviceerror}>
+                    <div class='slds-m-vertical_small'>
+                        <c-generic-scoped-notification-hum iconname="utility:error" message={message}
+                                                           type="error"></c-generic-scoped-notification-hum>
+                    </div>
+                </template>
+            </template>
+            <template if:false={loaded}>
+                <lightning-spinner alternative-text="Loading...."></lightning-spinner>
+            </template>
+        </div>
+    </article>
+</template>

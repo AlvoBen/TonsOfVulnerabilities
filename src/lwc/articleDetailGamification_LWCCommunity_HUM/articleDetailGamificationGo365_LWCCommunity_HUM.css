@@ -1,0 +1,36 @@
+.qd-gamification{
+    background-color: #efeff0;
+}
+.card-title h2{
+    font-family: FSHumana;
+  font-size: 20px;
+  color: #414042;
+}
+h3.doller:after {
+    content: ' \0024';
+    font-size: 36px;
+    font-family: FSHumana;
+    color:#003057;
+}
+.doller-section{
+    border: 2px solid #003057;
+    width: 64px;
+    height: 64px;
+    border-radius: 2rem;
+}
+.card-header h2{
+  font-family: FSHumana;
+  font-size: 18px;
+  color: #414042;
+}
+
+.card-header .earn-points{
+  font-family: FSHumana;
+  font-size: 14px;
+  font-weight: normal;
+  color:#003057;
+}
+
+.card-header .earn-points span{
+    font-weight: bold; 
+  }

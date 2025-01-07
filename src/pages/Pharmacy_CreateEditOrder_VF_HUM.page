@@ -1,0 +1,368 @@
+﻿<!--
+Page Name        : Pharmacy_CreateEditOrder_VF_HUM.page
+Version          : 1.0
+Created On       : 2016
+Function         : VF page to perform action for EDIT and Create Order
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Rajesh Chandgothia       89722                       04/11/2017                 Original Version
+* Rajesh Keswani           89095                       05/02/2017                 REQ - 310758; Add a new item link for Converting Order Edit to Subtab
+* Rajesh Keswani           89095                       05/02/2017                 REQ - 310759;  Modify Shipping address in Converting Order Edit/create to Subtab
+* Rajesh Keswani           89630                       05/02/2017                 REQ - 310760;  add and update credit cards -- Converting Order Edit/create to Subtab
+* Rajesh Keswani           112036	                     07/20/2017                 Implementation of REQ - 323389 - adding networkId in service request
+* Sharan Shanmugam									                   07/27/2017				          REQ - 323542 : Exception handling
+* Sushmetha Arumugam       271572                      08/14/2018                 REQ - 363500 - Displaying error message and preventing the user from saving the order for P.O.Box
+* Rakesh Patni						 273785				               08/20/2018				          REQ-363507
+* Kiran Bhuvanagri				 335861				               02/08/2019				          REQ - 383756 - Update 'Shipping Method' Picklist Values on Create Order and Edit Order Pages(RXRF)
+* Ravi Prakash kantamneni  345989                      03/21/2019                 REQ-383718 - Automatically Record Order Details to Case: 'Save & Log' to New Case & Existing Case(RXRF)
+* Kiran Kumar                                          04/13/2019                 Defect 409800 Fix
+* prathyu Tushar           351220                      04/11/2019                 REQ - 383718: Code clean up and script script changes.
+* Kiran Bhuvanagri				 351502				               02/08/2019				          REQ - 386012 - Update 'Shipping Method' Picklist Values on Create Order and Edit Order Pages(CRMS)
+* Prathyu Tushar			     355095					             05/02/2019				          REQ - 397913: CA Incident # 8244067, Removed select order attribute from Pharmacy Logging component.
+* Prathyu Tushar			        					               05/02/2019				          REQ - 396302, Removed permissionset check to move the Id-27 component to Mainstream CRM Service.
+* Lakshmi Vutukuri                                     05/02/2019                 REQ-397217- update errorr messages to top of the page(CRMS)
+* Sumit Pharande									   08/20/2019				   REQ - 404434 HP Expedited Shipping Project-- update the 'Shipping Method' values
+* Aaron Speakman							                         01/27/2020					        REQ - 729345 - Remove Checkbox for Prescriptions in 'WORKRX' Status (RxRF)
+* Shailesh Mali											18/02/2020				  REQ - 807240-CA ticket-8559406 Humana Pharmacy- Edit Order-- 'credit card/invoice' field-- not retaining the previous payment method 
+* Suraj Patil											31/03/2020				  946527 - CA Tickets - 9004947
+* Riya Agarwal										    06/08/2020				  Added switch functionality for REQ - 1041836 and REQ - 941028
+* Kiran Kumar											01/13/2021				  User Story: 1690593 - Automatically Record Credit Card Updates to Case- JS File Separation
+* Pallavi Shewale                                       06/08/2021                 USER STORY 1491784: T1PRJ0003815- CR 01 - Edit/Cancel/Release Links for Finance
+* AshokKumar Nutalapati								    10/19/2021				  User Story - 660769: T1PRJ0002517 - MF 4 - Update Order Payment Method Fields (RxRF) (ID# 74)
+* Pinky Vijur                    12/01/2021               REQ - 2846597: T1PRJ0002736 - 2021 MF6 - Security- TECH - SF - OSA Library Verify JQuery Bootsrap or Angular methods are working fine in Pharmacy Components       
+* Shaik Mujeebur Rahaman                                04/29/2022                US-3213649 T1PRJ0272548 - SF Legacy API Retirement Upgrade API Version for Integrationjs Pharmacy
+* Kiran Bhuvanaagiri					                  				05/06/2022			      	  User Story - 2961175: Update Order Payment Method Fields (CRMS)
+* Bhavani Tati								 		                      05/20/2022				        User Story - 3175324: T1PRJ0200895 - MF 5 - TECH - Switch Clean Up - Update Order Payment Method Fields (CRMS) (ID# 74)
+* Pinky Vijur                                           01/20/2023                3172071	T1PRJ0891339 - MF 5 - TECH - Pharmville Decommissioning - Custom Permission Usage
+* Tharun Madishetti                                    08/03/2023                 US-4647286:T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Pharmacy (Group 2)
+*********************************************************************************************************************************
+-->
+
+<apex:page controller="Pharmacy_CreateEditOrder_C_HUM" id="thePage" tabStyle="Policy_Member__c" showHeader="false" sidebar="false">
+  <apex:includeScript value="/support/console/54.0/integration.js"/> 
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery-ui.min.js')}"/> 
+  <apex:includeScript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/Bootstrap/dist/js/bootstrap.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/DataTables-1.13.4/js/jquery.dataTables.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/DataTables-1.13.4/js/dataTables.bootstrap.min.js')}" />
+  <link rel="stylesheet" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}" />
+  <link rel="stylesheet" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/Bootstrap-3.3.7/css/bootstrap.min.css')}" />
+  <link rel="stylesheet" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/DataTables-1.13.4/css/dataTables.bootstrap.min.css')}" />
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}" />
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_JQUERY, 'jquery-ui.min.css')}" />
+   
+   <script type="text/javascript">
+            var jqLocation = "{!URLFOR($Resource.CRM_JQUERY,'jquery.min.js')}";
+   </script>
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.PharmacyEditOrder_SR_HUM, 'PharmacyEditOrder_CSS_HUM.css')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.PharmacyEditOrder_SR_HUM, 'PharmacyEditOrder_JS_HUM.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY,'bootstrap-datepicker-uni.js')}" id="datePickerJS" />
+  <script>
+    var orderDetailRemote = '{!$RemoteAction.Pharmacy_CreateEditOrder_C_HUM.invokeOrderDetail}';
+//dont enable P9 Critical Fix    $j = jQuery.noConflict(true);
+    var getMemberAndScriptRemote = '{!$RemoteAction.Pharmacy_CreateEditOrder_C_HUM.getMemberAndScriptData}';
+    var createEditOrderRequest = '{!$RemoteAction.Pharmacy_CreateEditOrder_C_HUM.invokecreateEditOrderDetail}';
+    var logNoteRequest = '{!$RemoteAction.Pharmacy_CreateEditOrder_C_HUM.invokeLogNoteRequest}';
+    var netWorkId = '{!$User.Network_User_Id__c }';
+    var recordId = "{!recordId}";
+    var bHpProfile = {!$Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME};
+	var shippingRegularMail = '{!$Label.ShippingRegularMail}';
+    var shippingOvernightDel = '{!$Label.ShippingOvernightDel}';
+    var shippingOvernightNoCharge = '{!$Label.ShippingOvernightNoCharge}';
+	/* Changes for US-1824140 to store values of Credit Card changes */
+	let credicardChanges = {
+	ccMonthIdNew: "",
+	ccMonthIdOld: "",
+	ccYearIdNew: "",
+	ccYearIdOld: "",
+	ccAutoChargeNew: "",
+	ccAutoChargeOld: "",
+	ccStatusNew: "",
+	ccStatusOld: "" ,
+	ccLast4Digits:""
+	};
+	
+  </script>
+
+  <apex:outputpanel rendered="{!(TRIM(createEditflag) == 'create')}">
+    <div id="loggingStickyHeader" style="display:block;font-size:12px;position:fixed;z-index:5;top:0px;overflow-x:auto;background-color:#F8F8F8;width:100vw !IMPORTANT;">
+      <c:PharmacyOrder_Logging_CMP_HUM DisplayMessage="false"
+                             RecordId="{!pmId}" />
+    </div>
+  </apex:outputpanel>
+
+  <apex:form id="formId" style="margin-left: 20px;" >
+    <apex:outputpanel rendered="{!(TRIM(createEditflag) == 'create')}">
+      <div id="divTopSpaceId" style="padding-top:100px;"></div>
+    </apex:outputpanel>
+
+    <apex:outputpanel id="refreshEditOrderDiv">
+      <apex:outputPanel id="createEditPopupId"    layout="block" >
+        <div class="titleCss" id ="divSectionHeadingName"></div>
+		 <div id="orderSummaryEditPOBoxErrorMsgId" class="displayNone">
+          <span>
+            <div class="message errorM3" role="alert">
+              <table class="messageTable errorMessageTable">
+                <tbody>
+                  <tr valign="top">
+                    <td>
+                      <img alt="FATAL" class="msgIcon" src="/s.gif" title="FATAL" />
+                    </td>
+                    <td class="messageCell">
+                      <div class="messageText editOrderFont" >
+                        <span class="errorMessageTest">
+                          <h4 class="errorStyle">Error:</h4>
+                        </span>
+                        <apex:outputText value="{!$Label.POERROR_PHARMACY_HUM}"/>
+                        <br/>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </span>
+        </div>
+          <div id="orderNotProcessedErrorMsgId" class="displayNone">
+          <span>
+            <div class="message errorM3" role="alert">
+              <table class="messageTable errorMessageTable">
+                <tbody>
+                  <tr valign="top">
+                    <td>
+                      <img alt="FATAL" class="msgIcon" src="/s.gif" title="FATAL" />
+                    </td>
+                    <td class="messageCell">
+                      <div class="messageText editOrderFont" >
+                        <span class="errorMessageTest">
+                          <h4 class="errorStyle">Error:</h4>
+                        </span>
+                        <apex:outputText value="{!$Label.OrderNotProcessedErr}"/>
+                        <br/>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </span>
+        </div>
+          <div id="CreditCardErrorMsgId" class="displayNone">
+          <span>
+            <div class="message errorM3" role="alert">
+              <table class="messageTable errorMessageTable">
+                <tbody>
+                  <tr valign="top">
+                    <td>
+                      <img alt="FATAL" class="msgIcon" src="/s.gif" title="FATAL" />
+                    </td>
+                    <td class="messageCell">
+                      <div class="messageText editOrderFont" >
+                        <span class="errorMessageTest">
+                          <h4 class="errorStyle">Error:</h4>
+                        </span>
+                        <apex:outputText value="{!$Label.ExpiredCreditCardErr}"/>
+                        <br/>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </span>
+        </div>
+        <apex:outputpanel >
+          <table class="editOrderFont orderSummaryCSS">
+            <tr>
+              <td class="width24">
+                <div class="">
+                  <label><span >Order Number:</span></label><span id="editOrderNumber" ></span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="">
+                <div id ="editWebOrderNumber">
+                  <apex:outputLabel value="Web Order Number:" />
+                  <apex:outputPanel styleClass="vfHelpText" id="hoverOverAreas">
+                    <apex:commandLink onclick="javascript:void(O);">
+                      <apex:image id="lnkImgs" styleClass="imgMargin hoverQuestionMark" value="{!$Resource.HUMHoverOverQuestionMark}" />
+                      <apex:outputPanel styleClass="hoverfontstyle">
+                        {!$Label.PHARMACYEDITORDER_WEBORDERMSG}
+                      </apex:outputPanel>
+                    </apex:commandLink>
+                  </apex:outputPanel>
+                  <span id="editWebOrderNumber" class="labelvaluewidth"></span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="">
+                <div >
+                  <apex:outputLabel value="Release Date"  />
+                  <input type="text" id="releaseDateId" placeholder="__/__/____" maxlength ="10" class="widthDate" onkeyup="dtval(this,event);" onchange="checkDateFormate(this);" onfocus="trackPreviousDate(this);"/>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="">
+                <div >
+                  <label><span>Cap Type:</span></label><span id="editOrderCapType"></span>
+                </div>
+              </td>
+            </tr>
+          </table>
+
+        </apex:outputpanel>
+        <div id="orderSummaryEditLoadingImageId" class="loadingImageDivCon displayNone centerAlign">
+          <img src="/img/loading.gif" />
+          <span class="waitingDescription">{!$Label.LOADING_HUM}</span>
+        </div>
+        <div id="editOrderDetails" style="width:98%!IMPORTANT;">
+          <table id="editOrderPrescriptionTable" class="table table-striped table-bordered MPTableStyle"></table><br/>
+          <div id="createOrderAddNewItem" ></div>
+          <table class="editOrderFont editOrderDiv">
+            <tr>
+              <td>
+                <div id="editOrderShippingMehtod" class ="divWidth">
+                  <label>Shipping Method</label>
+                  <select name="shippingMethodID" id="shippingMethodID" class ="reuiredCSS" onchange="enableCaseRadioButtons();" >
+                    <option value = "-1">{!$Label.PHARMACY_SELECT_SHIPPING_METHOD}</option>
+                    <option value = "1">{!$Label.PHARMACY_REGULAR_MAIL}</option>
+                    <option value ="2">{!$Label.PHARMACY_EXPEDITED_CHARGE}</option>
+                    <option value = "511">{!$Label.PHARMACY_EXPEDITED_NO_CHARGE}</option>
+                  </select>
+                </div>
+              </td>
+              <td >
+                <div id="editOrderCreditCardInvoice" class ="editOrderColumnWidth">
+                  <label id="paymentMethodID">Credit Card/Invoice</label>
+                  <select name="creditCardInvoiceID" id="creditCardInvoiceID" class ="selectWidth reuiredCSS" onchange="enableCaseRadioButtons();return false;">
+                  </select>
+                </div>
+              </td>
+              <td>
+                <table>
+                  <tr>
+                    <td>
+                      <a class = "linkMimic editOrderFont selectWidth" href="#" onclick="setAddPopupFlagCreditCard(); return false; updateFromPharmacy=true;">Add New Credit Card</a>
+
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <a class = "linkMimic editOrderFont selectWidth"  href="#" onclick="prepareCardUpdateData();">Edit Credit Card</a>
+
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+          <table class="editOrderFont selectDivWidth">
+            <tr>
+              <td>
+                <div id="editOrderShippingAddress"/>
+              </td>
+              <td >
+                <div id="editOrderShippingNotes" class ="editOrderShippingNotesWidth" />
+              </td>
+            </tr>
+          </table>
+        </div> <br/>
+        <div id="orderSummaryEditErrorMsgId" class="displayNone centerAlign"></div>
+        <div id="orderSummaryEditPOBoxErrorMsgId" class="displayNone">
+          <span>
+            <div class="message errorM3 errorMessageStyle" role="alert">
+              <table class="messageTable errorMessageTable">
+                <tbody>
+                  <tr valign="top">
+                    <td>
+                      <img alt="FATAL" class="msgIcon" src="/s.gif" title="FATAL" />
+                    </td>
+                    <td class="messageCell">
+                      <div class="messageText editOrderFont" >
+                        <span class="errorMessageTest">
+                          <h4 class="errorStyle">Error:</h4>
+                        </span>
+                        <apex:outputText value="{!$Label.POERROR_PHARMACY_HUM}"/>
+                        <br/>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </span>
+        </div>
+        <div id="saveCancelButtonId" style="text-align:center;">
+          <apex:commandButton id="saveBtnEditOrder" value="Save" styleclass="btlLeftMar" onclick="saveCreateAndEditOrderDetail('MainPage'); return false;"/>
+          <apex:commandButton id="CancelEditOrder" value="Cancel"  styleclass="btlLeftMar" onclick="closeCreateOrderSubtab();return false;"/>
+        </div>
+      </apex:outputPanel>
+
+    </apex:outputpanel>
+
+
+    <apex:actionFunction name="setPopupFlagEditOrder" reRender="refreshEditOrderDiv" oncomplete="displayOrderEdit(request.options.parameters.pselectedOrderNumber);">
+      <apex:param assignto="{!selectedOrderNumber}" name="pselectedOrderNumber" value="" />
+      </apex:actionfunction>
+      <apex:actionFunction name="refreshOrderEditPanel"  reRender="refreshEditOrderDiv"/>
+      <apex:outputpanel >
+        <c:PharmacyAddPrescription_CMP_HUM id="pharmacyAddPresID"  />
+        <c:PharmacyModifyShippingAddress_CMP_HUM id="pharmacyModShippingaddressId"/>
+        <c:PharmacyAddUpdateCreditCard_CMP_HUM />
+      </apex:outputpanel>
+    </apex:form>
+
+  <script>
+    var releaseDate = '{!$CurrentPage.parameters.osReleaseDate}';
+    var futureDatedBooleanVal = '{!$CurrentPage.parameters.futureDatedBooleanVal}';
+    var rxMap = '{!$CurrentPage.parameters.rxMap}';
+    var pharmacyAddressValidationAction = '{!$RemoteAction.Pharmacy_CreateEditOrder_C_HUM.invokeEASService}';
+    var pharmacyEditRemoteAction = '{!$RemoteAction.Pharmacy_CreateEditOrder_C_HUM.updateGetMember}';
+    var creditTokenKey = '';
+    var pciUrl =  '{!sPCIEndPoint}';
+    var osStartDate = '{!osStartDate}';
+    var osEndDate =  '{!osEndDate}';
+    var payer =  '{!payer}';
+    var updateFromPharmacy = true;
+    var creditCardRowData;
+    var switchFQ = '{!bSwitchERC}';
+    var bSwitchCreditCard ='{!bSwitchCreditCard}';  //REQ-1041836
+    var bSwitchConsentStatus='{!bSwitchConsentStatus}';  //REQ-941028
+    changePaymentMethodText();
+    if('{!enterpriseID}'!= null && '{!enterpriseID}'!= "")  invokeRemoteActionPharmactGetmemberandScriptDetails('{!enterpriseID}','{!createEditflag}','{!orderNo}','{!selectedScript}');
+  </script>
+  <apex:includeScript value="{!URLFOR($Resource.PharmacyADDPrescription_SR_HUM,'PharmacyAddPrescription_JS_HUM.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.PharmacyModifyShippingAddress_SR_HUM,'PharmacyModifyShippingAddress_JS_HUM.js')}" />
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.PharmacyADDPrescription_SR_HUM,'PharmacyAddPrescription_CSS_HUM.css')}" />
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.PharmacyModifyShippingAddress_SR_HUM,'PharmacyModifyShippingAddress_CSS_HUM.css')}" />
+  <apex:includeScript value="{!URLFOR($Resource.PharmacyFinancialCreditCard_SR_HUM, 'PharmacyFinancialCreditCard_SR_HUM/PharmacyFinancialCreditCard_JS_HUM.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.PharmacyAddCreditCard_SR_HUM, 'PharmacyAddCreditCard_SR_HUM/PharmacyAddCreditCard_JS_HUM.js')}" />
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.PharmacyFinancialCreditCard_SR_HUM, 'PharmacyFinancialCreditCard_SR_HUM/PharmacyFinancialCreditCard_CSS_HUM.css')}" />
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.PharmacyAddCreditCard_SR_HUM, 'PharmacyAddCreditCard_SR_HUM/PharmacyAddCreditCard_CSS_HUM.css')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.PharmacyUpdateCreditCard_SR_HUM, 'PharmacyUpdateCreditCard_SR_HUM/PharmacyCreateEditOrder_UpdateCard_JS_HUM.js')}" />
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.PharmacyUpdateCreditCard_SR_HUM, 'PharmacyUpdateCreditCard_SR_HUM/PharmacyUpdateCreditCard_CSS_HUM.css')}"/>
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.PharmacyAddress_HUM,'PharmacyEditAddAddress_CSS_HUM.css')}" />
+
+</apex:page>

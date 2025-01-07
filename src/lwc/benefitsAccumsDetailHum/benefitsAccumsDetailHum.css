@@ -1,0 +1,10 @@
+.exampleHolder{
+    position: relative;
+    display: inline-block;
+    width: 550px;
+    height: 50px;
+}
+
+.container {
+    min-height: 25px;    
+}

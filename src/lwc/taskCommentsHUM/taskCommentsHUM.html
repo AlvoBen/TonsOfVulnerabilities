@@ -1,0 +1,70 @@
+﻿<!--
+*******************************************************************************************************************************
+LWC JS Name : TaskCommentsHUM.html
+Function    : This component is present on task details page, it shows the task comment
+
+Modification Log: 
+Developer Name           Code Review                      Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Shailesh Bagade                                       22/06/2022                  Initial version
+*********************************************************************************************************************************-->
+<template>
+    <article class="slds-card slds-grid slds-grid--vertical full-container">
+        <div class="hc-standard-table-styles slds-page-header slds-card_boundary slds-m-bottom_small">
+            <header
+                class=" slds-card__header slds-grid slds-p-right_none slds-media slds-media_center slds-has-flexi-truncate hc-align-header slds-p-around_none slds-m-bottom_none">
+                <div class="slds-grid slds-grid_vertical-align-center" style="width: 100%;">
+                    <div class="slds-media__figure">
+                        <lightning-icon icon-name="standard:custom"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <h2 class="slds-card__header-title">Task Comments</h2>
+                    </div>
+                </div>
+                <div class="slds-grid">
+                    <div class="slds-grid slds-grid_align-end">
+                        <div class="slds-grid">
+                            <lightning-button variant="brand-outline" label="New"
+                                onclick={openModal}>
+                            </lightning-button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="slds-m-around--x-small full-container slds-is-relative slds-p-horizontal_none">
+            <c-generic-modal-hum if:true={enablePopup} b-show-modal={enablePopup} onclose={closeModal}
+                title="New Comment" onsave={saveForm}  buttons-config={buttonsConfig} b-spinner={showSpinner} >
+                <c-generic-comments-form-hum edit-form = {enablePopup} my-labels={labels} case-comment-label={taskCommentLabel}  slot="content" case-id={recordId} onmodify={modifiedHandler} profile-name={profile}></c-generic-comments-form-hum>
+            </c-generic-modal-hum>
+
+            <div class="min-height-400">
+                <template if:true={loaded}>
+                    <lightning-layout class="infinite-scroll-cont">
+                        <lightning-layout-item flexibility="grow" size="12">
+                            <div class="slds-grid full-container slds-is-relative slds-p-horizontal_none table-container full-container min-height-400"
+                                onscroll={handleScroll}>
+                                <template if:true={historyTimelineData}>
+                                    <div class="slds-size_1-of-1">
+                                        <ul class="slds-timeline">
+                                            <template if:true={historyTimelineData}>
+                                                <c-generic-history-timeline-hum b-log-code-visible={bLogCodeVisible} case-id={recordId}
+                                                can-expand ondeletecomment={deleteComment} onsaveedit={saveComment} case-comment-display loaded={loaded} showbutton={showbutton} historytimelinedata={historyTimelineData} loadcount={onloadCount} filteredcount={filteredcount} totalcount={totalcount} totalresults={totalresults}>
+                                                </c-generic-history-timeline-hum>
+                                            </template>
+                                        </ul>
+                                    </div>
+                                </template>
+                            </div>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </template>
+                <template if:false={loaded}>
+                    <lightning-spinner alternative-text="Loading"></lightning-spinner>
+                </template>
+            </div>
+        </div>
+        </br></br>
+    </article>
+
+</template>

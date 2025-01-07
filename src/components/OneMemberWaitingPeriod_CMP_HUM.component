@@ -1,0 +1,39 @@
+﻿<!--
+Component Name   : OneMemberWaitingPeriod_CMP_HUM.component
+Version          : 1.0
+Created On       : 01/12/2016
+Function         : VF Component to display One Member Waiting Period table from the controller Benefits_C_HUM services
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Avinash Choubey          30467                      01/12/2016                   Original version
+ * Pradeepkumar Dani		30467					   03/08/2016					Modified for Data Story REQ - 237281
+ * Shikhar Mehta            		                   04/27/2016                   Added code for Logging REQ (REQ-184833)
+ * Pradeepkumar Dani		26437					   05/02/2016				    Moved Static Resource from Benefits_VF_HUM
+ * Apoorv Jain																			  07/15/2016									Defect#223875
+ ****************************************************************************************************************************
+ -->
+<apex:component >
+    <apex:includeScript value="{!URLFOR($Resource.OneMemberWaitingPeriod_SR_HUM)}"/>
+    
+    <!-- This block will render a spinner image to indicate table loading in the UI -->
+    <div class="loadingImageDivCon" id="statusImageOneMemberWaitingPeriod">
+        <img src="/img/loading.gif" /> 
+        <span class="waitingDescription"> {!$Label.LOADING_HUM}</span>
+    </div>
+    
+    <!-- This block will render a table using jQuery during the page load -->
+    <div id="theMainFormOneMemberWaitingPeriod" styleclass="MainFormWaitP">   
+        <table id="oneMemberWaitingPeriod" class="table table-striped table-bordered width100 enable_logging" title="{!$Label.VOB_WAITING_PERIOD_TABLE_TITLE}">
+        <caption style="display:none">{!$Label.VOB_WAITING_PERIOD_TABLE_TITLE}</caption>
+        </table>
+    </div>
+
+    <script>
+        /*bIsDataLoaded							Variable defined in Benefits_JS_HUM.js - Value will be true after completing the continution services of MBE, PBE and GBE
+		* getOneMemberWaitingPeriodData()		Method defined in OneMemberWaitingPeriod_SR_HUM.js - To generate the data table and disable the spinner
+		*/
+		if(bIsDataLoaded) getOneMemberWaitingPeriodData();  
+    </script>
+</apex:component>

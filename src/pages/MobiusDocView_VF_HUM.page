@@ -1,0 +1,42 @@
+﻿<!--
+Page Name        : MobiusDocView_VF_HUM
+Version          : 1.0 
+Created Date     : Apr 20, 2018
+Function         : This Page is used to invoke Mobius GetDocument service and display document as pdf
+Modification Log :
+* Developer               Code Review                     Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Muralidhar Kollu          218254                             04/20/2018          Original Version
+----------------------------------------------------------------------------------------------------------------------------->
+
+<apex:page controller="MobiusDocView_C_HUM"  sidebar="false" showheader="false">
+<script>
+window.onload = function(){
+
+    var mobiusURL = "{!sMobiusUrl}";
+    var docKey = "{!sDocKey}";
+    var appKey = "{!sAppKey}";
+
+    var form = document.createElement("form");
+    var element1 = document.createElement("input"); 
+    var element2 = document.createElement("input");     
+
+
+    form.method = "POST";
+    form.action = mobiusURL;   
+
+    element1.value=docKey;
+    element1.name="documentkey";
+    element1.type ="hidden";    
+    form.appendChild(element1);  
+    
+    element2.value=appKey;
+    element2.name="applicationkey";
+    element2.type ="hidden";        
+    form.appendChild(element2);  
+        
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
+</apex:page>

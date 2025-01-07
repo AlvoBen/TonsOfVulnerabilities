@@ -1,0 +1,147 @@
+﻿<!--
+Page Name        : Go365_CMP_HUM.component
+Version          : 1.0
+Created On       : 08/10/2016
+Function         : Component page to display Go365
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Prachi Bhasin                                        08/10/2016                   Original Version
+* Prachi Bhasin                                                                     Changes made for REQ 280995
+* Prachi Bhasin            42389                       10/06/2016                   Defect fix for -243561.0001
+* Avinash Choubey           62295                      02/14/2017                   Defect fix for -258988.0001.
+* Ashish Sharma	       	                 		           01/15/2019					          Changes as part of REQ 379743.
+* Priyanka Puranik                                 	   02/08/2021                  REQ - 1625475: PR00094226 - CR AEP readiness -Research - Critical Security Issues
+* Ravikanth Samudrala                                  04/26/2022                  3213502 -T1PRJ0272548 - SF Legacy API Retirement Upgrade API Version for Integrationjs Go365
+* Vivek														                     07/09/2022		               Updated the JS query to new Datatables to version tp 1.12.1
+****************************************************************************************************************************
+-->
+<apex:component controller="Go365Controller_C_HUM" >
+  <apex:attribute id="sAccID" name="sAccID" description="This is Account ID" type="String" required="true"/>
+  <apex:attribute id="sMemberName" name="sMemberName" description="This is member name" type="String" required="true"></apex:attribute>
+  <apex:attribute id="groupname" name="groupname" description="This is group name" type="String"></apex:attribute>
+  <apex:attribute id="groupnumber" name="groupnumber" description="This is group number" type="String"></apex:attribute>
+  <apex:attribute id="sgroupnameid" name="sgroupnameid" description="This is group name id" type="String"></apex:attribute>
+  <apex:includeScript value="/support/console/54.0/integration.js" />
+  
+  <apex:includescript value="{!URLFOR($Resource.CRM_DataTables_1_13_4,'/DataTables-1.13.4/js/jquery.dataTables.min.js')}"/><!--DT upgrade-->
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}" /><!--DT upgrade-->
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Logging/css/LoggingCompCSS.css')}"/>
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.Go365_CSS_SR_HUM)}"/>
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMMemberSearchComponent,'HUMMemberSearchComponent/HUMMemberSearchCSS.css')}" />
+  <script type="text/javascript">
+    <!-- Please do not change this line as it breaks the JS tables. -->
+//dont enable P9 Critical Fix    $j = jQuery.noConflict(true);
+  </script>
+  <div id="Go365Loading" class="waitingSearchDiv waitingSearchDivOpacity outerDIVStyle" ></div>
+  <div id="searchingStatus" class="waitingSearchDiv innerDIVStyle">
+    <div class="waitingHolder innermostDIVStyle" >
+      <apex:image styleclass="waitingImage" value="/img/loading.gif"/>
+      <span class="waitingDescription"> {!$Label.LOADING_HUM}</span>
+    </div>
+  </div>
+  <apex:pageblock id="pgblock" mode="maindetail" >
+    <apex:pageBlockSection id="mainpgblk" title="{!$Label.Go365_Details}" showheader="true" collapsible="true" columns="1">
+      <apex:pageBlockSection id="sectiontest" columns="2">
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="{!$Label.Go365}" styleclass="labelClass"></apex:outputLabel>
+          <span id="humanaGo365" class="spanClass"></span>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="{!$Label.Go365_EntityID}" styleclass="labelClass"></apex:outputLabel>
+          <span id="Go365EntityId" class="spanClass"></span>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="{!$Label.Group_Name}" styleclass="labelClass"></apex:outputLabel>
+          <apex:panelGrid columns="1">
+            <apex:outputLink target="_blank" onclick="openTab('{!JSENCODE(sgroupnameid)}','{!JSENCODE(groupname)}');return false" styleclass="labelClass">{!JSENCODE(groupname)}</apex:outputLink>
+          </apex:panelGrid>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="{!$Label.Go365_Age}" styleclass="labelClass"></apex:outputLabel>
+          <span id="Go365Age" class="spanClass"></span>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="{!$Label.Go365_GroupNumber}" styleclass="labelClass"></apex:outputLabel>
+          <apex:outputLabel value="{!groupnumber}" styleclass="spanClass"></apex:outputLabel>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="{!$Label.Go365_HealthAssessment}" styleclass="labelClass"></apex:outputLabel>
+          <span id="healthAssessment" class="spanClass"></span>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="{!$Label.Go365_Status}" styleclass="labelClass"></apex:outputLabel>
+          <span id="status" class="spanClass"></span>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem id="pbsi1">
+          <apex:outputLabel value="{!$Label.Go365_Effective_Date}" styleclass="labelClass"></apex:outputLabel>
+          <apex:outputLabel id="lblEffectiveDate" styleclass="spanClass"></apex:outputLabel>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="{!$Label.Go365_Bucks}" id="bucksOrRewards" styleclass="labelClass"></apex:outputLabel>
+          <span id="bucks" class="spanClass"></span>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem id="sectioninside">
+          <apex:outputLabel value="{!$Label.Go365_Registered}" styleclass="labelClass"></apex:outputLabel>
+          <apex:panelGrid columns="2" id="webGrid" styleclass="spanClass">
+            <span id="webRegistered"></span>
+            <apex:outputLink id="webEmulateLink" onclick="openWebEmulate();return false;">Web Emulate</apex:outputLink>
+            <span id="MemGenKey" >
+            </span>
+          </apex:panelGrid>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="{!$Label.Go365_Points}" styleclass="labelClass" id="display"></apex:outputLabel>
+          <span id="points" class="spanClass"></span>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="{!$Label.Go365_LastLoginDate}" styleclass="labelClass"></apex:outputLabel>
+          <span id="myHumanaLastLogindate" class="spanClass"></span>
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+
+
+      <apex:pageblock mode="maindetail">
+        <div id="responseErrors" align ="center"></div>
+        <br/>
+
+        <div style="width:100%;">
+          <div id="resultsDiv">
+          </div>
+        </div>
+        <div id="resultsDiv" >
+          <table id="activityTable" class="table table-striped table-bordered  table-hover responsive nowrap width100" ></table>
+        </div>
+
+
+      </apex:pageblock>
+      </apex:PageblockSection>
+    </apex:pageblock>
+  <script>
+    var HUMActivityResponse = "{!$Label.HUMWebActivityResponseErrors}";
+    var sAccID = "{!JSENCODE(sAccID)}";
+    var webEmulateID= "{!$Component.pgblock.mainpgblk.sectiontest.sectioninside.webEmulateLink}";
+    var webEmulate = document.getElementById(webEmulateID);
+    var weblink="{!JSENCODE(sWebEmulateLink)}";
+    var output = document.getElementById("resultsDiv");
+    var MemGenKey = document.getElementById("MemGenKey");
+    var responseErrors = document.getElementById("responseErrors");
+    var searchingStatus = document.getElementById("searchingStatus");
+    var Go365Loading = document.getElementById("Go365Loading");
+    var healthAssessment = document.getElementById("healthAssessment");
+    var Go365Age = document.getElementById("Go365Age");
+    var Go365EntityId = document.getElementById("Go365EntityId");
+    var humanaGo365 = document.getElementById("humanaGo365");
+    var IsGo365ID = "{!$Component.pgblock.mainpgblk.sectiontest.pbsi1.lblEffectiveDate}";
+    var IsGo365 = document.getElementById(IsGo365ID);
+    var Go365Message = "{!$Label.Go365_Message}";
+    var webRegistered = document.getElementById("webRegistered");
+    var myHumanaLastLogindate = document.getElementById("myHumanaLastLogindate");
+    var remoteAction = "{!$RemoteAction.Go365Controller_C_HUM.getVitalityInformation}";
+    Visualforce.remoting.timeout = "{!$Label.HUMMemWebActivityTimeout}";
+    HideSection();
+    getVitality();
+  </script>
+</apex:component>

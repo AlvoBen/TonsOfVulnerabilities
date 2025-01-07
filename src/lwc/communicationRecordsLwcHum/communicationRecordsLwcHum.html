@@ -1,0 +1,224 @@
+﻿<!-- /*******************************************************************************************************************************
+LWC JS Name : CommunicationRecordsLwcHum.HTML
+Function    : This JS serves as UI to CommunicationRecordsLwcHum
+
+Modification Log: 
+Developer Name           Code Review                      Date                         Description
+*--------------------------------------------------------------------------------------------------------------------------------
+Suraj Patil                                         14/07/2022                    User story 3443327 Contact Information Tab.
+Raj Paliwal                                         17/08/2022                    User story 3706036 Accordion Drop down Update
+Raj Paliwal                                         22/08/2022                    User story 3705963 Updated Sorting and additional records view
+Vishal Shinde                                       11/7/2022                     User story 3277055 CRM Service Benefits 2022- Auth/Referral: Lightning Build for Summary & Details - Logging Auth Details
+Vishal Shinde                                       11/25/2022                    Defect- Fix:6678
+Raj Paliwal											06/12/2022					  US #3888622 Auth/Referral: Lightning Verification: Auth Clean up
+Raj Paliwal											06/12/2022				      US #4001185 PROD DF:6540
+Raj Paliwal                                         20/12/2022                    Defect- Fix:6829
+*********************************************************************************************************************************/ -->
+<template>
+    <div class="slds-m-around_small">
+    <lightning-layout multiple-rows="true">
+        <lightning-layout-item size="4" class="slds-text-align_left" >
+            <p
+                class="slds-text-heading_medium slds-m-bottom_medium"
+                style="font-weight: bold;"
+            >
+                Communication Records
+            </p>
+        </lightning-layout-item>
+        <lightning-layout-item size="8" class="slds-text-align_right">
+            <lightning-button
+                class="blackIcon"
+                label="View More"
+                onclick={handleClick}
+                disabled={totalRecordCount}
+            ></lightning-button>
+
+        </lightning-layout-item>
+    </lightning-layout>
+        <lightning-layout if:false={noData}>
+            <lightning-layout-item size="12">
+                <div
+                
+                    style="background: #efefef;"
+                    class="slds-p-around_small"
+                >
+                    <span class="slds-m-right_small"
+                        ><lightning-icon
+                            icon-name="utility:info"
+                            alternative-text="info"
+                            size="small"
+                        ></lightning-icon
+                    ></span>
+                    <span>
+                        <lightning-formatted-text value={infoMsg}>
+                        </lightning-formatted-text>
+                    </span>
+                </div>
+            </lightning-layout-item>
+        </lightning-layout>
+        <div class="slds-m-top_medium" style="overflow: scroll; height: 300px;">
+            <table
+                class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols slds-no-row-hover"
+                role="grid"
+                if:false={noData}
+            >
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th class="" scope="col" style="width:4rem; padding : 15px;">
+                            <div class="slds-truncate">+/-</div>
+                        </th>
+                        <th class="" scope="col" style="width:10rem">
+                            <div class=" my-class slds-truncate" title="Created/Update Date">Created/Update Date
+                            </div>
+                        </th>
+                        <th class="" scope="col" style="width:10rem" >
+                            <div class=" my-class slds-truncate"  title="Created/Update By">Created/Update By
+                            </div>
+                        </th>
+                        <th class="" scope="col" style="width:7rem">
+                            <div class=" my-class slds-truncate" title="Department">Department
+                            </div>
+                        </th>
+                        <th class="" scope="col" style="width:10rem">
+                            <div class=" my-class slds-truncate" title="Communication Type">Communication Type
+                            </div>
+                        </th>
+                        <th class="" scope="col" style="width:9rem">
+                            <div class=" my-class slds-truncate" title="Contact Method">Contact Methods
+                            </div>
+                        </th>
+                        <th class="" scope="col" style="width:11rem">
+                            <div class=" my-class slds-truncate" title="Contact Result">Contact Result
+                            </div>
+                        </th>
+                        <th class="" scope="col" style="width:8rem">
+                            <div class=" my-class slds-truncate" title="Contact Attempt">Contact Attempt
+                            </div>
+                        </th>
+                        <th class="" scope="col" style="width:7rem">
+                            <div class=" my-class slds-truncate" title="Details">Details
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody >
+                    <template for:each={records} for:item="ele" for:index="ItemIndex">
+                        <tr key={ele.name} onclick={handleLogging}> 
+                            <td role="gridcell" style = "width : 30px; padding:15px;">
+                                <div>
+                                    <lightning-button-icon icon-name="utility:chevronright" value={ItemIndex} variant="bare" alternative-text="Expand" title=""  onclick={handleToggle}></lightning-button-icon>
+                                </div>
+                            </td>       
+                           <td role="gridcell" data-label="Created/Update Date">
+                                <div class="logthis slds-cell-wrap" data-logid={generateLogId} data-id="Created/Update Date">
+                                <div data-value="Created/Update Date">{ele.LastModifiedDateFormated}</div>
+                                </div>
+                            </td>
+                            <td role="gridcell" data-label="Created/Update By">
+                                <div class="logthis slds-cell-wrap" data-logid={generateLogId} data-id="Created/Update By">
+                                <div data-value="Created/Update By">{ele.LastModifiedBy}</div>
+                                </div>
+                            </td>
+                            <td role="gridcell" data-label="Department">
+                                <div class="logthis slds-cell-wrap" data-logid={generateLogId} data-id="Department">
+                                <div data-value="Department">{ele.Department}</div>
+                                </div>
+                            </td>
+                            <td role="gridcell" data-label="Communication Type">
+                                <div class="logthis slds-cell-wrap" data-logid={generateLogId} data-id="Communication Type">
+                                <div data-value="Communication Type">{ele.CommunicationType}</div>
+                                </div>
+                            </td>
+                            <td role="gridcell" data-label="Contact Method">
+                                <div class="logthis slds-cell-wrap" data-logid={generateLogId} data-id="Contact Method">
+                                <div data-value="Contact Method">{ele.ContactMethod}</div>
+                                </div>
+                            </td>
+                           <td role="gridcell" data-label="Contact Result">
+                                <div class="logthis slds-cell-wrap" data-logid={generateLogId} data-id="Contact Result">
+                                <div data-value="Contact Result">{ele.ContactResult}</div>
+                                </div>
+                            </td>
+                           <td role="gridcell" data-label="Contact Attempt">
+                                <div class="logthis slds-cell-wrap" data-logid={generateLogId} data-id="Contact Attempt">
+                                <div data-value="Contact Attempt">{ele.ContactAttempt}</div>
+                                </div>
+                            </td>
+                           <td role="gridcell" data-label="Details">
+                                <div class="logthis slds-cell-wrap" data-logid={generateLogId} data-id="Details">
+                                <div data-value="Details">{ele.Details}</div>
+                                </div>
+                            </td>
+                        </tr>
+                       
+                        <template if:true={ele.Expanded}>
+                            <div key={ele.name} class="slds-theme_default slds-wrap" style="width:2400% ; margin-top: 20px;"  onclick={handleLogging}>
+                                <div style="margin-left:4.5%;"> 
+								<div>
+                                   <div class="logthis" data-logid={generateLogId} data-value={ele.ContactResult} data-label="Contact Result" data-id="Contact Result">
+                                    <lightning-layout>
+                                        <lightning-layout-item style="width:11%;">
+                                            <div class="slds-cell-wrap slds-text-align_left" >
+                                                <div><p><b>Contact Result:</b></p></div>
+                                            </div>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item>
+                                            <div class="slds-cell-wrap slds-text-align_left" style="text-align :justify">
+                                               <div> <p>{ele.ContactResult}</p></div>
+                                            </div>
+                                        </lightning-layout-item>
+                                    </lightning-layout>
+								   </div>	
+								</div>
+								<div>
+								<div class="logthis" data-logid={generateLogId} data-value={ele.Details} data-label="Details" data-id="Details">
+                                    
+                                    <lightning-layout>
+                                        <lightning-layout-item style="width:11%;">
+                                            <div class="slds-cell-wrap slds-text-align_left"  style="text-align :justify">
+                                               <div> <p><b>Details:</b></p></div>
+                                            </div>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item>
+                                            <div class="slds-cell-wrap slds-text-align_left">
+                                               <div>  <p>{ele.Details}</p></div>
+                                            </div>
+                                        </lightning-layout-item>
+                                    </lightning-layout>
+								</div>
+								</div>
+								<div>								
+                                <div class="logthis" data-logid={generateLogId} data-value={ele.Notes} data-label="Notes" data-id="Notes">
+                                    <lightning-layout>
+                                        <lightning-layout-item style="width:11%;">
+                                            <div class="slds-cell-wrap slds-text-align_left" >
+                                               <div> <p><b>Notes:</b></p></div>
+                                            </div>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item>
+                                            <div class="slds-cell-wrap slds-text-align_left" style="text-align :justify">
+												<div><p>{ele.Notes}</p></div>
+											</div>
+                                        </lightning-layout-item>
+                                    </lightning-layout>
+								</div>
+								</div>
+								</div>
+                            </div>
+                        </template>
+                    </template>
+                </tbody>
+            </table>
+
+            <template if:true={noData}>
+                <div style="padding-left: 350px;">
+                    <c-search-no-result-hum
+                        no-result-message="No matching records found"
+                        message-with-icon="true"
+                    >
+                    </c-search-no-result-hum>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

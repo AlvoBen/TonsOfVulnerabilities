@@ -1,0 +1,120 @@
+.greenclock{
+    background: rgb(74, 153, 110) !important;
+}
+
+.blueclock{
+    background: rgb(92, 134, 197) !important;
+}
+
+.bluecalendar{
+    background: rgb(92, 134, 197) !important;
+}
+
+.refill{
+    left:10px;
+    width:5px;
+    text-align:center; 
+    color:black;
+    font-size: 20px;
+    position: absolute;
+    font-weight: bold;
+}
+.blue-icon{
+    --lwc-colorTextIconDefault: #3989c6;
+}
+
+.popoverSection
+{width:140px; position: absolute; top:0px; right: -140px;}
+
+.selectedcard{
+    border: 1px solid #0070D2;
+    box-sizing: border-box;
+}
+
+.container{
+    position: relative;
+    overflow: hidden;
+}
+
+.triangle{
+    position: absolute;
+    top:-25px;
+    right: -25px;
+    width: 59px;
+    height: 54px;
+    transform: rotate(45deg);
+    background: #F3F2F2;
+}
+
+.selectedtriangle{
+    position: absolute;
+    top:-25px;
+    right: -25px;
+    width: 59px;
+    height: 54px;
+    transform: rotate(45deg);
+    background: #0070D2;
+}
+
+.iconclass{
+    top: 5px;
+    right: 5px;
+    position: absolute;
+}
+.refill1{
+
+    left:10px;
+
+    width:5px;
+
+    text-align:center; 
+
+    color:black;
+
+    font-size: 20px;
+
+    position: absolute;
+
+    font-weight: bold;
+
+    top : 3px;
+
+}
+
+
+
+.refill2{
+
+    left:5px;
+
+    width:5px;
+
+    text-align:center; 
+
+    color:black;
+
+    font-size: 20px;
+
+    position: absolute;
+
+    font-weight: bold;
+
+    top : 3px;
+
+}
+
+.iconcolor{
+    --lwc-colorTextIconDefault : white;
+}
+
+.dot{
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    height: 7px;
+    width: 7px;
+   }
+
+ul li{
+    display: inline;
+}

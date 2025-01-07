@@ -1,0 +1,168 @@
+﻿<!--
+Page Name        : 	HumanaCodes_VF_Hum
+Version          : 	1.0 
+Created Date     : 	04/19/2019
+Function         : 	Request to search for a code 
+Modification Log :
+* Developer                 Code review         Date                  Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Yogesh Gupta                                  04/19/2019            REQ - 388831 Request to search for a code - Code Search Console Component
+* Priyanka Puranik                              05/09/2019            Defect 415224 Search button not working
+* Satyam Malviya             355726              05/13/2019            Defect #415226	REQ- 388832_Hover Hover,No Result message and Filter By field alignment issue
+* Priyanka Puranik                              05/15/2019            REQ - 388831 Code Set button Alignment
+* Priyanka Puranik                              05/17/2019            REQ - 388832 Reset button Issue fix
+* Satyam Malviya             357767             05/31/2019            Defect 419798
+* Satyam Malviya                                05/31/2019            Defect 419798 - Moving the prepare datatable method to javascript due to TFS issue
+* Satyam Malviya                               06/18/2019           Defect - 422755 - Extra text identified while capturing Search criteria hover over text using UFT 
+*Sunil Kumar Reddy				05/21/2020	       User Story 1062506: PR00091574 - MF 1 - AHT - Link Hospital Network Codes to Search Code Sets on Benefits and Accums page (RF)
+* Priyanka Puranik						   		02/08/2021			REQ: 1669827 CR AEP readiness -Research - Critical Security Issues (slide 11)
+* Priyanka Puranik								03/03/2021			REQ - 1669827 CR AEP readiness - Reverting Boolean and Permission set changes
+* Venkata Nagasiva						    4/29/2022				User Story 3213674: T1PRJ0272548 - SF Legacy API Retirement Upgrade API version for Integrationjs Misc
+* Pinky Vijur                                  07/14/2023           User Story 4647275: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Miscellaneous (Group 1)
+ -------------------------------------------------------------------------------------------------------------------------------
+-->
+<apex:page controller="HumanaCodes_C_Hum" sidebar="false" showHeader="false"  title="Code Search">
+    <apex:includeScript value="/support/console/54.0/integration.js" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery-ui.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/FixedHeader-3.3.2/js/dataTables.fixedHeader.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/FixedColumns-4.2.2/js/dataTables.fixedColumns.js')}" />
+    <!-- <apex:includeScript value="{!URLFOR($Resource.datePickerJS)}" /> -->
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY,'bootstrap-datepicker-uni.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.DatePickerOverrides_SR_HUM, '/js/datePickerOverrides.js')}"/> 
+    <apex:includeScript value="{!URLFOR($Resource.HumanaCodes_CodeSet_SR_HUM, '/HumanaCodes_CodeSet_JS.js')}" />
+    
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_JQUERY, 'bootstrap-datepicker-uni.css')}" /> 
+    <apex:stylesheet value="{!URLFOR($Resource.DatePickerOverrides_SR_HUM,'/css/datePickerOverrides.css')}"/> 
+    
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}" />
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}" />
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CSS/HoverOver.css')}" />
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/FixedHeader_SR_HUM/fixedheader.css')}" />   
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HumanaCodes_CodeSet_SR_HUM, '/HumanaCodes_CodeSet_CSS.css')}" />
+    <apex:form id="formId">
+        <apex:pageMessages id="msgId"/> 
+        <apex:actionFunction name="searchDetailsJsonAction"  action="{!searchDetailsJson}" reRender="pageBlockSecId,tableId,msgId,outputPanelId,tableHideShowId,CheckBoxId" oncomplete="initial();hideShowTable();filterByCode();"  status="pleaseWait"/> 
+        <apex:pageBlock > 
+            <div style= "margin-left: 33%;">
+                <apex:commandButton value="Search"  action="{!searchDetailsJson}" reRender="pageBlockSecId,tableId,msgId,outputPanelId,tableHideShowId,CheckBoxId" oncomplete="initial();hideShowTable();" id="srchbtn" status="pleaseWait" onclick="filterByBorder();"/> &nbsp;&nbsp;&nbsp;&nbsp;      
+                <apex:commandButton value="Reset" action="{!reset}" oncomplete="pageReset();" status="pleaseWait"  reRender="pageBlockSecId,msgId,outputPanelId,pageBlockId"/>
+            </div>
+            <hr/> 
+            <apex:pageblockSection id="pageBlockId" >        
+                <apex:panelgrid columns="1" styleClass="panelGridStyle">
+                    <apex:pageblockSectionItem id="pageBlockSecItemId">
+                        <apex:outputPanel id="outPanId" >
+                            <table class="tabStyle">
+                                <tr class="tabRowStyle">
+                                    <td class="tabTextColStyle">
+                                        <span id="IntNuHelp" class="helpButton">
+                                            <apex:outputLabel value="Search Criteria" style="font-weight:inherit;"/>
+                                        </span>
+                                    </td>
+                                    <td class="tabFieldColStyle">
+                                        <div class="requiredInput" style="margin-left:20px;margin-top:-3px;">
+                                            <div class="requiredBlock"></div>
+                                            <apex:inputText id="IntNameId" value="{!textToBeSearch}" style="height: 25px; width: 190px;"/>
+                                             <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea">
+                                                <apex:commandLink onclick="javascript:void(O);" html-log_this="false">
+                                                   <apex:image height="12" width="12" value="{!$Resource.HUMHoverOverQuestionMark}" />
+                                                      <apex:outputPanel styleClass="hoverfontstyle" >
+                                                      {!$Label.HUMSearchCodesMsg} <br/>
+                                                      {!$Label.HUMSearchCodesMsgDesc} <br/>
+                                              </apex:outputPanel>                                             
+                                            </apex:commandLink>
+                                          </apex:outputPanel>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </apex:outputPanel>
+                    </apex:pageblockSectionItem> 
+                </apex:panelGrid>  
+                <apex:panelGrid columns="3">
+                    Restrict Search to: <apex:inputCheckbox id="CheckBoxId" value="{!searchCodeOnly}" selected="{!searchCodeOnly}" onchange="show(this);" label="Restrict Search to:" style="width:14px;margin-left: 10px;margin-top: 1px;"/> 
+                    <label for="CheckBox" style="margin-top: -1px;margin-left: 11px;font-weight: inherit;">Codes Only</label>
+                    <a href="#" style="cursor: default !important; text-decoration: none;" helpText="{!$Label.HUMCodesOnlyMsg}">
+                        <img src="{!$Resource.HUMHoverOverQuestionMark}" height="12" width="12"/>
+                    </a>
+                </apex:panelGrid> 
+        	</apex:pageblockSection>
+        	<div id ="keywordDiv_CodesDetailsTable"  class="navbar navbar-default" style="background-color: transparent;display: block;margin-top: 13px;">
+       			<apex:outputPanel id="outputPanelId">
+                	<div class="col-xs-12" style="position:  absolute;margin-left: 470px;margin-top: 15px;width: 20px;">
+                		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="box-sizing: border-box !important;">
+                  			<form class="navbar-form navbar-left" role="search1" id="ddFilters1">                                       
+                     			<div class="btn-group">
+                      				<button type="button" style="margin-left:-175px;display:none;" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id = "IntentID">Code Set <span class="caret"></span></button>
+                      				<ul class="dropdown-menu scrollable-menu" role="menu" id= "IntId" style="margin-left: -175px;">
+                      				</ul>
+                   		 		</div>    
+                  			</form>
+                		</div>
+              		</div>
+           		</apex:outputPanel>  
+           	</div>
+          	<apex:outputPanel id="tableHideShowId">
+				<script>
+					function hideShowTable() { 
+			        	var messageValue='{!displayMessage}';
+			        	if(messageValue == "true") { 
+	        				pageReset();
+	        			}
+	        			else{
+		       		    	jQuery("[id$='pageBlockSecId']")[0].style.display = 'block'; 
+		            	    jQuery("[id$='IntentID']")[0].style.display = 'block';
+		                    jQuery("[id$='keywordDiv_CodesDetailsTable']")[0].style.display = 'block';
+		                    jQuery("[id$='IntNameId']").focus(); 
+	        			}
+	       			} 
+				</script>
+        	</apex:outputPanel>
+	        <apex:pageBlockSection id="pageBlockSecId" columns="1" >
+	            <apex:pageBlockSectionItem id="pageBlockSecItemId2">
+	                <c:BaseDataTable_CMP_HUM jqueryVariable="jQuery"
+	                tableid="CodesDetailsTable"
+	                stateSave="true"
+	                tablecontainerid="CodesDetailsTable_div"
+	                columnname="{!columnName}"              
+	                objname="Humana_Codes_Desc__c"
+	                columnHeader="{!columnHeader}"
+	                pagingbarBool="true"
+	                keyword="true"
+	                hideShow="true"
+	                selectAll="true"
+	                fixedHeader="true"
+	                colReorder="true"/>
+	            </apex:pageBlockSectionItem>
+	        </apex:pageBlockSection>
+	        <apex:actionStatus id="pleaseWait">
+	            <apex:facet name="start">
+	                <div class="waitingSearchDiv waitingSearchDivOpacity" style="width: 100%; height: 130%; display: block; opacity: 0.70" />
+	                    <div id="searchingStatus" class="waitingSearchDiv" style="width: 100%; height: 100%; display: block;">
+	                        <div class="waitingHolder" style="top: 300px; width: 110px;">
+	                            <img class="waitingImage" src="/img/loading.gif" /> <span class="waitingDescription">Loading...</span>
+	                        </div>
+	                    </div>
+	            </apex:facet>
+	            <apex:facet name="stop" />
+	        </apex:actionStatus>
+    	</apex:pageBlock>
+ 	</apex:form>
+    <apex:outputPanel id="tableId">
+        <script>
+          var filters = [];
+          var allCodeSet = [];
+          var isCheckedAllCodeSet = false;
+          var allCodeSet1 = [];
+          var isChecked = '';
+          var finalFilledArray = [];
+          jQuery.fn.dataTable.ext.search = [];
+          var codeSetDetail = JSON.stringify({!sSearchDetailsJSONreturn}); 
+          var sInitialFilter = "{!JSENCODE(sfilterValue)}";   
+          //Method to create the table based on the search result
+          prepareSearchResultTable();
+        </script>
+    </apex:outputPanel>
+</apex:page>

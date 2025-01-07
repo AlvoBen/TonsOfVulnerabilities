@@ -1,0 +1,47 @@
+﻿<!--
+Page Name        : GroupBillingProfile_VF_HUM
+Version          : 1.0 
+Created Date     : 10/29/2015
+Function         : Page to display group billing profile information
+
+Modification Log :
+* Developer                Code Review        Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Santhi Mandava           29052              10/29/2015           Original Version
+* Santhi Mandava           29422              01/19/2016            Implemented billing phase 2 stories.
+* Praveen Kumar Parimi     36948              08/18/2016            Embedded the new version of the Component which has Data Table Revisions.
+* Santhi Mandava           40488              09/20/2016            Added Logging Component
+* Prudhvi Pamarthi         163987             01/02/2018            REQ - 328929 Fix for HUMExceptionHelper: DML
+* Suresh Sunkari                              12/18/2018            REQ - 380777 Fix for REQ - 379742_Group Billing Profiles page is blank in Direct URL 
+* Bharath Rajappan                            12/21/2018            Direct URL Defect 392550 fix
+* Pinky Vijur                                 07/14/2023            User Story 4647183: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Billing, Health Resource, Grievance & Appeals, & MTV (Group 1)
+* ------------------------------------------------------------------------------------------------------------------------------ 
+-->
+<apex:page standardController="Account" tabStyle="Account" extensions="GroupBillingProfile_C_HUM" showHeader="true" sidebar="false">
+	<apex:includeScript value="/support/console/36.0/integration.js" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}"/>
+   
+    <apex:includeScript value="{!URLFOR($Resource.html2canvas, '/html2canvas.min.js')}"/>
+        
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}" /><!--DT upgrade-->
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}"/>
+     
+    
+    <apex:includeScript value="{!$Resource.GroupBillingProfiles_JS_HUM}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Logging/css/LoggingCompCSS.css')}"/> 
+    
+    <script>
+        
+    </script>
+        <div id="loggingStickyHeader" class="LoggingCompCSS" style="width:99%;">
+            <c:Logging_CMP_HUM DisplayMessage="false" Logging_Color="red" AttachmentKey="{!sSrcCustKey}" AttachmentDesc="GROUPID" Logged_Item_Color="blue" Screenshot_Area_Id="pageContent" RecordId="{!sRecId}" />
+        </div>
+        <div id="pageContent" style="margin-top:8%; background:white;">
+            <c:BillingProfile_V1_CMP_HUM BillingProfileController="{!this}"></c:BillingProfile_V1_CMP_HUM>
+        </div>
+        <apex:form id="myform">
+         <!-- For Constructor Related exception -->
+         <c:HUMConstructorExceptionComponent errorLogs="{!listErrorLogs}" />
+        </apex:form>
+</apex:page>

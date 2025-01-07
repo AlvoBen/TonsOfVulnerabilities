@@ -1,0 +1,217 @@
+﻿<!--
+Component Name   : THLoggingV2_CMP_HUM.component
+Version          : 1.0
+Created On       : 04/11/2018    
+Function         : VF Component to display Tooth History Section
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Rajesh Keswani            38348		                 09/01/2016                    Original version
+* Rajesh Keswani            50216			             12/02/2016                    Defect Fix 251352.0001.
+* Praveen Kumar Parimi      56654						 01/11/2017                    Created a new version for referencing the new controller.
+* Gargey Sharma			    82304		       		     04/06/2017                    REQ - 306338: Updated as per CTCI data model changes
+* Melkisan Selvaraj         220187						 04/11/2018                    Cloned from BenefitsV1_VF_HUM for REQ - 360140
+* Jamuna Sarla              319869                       12/17/2018                    Defect Fix 392455.0001.
+* Santhi Mandava                                         03/18/2020                    Created javascript variable to get RF access which will be used of case comments story
+* Sunil Kumar Reddy                                      05/11/2020                    User story - 1083118 Removed rapid force permission set for case comments story
+****************************************************************************************************************************
+-->
+
+<apex:component controller="BenefitsV2_C_HUM" id="THLogCmp" allowDML="true">
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+    <apex:attribute id="personID" name="personID" description="This is Person's ID" type="String" required="true"></apex:attribute>
+    <apex:includeScript value="{!URLFOR($Resource.TH_NEWCASE_SR_V2_HUM, '/TH_NEWCASE_SR_V2_HUM/TH_NEWCASE_SR_V2_JS_HUM.js')}" />
+    <apex:includeScript value="{!$Resource.CaseCommentLength_JS_HUM}"/>
+	<link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.TH_NEWCASE_SR_V2_HUM,'/TH_NEWCASE_SR_V2_HUM/TH_NEWCASE_SR_V2_CSS_HUM.css')}" />
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMCaseHistoryComponent,'/HUMCaseHistoryComponent/main.css')}" />
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Logging/css/style.css')}" />
+    <apex:outputPanel id="THLogpbPanel">
+        <apex:pageblock id="THLogpb" html-log_this="false" rendered="{!bShowPanel}">
+            <apex:pageBlockSection id="THlogPbSec" columns="1">
+                <apex:pageBlockSectionItem id="pbSecthSelRadio" rendered="{!bShowPanel}">
+                    <apex:selectRadio value="{!sSelectedTHRadio}" rendered="{!bShowPanel}" layout="lineDirection" styleClass="radioClass " id="thSelRadio" onChange="showTHActionBtn(this)">
+                        <apex:selectOption itemValue="{!$Label.HUM_TH_EXISTING_CASE}" itemLabel="{!$Label.HUM_TH_EXISTING_CASE}" id="exCae" />
+                        <apex:selectOption itemValue="{!$Label.HUM_TH_NO_LOGGING}" itemLabel="{!$Label.HUM_TH_NO_LOGGING}" id="noLog" />
+                    </apex:selectRadio>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem id="pbSecActionBtn" rendered="{!bShowPanel}">
+                    <apex:outputPanel >
+                        <apex:commandButton id="btnTHNoLogNeeded" Value="{!$Label.HUM_TH_GOTO_TH_APP}" styleClass="displayClass" onclick="activateTHButtonNoLog(); return false;" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:actionFunction name="openNewCaseTH" action="{!createCaseAndRedirect}" onComplete="openNewCaseTHSub('{!sCaseID}','{!sTHCaseNumber}','{!sRedirectURL}'); return false;" reRender="THLogpbPanel" status="counterStatus">
+                    <apex:param name="standardURL" value="" />
+                </apex:actionFunction>
+                <apex:actionStatus startText="{!$Label.HUM_TH_PROCESSINGMSG}" id="counterStatus" />
+            </apex:pageBlockSection>
+        </apex:pageblock>
+    </apex:outputPanel>
+    <apex:outputPanel id="toothMessage">
+        <apex:pageblock id="container" rendered="{!bExistingCaseScenario}">
+            <apex:outputLabel value="{!$Label.HUM_TH_EXISTING_LOGGING_MSG}" rendered="{!bExistingCaseScenario}" html-log_this="false"></apex:outputLabel>&nbsp;&nbsp;&nbsp;&nbsp;
+        </apex:pageblock>
+    </apex:outputPanel>
+    <apex:outputPanel id="comp_containerTooth" layout="block" html-log_this="false">
+        <script>
+            setWidthpgTablePanel();
+        </script>
+        <div id="dvcasedetail" class="ExistingCaseStyle">
+            <apex:outputPanel id="pnlcaselist1" styleClass="width119" layout="block" html-log_this="false">
+                <apex:pageBlock rendered="{!bExistingCaseScenario}">
+                    <apex:pageBlockSection columns="1">
+                        <apex:outputPanel layout="block" html-log_this="false">
+                            <apex:outputLabel value="{!$Label.HUM_TH_EXISTING_CASE}" html-log_this="false"></apex:outputLabel>
+                        </apex:outputPanel>
+                        <apex:outputPanel layout="block" html-log_this="false">
+                            <apex:outputLabel value="Case" html-log_this="false"></apex:outputLabel>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <apex:inputtext value="{!sCaseNumber}" html-log_this="false" onkeypress="return ignoreEnterKey(event);" />
+                            <input type="button" value="Search" id="SearchCase" onClick="searchTH();" log_this="false"></input>
+                        </apex:outputPanel>
+                        <apex:outputPanel layout="block" id="pnlProfs">
+                            <apex:pageBlockTable id="pbtCases" value="{!lstCases}" var="item" html-log_this="false">
+                                <apex:column headerValue="{!$Label.HUMSelectLabel}">
+                                    <input type="checkbox" class="chb" id="chb" onkeypress="return ignoreEnterKey(event);" onclick="handleClickTooth(this,'{!item.Id}','{!item.CaseNumber}');" log_ignore_click="false" />
+                                </apex:column>
+                                <apex:column headerValue="{!$Label.HUMCaseID}">
+                                    <a href="javascript: openSubTabFromLoggingPage('{!JSENCODE(item.id)}','{!item.CaseNumber}');" id="TH_{!item.Id}" onmouseover="openPopUpTooth('{!item.Id}','');" onmouseout="clearPopUpTooth();">{!item.CaseNumber}</a>
+                                </apex:column>
+                                <apex:column value="{!item.Origin}">
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist1" action="{!sortResultPage}" value="{!$Label.HUMCaseOrigin}{!IF(sSortExpression=='Origin',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort2">
+                                            <apex:param value="Origin" name="column" assignTo="{!sSortExpression}"></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column>
+                                <apex:column value="{!item.Type}">
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist1" action="{!sortResultPage}" value="{!$Label.HUMCaseType}{!IF(sSortExpression=='Type',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSor3t">
+                                            <apex:param value="Type" name="column" assignTo="{!sSortExpression}"></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column>
+                                <apex:column value="{!item.CTCI_List__r.Classification__r.Name}">
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist1" action="{!sortResultPage}" value="{!$Label.HUMCaseClassification}{!IF(sSortExpression=='CTCI_List__r.Classification__r.Name',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort4">
+                                            <apex:param value="CTCI_List__r.Classification__r.Name" name="column" assignTo="{!sSortExpression}"></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column>
+                                <apex:column headerValue="{!$Label.HUMCaseIntent}">
+                                    <apex:outputText value="{!item.CTCI_List__r.Intent__r.Name}" />
+                                </apex:column>
+                                <apex:column value="{!item.Product__c}">
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist1" action="{!sortResultPage}" value="{!$Label.HUMCaseProduct}{!IF(sSortExpression=='Product__c',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort5">
+                                            <apex:param value="Product__c" name="column" assignTo="{!sSortExpression}"></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column>
+                                <apex:column value="{!item.Interacting_With__r.Name}">
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist1" action="{!sortResultPage}" value="{!$Label.HUMIntWithFieldLabel}{!IF(sSortExpression=='Interacting_With__r.Name',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort6">
+                                            <apex:param value="Interacting_With__r.Name" name="column" assignTo="{!sSortExpression}"></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column>
+                                <apex:column value="{!item.Interacting_With_Type__c}">
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist1" action="{!sortResultPage}" value="{!$Label.HUMIntWithTypeFieldLabel}{!IF(sSortExpression=='Interacting_With_Type__c',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort7">
+                                            <apex:param value="Interacting_With_Type__c" name="column" assignTo="{!sSortExpression}"></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column>
+                                <apex:column value="{!item.Interacting_About__c}">
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist1" action="{!sortResultPage}" value="{!$Label.HUMIntAboutFieldLabel}{!IF(sSortExpression=='Interacting_About__c',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort11">
+                                            <apex:param value="Interacting_About__c" name="column" assignTo="{!sSortExpression}"></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column>
+                                <apex:column value="{!item.Status}">
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist1" action="{!sortResultPage}" value="{!$Label.HUMCaseStatus}{!IF(sSortExpression=='Status',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort8">
+                                            <apex:param value="Status" name="column" assignTo="{!sSortExpression}"></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column>
+                                <apex:column value="{!item.Priority}">
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist1" action="{!sortResultPage}" value="{!$Label.HUMCasePriority}{!IF(sSortExpression=='Priority',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort9">
+                                            <apex:param value="Priority" name="column" assignTo="{!sSortExpression}"></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column>
+                                <apex:column >
+                                    <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                        <apex:param value="{!item.CreatedDate}" />
+                                    </apex:outputText>
+                                    <apex:facet name="header">
+                                        <apex:commandLink reRender="pnlcaselist1" action="{!sortResultPage}" value="{!$Label.HUMCaseCreatedDate}{!IF(sSortExpression=='CreatedDate',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort10">
+                                            <apex:param value="CreatedDate" name="column" assignTo="{!sSortExpression}"></apex:param>
+                                        </apex:commandLink>
+                                    </apex:facet>
+                                </apex:column>
+                                <apex:column headerValue="{!$Label.HUMCaseClosedDate}">
+                                    <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                        <apex:param value="{!item.ClosedDate}" />
+                                    </apex:outputText>
+                                </apex:column>
+                                <apex:column headerValue="{!$Label.HUMCaseCreatedBy}">
+                                    <apex:outputText value="{!item.CreatedBy.Name}" />
+                                </apex:column>
+                                <apex:column headerValue="{!$Label.HUMCaseQueue}">
+                                    <apex:outputText value="{!item.Created_By_Queue__c}" />
+                                </apex:column>
+                            </apex:pageBlockTable>
+                        </apex:outputPanel>
+                    </apex:pageBlockSection>
+                    <apex:pageblockSection id="pgSect3" columns="1">
+                        <apex:outputPanel layout="block" styleClass="pSearchShowMore" id="otpNav">
+
+                            {!$Label.HUMTotalRecordsFound} {!IF((NOT(ISNULL(stdsetcon)) && stdsetcon.resultSize == iConstantValue),$Label.HUMMaximumPageSize,'')} {!IF(NOT(ISNULL(stdsetcon)) && stdsetcon.resultSize
+                            < iConstantValue ,stdsetcon.resultSize, '')}&nbsp; <apex:commandButton action="{!first}" reRender="pnlcaselist1,GoToToothBtn" title="{!$Label.HUM_TH_FIRST_PAGE}" value="{!$Label.HUMFirstLabel}" rendered="{!stdsetcon.HasPrevious}" />&nbsp;
+                            <apex:image url="/img/search_prevarrow.gif" title="{!$Label.HUM_TH_PREVIOUS}" styleClass="prevArrow" rendered="{!stdsetcon.HasPrevious}" />&nbsp;
+                            <apex:commandButton action="{!Previous}" rerender="pnlcaselist1,GoToToothBtn" title="{!$Label.HUM_TH_PREVIOUS}" value="{!$Label.HUMPreviousLabel}" rendered="{!stdsetcon.HasPrevious}" /> ({!IF(stdsetcon.PageNumber == 1,1,((stdsetcon.PageNumber -1) * stdsetcon.PageSize)+1)}-{!IF(NOT(ISNULL(stdsetcon)) && stdsetcon.resultSize
+                            < stdsetcon.PageSize,stdsetcon.resultSize,stdsetcon.PageNumber * stdsetcon.pageSize)})&nbsp; <apex:commandButton title="{!$Label.HUM_TH_NEXT}" reRender="pnlcaselist1,GoToToothBtn" value="{!$Label.HUMNextLabel}" rendered="{!stdsetcon.HasNext}" action="{!Next}" />&nbsp;
+                            <apex:image url="/img/search_nextarrow.gif" title="{!$Label.HUM_TH_NEXT}" styleClass="nextArrow" rendered="{!stdsetcon.HasNext}" /> &nbsp;
+                            <apex:commandButton action="{!lastpage}" reRender="pnlcaselist1,GoToToothBtn" title="{!$Label.HUM_TH_LAST_PAGE}" value="{!$Label.HUMLastLabel}" rendered="{!(stdsetcon.HasNext)}" />&nbsp;&nbsp;
+
+                        </apex:outputPanel>
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:outputPanel>
+
+        </div>
+        <br/>
+        <apex:outputpanel id="GoToToothBtn">
+            <apex:commandButton id="activeToothHisBtn" rendered="{!bExistingCaseScenario}" Value="{!$Label.HUM_TH_GOTO_TH_APP}" disabled="true" onclick="activateTHButtonNoLog(); return false;" />
+        </apex:outputpanel>
+    </apex:outputPanel>
+    
+            
+    <div id="PopUpTooth" class="arrow_box">
+       <c:HUMPopUPForToothCaseComments id="CustomComponentTooth" CaseId="{!sCaseId}"/>
+    </div>
+    
+    <apex:actionFunction name="callFunAFTooth"  reRender="ComponentRefTooth" oncomplete="onCompleteOfAFTooth('{!sCaseID}');">
+        <apex:param name="caseId" value="" assignTo="{!sCaseID}"/>
+    </apex:actionFunction>
+    <apex:actionFunction name="renderSection" action="{!showRadioBtn}" reRender="THLogpbPanel" status="toothWaitStatus" />
+    <apex:actionFunction name="disablePanel" action="{!disableRadioBtn}" reRender="THLogpbPanel" status="toothWaitStatus" />
+    <apex:actionFunction name="getAllCases" action="{!displayCaseList}" reRender="pnlcaselist1,toothMessage,GoToToothBtn" status="toothWaitStatus" oncomplete="document.getElementById('dvcasedetail').style.display = 'block';" />
+    <apex:actionFunction name="searchTH" action="{!searchTHData}" reRender="pnlcaselist1,btnLog" status="toothWaitStatus" />
+    <apex:actionStatus id="toothWaitStatus">
+        <apex:facet name="start">
+            <div class="loadingImageDivCon">
+                <img src="/img/loading.gif" />
+                <span class="waitingDescription">{!$Label.LOADING_HUM}</span>
+            </div>
+        </apex:facet>
+    </apex:actionStatus>
+
+    <script>
+        var labCaseStURL = '{!$Label.HUMCaseStandardURL}';
+    </script>
+</apex:component>

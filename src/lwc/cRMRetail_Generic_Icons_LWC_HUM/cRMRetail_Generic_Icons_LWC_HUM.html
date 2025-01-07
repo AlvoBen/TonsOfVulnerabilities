@@ -1,0 +1,34 @@
+﻿<!--
+Component Name   : cRMRetail_Generic_Icons_LWC_HUM
+Version          : 1.0
+Created On       : 02/01/2023
+Function         : Lightning Web Component to show icons on account detail page. 
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*********************************************************************************************************************************************************************
+* Sahil Verma                                          02/01/2023                   User Story 4231796: T1PRJ0154546 / DP / MF9 Storefront - Ability to View Deceased Information on Member Account
+* Vinoth L                                         	   04/26/2023                   User Story 3637591: T1PRJ0154546 / SF / MF3 Storefront: Display MyHumana Enrollment & Go365 Enrollment - UI 
+*********************************************************************************************************************************************************************
+-->
+<template>
+        <div style="display: flex;">
+            <template for:each={iconArr} for:item="icArr">                
+                <template if:true={icArr.show}>
+                    <div key={icArr.label} class="slds-form-element accInfoIconDiv">
+                        <label class="slds-form-element__label" for="checkbox-unique-id-81" >{icArr.label}</label>
+                        <template if:true={icArr.isIcon}>
+                            <div class="slds-form-element__control">
+                                <lightning-icon class="accInfoIcon" icon-name={icArr.icon} size="xx-small" style={icArr.style}></lightning-icon>
+                            </div>
+                        </template>
+                        <template if:false={icArr.isIcon}>
+                            <div class="slds-form-element__control">                                
+                                <span>{icArr.value}</span>
+                            </div>
+                        </template>                        
+                    </div>
+                </template>
+            </template> 
+        </div>
+</template>

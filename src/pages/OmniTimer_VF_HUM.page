@@ -1,0 +1,63 @@
+﻿<!--
+Page Name        : OmniTimer_VF_HUM
+Version          : 1.0
+Created Date     : Jan 10 2018
+Function         : This Page is used to show timer on change of status in Omni Channel
+***********************************************************************************************************************************
+Modification Log:
+
+* Developer Name               Review Number                 Date                       Description
+*----------------------------------------------------------------------------------------------------------------------------------
+* Shruthi Karanth                                          	01/10/2018                   Original Version
+* Pradeep Dani					350910						04/12/2019					 REQ - 396202 Transferring case to the accepting agent.
+* Lakshmi Madduri											05/29/2019					 Defect fix 418865.0001
+* Akshay Pai												9/01/2020	 				 REQ - 1208691 HP Chat Associates See Issue Text In Chat Window
+* Mithra Bharadwaj														                 US#1522825 SonarQube Changes
+***********************************************************************************************************************************
+-->
+<apex:page Controller="OmniTimer_C_HUM">
+    <apex:includeScript value="/support/console/41.0/integration.js" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.OmniTimer_SR_HUM, 'OmniTimer_SR_JS_HUM.js')}" />
+    <script type="text/javascript">
+        var fetchCaseRecord = "{!$RemoteAction.OmniTimer_C_HUM.transferCase}";
+        var liveAgentUser = '{!JSENCODE(IF(bLiveAgentUser, "true", "false"))}';
+        var chatKey = '';
+		var bSwitch = '{!bSwitch}';
+
+    </script>
+    <apex:form id="formId">
+        <div style="overflow: scroll; width: 400px; height: 200px;">
+            <apex:pageblock id="pbTbl">
+                <apex:actionFunction id="refreshBtn" name="refreshWidget" rerender="pbTbl" oncomplete="isElapsed();" />
+                <table align="center">
+                    <tr>
+                        <td>
+                            <div>
+                                <apex:outputLabel style="font-size:12.5px;font-weight:bold;" value="Current Status: " />
+                                <apex:OutputText style="font-size:13.5px; " Label="Current Status" id="statusCur" />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="timeId" align="center" style="font-size:200%">
+                            <apex:outputPanel id="opTimer">
+                                <apex:OutputText id="elpsedTime" />
+                            </apex:outputPanel>
+                        </td>
+                    </tr>
+                </table>
+            </apex:pageblock>
+        </div>
+    </apex:form>
+    <script>
+//dont enable P9 Critical Fix       var $ = jQuery.noConflict(true);
+       jQuery(document).ready(function ()
+       {
+           if (liveAgentUser == "true")
+           {
+               sforce.console.chat.onChatStarted(onChatStartedCallback);
+           }
+       });
+    </script>
+</apex:page>

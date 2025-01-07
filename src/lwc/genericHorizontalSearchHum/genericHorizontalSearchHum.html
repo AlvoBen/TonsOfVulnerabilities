@@ -1,0 +1,56 @@
+﻿<!--
+LWC Name        : benefitSearchDentalHum.html
+Function        : LWC to display benefit search details;
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Nirmal Garg                06/01/2023                   initial version - US - 4648135
+* Atul Patil                 06/07/2023                    DF-7028
+****************************************************************************************************************************-->
+<template>
+    <div class="slds-grid slds-wrap">
+        <template if:true={filterconfig}>
+            <template for:each={filterconfig} for:item="item">
+                <div class={item.class} key={item.label} style={item.style}>
+                    <template if:true={item.combobox}>
+                        <template if:true={item.required}>
+                            <lightning-combobox name={item.name} label={item.label} value={item.value}
+                                data-id={item.dataid} placeholder={item.placeholder} options={item.options}
+                                dropdown-alignment="auto" onchange={handleChange} required class="validate"
+                                disabled={item.disabled} message-when-value-missing="Error: You must select a value.">
+                            </lightning-combobox>
+                        </template>
+                        <template if:false={item.required}>
+                            <lightning-combobox name={item.name} label={item.label} value={item.value}
+                                data-id={item.dataid} placeholder={item.placeholder} options={item.options}
+                                dropdown-alignment="auto" onchange={handleChange} disabled={item.disabled}
+                                message-when-value-missing="Error: You must select a value.">
+                            </lightning-combobox>
+                        </template>
+                    </template>
+                    <template if:true={item.button}>
+                        <div class="slds-m-top_large">
+                            <lightning-button variant={item.variant} label={item.label} title={item.title}
+                                disabled={item.disabled} name={item.name} onclick={handleButtonClick}>
+                            </lightning-button>
+                        </div>
+                    </template>
+                    <template if:true={item.filter}>
+                        <div class="slds-m-top_large slds-m-left_xx-small">
+                            <lightning-icon class="blackIcon filtericon slds-p-around_xx-small"
+                                icon-name="standard:filter" size="small" alternative-text="Filters"
+                                onclick={handleFilterClick}>
+                            </lightning-icon>
+                        </div>
+                    </template>
+                </div>
+            </template>
+            
+        </template>
+    </div>
+    <div >
+        <c-generic-filter-cmp-hum displayfilter={displayfilter} onfilterbtnclick={handleClearFilter}
+            filterconfig={filterConfig} onkeywordvalue={handleKeyWordValue}></c-generic-filter-cmp-hum>
+    </div>
+</template>

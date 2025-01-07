@@ -1,0 +1,374 @@
+﻿<!--
+Page Name       : CaseClosed_Edit_VF_HUM.page
+Version         : 1.0
+Function        : VF page to show the details of Closed Cases ( Member,Medicare,Group,Agent,Pharmacy,Provider and Unknown)
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Chaitanya Vegendla             146694                12/9/2017                    Original version
+* Prasad Jandhyala                                     01/12/2018                                   
+* Mohammed Noor                  224977                05/07/2018                   REQ-350477 - Pend Key display for Medicare Enrollment Cases
+* Mohammed Noor                  230884                05/07/2018                   REQ-350470 - Election Type Code (ETC) display for Medicare Enrollment Cases
+* Deepankar Binjola                    319242                        12/12/2018                   NBA MF4 Guidance Alert 
+* Satyam Malviya                         320359                      12/12/2018                  Defect 395651 - NBA MF4 Guidance Alert 
+* Satyam Malviya                                                   12/12/2018                  NBA MF4- Account Check to Display Alert Panel
+* Sumit Pharande                                                          REQ-386780 - Removed ; from Collapsible Side panel URL to pass correct Account id
+* Suraj Patil                                          08/07/2019                   REQ - 405997 - Regression Defect - 423752
+*  Vijaya Koriprolu                                     11/18/2019                 REQ-383958 added functionality for adding claim numbers on case edit page
+*  Vijaya Koriprolu                                     12/10/2019                 Defect fix for 451071.0001
+* Subhamay Mandal                                      02/20/2020                  USER STORY 860330 and 860311
+* Mohammed Noor									       03/26/2020                  US#975731 - Add DEAA OnOff Switch changes
+* Mohammed Noor                             		   04/24/2020           	   US#1020879 - Remove DEAA OnOff Switch
+* Vinay Lingegowda                              	04/29/2020                 	USER STORY 1038807/1038796
+* Kavya Bondada                                         11/18/2020                      User Story 1641595: PR00091574 - MF 1 - Quality - Ability for Rep to select "Was the Grievance Resolved during the call?" on Quick Start/Case Page (RF)
+* Satyam Malviya                                     11/5/2020                    User Story - 1608276 - PR00090631 - MF 12 - MVP - Alert panel for Case pages
+* Gourab Tewary                                     10/2/2021                    User Story - 1733612 - PR00091574- IR 5050 - Add new response status for Cases with Pending Response (CRM)
+* Sayali Nemade                                      02/09/2021                   User Story 1836611: PR00090631 - MF 12 - SF- TECH - Adding Case pages to Location field on the Recommendation creation tool
+* Mithra Bharadwaj                                                                   US#1921420 Case Detail Page - Hyperlinks over the Classification and Intent are removed for closed and pending cases
+* Mohammed Noor                                      04/26/2021                   US2163321 - Case Management Checkmarx Security violations - Case History & Case Misc
+* Amar Gadewar                                       05/15/2021                   User Story 2215231: T1PRJ0001827 - MF 1 - RF Clean Up - Was the Grievance Resolved during the Call? (RF)
+* Kavya Bondada                                      07/13/2021                   User Story 2451369: T1PRJ0001827 - MF 1 - Quality - Change the label of 'Cancel' button on the Case Edit page to 'Exit without Saving' (CRM)
+* Atia Uzma                                          07/29/2021                   User Story 2498842: T1PRJ0001827 - MF 1 - AHT - Ability to Reopen and Edit closed cases (RF)
+* Kavya Bondada				                               10/11/2021		                User Story 2737375: T1PRJ0001827 - MF 1 - Quality - Ability to capture Verbal Consent Obtained and making it required for certain case types (RF)
+* Kiran Kumar 										  06/07/2022				  USER STORY 2310106 T1PRJ0003805/T1PRJ0184373 - Add an Escalation Indicator in CRM Service
+****************************************************************************************************************************
+-->
+<apex:page standardController="Case" extensions="CaseClosedEdit_C_HUM" applyBodyTag="false" tabStyle="Case" action="{!caseReopen}">
+  <apex:includeScript value="/support/console/34.0/integration.js" />
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.Collapsible_RightConsole_SR_HUM, '/styles/CollapsibleRightConsole.css')}" />
+  <apex:includeScript value="{!URLFOR($Resource.Collapsible_RightConsole_SR_HUM, '/js/CollapsibleRightConsoleCaseClosedEdit.js')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.Collapsible_RightConsole_SR_HUM, '/styles/CollapsibleRightConsoleCaseDetail.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CSS/HoverOver.css')}"/>
+  <script type="text/javascript">
+    <!-- Please do not change this line as it breaks the JS tables. -->
+    //dont enable P9 Critical Fix    $j = jQuery.noConflict();
+  </script>
+  <script src="{!URLFOR($Resource.CaseDetailResources_SR_HUM,'/CaseClosedEdit/CaseClosedEdit_JS_HUM.js')}"/>
+  <div id="main-container" class="mainContainer" style="float:left;">
+    <apex:sectionHeader title="Case" subtitle="{!Case.CaseNumber}" printUrl="/apex/CaseDetail_Member_VF_HUM?id=+{!Case.Id}" help="/apex/htdoor?loc=help&target=co_edit.htm&section=CustomObjects&language=en_US"/>
+
+    <apex:form >
+      <apex:pageBlock mode="maindetail">
+        <apex:pageMessages id="msgId"  escape="false"/>
+
+        <apex:outputPanel id="returnValueRefresh">
+          <script>
+            var returnURLVal ='{!JSENCODE(returnURL)}';
+          </script>
+        </apex:outputPanel>
+
+        <apex:outputPanel id="noResponseStatus" style="display: none;">
+        <apex:PageMessage Title="Error:" Summary="{!$Label.RequiredResponseStatus}" severity="Error" Strength="3" />
+        </apex:outputPanel>
+
+        <!--For Salesforce ticket - 17890966 -->
+        <apex:actionFunction name="saveCaseDetails" action="{!save}" status="caseSaveStatus" rerender="msgId,opLaunchEMME,returnValueRefresh" onComplete="redirectToURL();">
+          <!--Pass in if current console generated url is detail or not-->
+          <apex:param name="currentPageIncorrectURL" assignTo="{!isDetailURL}" value="" />
+        </apex:actionFunction>
+
+        <apex:outputPanel id="claimPopUpDiv">
+          <apex:outputPanel id="claimInnerDiv" style="display:none">
+            <div id="claimNumberModal" title="{!$Label.Add_Claim_Number}" class="claimNumberModalStyl">
+              <div id="claimPopup" class="claimPopupStyl">
+                <div style="font-size: 12px !important;">{!$Label.Add_Claim_Number}</div>
+                <hr/>
+              </div>
+              <table class="claimTabStyl">
+                <apex:repeat value="{!lstClaims}" var="oClaim" rows="5">
+                  <tr>
+                    <td  class="ClaimsTd">
+                      <div>
+                        <apex:outputLabel Styleclass="ClaimsTdPnl"> {!oClaim.sClaimText} </apex:outputLabel>
+                      </div>
+                    </td>
+                    <td  class="ClaimsTd">
+                      <div>
+                        <apex:inputText id="claimFirstInput" Styleclass="ClaimsTdPnl" value="{!oClaim.sClaimNumber}"/>
+                      </div>
+                    </td>
+                    <td  class="ClaimsTd">
+                      <div>
+                        <apex:inputText id="claimSecondInput"  Styleclass="ClaimsTdPnl" value="{!oClaim.sSecondCol}"/>
+                      </div>
+                    </td>
+                    <td  class="ClaimsTd">
+                      <div>
+                        <apex:inputText id="claimThirdInput"  Styleclass="ClaimsTdPnl" value="{!oClaim.sThirdCol}"/>
+                      </div>
+                    </td>
+                    <td  class="ClaimsTd">
+                      <div>
+                        <apex:inputText id="claimFourthInput" Styleclass="ClaimsTdPnl" value="{!oClaim.sFourthCol}"/>
+                      </div>
+                    </td>
+                    <td  class="ClaimsTd">
+                      <div>
+                        <apex:inputText id="claimFifithInput" Styleclass="ClaimsTdPnl" value="{!oClaim.sFifthCol}"/>
+                      </div>
+                    </td>
+                  </tr>
+                </apex:repeat>
+              </table>
+              <br/>
+              <div id="claimErrMsg" style="color:red;">{!$Label.Unsaved_Changes_Msg}</div>
+              <br/>
+              <apex:commandButton id="saveBtn" value="Save"  style="margin-left:40% !IMPORTANT;" action="{!claimSaveClick}" onclick="claimSaveBtn();" rerender="PblockBtns"/>
+              <apex:commandButton value="Cancel" id="cancelBtn" style="margin-left:5% !IMPORTANT;"  styleclass="cancelBtnCSS" onclick="claimCancelBtn();" action="{!claimCancelClick}" rerender="PblockBtns"/>
+
+            </div>
+          </apex:outputPanel>
+        </apex:outputPanel>
+
+        <apex:pageBlockButtons >
+          <apex:commandButton styleClass="caseEditButton" value="Save" id="cmdSaveID" status="caseSaveStatus"  onClick="checkConsoleURLAndSave();return false;"/>
+          <apex:commandButton action="{!cancel}" styleClass="caseEditButton" value="Exit without Saving" id="cmdCancelID" />
+          <apex:commandButton value="{!$Label.Add_Claim_Number}" id="cmdClaimNumber" rendered="{!bClaimNumberBtn}" onclick="openClaimNumberPopUp();return false;"/>
+        </apex:pageBlockButtons>
+
+        <apex:pageBlockSection columns="2" title="{!$Label.Case_Edit_Page_Section_Case_Information}">
+          <apex:outputField value="{!Case.Origin}"/>
+          <apex:outputField value="{!Case.Owner_Queue__c}"/>
+          <apex:outputField value="{!Case.Type}"/>
+          <apex:outputField value="{!Case.Case_Owner__c}"/>
+          <apex:outputField value="{!Case.Subtype__c}"/>
+          <apex:inputField value="{!caseRec.Status}" id="caseStatus" onchange="isEnableResponseStatus();"/>
+          <br/>
+          <apex:pageBlockSectionItem >
+            <apex:outputPanel >
+              <apex:inputField value="{!caseRec.Response_Status__c}" id="idResponseStatusHidden" style="display:none;"/>
+              <apex:outputLabel value="Response Status" styleClass="medPartCSS" for="idResponseStatusLabel" id="idResponseStatusLabel" />
+              <apex:outputPanel styleClass="vfHelpText" id="hoverOverAreaRS" >
+                <a onclick="javascript:return false;" html-log_this="false">
+                  <apex:image id="lnkImg1" height="12" width="12" styleClass="hoverimgStyle" value="{!$Resource.HUMHoverOverQuestionMark}"/>
+                  <apex:outputPanel style="width:200px;" styleClass="hoverfontstyle"><apex:outputText value="{!$Label.ResponseStatusHelpText}" escape="false"/></apex:outputPanel>
+                </a>
+              </apex:outputPanel>
+            </apex:outputPanel>
+            <input type="radio" id="Internal" name="ResponseOption" value="Internal" onclick="setResponseStatus(this);"/> Internal&nbsp;&nbsp;&nbsp;
+            <input type="radio" id="External" name="ResponseOption" value="External" onclick="setResponseStatus(this);"/> External
+          </apex:pageBlockSectionItem>
+
+          <apex:outputField value="{!Case.Doc_Type__c}" rendered="{!IF(bClosedMedicareRType,true,false)}"/>
+
+          <apex:outputField value="{!Case.Pend_Key__c}" rendered="{!AND(IF(bClosedMedicareRType,true,false),IF(Case.Type == $Label.Customer_Inquiry_Case_Type,true,false))}"/>
+          <apex:pageBlockSectionItem rendered="{!AND(IF(bClosedMedicareRType,true,false),IF(Case.Type == $Label.Customer_Inquiry_Case_Type,true,false))}" />
+
+          <apex:outputPanel rendered="{!IF(bClosedMedicareRType,false,true)}">
+            <apex:pageBlockSectionItem />
+          </apex:outputPanel>
+
+          <apex:outputField value="{!Case.Recordtype.name}" label="{!$Label.Case_Record_Type}"/>
+        </apex:pageBlockSection>
+
+
+        <apex:pageBlockSection title="{!$Label.Related_Accounts}">
+          <apex:outputField value="{!Case.Interacting_With_Type__c}"/>
+          <apex:outputField value="{!Case.Interacting_About_Type__c}"/>
+          <apex:outputField value="{!Case.Interacting_With__c}"/>
+          <apex:outputField value="{!Case.AccountId}"/>
+          <apex:outputField value="{!Case.Interacting_With_Name__c}"/>
+
+          <apex:pageBlockSectionItem rendered="{!IF(bClosedProviderRType,true,false)}">
+            <apex:outputLabel value="{!$ObjectType.Case.fields['NPI_ID__c'].label}"/>
+            <apex:outputField value="{!Case.NPI_ID__c}"/>
+          </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem rendered="{!IF((bClosedMedicareRType || bClosedMemberRType),true,false)}">
+            <apex:outputLabel value="{!$ObjectType.Case.fields['Policy_Member__c'].label}"/>
+            <apex:outputField value="{!Case.Policy_Member__c}"/>
+          </apex:pageBlockSectionItem>
+
+          <apex:outputPanel rendered="{!IF((bClosedMedicareRType || bClosedMemberRType),false,true)}">
+            <apex:pageBlockSectionItem />
+          </apex:outputPanel>
+
+          <apex:pageBlockSectionItem rendered="{!IF((bClosedUnknownRType || bClosedProviderRType),true,false)}">
+            <apex:outputLabel value="{!$ObjectType.Case.fields['Tax_ID__c'].label}"/>
+            <apex:outputField value="{!Case.Tax_ID__c}"/>
+          </apex:pageBlockSectionItem>
+
+          <apex:outputField value="{!Case.Medicare_Track_ID__c}" rendered="{!IF(bClosedMedicareRType,true,false)}"/>
+
+
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection title="{!$Label.Additional_Information}" columns="2" >
+          <apex:outputField value="{!Case.Classification_Type__c}"/>
+          <apex:outputField value="{!Case.Priority}"/>
+          <apex:outputField value="{!Case.Classification_Id__r.Name}" label="{!$Label.Classification_Name}"/>
+          <apex:inputField value="{!caseRec.Follow_up_Due_Date__c}"/>
+          <apex:outputField value="{!Case.Intent_Id__r.Name}" label="{!$Label.Intent_Name}"/>
+          <apex:outputField value="{!Case.Election_Type_Code__c}" rendered="{!IF(bClosedMedicareRType,true,false)}"/>
+          <apex:outputField value="{!Case.Topic__c}" rendered="{!IF(bClosedMedicareRType,true,false)}"/>
+          <apex:pageBlockSectionItem rendered="{!IF((bClosedMedicareRType || bClosedMemberRType),true,false)}">
+            <apex:outputLabel value="{!$Label.case_med_partC_partD_label}" styleClass="medPartCSS" for="medPartCPartD" id="medPartCPartDLabel" />
+            <apex:outputField value="{!Case.Call_Benefit_Category__c}" id="medPartCPartD"/>
+          </apex:pageBlockSectionItem>
+
+          <apex:outputField value="{!Case.Due_Date__c}" label="{!$Label.Expiration_Date}" rendered="{! IF(case.origin==$Label.case_Origin_DEAA && (Case.Recordtype.name == $Label.HUMClosedMedicareCase),true,false)}"/>
+          <apex:outputPanel rendered="{!IF((bClosedMedicareRType || bClosedMemberRType),false,true)}">
+            <apex:pageBlockSectionItem />
+          </apex:outputPanel>
+          <apex:outputField value="{!Case.Topic__c}" rendered="{!IF(bClosedMedicareRType,false,true)}"/>
+
+          <apex:outputField value="{!Case.Verbal_Consent_Obtained__c}" rendered="{!AND(IF((bClosedUnknownRType || bClosedMedicareRType || bClosedMemberRType),true,false),AND($Permission.RapidForceUser_AHT_HUM, OR($Permission.CRMS_684_Medicare_Customer_Service_Access, $Permission.CRMS_205_CCSPDPPharmacyPilot, $Permission.MedicareElectionTrackingEnrollmentUser_HUM)))}"/>
+          <apex:outputPanel rendered="{!AND(IF((bClosedUnknownRType || bClosedMedicareRType || bClosedMemberRType),true,false),AND($Permission.RapidForceUser_AHT_HUM, OR($Permission.CRMS_684_Medicare_Customer_Service_Access, $Permission.CRMS_205_CCSPDPPharmacyPilot, $Permission.MedicareElectionTrackingEnrollmentUser_HUM)))}">
+            <apex:pageBlockSectionItem />
+          </apex:outputPanel>
+
+          <apex:outputField value="{!Case.Tax_ID__c}" rendered="{!IF((bClosedUnknownRType || bClosedProviderRType),true,false)}"/>
+
+          <apex:outputPanel rendered="{!IF((bClosedUnknownRType || bClosedProviderRType),false,true)}">
+            <apex:pageBlockSectionItem />
+          </apex:outputPanel>
+
+
+          <apex:pageBlockSectionItem rendered="{!IF((bClosedUnknownRType || bClosedGroupRType || bClosedMemberRType),true,false)}">
+            <apex:outputLabel value="{!$ObjectType.Case.fields['OpenEnrollment__c'].label}"/>
+            <apex:inputField value="{!caseRec.OpenEnrollment__c}"/>
+          </apex:pageBlockSectionItem>
+
+
+          <apex:outputPanel rendered="{!IF((bClosedUnknownRType || bClosedGroupRType || bClosedMemberRType),false,true) && (!(bClosedHPMemberRType || bClosedHPUnknownRType || bClosedHPProviderRType || bClosedHPGroupRType || bClosedHPAgentRType) && bShowEsclIndicator)}">
+            <apex:pageBlockSectionItem />
+
+          </apex:outputPanel>
+
+
+          <apex:pageBlockSectionItem rendered="{!IF((bClosedUnknownRType || bClosedProviderRType),false,true) && (!bClosedAgentRType && bShowEsclIndicator)}">
+            <apex:pageBlockSectionItem />
+          </apex:pageBlockSectionItem>
+
+
+          <apex:pageBlockSectionItem rendered="{!IF((bClosedUnknownRType || bClosedGroupRType || bClosedMemberRType),true,false)}">
+            <apex:outputLabel value="{!$ObjectType.Case.fields['OpenEnrollmentType__c'].label}"/>
+            <apex:inputField value="{!caseRec.OpenEnrollmentType__c}"/>
+          </apex:pageBlockSectionItem>
+
+          <apex:pageblocksectionItem rendered="{! IF(case.origin==$Label.case_Origin_DEAA && (Case.Recordtype.name == $Label.HUMClosedMemberCase),true,false) && bShowEsclIndicator}"></apex:pageblocksectionItem>
+          <apex:outputField value="{!Case.Due_Date__c}" label="{!$Label.Expiration_Date}" rendered="{! IF(case.origin==$Label.case_Origin_DEAA && (Case.Recordtype.name == $Label.HUMClosedMemberCase|| Case.Recordtype.name == $Label.HUMClosedUnknownCase),true,false)}"/>
+	      <apex:pageBlockSectionItem rendered="{!bClosedUnknownRType}"/>
+          <apex:outputField value="{!Case.Escalation_Indicator__c}" rendered="{!bShowEsclIndSwitch && bShowEsclIndicator}" html-disabled="true"/>  
+
+        </apex:pageBlockSection>
+
+
+        <apex:pageBlockSection title="{!$Label.G_A_Complaints}" columns="2" collapsible="false" rendered="{!IF((bClosedMemberRType || bClosedProviderRType || bClosedMedicareRType),true,false)}">
+          <apex:outputField value="{!Case.G_A_Rights_Given__c}"/>
+          <apex:outputField value="{!Case.Complaint__c}"/>
+          <apex:outputField value="{!Case.G_A_Reason__c}"/>
+          <apex:outputField value="{!Case.Complaint_Reason__c}"/>
+          <apex:pageBlockSectionItem />
+          <apex:outputField value="{!Case.Complaint_Type__c}" />
+        </apex:pageBlockSection>
+
+
+        <apex:pageBlockSection title="{!$Label.Texas_Complaint_Letter}" collapsible="false" columns="1" rendered="{!IF(bClosedMemberRType,true,false)}">
+          <apex:outputField value="{!Case.Language_Preference__c}"/>
+        </apex:pageBlockSection>
+
+
+        <apex:pageBlockSection title="{!$Label.System_Information}" columns="2" collapsible="false">
+
+          <apex:outputField value="{!Case.Re_Open_Case_Date__c}"/>
+          <apex:outputField value="{!Case.Created_By_Queue__c}"/>
+          <apex:pageBlockSectionItem />
+          <apex:outputField value="{!Case.Work_Queue_View_Name__c}"/>
+          <apex:pageBlockSectionItem />
+
+          <apex:outputField value="{!Case.LastModifiedby_Queue__c}"/>
+
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection title="{!$Label.case_edit_page_section_Case_Comments}" id="pbSecCcID" columns="1">
+          <apex:inputField value="{!caseCom.CommentBody}" id="ccID" styleClass="ccStyle" label="{!$Label.case_comments}" style="width:80%;height:100px;"/>
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+
+    </apex:form>
+    <div class="alertTooltip" id="alertDetailsTooltip" style = "border-style: solid;font-family: Arial;display:none;" />
+  </div>
+  <apex:outputPanel rendered="{!VerifyAccountType}">
+    <div id="sideBar-container" style="height:100%; display:none; position:fixed">
+      <apex:outputpanel rendered="{!$Permission.NBA_Alerts_V2 }" >
+        <div id="RTISummaryPage" style="float:right;width:280px;height:100%">
+          <apex:iframe src="/apex/CollapsibleRightConsole_VF_HUM?id={!Case.AccountId}&ServiceFlag=false&CollapsedSidePanel=false&RTIFlag=false&sPageName=Case Closed Edit" height="600px" scrolling="true" id="alertsIframe"/>
+        </div>
+      </apex:outputpanel>
+    </div>
+    </apex:outputpanel>
+
+    <script type="text/javascript">
+      
+      var caseStatus = document.querySelector("[id$='caseStatus']");
+      var getPrimaryTabID = '';
+      var getSubTabID = '';
+      //Current Page Info including console url seen on tab(could be different from actual content url)
+      var pageObjectInfo;
+      //In case tab Url is different from actual content url
+      var isDetailURL = false;
+      var caseNum ='{!Case.caseNumber}';
+      var bRecTypeCheck ='{!isDisplay}';
+      jQuery(document).ready(function(){
+      if(bRecTypeCheck == 'false'){
+      jQuery('#main-container').removeClass('mainContainer');
+      jQuery('#main-container').width('100%');
+      }
+      loadResponseStatus();
+      isEnableResponseStatus();
+      });
+      //Issue Open Account-Case Page with Member to Member interaction in one tab and Open Account-Case Page with Agent/provider/group to Member interaction in other tab then RIght side panel goes away on 1st tab. Because Event name was not unique per tab
+      //Appending primary tab id to CollapseRightAlertPanelCase event listener to make event unique
+      var getPrimaryTabId = function getPrimaryTabId() {
+      sforce.console.getEnclosingPrimaryTabId(getTabPrimaryId);
+      }
+      var getTabPrimaryId = function getTabPrimaryId(result) {
+      CollapseRightAlertPanelCase = 'CollapseRightAlertPanelCase' +result.id;
+      sforce.console.addEventListener(CollapseRightAlertPanelCase, function(result){
+      document.getElementById('main-container').classList.remove('mainContainer');
+      document.getElementById('main-container').style.width='100%';
+      document.getElementById('sideBar-container').style.display='none';
+      document.getElementById('stickyDiv').style.width='100%';
+      });
+      }
+      getPrimaryTabId();
+
+      //Add a listener for the 'fnProcessComments' event type
+      var fnProcessComments = function (result) {
+      var caseID = '{!Case.Id}';
+      var oComments = JSON.parse(result.message);
+
+      var isAllowUpdateComment = false;
+      var noneValue ='{!$Label.HUMNone}';
+
+      var classificationIdQS = oComments.classificationIdQS ? oComments.classificationIdQS : '';
+      var intentIdQS = oComments.intentIdQS ? oComments.intentIdQS : '';
+
+      var classificationIdCC = '{!Case.Classification_Id__c}';
+      var intentIdCC = '{!Case.Intent_Id__c}';
+
+      if(intentIdQS &&  intentIdCC != noneValue && intentIdQS != intentIdCC) {
+      isAllowUpdateComment = true;
+      }
+      if(classificationIdQS && classificationIdCC != noneValue && classificationIdQS != classificationIdCC) {
+      isAllowUpdateComment = true;
+      }
+
+      var caseComment = document.querySelector("[id$='ccID']");
+
+      if (caseID.substring(0, 15) == oComments.CaseId.substring(0, 15) && !isAllowUpdateComment) {
+      sforce.console.fireEvent('CommentsTransfered', true);
+      var tempComment = oComments.issue + '\n\n' + oComments.resolution;
+      if(tempComment) {
+      caseComment.value = tempComment.slice(0, 4000);
+      }
+      } else {
+      sforce.console.fireEvent('CommentsTransfered', false);
+      }
+      };
+      sforce.console.addEventListener('SendComments', fnProcessComments);
+
+    </script>
+  </apex:page>

@@ -1,0 +1,133 @@
+﻿<!--
+LWC Name: AlertInteractionInfoHum
+Function: This component is used to display alerts on Interaction record page
+
+Modification Log:
+* Developer Name                  Date                         Description
+* ------------------------------------------------------------------------------------------------------------------------------
+* Nirmal Garg                     3/28/2023                   initial version
+ 
+****************************************************************************************************************************-->
+<template>
+    <article class="slds-brand-band headerBottomBorder forceRelatedListCardDesktop">
+        <div>
+            <h3 class="label slds-truncate slds-p-around_xx-small slds-theme_shade slds-text-heading_small">
+                <button class="slds-button slds-section__title-action" onclick={handleClick}>
+                    <lightning-icon
+                        class="slds-section__title-action-icon slds-button__icon slds-button__icon_left slds-icon-utility-switch slds-icon_container"
+                        icon-name={iconname} size="x-small">
+                    </lightning-icon>
+                    <span class="slds-truncate" title="Alerts">Alerts ({count})</span>
+                </button>
+            </h3>
+        </div>
+        <template if:true={expandSection}>
+            <template if:true={loaded}>
+                <template lwc:if={datafound}>
+                    <div data-id="result" class="slds-table--header-fixed_container slds-m-top_x-small">
+                        <div class="slds-scrollable_y container" style="height:100%;" onscroll={handleScroll}>
+                            <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered slds-table--header-fixed">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <template for:each={columns} for:item="col">
+                                            <th scope="col" key={col.label} style={col.style} data-iconname={col.iconname}
+                                                data-label={col.label} data-id={col.mappingField}
+                                                onmouseenter={handleMouseEnter} onmouseleave={handleMouseLeave}
+                                                onclick={onHandleSort}>
+                                                <div class="slds-p-top_x-small slds-truncate slds-cell-fixed slds-m-left_x-small" title={col.label}
+                                                     style="width: 100%;">
+                                                    {col.label}
+                                                    <span>
+                                                        <template if:false={col.mousehover}>
+                                                            <template if:true={col.sorting}>
+                                                                <lightning-icon class="slds-var-m-left_small remove-display-sort-icon"
+                                                                                icon-name={col.iconname} size="xx-small">
+                                                                </lightning-icon>
+                                                            </template>
+                                                        </template>
+                                                        <template if:true={col.mousehover}>
+                                                            <lightning-icon class="slds-var-m-left_small remove-display-sort-icon"
+                                                                            icon-name={col.mousehovericon} size="xx-small">
+                                                            </lightning-icon>
+                                                        </template>
+                                                    </span>
+                                                </div>
+                                            </th>
+                                        </template>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template if:true={alertDetails}>
+                                        <template for:each={alertDetails} for:item="alert" for:index="index">
+                                            <tr class="slds-hint-parent" key={alert.Id}>
+                                                <td data-label="action" scope="row" style="width: 5%;">
+                                                    <template if:true={alert.bQuestions}>
+                                                        <lightning-icon size="x-small" data-rowid={alert.Id}
+                                                                        style="cursor: pointer;" icon-name="utility:chevronright"
+                                                                        onclick={toggleDetailSection}>
+                                                        </lightning-icon>
+                                                    </template>
+                                                </td>
+                                                <td data-label="Alert Name" style="width: 13%;">
+                                                    <div class="slds-truncate" title="Alert Name">
+                                                        {alert.sAlertName}
+                                                    </div>
+                                                </td>
+                                                <td data-label="Action" style="width: 20%;">
+                                                    <div class="slds-truncate" title="Action">
+                                                        {alert.sActionTaken}
+                                                    </div>
+                                                </td>
+                                                <td data-label="sTermNotDeliveredReason" style="width: 15%;">
+                                                    <div class="slds-truncate" title="sTermNotDeliveredReasonCoverage Type">
+                                                        {alert.sTermNotDeliveredReason}
+                                                    </div>
+                                                </td>
+                                                <td data-label="Action taken Date/Time" style="width: 15%;">
+                                                    <div class="slds-truncate" title="Action taken Date/Time">
+                                                        {alert.sActionDateTime}
+                                                    </div>
+                                                </td>
+                                                <td data-label="Associate ID" style="width: 10%;">
+                                                    <div class="slds-truncate" title="Associate ID">
+                                                        {alert.sAssociateID}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <template if:true={alert.bQuestions}>
+                                                <tr key={alert.Id} data-key={alert.Id} class="slds-hide">
+                                                    <td colspan="6">
+                                                        <c-alert-interaction-details-hum alert={alert}></c-alert-interaction-details-hum>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </template>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </template>
+                <template lwc:elseif={multimember}>
+                    <div class="slds-grid slds-wrap slds-m-top_x-small">
+                        <div class="slds-col slds-size_1-of-1">
+                            <c-generic-scoped-notification-hum iconname="utility:info" message={labels.MULTI_MEMBER_MSG}>
+                            </c-generic-scoped-notification-hum>
+                        </div>
+                    </div>
+                </template>
+                <template lwc:else>
+                    <div class="slds-grid slds-wrap slds-m-top_x-small">
+                        <div class="slds-col slds-size_1-of-1">
+                            <c-generic-scoped-notification-hum iconname="utility:info" message={labels.NO_RECORD_MSG}>
+                            </c-generic-scoped-notification-hum>
+                        </div>
+                    </div>
+                </template>
+            </template>
+            <template if:false={loaded}>
+                <lightning-spinner alternative-text="Loading"></lightning-spinner>
+            </template>
+        </template>
+    </article>
+</template>

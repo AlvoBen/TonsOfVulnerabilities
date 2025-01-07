@@ -1,0 +1,104 @@
+﻿<!--
+LWC Name        : BenefitSearchDetailsHum.html
+Function        : LWC to display Benefit Search Details
+
+Modification Log:
+* Developer Name                  Date                         Description
+* Nirmal Garg                     03/17/2022                   initial version - US - 3017464
+* Aishwarya Pawar                 03/17/2022                   US-3150160 - Add limits
+* Swapnali Sonawane               06/05/2023                   US-4588633 Enablement of the medical benefits UI logging - Search
+*************************************************************************************************************************** -->
+
+<template>
+    <template if:true={item}>
+        <div class="slds-grid slds-gutters slds-wrap slds-m-left_x-large  slds-m-right_small" onclick={handleLogging}>
+            <div class="slds-col slds-m-vertical_small slds-size_2-of-5 logthis" data-logid={generateLogId}
+                data-label="Tiered Network Number" data-id="Tiered Network Number"
+                data-value={item.ProviderSubNetworkNumber}>
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label">Tiered Network Number:</label>
+                    <div class="slds-form-element__control">
+                        <div style='font-weight: 500;' class="">{item.ProviderSubNetworkNumber}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-col slds-m-vertical_small slds-size_3-of-5 logthis" data-logid={generateLogId}
+                data-label="Notes" data-id="Notes" data-value={item.Notes}>
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label">Notes:</label>
+                    <div class="slds-form-element__control">
+                        <div style='font-weight: 500;' class="">{item.Notes}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-wrap slds-p-horizontal_large slds-m-right_small">
+
+            <template if:true={displayLimitSection}>
+                <div class="slds-col slds-m-vertical_small slds-size_2-of-5">
+                    <label
+                        class="slds-form-element__label slds-p-horizontal_large slds-m-vertical_small slds-col slds-size_5-of-5">
+                        Limit Comments :
+                    </label>
+                </div>
+                <div class="slds-table--header-fixed_container slds-size_5-of-5">
+                    <div class="container table-header" data-id="tablediv">
+                        <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table--header-fixed">
+                            <thead class="table-header">
+                                <tr class="slds-line-height_reset">
+                                    <template for:each={columns} for:item="col">
+                                        <th class="slds-is-sortable slds-cell-fixed table-header" style={col.style}
+                                            scope="col" key={col.label}>
+                                            <div class="slds-wrap slds-cell-fixed slds-m-left_xxx-small"
+                                                style="width: 100%;">
+                                                {col.label}
+                                            </div>
+
+                                        </th>
+                                    </template>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={BenefitLimits} for:item="limit" for:index="index">
+                                    <tr key={limit.index} onclick={handleLimitLogging} data-item={limit.index}
+                                        class="slds-hint-parent expandedrow">
+                                        <td class="logthis">
+                                            <div class="slds-wrap" title="Limit Name"> {limit.LimitName}</div>
+                                        </td>
+                                        <td class="logthis">
+                                            <div class="slds-wrap" title="Limit Amount">{limit.LimitAmount}</div>
+                                        </td>
+                                        <td class="logthis">
+                                            <div class="slds-wrap">{limit.LimitText}</div>
+                                        </td>
+                                        <td class="logthis">
+                                            <div class="slds-wrap">{limit.LimitComments}</div>
+                                        </td>
+                                        <td class="logthis">
+                                            <div class="slds-wrap">{limit.ParNonPar}</div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="slds-grid slds-gutters slds-wrap slds-m-left_x-large  slds-m-right_small" onclick={handleLogging}>
+            <div class="slds-col slds-m-vertical_small slds-size_12-of-12 logthis" data-logid={generateLogId}
+                data-label="Service Type Comments" data-id="Service Type Comments" data-value={Comment}>
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label">Service Type Comments:</label>
+                    <div class="slds-form-element__control">
+                        <template for:each={item.serviceComments} for:item="Comment">
+                            <div key={Comment} style='font-weight: 500;' class="slds-cell-wrap slds-m-bottom_x-small">
+                                {Comment}</div>
+                        </template>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>

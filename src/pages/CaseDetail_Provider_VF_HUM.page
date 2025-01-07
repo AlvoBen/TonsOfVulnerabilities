@@ -1,0 +1,316 @@
+﻿<!--
+Page Name   	: CaseDetail_Provider_VF_HUM.page
+Version       	: 1.0
+Function     	: VF page to show the details of Provider cases
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Rakesh Patni		          146694                  11/10/2017                    Original version
+ * Rakesh Patni               157480                  12/10/2017                    Floating header changes for REQ-349582
+ * Sumit Pharande             164813                  26/12/2017                    Fix Defect 335877.0001
+ * Sumit Pharande             164813                  29/12/2017                    Fix Defect 335911.0001
+ * Darshan Sharma                                     12/04/2018                    Req-360087 Quality/AHT - Move Clone Case button on Case Detail Page to the right of all button
+ * Darshan Sharma 									  07/25/2018				    REQ-370566 Quality - Remove ability to Close Case if the User is not the Case Owner (RF)
+ Lakshmi Vutukuri           266546                    08/03/2018                    REQ-363342-Added 2 fields in G&A section
+ * Satyam Malviya           276884                    08/27/2018                    REQ -374734- CSI 902/CMO 5604: Oral Grievance Category/Sub-Category on Case Detail page
+ * Asish Behera                                       08/27/2018                    REQ - 373413 AHT - Ability to Notify User of Logged Attachments (RF)
+ *Lakshmi Vutukuri                                    9/04/2018                     REQ-361157- Added Complaint tracking fields in the Additional Info section
+ * Lakshmi Madduri	    	276002		 			  9/10/2018						Req - 367827 Added DocType and DCN fields in Case detail info
+ * Joel George										  12/03/2018					Changed the Id from CCP/GCP to Related Information
+ * Sumit Pharande                                     12/28/2018                    Floating links fix
+ * Darshan Sharma 									  11/29/2018					REQ - 378732 AHT - Ability to Notify User of Logged Attachments (CRM)
+ * Prudhvi Pamarthi                                   02/06/2019                    REQ - 361155 - Not allowing case creation on Legacy Deleted policies
+ * Seema Kaulgi										  02/25/2019	    	        REQ - 383966 - Ability to open DCN link in separate window (RF)
+ * Ajay Chakradhar 									  04/09/2019					REQ - 389747 - Lock case with Case Status of External Transfer in Progress
+ * Melkisan Selvaraj								  08/22/2019				    REQ - 403735. Launch Compass Functionality
+ * Subhamay Mandal                                    09/19/2019                    REQ - 408295 Quality - OGO - Disable Change Case Owner button when the case is routed to 'Louisville RSO Oral Grievance Oversight' WQ (RF)
+ * Sumanth Naredla                                    03/20/2020                    731455 - MF 8 - Manually Create DCN Link for Correspondence in CRM
+ * Sunil Kumar Reddy Y					 			  05/04/2020	     			USER STORY 1072538 - Added case ID to CaseDetail_FloatingLinks_CMP_HUM component
+ * Jayesh Solanki									  1/27/2021					    User Story 1317518: PR00091574 - MF 1 - RF Clean Up (RF)
+ * Gourab Tewary                                      01/31/2021                    User Story 1733612: PR00091574- IR 5050 - Add new response status for Cases with Pending Response (CRM)
+ *Prudhvi Pamarthi									  02/04/2021					User Story 1304892 Remove CCP/GCP swivel buttons in CRM Service
+ * Mithra Bharadwaj                                                                 US#1921420 Case Detail Page - Hyperlinks over the Classification and Intent are removed for closed and pending cases
+* Mithra Bharadwaj                           					        			US#1522825 SonarQube Changes
+* Samantha Tennyson                                   05/17/2021                    User Story 2271455: T1PRJ0001827 - MF 1 - AHT - Ability to copy information in CRM - Phase 2 (RF) 
+* Anand Kumar                                         05/28/2021                 	User Story 2325456: T1PRJ0001827 - MF 1 - AHT - Ability to copy information in CRM - Phase 2 (CRM)
+* Atia Uzma                                           07/29/2021                 	User Story 2498842: T1PRJ0001827 - MF 1 - AHT - Ability to Reopen and Edit closed cases (RF)
+* Mohammed Noor                                       08/19/2021                 	USER STORY 1801197 - PR00094010 -STRIDES MVP MF 6 - Unified Search Button Case page
+* Mohammed Noor                                       09/23/2021                 	Changes for USER STORY 2712408
+ * Sahil Verma                                        10/14/2021            	    Show popup on Case/Plan/Detail page on click of Save button on Interaction Log Panel as part of US - 2564484
+* Ajay Chakradhar 									  05/24/2022					Defect 4844 FIX - Complaint Type Field  - REL 05.27.2022
+* Kiran Kumar 										  06/07/2022				    USER STORY 2310106 T1PRJ0003805/T1PRJ0184373 - Add an Escalation Indicator in CRM Service
+* Ajay Chakradhar                                     12/07/2022                  User Story 3888816 : T1PRJ0316976 - SF - MHK provider disputes (est 634) - CRM DCN field for MHK Dispute Task Case Type (Classic)
+****************************************************************************************************************************
+ -->
+<apex:page standardController="Case" extensions="CaseDetail_C_HUM">
+    <apex:includeScript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CopyToClipBoard/CopyToClipBoard.js')}"/>  
+ 	<style>
+	  .custPopupNew {
+        z-index: 9999;
+        left: 50%;
+        padding: 10px;
+        position: fixed;
+        width: 300px;
+        height: 100px;
+        margin-left: -250px;
+        top: 100px;
+    }
+    .popupBackgroundNew {
+        background-color: black;
+        opacity: 0.20;
+        filter: alpha(opacity=20);
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 9998;
+    }
+    .bPageBlock .pbBody {
+      color:black!important;
+    }
+  </style>
+  <c:CaseDetail_Header_CMP_HUM caseClassification="{!case.Classification_Id__r.Name}" caseIntent="{!case.Intent_Id__r.Name}" caseInteractingAboutType="{!Case.Interacting_About_Type__c}" caseAccountName="{!Case.Account.Name}"  mentorSubFunction="{!sSubFunction}" mentorFunction="{!sFunction}"    caseId="{!case.Id}" caseNumber="{!case.CaseNumber}" bdisableOwnerCloseCase="{!bdisableOwnerCloseCase}" bdisableChangeCaseOwner="{!bDisableButtonOGO}"/>
+  <apex:form >
+    <apex:actionFunction name="closeCase" action="{!closeCase}"/>
+    <apex:actionFunction name="editCase" action="{!referEdit}"/>
+    <apex:actionFunction name="reopenAndEditCase" action="{!referEdit}"  reRender="resultPanel" status="myStatus">
+      <apex:param name="reopenAndEditParam" value="ReopenAndEdit" assignTo="{!reopenButtonName}"/>
+    </apex:actionFunction>
+    <apex:actionFunction name="changeCaseOwner" action="{!changeCaseOwner}"/>
+  </apex:form>
+
+  <div class="fixedDiv" id="stickyDiv">
+    <c:CaseDetail_FloatingLinks_CMP_HUM lstparam="{!lst_FloatId}" caseId="{!case.Id}"/>
+    <div id="anchorButtons" >
+      <a href="javascript:void(0)" id="caseEditButtonId" onclick="editCase();" class="btn">{!$LABEL.EDIT}</a>
+      <apex:outputPanel rendered="{!IF(case.Status == 'Closed' && reopenAndEditSwith ,true,false)}">
+        <a href="javascript:void(0)" id="caseReopenEditButtonId" onclick="reopenAndEditCase();" class="btn">{!$LABEL.Reopen_and_Edit}</a>
+      </apex:outputPanel>
+      <apex:outputPanel rendered="{!IF(case.Status != 'Closed' && case.Status != 'Cancelled' && case.Status != 'External Transfer in Progress',true,false)}">
+        <a href="javascript:void(0)" id="caseCloseButtonId" onclick="closeCase();" class="btn">{!$LABEL.CLOSE_CASE}</a>
+      </apex:outputPanel>
+      <apex:outputPanel rendered="{!IF(case.Status != 'Closed' && case.Status != 'Cancelled' && case.Status != 'External Transfer in Progress',true,false)}">
+        <a href="javascript:void(0)" id="caseOwnerChangeButtonId" onclick="changeCaseOwner();" class="btn">{!$LABEL.CHANGE_CASE_OWNER}</a>
+        <a href="javascript:void(0)" onclick="if ({!isGenesysUser} == true && {!phoneBookSwitch1726016}){sforce.console.fireEvent('PhoneBookPopUpEvent', '{!Case.Id}' );return false;}else{callTransfer()}" class="btn">{!$LABEL.CALL_TRANSFER}</a>
+      </apex:outputPanel>
+      <a href="javascript:void(0)" id="cloneButtonId" onclick="cloneCase();return false;" class="btn">{!$LABEL.CLONE_CASE}</a>
+      <apex:outputPanel rendered="{!(isRapidForceApp && ((!bIsPharmacyUser) || (bIsPharmacyUser && !CaseReadOnly)))}">
+        <a href="javascript:void(0)" id="CompassButtonId" onclick="launchWindow_Compass();return false;" class="btn">{!$Label.HUMLaunchCompass}</a>
+      </apex:outputPanel>
+    </div>
+  </div>
+
+
+  <div class="sectHeader">
+	<!-- USER STORY 1801197 - Unified Search start-->      
+      <apex:outputPanel rendered="{!bCaseUnifiedSearch}" id="opCoveoBtn">
+	    <br/>
+        <a href="javascript:void(0)" onclick="launchCoveo();return false;" class="btn">{!$LABEL.Unified_Button}</a>
+      </apex:outputPanel>
+    <!-- USER STORY 1801197 - Unified Search End-->
+    <apex:sectionHeader title="Case" subtitle="{!case.CaseNumber}" printUrl="/{!Case.Id}" help="https://help.salesforce.com/apex/htdoor?loc=help&target=co_edit.htm&section=CustomObjects&language=en_US"/>
+  </div>
+
+  <apex:pageBlock mode="maindetail">
+    <chatter:feedwithFollowers entityId="{!Case.Id}" />
+    <a id="CaseDetail"></a>
+    <apex:variable value="-" var="hyphen"/>
+    <apex:pageBlockSection columns="2" title="{!$Label.Case_Detail}" collapsible="true">
+      <apex:outputText label="{!$ObjectType.Case.Fields.CaseNumber.Label}" value="{!MID(Case.CaseNumber,1,3)}{!hyphen}{!MID(Case.CaseNumber,4,3)}{!hyphen}{!MID(Case.CaseNumber,7,3)}{!hyphen}{!MID(Case.CaseNumber,10,4)}"/>
+      <apex:outputField value="{!Case.Owner_Queue__c}"/>
+      <apex:outputField value="{!Case.Origin}"/>
+      <apex:outputField value="{!Case.Case_Owner__c}"/>
+      <apex:outputField value="{!Case.Type}"/>
+      <apex:outputField value="{!Case.Status}"/>
+      <apex:outputField value="{!Case.Subtype__c}"/>
+      <apex:outputField value="{!Case.Response_Status__c}" rendered="{!(Case.Response_Status__c != null && Case.Status == 'Pending - Response')}"/>
+      <apex:outputLabel rendered="{!(Case.Response_Status__c != null && Case.Status == 'Pending - Response')}"/>
+      <apex:outputField value="{!Case.Case_Age__c}"/>
+      <apex:outputField value="{!Case.Doc_Type__c}" rendered="{!OR(AND($Label.HUMCaseTypeCorrespondence == Case.Type, $Label.HUMCaseOriginCorrespondence == Case.Origin),bIsMHKDCN)}"/>
+      <apex:pageBlockSectionItem rendered="{!AND(OR($Label.HUMCaseTypeCorrespondence != Case.Type, $Label.HUMCaseOriginCorrespondence != Case.Origin),NOT(bIsMHKDCN))}"/>
+      <apex:outputField value="{!Case.Re_Open_Case_Age__c}"/>
+      <apex:outputField value="{!Case.DCN_Formula__c}" rendered="{!OR($Label.HUMCaseTypeCorrespondence == Case.Type,bIsMHKDCN)}" />
+      <apex:pageBlockSectionItem rendered="{!AND(OR($Label.HUMCaseTypeCorrespondence != Case.Type, $Label.HUMCaseOriginCorrespondence != Case.Origin),NOT(bIsMHKDCN))}"/>
+      <apex:outputField value="{!Case.Recordtype.name}" label="{!$Label.Case_Record_Type}"/>
+    </apex:pageBlockSection>
+
+    <a id="RelatedAccounts"></a>
+    <apex:pageBlockSection title="{!$Label.Related_Accounts}" columns="2" collapsible="true">
+      <apex:outputField value="{!Case.Interacting_With_Type__c}"/>
+      <apex:outputField value="{!Case.Interacting_About_Type__c}"/>
+      <apex:outputField value="{!Case.Interacting_With__c}"/>
+      <apex:outputField value="{!Case.AccountId}"/>
+      <apex:outputField value="{!Case.Interacting_With_Name__c}"/>
+      <apex:outputField value="{!Case.Tax_ID__c}"/>
+      <apex:pageBlockSectionItem />
+      <apex:outputField value="{!Case.NPI_ID__c}"/>
+    </apex:pageBlockSection>
+
+    <a id="AdditionalInformation"></a>
+    <apex:pageBlockSection title="{!$Label.Additional_Information}" columns="2" collapsible="true">
+      <apex:outputField value="{!Case.Classification_Type__c}"/>
+      <apex:outputField value="{!Case.Priority}"/>
+      <apex:outputField value="{!Case.Classification_Id__r.Name}" label="{!$Label.Classification_Name}"/>
+      <apex:outputField value="{!Case.Follow_up_Due_Date__c}"/>
+      <apex:outputField value="{!Case.Intent_Id__r.Name}" label="{!$Label.Intent_Name}"/>
+      <apex:pageBlockSectionItem rendered="{!!bCsertComplaints}"/>
+      <apex:outputField value="{!Case.Rx_Complaint_date__c}"  rendered="{!bCsertComplaints}"/>
+      <apex:outputField value="{!Case.Topic__c}"/>
+      <apex:pageBlockSectionItem rendered="{!!bCsertComplaints}" />
+      <apex:outputField value="{!Case.Rx_Complaint_origin__c}" rendered="{!bCsertComplaints}" />
+      <apex:pageBlockSectionItem rendered="{!bCsertComplaints}"/>
+      <apex:outputField value="{!Case.Rx_Complaint_category__c}" rendered="{!bCsertComplaints}"/>
+      <apex:pageBlockSectionItem rendered="{!bCsertComplaints}"/>
+      <apex:outputField value="{!Case.Rx_Complaint_reason__c}"  rendered="{!bCsertComplaints}"/>
+	  <!---Esclation Indicator Story Change--> 
+	  <apex:pageBlockSectionItem /> 
+      <apex:outputField value="{!Case.Escalation_Indicator__c}" rendered="{!bShowEsclIndSwitch && bShowEsclIndicator}"/>  
+      <apex:pageBlockSectionItem /> 
+      <apex:outputField value="{!Case.Escalation_Indicator_Date__c}" rendered="{!bShowEsclIndSwitch && bShowEsclIndicatorDate}"/>
+    </apex:pageBlockSection>
+
+    <a id="GAComplaints"></a>
+    <apex:pageBlockSection title="{!$Label.G_A_Complaints}" columns="2" collapsible="true">
+      <apex:outputField value="{!Case.G_A_Rights_Given__c}"/>
+      <apex:outputField value="{!Case.Complaint__c}"/>
+      <apex:outputField value="{!Case.G_A_Reason__c}"/>
+      <apex:outputField value="{!Case.Complaint_Reason__c}"/>
+      <apex:pageBlockSectionItem rendered="{!bIsPharmacyUser}"/>
+      <apex:outputField value="{!case.Oral_Grievance_Category__c}"/>
+      <apex:outputField value="{!Case.Complaint_Type__c}" />
+      <apex:outputField value="{!case.Oral_Grievance_Sub_Category__c}"/>
+    </apex:pageBlockSection>
+
+    <apex:form >
+      <a id="CaseComments"></a>
+      <apex:pageBlockSection title="{!$Label.Label_Case_Comments}" columns="1" collapsible="true">
+        <c:CaseCommentsData_CMP_HUM caseRecordId="{!Case.Id}"/>
+      </apex:pageBlockSection>
+
+      <a id="LoggedInformation{!iLoggedInattachmentCount}"></a>
+      <apex:pageBlockSection title="{!$Label.Case_Logged_Information}" columns="1">
+        <c:CaseLoggedInfo_CMP_HUM caseRecordId="{!Case.Id}" />
+      </apex:pageBlockSection>
+
+      <a id="RelatedInformation"></a>
+      <apex:pageBlockSection title="{!$Label.GCP_CCP_Attachments}" columns="2" collapsible="true">
+        <c:CCPGCPDatatable_CMP_HUM caseRecordId="{!Case.Id}" />
+      </apex:pageBlockSection>
+
+      <a id="Attachments"></a>
+      <apex:pageBlockSection title="{!$Label.Attachments}" columns="1" collapsible="true">
+        <c:CaseAttachments_CMP_HUM caseRecordId="{!Case.Id}" />
+      </apex:pageBlockSection>
+    </apex:form>
+
+    <a id="TaskHierarchy"></a>
+    <apex:pageBlockSection id="pbsTaskHeirarchy" title="{!$Label.Task_Heirarchy}" columns="1" collapsible="true">
+      <apex:include pageName="TaskHeirarchy_VF_HUM"/>
+    </apex:pageBlockSection>
+    <apex:form >
+
+      <a id="LinkedCases"></a>
+      <apex:pageBlockSection title="{!$Label.Linked_Cases}" columns="1" collapsible="true">
+        <c:LinkedCases_CMP_HUM caseRecordId="{!Case.Id}"/>
+      </apex:pageBlockSection>
+
+      <a id="Compass"></a>
+      <apex:pageBlockSection title="{!$Label.Compass}" columns="1" collapsible="true">
+        <c:CaseCompass_CMP_HUM caseRecordId="{!Case.Id}"/>
+      </apex:pageBlockSection>
+
+      <a id="Interaction"></a>
+      <apex:pageBlockSection title="{!$Label.Interaction}" columns="1" collapsible="true">
+        <c:CaseInteraction_CMP_HUM caseRecordId="{!Case.Id}" />
+      </apex:pageBlockSection>
+
+      <a id="SystemInformation"></a>
+      <apex:pageBlockSection title="{!$Label.System_Information}" columns="2" collapsible="true">
+        <apex:outputField value="{!Case.CreatedDate}" />
+        <apex:outputField value="{!Case.CreatedById}" />
+        <apex:outputField value="{!Case.ClosedDate}" />
+        <apex:outputField value="{!Case.Created_By_Queue__c}"/>
+        <apex:outputField value="{!Case.Re_Open_Case_Date__c}"/>
+        <apex:outputField value="{!Case.Work_Queue_View_Name__c}"/>
+        <apex:pageBlockSectionItem />
+        <apex:outputField value="{!Case.LastModifiedById}" />
+        <apex:pageBlockSectionItem />
+        <apex:outputField value="{!Case.LastModifiedby_Queue__c}"/>
+        <apex:pageBlockSectionItem rendered="{!IF($ObjectType.Case.fields.Subject.accessible,False,True)}"/>
+        <apex:outputField value="{!Case.Subject}"/>
+        <apex:outputField value="{!Case.Days_Since_Last_Modified__c}"/>
+        <apex:outputField value="{!Case.Description}"/>
+        <apex:outputField value="{!Case.ContactId}" />
+
+      </apex:pageBlockSection>
+
+      <a id="CaseHistory"></a>
+      <apex:pageBlockSection title="{!$Label.Case_History}" columns="1" collapsible="true">
+        <c:CaseHistoryDataTable_CMP_HUM caseRecordId="{!Case.Id}"/>
+      </apex:pageBlockSection>
+    </apex:form>
+    <script type="text/javascript">
+      var accessAlertPanel= false;
+    </script>
+  </apex:pageBlock>
+  <link rel="stylesheet" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/DataTables/css/UIEnahncements.css')}" />
+
+    <apex:form id="SavePopup">
+      <apex:outputPanel id="saveAndContPopUp">
+          <apex:outputPanel styleClass="popupBackgroundNew" layout="block" rendered="{!bPopUp}"/>
+              <apex:outputPanel styleClass="custPopupNew" layout="block" rendered="{!bPopUp}">
+                  <apex:pageBlock >
+                  <apex:outputText value="{!$Label.HUMInteractionSaved}"  />
+                  <apex:pageBlockButtons location="bottom">
+                  <apex:commandButton value="Ok" onclick="openAccountOnSaveAndContinue();return false;"/>
+                  </apex:pageBlockButtons>
+                  </apex:pageBlock>
+              </apex:outputPanel>
+          </apex:outputPanel>
+          <apex:actionFunction name="saveContPopup" action="{!saveAndContPopup}" rerender="main-container,saveAndContPopUp,SavePopup" status="buttonStatus" />
+          <apex:actionFunction name="closeIntSavedPopup" action="{!closePopup}" rerender="saveAndContPopUp,main-container,Interactions" status="buttonStatus" />
+    </apex:form>
+  <script>
+    var legacydelCheck = {!JSENCODE(IF(bdisableButton, "true", "false"))};
+    var caseStatus = {!JSENCODE(IF(bnotClosedCase, "true", "false"))};
+	var onLoadSubTabID;    
+    var unifiedSearchFlag = {!JSENCODE(IF(bCaseUnifiedSearch, "true", "false"))};    
+    var coveoMessageStr;
+    var coveoMessage;  
+    var isMHKDCN = {!JSENCODE(IF(bIsMHKDCN, "true", "false"))};  
+
+    //call the onload function    
+    jQuery(document).ready(function () {
+      if(unifiedSearchFlag) {
+        coveoMessageStr = JSON.stringify({!sCoveoMessage});        
+        casedetailOnLoad();
+      }
+    });
+    
+    displayCopyOptionForPageHeader('{!Case.CaseNumber}');
+
+    if(legacydelCheck)
+    {
+    jQuery('#caseEditButtonId').attr('disabled','disabled');
+
+    }
+    
+    
+    if(legacydelCheck || caseStatus || isMHKDCN)
+    {
+
+    jQuery('#cloneButtonId').attr('disabled','disabled');
+    }
+    function evntOutboundOpenPopup(){
+      $("html").css("overflow", "hidden");
+      saveContPopup();
+    }
+    function openAccountOnSaveAndContinue(){
+      $("html").css("overflow", "auto");
+      closeIntSavedPopup();
+    }
+    sforce.console.addEventListener('EVENT_OPEN_POPUP_OUTBOUND_INTERACTION_CASE', evntOutboundOpenPopup);
+  </script>
+</apex:page>

@@ -1,0 +1,15 @@
+﻿<!--
+Page Name        : BenefitMatrixRedirect_VF_HUM.page
+Version          : 1.0
+Created On       : 10/04/2017
+Function         : VF page to redirect to the Mentor Application
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Dinesh Subramaniyan                                10/04/2017                   Original Version 
+****************************************************************************************************************************
+-->
+
+<apex:page id="thePage" showHeader="false" sidebar="false" controller="BenefitMatrixRedirect_C_HUM" action="{!benefitMatrixRec}">
+</apex:page>

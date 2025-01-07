@@ -1,0 +1,112 @@
+﻿<!-----------------
+ Page Name  : UserAssociationCreateEdit_VF_HUM
+ Version   : 1.0 
+ Created Date  : 06/20/2018
+ Controller Name :UserAssociationCreateEdit_C_HUM
+ 
+ Modification Log :
+* Developer                 Code Review         Date                        Description
+* -----------------------------------------------------------------------------------------------------                 
+* Amol Patil                                  06/20/2018                   Original Version
+* Sumit Pharande                              06/23/2018                   REQ - 350635 
+* Mukul Kumar                                 08/30/2018                   REQ-371438 add some changes for edit password page.
+* Mukul Kumar                                 10/10/2018                   REQ-371438 wrapup text is now working fine.
+* Raja Sekhar Reddy M V						  12/12/2018                   Defect Fix 392434.0001 Under REQ - 380718
+* Firoja Begam              1946387           02/24/2021                   T1PRJ0002736/PR00094232 - 2021 - MF6 - Security - Checkmarx High Defects in Release_2021_02_21 - SF - TECH - Type: "inputText Ignoring FLS" - Remediation
+------------------------------------------------------------------------------------------------------ -->
+<apex:page standardcontroller="Account" extensions="UserAssociationCreateEdit_C_HUM"  >
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/> 
+    <apex:includeScript value="/support/console/36.0/integration.js" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery-ui.min.js')}" /> 
+    <apex:includeScript value="{!URLFOR($Resource.UserAssociationCreateEdit_SR_HUM, '/UserAssociationCreateEdit_SR_HUM/UserAssociationCreateEdit_JS_HUM.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.UserAssociationCreateEdit_SR_HUM, '/UserAssociationCreateEdit_SR_HUM/UserAssociationCreateEdit_CSS_HUM.css')}"/>   
+  
+   
+<apex:form id="formId" > 
+    <apex:outputPanel id="creatPasswordPanel">  
+        <div class="sectHeader">
+                <apex:sectionheader title="Create Password" subtitle="{!Account.Name}" rendered="{!!bPageMode}"  />  
+                <apex:sectionheader title="Edit Password" subtitle="{!Account.Name}" rendered="{!bPageMode}" />  
+        </div> 
+    <apex:outputPanel id="MemberErr" Styleclass="clearMsg">
+        <apex:PageMessage Summary="{!$Label.CharacterLimit_Hum}" severity="Error" Strength="3" />
+    </apex:outputPanel>
+    <div id="passwordErrorMsg">
+    <apex:outputPanel id="userRequiredErr" Styleclass="clearMsg">
+        <apex:PageMessage id="userRequiredMsg" severity="Error" Strength="3" />
+    </apex:outputPanel>
+    </div>
+  
+    <apex:pageBlock id="pgBlockId">
+        <apex:pageblockSection id="passwordDetail" collapsible="False" columns="1" >
+                  <apex:pageBlockSectionItem rendered="{!bPageMode}"   >
+                          <apex:outputLabel value="Current Password"></apex:outputLabel>
+                          <apex:outputText value="{!sPasswordEdit}" id="edidPassword"  style="white-space:pre-wrap;"/>
+                  </apex:pageBlockSectionItem>
+                  <apex:pageBlockSectionItem > 
+                            <apex:outputPanel >
+                                <apex:outputLabel Value="Password"  style="width: 200px;" rendered="{!!bPageMode}" />
+                                <apex:outputLabel Value="New Password"  style="width: 200px;" rendered="{!bPageMode}" />
+                            </apex:outputPanel>
+                            <apex:outputPanel id="outputPanalPass" >
+                               <div class="requiredCss" id="passId">                            
+                                    <apex:inputTextarea id="accPassword" rows="8"  cols="80" style="margin: 0px;height: 60px;width: 497px;" value="{!sPassword}" onkeyup="checkLength()" rendered="{!$ObjectType.Account.fields.Account_Security_Access__c.Accessible}"/>  <!--Checkmarx inputText ignoring FLS Fixed-->                          
+                                    <apex:commandButton value="X" id="btnPass" onclick="resetValues('Password');return false;" styleClass="btnCss"/>
+                                    <br/><span>{!$Label.LimitChar_Hum}</span>
+                               </div>
+                            </apex:outputPanel>
+                   </apex:pageblockSectionItem>
+                   
+                   <apex:pageBlockSectionItem rendered="{!bPageMode}"  >
+                      <apex:outputLabel value="Current Question"></apex:outputLabel>
+                      <apex:outputText value="{!sSecurityQuestionEdit}" id="edidPassQuestion"  style="white-space:pre-wrap;"/>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageblockSectionItem id="securityQuestion">
+                        <apex:outputPanel >
+                            <apex:outputLabel Value="Security Question" for="securityQuestion" style="width: 200px;"  rendered="{!!bPageMode}"/>
+                            <apex:outputLabel Value="New Question" for="securityQuestion" style="width: 200px;"  rendered="{!bPageMode}"/>
+                         </apex:outputPanel>
+                        <apex:outputPanel >
+                            <div class="requiredCss" id="securityQuesId" >
+                            <apex:inputTextarea id="securityQuestion"  rows="8"  cols="80" style="margin: 0px;height: 60px;width: 497px;" value="{!sSecurityQuestion}" onkeyup="checkLength()" rendered="{!$ObjectType.Account.fields.Account_Security_Question__c.Accessible}"/> <!--Checkmarx inputText ignoring FLS Fixed-->
+                            <apex:commandButton value="X" id="btnPassQue"  onclick="resetValues('Question');return false;" styleClass="btnCss"/>
+                            <br/><span>{!$Label.LimitChar_Hum} </span>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageblockSectionItem>
+                    
+                    <apex:pageBlockSectionItem rendered="{!bPageMode}"   >
+                          <apex:outputLabel value="Current Answer"></apex:outputLabel>
+                          <apex:outputText value="{!sSecurityAnswerEdit}" id="edidPassAnswer"  style="white-space:pre-wrap;"/>
+                     </apex:pageBlockSectionItem>
+                        
+                    <apex:pageblockSectionItem id="securityAnswer">
+                        <apex:outputPanel >
+                        <apex:outputLabel Value="Security Answer" for="securityAnswer" style="width: 200px;" rendered="{!!bPageMode}"/>
+                        <apex:outputLabel Value="New Answer" for="securityAnswer" style="width: 200px;" rendered="{!bPageMode}"/>
+                        </apex:outputPanel>
+                        <apex:outputPanel >
+                            <div class="requiredCss" id="securityAnsId">
+                            <apex:inputTextarea onkeypress="" id="securityAnswer"  rows="8"  cols="80" style="margin: 0px;height: 60px;width: 497px;" value="{!sSecurityAnswer}" onkeyup="checkLength()" rendered="{!$ObjectType.Account.fields.Account_Security_Answer__c.Accessible}"/> <!--Checkmarx inputText ignoring FLS Fixed-->
+                            <apex:commandButton value="X" id="btnPassAns"   onclick="resetValues('Answer');return false;" styleClass="btnCss"/>
+                            <br/><span>{!$Label.LimitChar_Hum} </span>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:pageblockSectionItem>
+         </apex:pageblockSection>
+         <apex:pageBlockButtons location="bottom"> 
+              <apex:commandButton id="saveBtn" value="Save"   onclick="confirmation();return false;" />
+              <apex:commandButton value="Cancel" onclick="cancelTab();return false;"/>
+              <apex:commandButton value="Reset" onclick="reset();resetErrorValues();return false;"/>
+        </apex:pageBlockButtons>
+        <apex:actionFunction name="saveAccount" action="{!saveAccount}"  oncomplete="closeTab(); return false;"/>
+        </apex:pageBlock> 
+</apex:outputPanel>
+</apex:form>    
+<script>
+sMode = "{!bPageMode}"; 
+   var accountId = '{!JSENCODE(sAccountId)}';
+</script>  
+</apex:page>

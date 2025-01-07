@@ -1,0 +1,310 @@
+﻿<!--
+Page Name        : InquirySummary_VF_HUM
+Version          : 1.0
+Created On       : 7/24/2020
+Function         : VF page to display retrieve history
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Sayali Nemade                                        07/24/2020                    REQ - 1137828 : MF 3 - CRM User Access to CCP GCP Data in Repository (Legacy Contact History Section - Member/ Policy Member/ Policy/ Unknown Member/ Agent-Broker/ Provider/ Group)
+ * Sayali Nemade                                        08/27/2020                    REQ - 1170241 MF 3 - Archived CCP Reference Summary Page - High Level  (Overall look)
+ * Sayali Nemade 								        09/03/2020                    REQ - 1170241 DF -1509 Not able to see data on UI for Group, Provider and Agent/Broker
+ * Riya Agarwal											09/08/2020					  REQ-1286345 DF- The Check box is not Displaying properly for the Type  'CORRESPONDENCE INQUIRY' 
+ * Priyanka Puranik										09/11/2020					  DF - 1588 Defect Fix - It is showing Records before 2009 in the Results table
+ * Sayali Nemade 					   				    09/12/2020                    REQ - 1138575 Logging Component for Inquiry Details
+ * Sayali Nemade 					   				    09/12/2020                    REQ - 1170241 Added new Parameter Record Type in Legacy Contact History
+ * Riya Agarwal											09/15/2020					  DF - 1617 - A warning message is displayed and Go To Section –CCP Reference Number and Fliter By field is disabled 
+ * Sayali Nemade 					   				    09/22/2020                    DF - 1672 Hide Error Message on Page Load
+ * Tharun Madishetti                    07/14/2023           US-4635103: T1PRJ0891742 - VIT19761200 - TECH - Data Table Upgrade - Upgrade Moment.js Usage (Group 1)
+ * Pinky Vijur                                          07/14/2023                    User Story 4647275: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Miscellaneous (Group 1)
+ * Tharun Madishetti							        03/01/2024				      US-5318077 : Consumer Mgt-Classic-VIT Remediation Member Plan and Verify Demographics; VIT37935988,VIT37935989
+   ****************************************************************************************************************************-->
+<apex:page controller="InquirySummary_C_HUM" tabStyle="Policy__c" showheader="true" sidebar="false">
+
+    <apex:includeScript value="/support/console/36.0/integration.js" id="integrationJS"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" id="datatablesJS" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}" id="datatablesJS1"/> 
+
+    <apex:includeScript value="{!URLFOR($Resource.html2canvas, '/html2canvas.min.js')}" id="htmlcanvasJS"/>
+  <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/Moment-2.29.4/moment.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/Sorting/datetime-moment.js')}" />
+    
+
+    <!-- Datatables Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}" id="datatablesCSS" />
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}" id="datatablesCSS1"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/FixedHeader-3.3.2/js/dataTables.fixedHeader.js')}" id="datatablesFixedHeaderJs"/>
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/FixedHeader-3.3.2/css/fixedHeader.dataTables.css')}" id="datatablesFixedHeaderCSS"/>
+    
+    <!--CSS for filter by hover over and datepicker-->
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CSS/HoverOver.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'bootstrap-datepicker-uni.js')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_JQUERY, 'bootstrap-datepicker-uni.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.DatePickerOverrides_SR_HUM, '/js/datePickerOverrides.js')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.DatePickerOverrides_SR_HUM,'/css/datePickerOverrides.css')}"/> 
+    
+   <apex:includescript value="{!URLFOR($Resource.InquirySummary_SR_HUM,'InquirySummaryJS.js')}"/> 
+   <apex:stylesheet value="{!URLFOR($Resource.InquirySummary_SR_HUM,'InquirySummaryCSS.css')}"/>
+	<style>
+   #TypeId.dropdown-menu{
+    width: 270px !important;
+    }
+   </style>   
+   <script>
+    var sMembergenkey = '{!JSENCODE($CurrentPage.parameters.sInteractingAboutCCPGCP)}'; 
+    var sMemberId = '{!JSENCODE($CurrentPage.parameters.sSelectedPolicy)}';
+    var getInqSummary = '{!$RemoteAction.InquirySummary_C_HUM.getInquirySummary}';
+    var getInqSingleRef = '{!$RemoteAction.InquirySummary_C_HUM.getInquirySingleReference}';
+    var sProductName = '{!JSENCODE($CurrentPage.parameters.sProductName)}'; 
+    var inquiryButtonRange = '{!sButtonRange}'; 
+    var startCount = null; 
+    var endCount = null; 
+    var sStartDateCalendar = ''; 
+    var sEndDateCalendar = '';
+	var sEnterpriseID = '{!JSENCODE($CurrentPage.parameters.sEnterpriseID)}';
+	var bGoFlag = false;
+    var startDate = '';
+    var endDate = '';
+	var sRecordId = '{!JSENCODE($CurrentPage.parameters.sRecordId)}';
+	var sAccName = '{!JSENCODE($CurrentPage.parameters.sAccName)}';
+	var sMemberDep = '{!JSENCODE($CurrentPage.parameters.sMemberId)}';
+	var sRecordType = '{!JSENCODE($CurrentPage.parameters.sRecordType)}';
+
+    function getTwoDigitDateFormat(monthOrDate) {
+      return (monthOrDate < 10) ? '0' + monthOrDate : '' + monthOrDate;
+    }
+  
+    //Inquiry Summary service call
+    Visualforce.remoting.Manager.invokeAction(getInqSummary, sMembergenkey, sMemberId, startCount,endCount,sStartDateCalendar,sEndDateCalendar,sEnterpriseID,sRecordType,inqSummaryCallback); 
+   </script>
+   
+    <apex:form >
+        <div id="pageContent" style="background:white;">
+            <table class="pageHeader enable_logging" style="white-space: nowrap;font-size: 14px">
+                <tr>
+                    <td>
+                        <apex:sectionHeader title="Archived CCP Inquiry Summary" subtitle="{!sAccountName}" />
+                    </td>
+                </tr>
+            </table>
+      
+            <!-- Button functionality -->
+            <div class="col-xs-12" id="totalRecordsMsgId" style="font-size:12px; left:-20px !important;">
+                <div id="buttonmsg" style="float:left;"> </div>
+                <div  id="buttonsonpage" > </div>
+                <div id="ErrorMsg" style="float:left;display:none; padding-right:72px !important;width:1040px;">                      
+                    <apex:pageMessage severity="error" strength="2" summary="{!$Label.InquirySummary_InfoMsg5}" title="Error:"/>
+                </div>   
+            </div>
+            
+            <!--Waiting image-->
+            <div class="col-xs-12" style="font-size:16px">
+                <div id="opaque"/>
+                <div id="spinner">
+                    <p align="center" style='{font-family:"Arial", Helvetica, sans-serif; color:white; font-size:20px;}'>
+                    <apex:image value="/img/loading.gif" id="LoadingImageId"/><span style="margin-left :5px;">Loading...</span></p>
+                </div>
+            </div>
+      
+            <div class="col-xs-12" style="font-size:12px;display:none;width:1000px; left:-20px !important;" id="infoAddMsg">           
+                <apex:outputPanel id="infoAddMsgId">
+                    <div id="pageMsg" style="width: 600px !important;">
+                        <apex:pageMessage severity="warning" strength="2" summary="{!$Label.InquirySummary_InfoMsg1}" /> 
+                    </div>
+                    <div class="btn-group" style="font-size:12px; margin-left: 6px;"> 
+                        <input id="hiddenElementId" type="hidden" />
+                        <div style="display: inline-flex;">
+                            <label for="datepicker" style="font-size:12px" class="navbar-brand panel-title">FROM</label>
+                                <input  onchange = "compareDates();" id="From1" value="01/01/2009" maxlength="10"  type="text" class="date-picker form-control" style="width: 100px; margin-top: 12px;height: 25px;"/>  
+                            <label for="From1"><i class="glyphicon glyphicon-calendar" id="FromSpan" style="margin-top:18px;margin-left: 10px;"></i></label>
+                        </div>
+          
+                        <div style="display: inline-flex;">
+                            <label for="datepicker" style="font-size:12px; margin-left:20px" class="navbar-brand panel-title">TO</label>
+                            <input  onchange = "compareDates();" id="To1" value="12/31/2010" maxlength="10" type="text" class="date-picker form-control" style="width: 100px; margin-top: 12px; height: 25px;"/>                                                    
+                            <label for="To1"><i class="glyphicon glyphicon-calendar" id="ToSpan" style="margin-top:18px;margin-left: 10px;"></i></label>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-default inquirySummaryTableId_disable_while_logging" id= "goButton"  onclick = "calendarValues();">GO</button>
+                    <button type="button" class="btn btn-default inquirySummaryTableId_disable_while_logging" id= "clearButton" >CLEAR</button>
+                    <apex:pageMessages id="jserror"/>
+                    <div id="calendarMsg"></div>
+                </apex:outputPanel>
+            </div> 
+			
+			<!--Page message for service error-->
+			<div id="errorDiv" style="font-size:12px; display:none; width:968px; margin-left: -4px !important">            
+                <apex:outputPanel id="calloutError" Styleclass="displayNoneErr" >       
+                    <apex:PageMessage Summary="{!$Label.InquiryServiceError_Msg}" severity="error" Strength="2" title="Error:" />    
+                    <apex:pagemessages />      
+                </apex:outputPanel> 
+			</div>	
+            <!-- Persistant page message-->
+            <div class="col-xs-12" style="font-size:12px; display:block; width:1000px; left: -20px !important" id="infoMsgJS">           
+                <apex:outputPanel id="infoMsgId">
+                    <apex:pageMessage severity="info" strength="2" summary="{!$Label.InquirySummary_InfoMsg2}" />                
+                </apex:outputPanel>
+            </div>
+
+            <div class="col-xs-12" style="font-size:12px; margin-top : 12px !important;">
+                <nav class="navbar navbar-default" style = "height: 60px;">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-inquirySummaryTableId-navbar-collapse-2" aria-expanded="true">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <span class="navbar-brand panel-title">Go To</span>
+                    </div>
+                    <div class="collapse navbar-collapse" id="bs-inquirySummaryTableId-navbar-collapse-2">
+                    <form class="navbar-form navbar-left" role="search1" id="ddFilters1">
+                        <div class="form-group" style="margin-top: 10px;">
+                            <input type="text" class="form-control inquirySummaryTableId_disable_while_logging" placeholder="CCP Reference Number" id="keyword1" aria-expanded="true" style="width: 250px;"  onkeypress="if (event.keyCode==13){ inquirySearchFunction(); return false;}"/>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default inquirySummaryTableId_disable_while_logging" aria-haspopup="true" aria-expanded="false" onclick="inquirySearchFunction()" id= "goId" style="color: black;margin-left: 310px;margin-top: -48px;">Go</button>
+                        </div>
+                        <div class="form-group" style="font-size:12px;width: 530px;margin-left: 353px;margin-top: -60px;">
+                            <apex:outputPanel id="message">
+                                <div id="GoButtonmsg">
+                                    <apex:pageMessage summary="{!$Label.InquirySummary_InfoMsg3}" severity="Info" strength="3" />
+                                </div>
+                            </apex:outputPanel>
+                        </div>
+                    </form>
+                    </div>
+                </nav>
+            </div>
+     
+            <!--filterby changes-->   
+            <div class="col-xs-12" style="font-size:12px">
+                <nav class="navbar navbar-default">
+                <!-- Label and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-inquirySummaryTableId-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <span class="navbar-brand panel-title">Filter By</span>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-inquirySummaryTableId-navbar-collapse-1">
+                    <form class="navbar-form navbar-left" role="search" id="ddFilters">
+                        <div class="form-group">
+                            <input type="text" class="form-control inquirySummaryTableId_disable_while_logging" placeholder="Keyword"   id="keyword" />
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle inquirySummaryTableId_disable_while_logging" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id = "dateBtnID">Created On <span class="caret"></span></button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <div class="input-group" style="display: inline-flex;">
+                                            <input id="dos_start" maxlength="10" onkeyup="dateSlash(this,event)"  type="text" class="date-picker form-control" placeholder="Begin"/>
+                                            <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea1">
+                                                <a onclick="javascript:return false;" html-log_this="false">
+                                                    <apex:image id="lnkImg1" style="margin-top: 8px;" styleClass="imgMargin hoverimagesize" value="{!$Resource.HUMHoverOverQuestionMark}"/>
+                                                    <apex:outputPanel styleClass="hoverfontstyle" style="width: 7em;margin-top: -15px;">(MMDDYYYY)</apex:outputPanel>
+                                                </a>
+                                            </apex:outputPanel>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="input-group"  style="display: inline-flex;">
+                                            <input id="dos_end"  maxlength="10" onkeyup="dateSlash(this,event)" type="text" class="date-picker form-control" placeholder="End" />
+                                            <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea2">
+                                                <a onclick="javascript:return false;" html-log_this="false">
+                                                    <apex:image id="lnkImg2" style="margin-top: 8px;" styleClass="imgMargin hoverimagesize" value="{!$Resource.HUMHoverOverQuestionMark}"/>
+                                                    <apex:outputPanel styleClass="hoverfontstyle" style="width: 7em;margin-top: -15px;">(MMDDYYYY)</apex:outputPanel>
+                                                </a>
+                                            </apex:outputPanel>
+                                        </div>
+                                    </li>
+                                </ul>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle inquirySummaryTableId_disable_while_logging" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id = "typeBtnID">Type <span class="caret"></span></button>
+                            <ul class="dropdown-menu" id = "TypeId"> </ul>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle inquirySummaryTableId_disable_while_logging" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id = "poBtnID">Policy <span class="caret"></span></button>
+                            <ul class="dropdown-menu" id= "PolicyId">
+                            </ul>
+                        </div>
+
+                        <button type="button" class="btn btn-default dropdown-toggle inquirySummaryTableId_disable_while_logging" id = "rsBtnID">Clear Filters</button>
+                        <div class="form-group" style="font-size:12px">
+                            <apex:outputPanel id="dateFormatMessageOP" >
+                                <div id="dateFormatMessageDiv" style="display:none;">
+                                    <apex:pageMessage summary="{!$Label.InquirySummary_InfoMsg4}" severity="warning" rendered="true" strength="3" id="dateFormatMessagePM"/>
+                                </div>
+                            </apex:outputPanel>
+                        </div>
+                    </form>
+                </div>
+                </nav>
+            </div>
+        
+            <!--Table For Inquiry Summary-->
+            <div class="col-xs-12 ">
+                <div class="table-responsive" id="tableId">
+                    <table id="inquirySummaryTableId" class="table table-striped table-bordered width100" cellspacing="0" style = "width: 100%; font-size : 12px">
+                        <caption style="display:none">Inquiry Summary</caption>
+                            <thead>
+                                <tr>
+                                    <th title = "Reference ID">Reference ID</th>
+                                    <th title = "Inquiry ID">Inquiry ID</th>
+                                    <th title = "Type">Type</th>
+                                    <th title = "Policy">Policy</th>
+                                    <th title = "Category">Category</th>
+                                    <th title = "Reason">Reason</th>
+                                    <th title = "Disposition">Disposition</th>
+                                    <th title = "Created On">Created On</th> 
+                                    <th title = "Inquiry Type">Inquiry Type</th>
+                                    <th title = "Inquired For ID">Inquired For ID</th>
+                                    <th title = "Inquired For Name">Inquired For Name</th>
+                                    <th title = "Inquired About Type">Inquired About Type</th>
+                                    <th title = "Inquired About ID">Inquired About ID</th>
+                                    <th title = "Inquired About Name">Inquired About Name</th>
+                                    <th title = "Owned By">Owned By</th>
+                                    <th title = "Owner Team">Owner Team</th>
+                                    <th title = "Owner Dept">Owner Dept</th>
+                                    <th title = "Tasks">Tasks</th>
+                                    <th title = "Priority">Priority</th>
+                                    <th title = "Status">Status</th>
+                                    <th title = "Received Date">Received Date</th>
+                                </tr>
+                            </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+  
+    <script>
+        window.onload = setFocus
+        function setFocus() {
+            document.getElementById("hiddenElementId").focus();
+        }
+        jQuery('#From1').datepicker({
+            endDate: new Date(),
+            startDate: new Date('01/01/2009')
+       });
+       jQuery('#To1').datepicker({
+           endDate: new Date(),
+           startDate: new Date('01/01/2009')
+       });
+       jQuery('#clearButton').click(function(){
+           jQuery("#From1").val("01/01/2009").datepicker("update");
+           jQuery("#To1").val("12/31/2010").datepicker("update");
+           jQuery('#goButton').prop('disabled', false);
+           counter = 0;
+           jQuery('#calendarMsg').empty();
+		   bGoFlag = false;
+       })
+    </script>
+        
+    </apex:form>
+</apex:page>

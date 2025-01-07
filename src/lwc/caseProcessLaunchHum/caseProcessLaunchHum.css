@@ -1,0 +1,52 @@
+.slds-tabs_default__link {
+  font-size: 16px !important;
+}
+h2 {
+  color: #282828;
+  padding-top: 12px;
+  padding-left: 12px;
+  padding-bottom: 12px;
+  font-size: 16px;
+  font-weight: bold;
+}
+.hide {
+  display: none;
+}
+
+.myDIV:hover + .hide {
+  display: block;
+}
+
+.spancls:hover {
+  background: lightgray !important;
+  display: block !important;
+}
+
+.spancls{
+  color: rgb(1, 118, 211); 
+  cursor: pointer;
+  padding-left: 12px;
+  text-decoration: underline;
+}
+
+.spandisabled{
+  color: gray; 
+  padding-left: 12px;
+}
+
+.slds-modal__container {
+  max-width: 55rem !important;
+  width: 55% !important;
+}
+
+td {
+  padding-left: 12px;
+}
+ul {
+  padding: 0.5rem;
+  background: rgb(243, 243, 243);
+}
+
+.slds-align_absolute-center:hover {
+  text-decoration: underline;
+}

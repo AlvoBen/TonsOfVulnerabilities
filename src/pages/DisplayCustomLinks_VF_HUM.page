@@ -1,0 +1,16 @@
+﻿<!--
+Page Name        : DisplayCustomLinks_VF_HUM
+Version          : 1.0 
+Created Date     : OCT 10 2015
+Function         : Page to display custom links dynamically.
+
+Modification Log :
+* Developer                Code Review        Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Sruthi Adivikolanu                          05/10/2015           Original Version
+-->
+<apex:page controller="DisplayCustomLinks_C_HUM" id="DisplayCustomLinks_VF_HUM">
+
+    <c:DynamicCustomLinks_CMP_HUM DynamicLinkController="{!this}"></c:DynamicCustomLinks_CMP_HUM>
+
+</apex:page>

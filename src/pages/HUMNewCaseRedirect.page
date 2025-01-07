@@ -1,0 +1,40 @@
+﻿<!--
+Page Name        : HUMNewCaseRedirect
+Version          : 1.0 
+Created Date     : MAY 21 2014
+Function         : Page used for redirection when creating new case.
+
+Modification Log :
+*   Developer Name           Code Review              Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*  Sagar Tapadia              17093                     05/21/2014              Original Version
+*  Sagar Tapadia              17093                     06/21/2014              Moved JS to Static Resources
+*  Vishal Verma               18096                     09/22/2014              Added on complete on  Save action function to open the 
+                                                                                New case tab in console with side panel
+*  SuryaKumari Medicherla     18446                     10/09/2014              Passed casenumber as parameter for reDirectToCaseEditPageConsole javascript method.defect :157175,157474                                                                                 
+*  Mithra Bharadwaj													             US#1522825 SonarQube Changes
+-------------------------------------------------------------------------------------------------------------------------------------->
+<apex:page id="thePage" standardController="Case"  action="{!funcOnPageLoad}"  sidebar="false" extensions="HUMNewCaseRedirectExtension" >
+    <apex:includeScript value="/support/console/28.0/integration.js" />
+    <apex:includeScript value="{!URLFOR($Resource.HUMNewCaseRedirect,'/HUMNewCaseRedirect/main.js')}"/> 
+    
+    <apex:form id="theForm" >
+        <apex:pageMessages />
+        
+        <!-- Action function for saving case only when called from outside console -->
+        <apex:actionFunction action="{!SaveCase}" name="Save" onComplete="reDirectToCaseEditPage('{!JSENCODE(caseID)}'); return false;">
+            <apex:param assignTo="{!isInConsole}" name="isInConsole" value="no" />
+        </apex:actionFunction>
+        
+        <!-- Action function to call case from Console so as to pass URL of the tab to controller -->
+        <apex:actionFunction action="{!SaveCase}" name="SaveCase"  onComplete="reDirectToCaseEditPageConsole('{!JSENCODE(caseID)}','{!JSENCODE(sCaseNumber)}'); return false;">
+                    <apex:param assignTo="{!sStandardUrlForTab}" name="resultId" value="" />
+                    <apex:param assignTo="{!isInConsole}" name="isInConsole" value="yes" />
+        </apex:actionFunction>
+        <apex:outputField value="{!Case.Policy_Member__c}" rendered="false"/>
+    </apex:form>
+    <script>
+        //This code will run on load of Window
+        window.onload = init();
+    </script>
+</apex:page>

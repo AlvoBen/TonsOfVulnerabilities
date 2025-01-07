@@ -1,0 +1,60 @@
+﻿<!--
+Function        : LWC to display Pharmacy Web Issues flow launched from Pharmacy .
+
+Modification Log:
+* Developer Name                  Date                         Description
+****************************************************************************************************************************
+* Pinky Vijur                                            03/01/2024                User Story 5428942: T1PRJ0865978- MF21712 Mail Order Management; Pharmacy- Guided Flow- Web Issues- Launch from pharmacy
+*****************************************************************************************************************************-->
+<template>
+<template if:true={showHighlightPanel}>
+ <article class="slds-card slds-page-header slds-card_boundary slds-grid slds-grid--vertical" style="margin-bottom: 0.75rem">
+            <div class="hc-standard-table-styles slds-page-header__row">
+                <header class="slds-grid slds-media slds-media_center slds-has-flexi-truncate hc-align-header">
+                    <div class="slds-grid slds-grid_vertical-align-center">
+                        <div class="slds-media__figure">
+                            <lightning-icon icon-name="action:new_contact" alternative-text="contact" title="contact"></lightning-icon>
+                        </div>
+                        <div class="slds-media__body">
+                            <h2 class="slds-card__header-title" style="font-size:20px;"> Mail Order Pharmacy Web Issues</h2>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-col_bump-left"></div>
+                    <div class="slds-grid">
+                        <div class="slds-grid slds-grid_align-end">
+                            <div class="slds-grid">
+                                <lightning-button class="slds-m-top_small slds-m-right_small" name="cancel" label="Cancel"
+                                                  onclick={onCancel}>
+                                </lightning-button>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+            </div>
+        </article>
+    </template>
+            <template if:true={bShowModal}>
+                <c-generic-modal-hum if:true={bShowModal} buttons-config={buttonsConfig} b-show-modal={bShowModal}
+                    onclose={closeModal} oncontinue={cancelTemplateCreation} title="Unsaved Changes">
+                    <div slot="content" class="slds-modal__content slds-p-around_medium" style="text-align:center;">
+                        {labels.UNSAVED_CHANGES_HUM}
+                    </div>
+                </c-generic-modal-hum>
+            </template>
+            <template if:true={flowName}>
+                <div class="card">
+                    <c-screen-flow flow-name={flowName} flow-params={flowParamsJSON}
+                        onflowstatuschange={handleflowfinished}>
+                    </c-screen-flow>
+                </div>
+            </template>
+            <template if:true={webIssuesFinalScreen}>
+                <div class="slds-card">
+                    <c-generic-case-comment-logging hide-popover={hidePopover} record-id={recordId}
+                        onfinish={handleFinishLogging} oncloseloggingpopup={handleCloseLoggingPopup}
+                        responseobj={webIssueObj} filter-cases-having-template={filterCasesHavingTemplate}>
+                    </c-generic-case-comment-logging>
+                </div>
+            </template>
+       
+</template>

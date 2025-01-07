@@ -1,0 +1,161 @@
+﻿<!--
+/*****************************************************************************************************************************
+Component Name   : PharmacyCreditCardPaymentHum.html
+Version          : 1.0
+Function         : lwc to display credit card payment section
+
+Modification Log:
+* Developer Name           Code Review                 Date                         Description
+*---------------------------------------------------------------------------------------------------------------------
+* Nirmal Garg																	12/06/2022					Original Version
+*******************************************************************************************************************************************************************/
+-->
+<template>
+    <div class="mainsection">   
+        <div class="slds-grid slds-grid_align-spread slds-wrap">
+            <div class="slds-col slds-size_1-of-1  slds-m-top_small">
+                <div class="slds-grid slds-grid_align-spread">
+                    <div class="slds-col">
+                        <h3>
+                            <span class="slds-page-header__title slds-truncate" title="Credit Card Payment">Credit
+                                Card Payment</span>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-1  slds-m-top_small">
+                <div class="slds-grid slds-grid_align-spread">
+                    <div class="slds-col slds-size_6-of-12">
+                        <div class="carddetails  slds-var-m-left_large"
+                            style="min-height: 250px; background-color: white;">
+                            <div class="slds-grid  slds-grid_align-end slds-wrap">                                
+                                <div class="slds-col slds-m-right_x-small">
+                                    <div data-id="cardtype" class="card-type">
+                                        <svg width="60" height="60" viewBox="0 0 146 48" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-grid slds-wrap slds-m-left_small">
+                                <template if:true={cardtype}>
+                                    <div class="slds-col slds-size_9-of-12">
+                                        <c-credit-card-icon-hum></c-credit-card-icon-hum>
+                                    </div>
+                                </template>
+                                <div class="slds-col slds-size_3-of-12">
+
+                                </div>
+                            </div>
+                            <template if:true={cardtype}>
+                                <div class="slds-grid slds-wrap slds-m-left_small slds-m-right_small">
+                                    <div class="slds-col slds-col slds-size_1-of-1">
+                                        <lightning-combobox value={selectedCardComboData} placeholder="-None-" required
+                                            dropdown-alignment="auto" options={lstCardComboData} class="validate"
+                                            onchange={handleCardChange}
+                                            message-when-value-missing="Error: You must Enter a Value"></lightning-combobox>
+                                    </div>
+                                </div>
+                            </template>
+                            <div
+                                class="slds-grid slds-wrap slds-m-top_x-small slds-m-left_small slds-m-right_small slds-m-top_medium">
+                                <div class="slds-col slds-col slds-size_1-of-1">
+                                    <template if:true={cardtype}>
+                                        <div class="slds-text-title slds-truncate">Owner Name</div>
+                                        <div class="slds-truncate"><strong>{selectedCardOwnerName}</strong></div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <div class="slds-grid slds-gutters slds-grid_align-spread slds-wrap slds-m-top_xx-large">
+                            <div class="slds-col slds-size_4-of-12">
+                                <lightning-input type="date" name="input1" label="Payment Date" date-style="short" class="validate"
+                                    value={enteredDate} min={minDateValue} required onchange={handlePaymentDateChange}
+                                    message-when-value-missing="Please Enter Payment Date."></lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_4-of-12">
+                                <div class="slds-text-title slds-truncate slds-m-top_xx-small" title="Balance Due">
+                                    <div class="slds-grid slds-grid_align-center">
+                                        <div class="slds-col">
+                                            <strong>Balance Due</strong>
+                                        </div>
+                                    </div>                                    
+                                </div>
+                                <div class="slds-truncate slds-m-top_small" title={balanceDue}>
+                                    <div class="slds-grid slds-grid_align-center">
+                                        <div class="slds-col">
+                                            <lightning-formatted-number class="slds-text-heading_medium slds-text-align_left data-style" value={balancedue} format-style="currency"
+                                            currency-code="USD" currency-display-as="symbol"></lightning-formatted-number>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_4-of-12">
+                                <div class="slds-form-element">
+                                    <div class="slds-form-element__control">
+                                        <span onkeypress={validateAmountInput}>
+                                            <lightning-input type="number" name="input7" class="inputAmount validate"
+                                                label="Payment Amount $" placeholder="$0.00" formatter="currency"
+                                                step="0.01" value={enteredAmount} onchange={handlePaymentInput} required
+                                                message-when-value-missing="Please Enter Payment Amount $." min="0.01">
+                                            </lightning-input>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1">
+                                <div class="slds-grid slds-gutters slds-grid_align-end slds-wrap">
+                                    
+                                    <div class="slds-col">
+                                        <lightning-button variant="brand-outline" label="Cancel" title="Cancel"
+                                            onclick={handleCancelCardUpdate}
+                                            class="slds-m-top_medium slds-m-left_small slds-float_right"
+                                            ></lightning-button>
+                                    </div>
+                                    <div class="slds-col">
+                                        <lightning-button variant="brand" label="Submit" title="Submit"
+                                            onclick={handleSumitCardUpdate}
+                                            class="slds-m-top_medium slds-m-left_small slds-float_right"
+                                            disabled={isCardNotAvailable}></lightning-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <template if:true={showConfirmationModal}>
+        <div class="slds-modal slds-fade-in-open slds-backdrop">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <lightning-button-icon icon-name="utility:close" alternative-text="Close this window" size="large"
+                        variant="bare-inverse" onclick={closeModal} class="slds-modal__close">
+                    </lightning-button-icon>
+                    <h1 class="slds-text-heading_large">Submit One-Time Payment?</h1>
+                </div>
+                <div class="slds-modal__content slds-var-p-around_medium">
+                    <P class="slds-text-align_center slds-var-m-top_xx-large slds-var-m-bottom_xx-large">You are about
+                        to submit a one-time payment for <strong>${enteredAmount},</strong> to the
+                        <strong>{selectedcardTypeLiteral}</strong> ending in <strong>{selectedCardLast4Digits}</strong>
+                        expiring on <strong>{selectedCardExpiryDate}.</strong> <br>
+                        Are you sure?
+                    </P>
+                </div>
+                <div class="slds-modal__footer">
+                    <lightning-button label="No" title="No" onclick={closeModal} class="slds-var-m-right_small">
+                    </lightning-button>
+                    <lightning-button label="Yes" variant="brand" onclick={handlePaymentServiceCall}></lightning-button>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template if:true={showCaseCommentBox}>
+        <c-generic-case-comment-logging record-id={recordId} responseobj={oneTimePaymentDataObj}
+            onfinish={handleFinishLogging}></c-generic-case-comment-logging>
+    </template>
+</template>

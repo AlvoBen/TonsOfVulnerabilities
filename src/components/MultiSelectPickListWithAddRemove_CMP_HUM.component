@@ -1,0 +1,156 @@
+﻿<!--
+/*****************************************************************************************************************************************************************
+Apex Class Name : MultiSelectPickListWithAddRemove_CMP_HUM
+Version         : 1.0
+Created On      : 11/01/2019
+Function        : This is a reusable multiselect picklist with add/remove options
+                 
+Modification Log: 
+* Version          Developer Name              Date                       Description
+*-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+*    1.0           Santhi Mandava              08/13/2019                Original Version
+*    2.0           Santhi Mandava              12/09/2019                Removed extra space before selected values.
+*    3.0           Amit Agarwal                06/25/2020                User Story 1186331: PR00091574 - MF 1 - Quality - Ability to display Repeat Caller Icon on search page and Repeat Caller Information on the Member Account page (RF)
+- *******************************************************************************************************************************************************************/
+ -->
+<apex:component >
+    <apex:attribute name="availableOptions" description="" type="String" required="true"/>
+    <apex:attribute name="selectedOptions" description="" type="String" required="true"/>
+    <apex:attribute name="id" description="" type="String" required="true"/>
+    <apex:attribute name="picklistLabel" type="String" required="true" description=""/>
+    <style>
+    .labelStyle{
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 10.92px;
+        font-weight: 700;
+        color: #4a4a56;
+        }
+        
+        .selectBoxStyle{
+            font: 400 13.3333px Arial;
+            width : 100%;
+        }
+        
+        .buttonStyle{
+            margin-left:5px;
+            margin-right:5px;
+            width:50px;
+        }
+        
+    </style>
+    
+   <table>
+         <tr>
+             <td> 
+                 <apex:outputLabel styleClass="labelStyle" value="Available {!PicklistLabel}"></apex:outputLabel>
+             </td>
+             <td> 
+             
+             </td>
+             
+             <td> 
+                 <apex:outputLabel styleClass="labelStyle" value="Selected {!PicklistLabel}"></apex:outputLabel>
+             </td>
+         </tr>
+          <tr>
+             <td> 
+                <select class="selectBoxStyle" name="selectfrom" id="select-from_{!id}" multiple ="multiple" size="5">
+                 
+                </select>
+
+             </td>
+             <td style="vertical-align: middle;"> 
+             
+                 <button type="button" class="buttonStyle" onclick="Add_{!id}();" value=">">Add</button><br/>
+                 <button type="button" class="buttonStyle" onclick="remove_{!id}();" value="<">Remove</button>
+             </td>
+            
+             <td> 
+                 <select class="selectBoxStyle" name="selectto" id="select-to_{!id}" multiple="multiple" size="5">
+                  
+                </select>
+             </td>
+         </tr>
+     </table>
+     <script> 
+        // DO NOT MOVE THIS SCRIPT TO JS FILE//
+        var jsonAvailable = '{!AvailableOptions}';
+        var jsonselected = '{!SelectedOptions}';
+        var lstAvaialble = [];
+        var lstSelected = [];
+        if(jsonAvailable) lstAvaialble = JSON.parse(jsonAvailable );
+        if(jsonselected ) lstSelected = JSON.parse(jsonselected );
+        var AvailableElement = document.getElementById("select-from_{!id}");
+        var SelectedElement = document.getElementById("select-to_{!id}");
+        var lstOptions = [];
+        var sSelected_{!id} = '';
+        
+        for(var i=0;i<lstSelected.length;i++)
+        {
+            lstSelected[i]= lstSelected[i].trim();
+        }
+        
+        for (var i = 0; i < lstAvaialble.length; i++)
+        {
+            var option = document.createElement("option");
+            option.text = lstAvaialble[i];
+            option.value= lstAvaialble[i];
+            option.title = lstAvaialble[i];
+            if(lstSelected.indexOf(lstAvaialble[i].trim()) > -1)
+            {
+                SelectedElement.add(option);
+                sSelected_{!id} =  sSelected_{!id} +', '+option.value ;
+            }
+            else
+            {
+                AvailableElement.add(option);
+            }
+        }
+        sSelected_{!id} = sSelected_{!id}.substr(1);
+          
+        function Add_{!id}()
+        {
+            lstOptions = [];
+            var AvailableElement = document.getElementById("select-from_{!id}");
+            var selectedOption;
+            for (var i = 0; i < AvailableElement.options.length; i++)
+            {
+                if(AvailableElement.options[i].selected) lstOptions.push(AvailableElement.options[i]);
+            }
+            var SelectedElement = document.getElementById("select-to_{!id}");
+            for (var i = 0; i < lstOptions.length; i++)
+            {
+                SelectedElement.add(lstOptions[i]);
+            }
+            getSelectedString_{!id}();
+        }
+          
+        function remove_{!id}()
+        {
+            lstOptions = [];
+            var AvailableElement = document.getElementById("select-to_{!id}");
+            var selectedOption;
+            for (var i = 0; i < AvailableElement.options.length; i++)
+            {
+                if(AvailableElement.options[i].selected) lstOptions.push(AvailableElement.options[i]);
+            }
+            var SelectedElement = document.getElementById("select-from_{!id}");
+            for (var i = 0; i < lstOptions.length; i++)
+            {
+                SelectedElement.add(lstOptions[i]);
+            }
+            getSelectedString_{!id}();
+        }
+          
+        function getSelectedString_{!id}()
+        {
+            sSelected_{!id} = '';
+            var SelectedElement = document.getElementById("select-to_{!id}");
+            for (var i = 0; i < SelectedElement.options.length; i++)
+            {
+                sSelected_{!id} = sSelected_{!id} + ', '+SelectedElement.options[i].value ;
+            }
+            sSelected_{!id} = sSelected_{!id}.substr(2);
+        }
+     </script>
+</apex:component>

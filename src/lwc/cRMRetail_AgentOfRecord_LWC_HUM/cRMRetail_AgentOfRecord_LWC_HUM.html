@@ -1,0 +1,65 @@
+﻿<template>
+    <div class="cardContainer">
+        <lightning-card>
+            <h3 slot="title" class="cardHeader">
+                <lightning-icon icon-name="standard:contact" size="small"></lightning-icon> <span
+                    class="slds-m-left_small">Agent of Record</span>
+            </h3>
+            <lightning-button class="cardBody" label="Refresh" onclick={onRefresh} disabled={refreshDisabled}
+                slot="actions"></lightning-button>
+            <lightning-layout multiplerows="true">
+                <lightning-layout-item size="12" padding="around-small" class="slds-grid slds-wrap">
+                    <div class="slds-size_2-of-2 borderCardBody">
+                        <div class="slds-grid slds-wrap">
+                            <p class="slds-var-p-horizontal_small cardBodyP">
+                                <template if:true={showBody}>
+                                    <div class="aorHolder">
+                                        <div class="slds-form-element aorField
+                            slds-form-element_readonly">
+                                            <span class="slds-form-element__label">
+                                                AOR Number
+                                            </span>
+                                            <div class="slds-form-element__control 
+                                slds-grid itemBody">
+                                                <div class="slds-form-element__static 
+                                    slds-grow  is-read-only">
+                                                    {aorNumber}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="aorGap"></div>
+                                        <div class="slds-form-element aorField 
+                            slds-form-element_readonly">
+                                            <span class="slds-form-element__label">
+                                                AOR Name
+                                            </span>
+                                            <div class="slds-form-element__control 
+                                slds-grid itemBody">
+                                                <div class="slds-form-element__static 
+                                    slds-grow  is-read-only">
+                                                    {aorName}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                                <template if:false={showBody}>
+                                    <template if:true={showError}>
+                                        There is an error in AOR Details fetch. <br />
+                                        {aorErrorBody}
+                                    </template>
+                                    <template if:false={showError}>
+                                        <div class="spinnerHolder">
+                                            <lightning-spinner alternative-text="Loading...">
+                                            </lightning-spinner>
+                                        </div>
+                                    </template>
+                                </template>
+                            </p>
+                        </div>
+                    </div>
+                </lightning-layout-item>
+            </lightning-layout>
+        </lightning-card>
+    </div>
+</template>

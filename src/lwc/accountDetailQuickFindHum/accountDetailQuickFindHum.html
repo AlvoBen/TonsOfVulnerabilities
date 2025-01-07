@@ -1,0 +1,36 @@
+﻿<!--
+LWC Name        : accountDetailQuickFindHum.html
+Function        : LWC to display quick find section on account details pages.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Pradeep Dani                  12/18/2020                Original Version 
+****************************************************************************************************************************-->
+<template>
+    <lightning-card if:true={bLinksLoaded}>
+        <lightning-layout multiple-rows="false" class="slds-p-horizontal_small slds-align_absolute-center">
+            <lightning-layout-item size="12" medium-device-size="2">
+                <div class="slds-align_absolute-center">
+                    <lightning-input name="enter-search" type="search" variant="label-hidden" label="hidden"
+                        onchange={onKeyDownHandler} placeholder="Quick Find" class="slds-var-p-vertical_medium">
+                    </lightning-input>
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item size="12" medium-device-size="10">
+                <div class="slds-grid slds-wrap slds-p-horizontal_xx-large" if:true={oLinks}>
+                    <template for:each={oLinks} for:item="arrayEl">
+                        <div class="slds-size_1-of-5" key={arrayEl}>
+                            <div class="slds-m-around_x-small slds-truncate">
+                                <a href="#" title={arrayEl}>{arrayEl}</a>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </lightning-layout-item>
+        </lightning-layout>
+        <div if:true={bIsViewAllEligible} class="slds-card__footer slds-p-bottom_none">
+            <div class="slds-align_absolute-center"><a onclick={handleBtnClick}>{labels.HUMViewAll}</a> </div>
+        </div>
+    </lightning-card>
+</template>

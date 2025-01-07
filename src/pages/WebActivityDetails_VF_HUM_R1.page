@@ -1,0 +1,15 @@
+﻿<!--
+Page Name        : WebActivityDetails_VF_HUM_R1
+Version          : 1.0 
+Created Date     : June 27 2016
+Function         : Page to display MyHumana details.
+Modification Log: 
+* Developer Name             Review Number            Date                       Description
+*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* Manish Kumar                                        06/27/2016                 Original Version
+***********************************************************************************************************************************************************************************************************************************/
+-->
+
+<apex:page StandardController="Policy_Member__c" sidebar="false" showHeader="false">
+   <c:WebActivityDetails_CMP_HUM accountID="{!Policy_Member__c.Member__c}" PolicyMemberID="{!Policy_Member__c.id}"></c:WebActivityDetails_CMP_HUM>
+</apex:page>

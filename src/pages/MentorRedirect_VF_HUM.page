@@ -1,0 +1,15 @@
+﻿<!--
+Page Name        : MentorRedirect_VF_HUM.page
+Version          : 1.0
+Created On       : 2016
+Function         : VF page to redirect to the Mentor Application
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Shreya Choodamani        27205                     05/06/2016                   Original Version 
+****************************************************************************************************************************
+-->
+
+<apex:page id="thePage" showHeader="false" sidebar="false" controller="MentorRedirect_C_HUM" action="{!queryPolicyMemberRec}">
+</apex:page>

@@ -1,0 +1,120 @@
+﻿<!--ORIGINAL COMPONENT WITH CONTROLLER
+Component Name   : CurrentBenefitsPeriodVOBV2_CMP_HUM.component
+Version          : 1.0
+Created On       : 04/11/2018
+Function         : VF Component to display the current benefits period
+
+Modification Log: bRenderErrorMsg
+* Developer Name           Code Review                 Date                         Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Shreya Choodamani        29801                      03/15/2016                   Original version
+* Pradeepkumar Dani        25034                      04/15/2016                   Added Defect Fix 222770.0001
+* Prerna Prasad            25784                      04/21/2016                   Defect Fix 223415.0001
+* Naveenkanth B            25956                      04/25/2016                   Defect Fix #223821.0001
+* Shikhar Mehta            27526                      04/27/2016                   Added code for Logging REQ (REQ-184833)
+* Pradeepkumar Dani        27526                      05/15/2016                   Defect Fix 226291.0001 & Moved JS,CSS to static resource
+* Vishal verma                                        06/10/2016                   Defect :229243 , 229503: Added Parenthesis and updated the reference of Start Date and EndDate
+* Rajesh Keswani           29921                      06/13/2016                   Added Refresh functionality of subtab when refdate is changed.
+* Shikhar Mehta                                       06/21/2016                   Defect Fix 229817.0001.
+* Praveen Kumar Parimi     56654                      01/11/2017                   Created a New Version for PCP/Tiering Project changes. 
+* Melkisan Selvaraj        220187                     04/11/2018                   Cloned from BenefitsV1_VF_HUM for REQ - 360140 
+* Rajesh Relkar										  07/08/2021				   REQ - 2374240-BenefitsPage Manual Date Entry
+*********************************************************************************************************************************
+-->
+<apex:component controller="BenefitsV2_C_HUM" id="CurrnetBenefitsPeriodComp">
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CurrentBenefitsPeriodVOB_SR_HUM, 'CurrentBenefitsPeriodVOB_CSS_SR_HUM.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CurrentBenefitsPeriodVOB_SR_HUM, 'CurrentBenefitsPeriodVOB_JS_SR_HUM.js')}"/>
+    <apex:pageBlock id="pbVOBCurrBen">       
+        <apex:outputpanel id="opPgMsg">
+            <apex:pageMessages id="pbsMsg" rendered="{!bRenderErrorMsg}"/>
+        </apex:outputpanel>
+        <apex:outputPanel id="opDateMsg" style="display:none;" styleClass="dateMessage">
+            
+            <apex:pageMessage summary="{!$Label.Valid_Waiver_Date}" severity="warning" strength="3" />
+        
+        </apex:outputPanel>
+	              <apex:pageBlockSection id="pbsVOBCurrBen" columns="1">
+            <apex:pageBlockSectionItem id="pbsiVOBCurrBen">
+                <apex:outputPanel id="outputPan1">
+                    <table class="width100">
+                        <tr class="width100">
+                            <td class="width2">
+                                <apex:image value="/img/msg_icons/info16.png" styleClass="icondisplayStyle" />
+                            </td>
+                            <td class="width52">
+                                <apex:outputLabel value="{!$Label.HUM_POLMEM_CURRBENDISDATE}"/>
+                            </td>
+                            <td class="width46">
+                                <apex:outputText value="{!sDate}"/>
+                            </td>
+                        </tr>
+                    </table>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection id="pbsVOBCurrBenSec2" columns="1">
+            <apex:PageBlockSectionItem id="pbsi2VOBCurrBen">
+                <apex:outputPanel >
+                    <table class="width100">
+                        <tr class="width100">
+                        <td style="text-align:right;    width: 2%;">
+                            <apex:outputLabel value="{!$Label.HUM_POLMEM_CHANGEDATE}" html-log_this="false"/>                            
+                        </td>
+                        <td style="text-align:center;    width: 1%;">
+                            <apex:inputField value="{!oEventObj.ActivityDate}" showDatePicker="false" id="aName" onchange="selectDate();" onkeyup="rendergobutton(this);"  onkeydown="if(event.keyCode==13){this.blur();calculateDate(this,event);}" styleclass="inputDateBox">
+                            <a href="javascript:DatePicker.pickDate(true, '{!$Component.aName}', false);" >
+                                <img src="data:image/gif;base64,R0lGODlhEAAQAMQAANvn8klVa+bt9Onx9lRpiUWHuXaYtT13uVJgea/S5OPr8ENLXPL1+HiOqerv+m+NrYOqxYyzzFp5npa805/E2KjL3ikxQz5FVUHUD+fv93uhvercjYXaaer0/7jT7P///yH5BAAAAAAALAAAAAAQABAAAAWJ4CeOZCkCSVJRUwRphvFIjZgAGaDvevYRtk5heCgaDz9RZeDpNJ/OTvJDyXg8m+x1+0GIJo5mdhNtdkWRMFbLaXs+ARFEAG1yMBxp/KNRtDlbf28LIhoCd3l1UoQfBoduW1wXIg8MilAfkx8SAAwCnwqhCgADHxYiDQSqCAgBAQsLFxcWXia2IyEAOw=="
+                                     class="imgCal" alt="Calendar Icon" border="0" id="datePickerImage1" />
+                            </a>
+                            </apex:inputField>
+                        </td>
+                        
+                        <td style="text-align:left;width: 5%;padding : 0 ;margin : 0;">
+                            <apex:outputpanel id="gobuttonId">
+                                <apex:commandButton id="pgButton1" rendered="{!benableCase}" value="Go" onclick="testGetFocusedSubtabId(); return false;" reRender="pbsiVOBCurrBen" styleClass="padding0 gobutton" style="width: 10%;"/>
+                            </apex:outputpanel> 
+                        </td>
+                    </tr>
+                    </table>
+                </apex:outputPanel>
+            </apex:pageBlockSectionItem>
+        </apex:PageBlockSection>
+        <apex:pageBlockSection id="pbsVOBCurrBenSec3" columns="1">
+            <apex:PageBlockSectionItem id="pbsi3VOBCurrBen">
+                <apex:outputPanel id="outputTextId">
+                    <table class="width100" log_this="false">
+                        <tr class="width100">
+                            <td class="width100">
+                                <apex:outputText value="{!$Label.HUM_POLMEM_DATEDUR}({!objPolMem.Effective_Date__c} {!$Label.HUM_AND_VALUE} {!objPolMem.End_Date__c}) " rendered="{!!bSerDateGreater}"/>
+                            </td>
+                        </tr>
+                        <tr class="width100">
+                            <td class="width100">
+                                <apex:outputText value="{!$Label.HUM_POLMEM_DATEDUR}({!objPolMem.Effective_Date__c} {!$Label.HUM_AND_VALUE} {!objPolMem.End_Date__c}) " rendered="{!bSerDateGreater}" styleClass="dateTextDisplayStyle"/>
+                            </td>
+                        </tr>
+                    </table>
+                </apex:outputPanel>
+            </apex:PageBlockSectionItem>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    <apex:outputPanel id="op1">
+        <script>
+            var benableCase = {!benableCase};
+       if(document.querySelector(".gobutton") != null && document.querySelector(".gobutton") != undefined)
+            {document.querySelector(".gobutton").style.display = "block";
+                }
+            if(benableCase&&enterflag)
+                {
+                    testGetFocusedSubtabId();
+                    }
+        </script>
+    </apex:outputPanel>
+    <apex:actionFunction name="selectedDate" action="{!renderGoButton}" oncomplete="rerenderGo();"/>
+    <apex:actionFunction name="rerenderGo"  reRender="gobuttonId,outputTextId,op1"/>
+    <apex:actionFunction name="renderErrorMessage" action="{!showErrorMessage}" reRender="opPgMsg" />
+    <apex:actionFunction name="renderErrMess" reRender="opPgMsg"/>
+    <script>
+    var pageURL = '{!$Page.BenefitsV2_VF_HUM}';
+    </script>  
+</apex:component>

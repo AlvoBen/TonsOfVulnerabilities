@@ -1,0 +1,82 @@
+﻿<!--
+LWC Name        : qsMessagingHum.html
+
+Modification Log:
+* Developer Name                  Date                         Description
+------------------------------------------------------------------------------------------------------------------------------
+* Disha Dole					17/02/2023					   US:4217891 - T1PRJ0865978 - C06, Lightning-Case Management- Quick Start- Standardization of Scoped Notification
+* Pooja Kumbhar					06/01/2023                                         US:4654197 - T1PRJ0865978 - C06- Case Mgt- for DF-7642- after choosing valid CTCI combination in quickstart the error message is not vanishing
+------------------------------------------------------------------------------------------------------------------------------->
+
+<template>
+    <template if:true={showErrorMsg}>
+        <template for:each={errorMsgList} for:item="msg" >
+            <div key={msg.Source} class="slds-notify slds-notify_alert slds-m-bottom_xx-small" role="alert" style="background-color: #c23934;">
+                <lightning-icon size="xx-small" class="slds-m-right_xx-small" icon-name="utility:error" variant="inverse" alternative-text="Error"></lightning-icon> <lightning-formatted-rich-text value={msg.Message}></lightning-formatted-rich-text>
+            </div>
+            <template if:true={showRequiredFieldMsg}>
+                <lightning-layout  key={msg.Source} class="my-text-error slds-m-right_xx-small">
+                    <lightning-layout-item class="slds-m-left_x-small" size="12">
+                        <div class="slds-align_absolute-left" >Required fields are highlighted in red </div>  
+                    </lightning-layout-item>
+                </lightning-layout>
+            </template>
+</template>
+</template>
+<template if:true={showInfoMsg}>
+        <template for:each={infoMsgList} for:item="msg" >
+            <div key={msg.Source} class="slds-scoped-notification slds-media slds-media_responsive slds-scoped-notification_light" role="status">
+				<div class="slds-media__figure">
+					<lightning-icon size="xx-small"  class="slds-m-right_xx-small" icon-name="utility:info" alternative-text="Info"></lightning-icon> 
+				</div>
+				<div class="slds-media__body">
+					<lightning-formatted-rich-text value={msg.Message}></lightning-formatted-rich-text>
+				</div>
+				<div class="slds-media__body">
+					<span> 
+						<template for:each={msg.DynamicValue} for:item="lnk">
+							<a key={lnk.CaseID} data-caseid={lnk.CaseID} title={lnk.CaseComment}  onclick={onOpenLink} > {lnk.CaseNumber} </a>
+						</template>
+					</span>
+				</div>
+            </div>
+        </template>
+    </template>
+    <template if:true={showWarningMsg}>
+        <template for:each={warningMsgList} for:item="msg" >
+            <div  key={msg.Source} class="my-text slds-notify slds-notify_alert slds-m-bottom_xx-small" role="alert" style="background-color: #FFB75D;">
+                <lightning-icon size="xx-small"  class="my-icon slds-m-right_xx-small" icon-name="utility:warning" alternative-text="Warning"></lightning-icon> <lightning-formatted-rich-text value={msg.Message}></lightning-formatted-rich-text>
+                <span>
+                    <button style="width: 38px;height: 23px;" class="slds-button slds-button_neutral slds-button_stretch slds-m-left_x-small" title="Yes" data-msgsrc={msg.Source} onclick={handleConfirmation} >Yes</button>
+                    <button style="width: 38px;height: 23px;" class="slds-button slds-button_neutral slds-button_stretch slds-m-left_x-small" title="No" data-msgsrc={msg.Source} onclick={handleConfirmation} >No</button>
+                </span>
+            </div>
+        </template>
+    </template>
+    <template if:true={successMsg}>
+        <template for:each={successMsgList} for:item="msg" >
+            <div key={msg.Source} class="slds-notify slds-notify_alert slds-theme_success slds-m-bottom_xx-small" role="alert">
+                <lightning-icon size="xx-small"  class="slds-m-right_xx-small" icon-name="utility:success" variant="inverse" alternative-text="Success"></lightning-icon> <lightning-formatted-rich-text value={msg.Message}></lightning-formatted-rich-text>
+                <span> 
+                    <template for:each={msg.DynamicValue} for:item="lnk">
+                        <a key={lnk.CaseID} data-caseid={lnk.CaseID} title={lnk.CaseComment}  onclick={onOpenLink} > {lnk.CaseNumber} </a>
+                    </template>
+                </span>
+            </div>
+        </template>
+    </template>
+    <template if:true={showWarningnoButtonMsg}>
+        <template for:each={showWarningnoButtonMsgList} for:item="msg" >
+            <div  key={msg.Source} class="my-text slds-notify slds-notify_alert slds-m-bottom_xx-small" role="alert" style="background-color: #FFB75D;">
+                <lightning-icon size="xx-small"  class="my-icon slds-m-right_xx-small" icon-name="utility:warning" alternative-text="Warning"></lightning-icon> <lightning-formatted-rich-text value={msg.Message}></lightning-formatted-rich-text>
+            </div>
+        </template>
+    </template>
+    <template if:true={showGuidMsg}>
+        <template for:each={showGuidMsgList} for:item="msg" >
+            <div  key={msg.Source} class="slds-notify slds-notify_alert slds-m-bottom_xx-small" role="alert" style="background-color: #FFB75D;">
+                <lightning-icon size="xx-small"  class="my-icon slds-m-right_xx-small" icon-name="utility:warning" alternative-text="Warning"></lightning-icon> <lightning-formatted-rich-text value={msg.Message} style="color:black;"></lightning-formatted-rich-text>
+            </div>
+        </template>
+    </template>
+</template>

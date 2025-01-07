@@ -1,0 +1,16 @@
+﻿<!--
+LWC Name        : alertIconHum.html
+Function        : LWC to display alert icon with count of alerts.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Jonathan Dickinson             03/31/2023               initial version - REQ 4365030
+****************************************************************************************************************************-->
+<template>
+    <button title="View Alerts" class="buttons" onclick={handleClick}>
+        <lightning-icon icon-name="action:announcement" alternative-text="Alerts" size="x-small"
+                        class={alertsIconClass}></lightning-icon>
+    </button>
+    <div if:true={alertCountdisplay} class="circle">{alertCount}</div>
+</template>

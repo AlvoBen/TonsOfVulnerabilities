@@ -1,0 +1,15 @@
+﻿<!--
+Page Name        : IndividualMedicareSobRedirect_VF_HUM.page
+Version          : 1.0
+Created On       : 06/05/2018
+Function         : VF page to redirect to the Individual medicare'summary of benefits of coverage document
+
+Modification Log: 
+* Developer Name    Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Asish Behera       06/05/2018          REQ - 366095 -Add Individual Medicare Summary of Benefits link to the Member Policy Page (RF)
+****************************************************************************************************************************
+-->
+<apex:page id="IndividualMedicareSobRedirectPage" showHeader="false" sidebar="false" controller="IndividualMedicareSobRedirect_C_HUM"  action="{!updateURLAndLaunch}">
+
+</apex:page>

@@ -1,0 +1,10 @@
+﻿<aura:component>
+    <aura:registerEvent name="rc" type="c:PharmacyRxClaimsSummaryRowClickEvent" />
+    <aura:attribute name="memberGenKey" type="String"></aura:attribute>
+    <aura:attribute name="policyStartDate" type="String"></aura:attribute>
+    <aura:attribute name="policyEndDate" type="String"></aura:attribute>
+    <c:pharmacyRXClaimSummaryLWC memberGenKey="{!v.memberGenKey}" 
+                                 policyStartDate="{!v.policyStartDate}"
+                                 policyEndDate="{!v.policyEndDate}"
+                                 onrowclick="{!c.fireRowClick}" ></c:pharmacyRXClaimSummaryLWC>
+</aura:component>

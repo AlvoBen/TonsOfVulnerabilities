@@ -1,0 +1,14 @@
+﻿<!--*******************************************************************************************************************************
+LWC Name    : caseLoggingDetailTableContainerHum.html. 
+Modification Log: 
+Developer Name             Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Prasuna Pattabhi       07/04/2022                    Original Version
+*********************************************************************************************************************************-->
+<template>
+    <c-case-logging-details-hum if:true={bShowLogAttachments} 
+            record-id={encodedData.recordId} 
+            bread-crumb-items={breadCrumbItems} show-view-all={encodedData.showViewAll} view-all=false
+            case-number={encodedData.caseNumber}>
+    </c-case-logging-details-hum>
+</template>

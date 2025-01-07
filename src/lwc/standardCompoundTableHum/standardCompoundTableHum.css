@@ -1,0 +1,83 @@
+.boldedText {
+    font-weight: bold;
+}
+
+.std-table-buttons-group {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.std-table-buttons-group .slds-col:first-child {
+    width: 100%;
+}
+
+.status-termed{
+    background :red;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    margin-right: .3rem;
+}
+
+.status-active{
+    background :green;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    margin-right: .3rem;
+}
+
+.status-future{
+    background :blue;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    margin-right: .3rem;
+}
+
+.status-pending {
+    background : yellow;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    margin-right: .3rem;
+}
+
+.status-closed {
+    background : black;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    margin-right: .3rem;
+}
+
+.status-cancelled {
+    background : gray;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    margin-right: .3rem;
+}
+
+.cell-status {
+    display: flex;
+    align-items: center;
+    height: 20px;
+}
+.button-s-wrapper{
+    width: 47%;
+}
+.button-s-wrapper:nth-child(odd){
+    margin-left: 3%;
+}
+.button-s-wrapper:nth-child(even){
+    margin-right: 3%;
+}
+.member-icons img {
+    height: 2rem;
+}
+.member-icons c-custom-tooltip-hum {
+    position: absolute;
+    left: .5rem;
+    bottom: .5rem;
+}

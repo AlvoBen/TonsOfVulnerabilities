@@ -1,0 +1,39 @@
+﻿<!--
+/*
+LWC Name        : Go365 Tab Container
+Function        : LWC to display Go365 Tab Container
+
+Modification Log:
+* Developer Name                  Date                         Description
+* Pallavi Shewale				  02/25/2022			       US-2557646 Original Version
+* Swapnali Sonawane			      07/13/2023				   US-4812119
+***************************************************************************************************************************/
+-->
+<template>
+    <div class="slds-grid slds-grid_vertical">
+        <div class="slds-col">
+            <c-generic-component-header iconname="standard:account" iconsize="medium" headerline="Go365"
+                                        subheaderline={memberName}>
+            </c-generic-component-header>
+        </div>
+        <div class="slds-col slds-m-top_medium">
+            <lightning-card style="height: 600px;">
+                <div class="slds-var-p-left_medium slds-var-p-right_medium">
+                    <lightning-tabset>
+                        <lightning-tab label="Go365 Details">
+                            <c-go-365-details-tab></c-go-365-details-tab>
+                        </lightning-tab>
+                        <template if:true={bCommercialMember}>
+                            <lightning-tab label="Go365 Kids Delegation">
+                                <c-go365-kids-deligation-tab b-date={birthDate} ent-id={entId}></c-go365-kids-deligation-tab>
+                            </lightning-tab>
+                            <lightning-tab label="Go365 Kids Delegation History">
+                                <c-go-365-kids-delegate-history-tab b-date={birthDate} ent-id={entId}></c-go-365-kids-delegate-history-tab>
+                            </lightning-tab>
+                        </template>
+                    </lightning-tabset>
+                </div>
+            </lightning-card>
+        </div>
+    </div>
+</template>

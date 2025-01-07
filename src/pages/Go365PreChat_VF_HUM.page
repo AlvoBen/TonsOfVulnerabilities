@@ -1,0 +1,516 @@
+﻿<!--
+Page Name        : Go365PreChat_VF_HUM
+Version          : 1.0 
+Created Date     : 10/24/2016 
+Function         : This page is Go365 pre-chat survey form Which is filled in by user before chat is initiated.
+Modification Log :
+*   Modification ID     Developer               Code Review             Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   1.0                 Shiva Pasumarty                                 10/24/2016           Original       
+*   1.1                 Shiva Pasumarty                                 11/28/2016           Defect 250376.0001
+*   1.2                 Vishal Verma             104368                 06/22/2017           Defect:297657.0001 - InteractionId issue on Go365 chat
+*   1.3                 Vishal Verma             135013                 10/04/2017           REQ - 331699 - Missing Member (Person Account) Tab: CA Ticket 6961688 (Go365 Portal)
+*   1.4                 Vishal Verma             144291                 11/06/2017           REQ - 321230 Unique Identifier for Secondary Chat ID
+*   1.5                 Vishal Verma             155591                 12/08/2017           REQ - 349501 Populate Skill Name in Live Agent Window and Visitor Tab (Go365)
+*   1.6                 Sachin Karale            180049                 02/07/2018           Req - 351182 Used Old API to save fields (URL, Plan Name, Category, Issue).
+*   1.7			        Vandana Chaudhari     	 220488		 	        04/24/2018         	 REQ - 355781 CR788: Web Chat Auto Create Case (CMO CR5548)  
+*   1.8					Sumit Pharande								    05/07/2018			 REQ - 361229 Removed modernizr javascript reference 
+* 	1.9        			Vandana Chaudhari     				 	        07/20/2018         	 REQ - 370601 CA Ticket 7646745 Fix: Web Chat Auto Create Case
+*   1.10                Prafull Verma			 328794	                12/28/2018           REQ - 380424: Web Chat Windows Display Proportionately on Small Glass
+*   1.11                Pradeep Dani 			 350910					04/12/2019			 REQ - 396202 Associating chat key to the case
+*   1.12	            Akshay Pai                                      07/16/2020           REQ - 1292117 IVA NINA - Member Secure chat changes
+* 	1.13            	Joel George                                     07/20/2020           REQ - 1159264 Include Chat Type
+*   1.14              	Lakshmi Madduri                                 3/24/2021            US-1910841 SonarQube Fixes
+*   1.15	            Vishnu Pilli                                 	07/29/2021           MF-22 Accolade Impact Member changes
+*   1.16	            Vishnu Pilli                                 	09/07/2021           MF-22 Accolade Impact Member changes - Added a new Go365 SSO URL
+*   1.17	            Vishnu Pilli                                 	06/20/2022           US3062775 - Go365 Live Agent pre and post chat
+*   1.18              Sivaprakash rajendran                       	07/19/2023           US4871774-Skipping PreChat Survey for GBOChat on MyHumana & Go365
+-------------------------------------------------------------------------------------------------------------------------------->
+<apex:page controller="HUMPreChatController" id="thePage" showheader="false" standardStyleSheets="false" action="{!initVariable}">
+  <!-- Loading CSS files received from digital team for Humana view standards -->
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/styles.css')}"/>
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HumGo365LiveAgentCSS,'/content/dist/css/go365.css')}"/>
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HumGo365SampleCSS,'/c2csample/custom.css')}"/>
+  
+  <!-- Loading jQuery toolkit as per VF standards -->
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+  
+
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
+    <title>{!$Label.HUMPreChat}</title>
+    <style>
+      .box-container {
+        background: #ffffff;
+        box-shadow: 0 3px 4px 2px #d5d5d5;
+        color: #414042;
+        border-top: 2px solid #4E8416;
+        border-radius: 0 0 4px 4px;
+      }
+  
+      .message-container {
+        padding: 1.25rem;
+      }
+  
+      .box-message {
+        font-family: "FS Me Web Regular", Tahoma, Helvetica, Arial, sans-serif;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+      }
+  
+      .accolade-card .dashboard-header-image {
+        padding: 1.25rem;
+      }
+  
+      .accolade-card .dashboard-header-image a img {
+        width: 50%;
+        height: auto;
+      }
+  
+      .box-container .dashboard-box-heading {
+        font-family: "FS Me Web Regular", Tahoma, Helvetica, Arial, sans-serif;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 18px;
+      }
+  
+      .accolade-card .columns.box-header {
+        padding: .625rem 1.25rem;
+      }
+  
+      .module-dashboard-box {
+        font-family: "FS Me Web Light", Tahoma, Helvetica, Arial, sans-serif;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 16px;
+      }
+  
+      .box-item {
+        padding: 0 1.25rem 1.25rem 1.25rem;
+      }
+  
+      .box-container .cta-container {
+        background: #ffffff;
+        box-shadow: 0 3px 4px 2px #d5d5d5;
+        color: #414042;
+        border-top: 1px solid #D5D5D5;
+        border-radius: 0 0 4px 4px;
+      }
+  
+      .accolade-card .cta-container .column.box-item {
+        padding: 1.25rem;
+      }
+  
+      .accolade-card .cta-container .box-cta .links {
+        padding-bottom: .625rem;
+      }
+  
+      a.arrow-link {
+        font-family: "FS Me Web Regular", Tahoma, Helvetica, Arial, sans-serif;
+        font-style: normal;
+        font-weight: normal;
+        color: #aa005f;
+        white-space: nowrap;
+        font-size: 16px;
+        border-bottom: none;
+      }
+    </style>
+  </head>
+
+  <body class="x5">
+    <main>
+      
+      <div class="row">
+          <div class="chat-page-heading">
+            <h1>Go365 Chat</h1>
+          </div>
+      </div>
+      <div class="container" id="preChat">
+        
+        <div class="chat-wrapper">
+          <div class="row">
+            <div id="statusImageHUMPrechat" style="display: Block;">
+                <div id="displayLoadingMsg" class="row" style="display: none;">
+                    <div class="seventeen columns x1-left">
+                        <p class="x1">{!$Label.HUMThankYouMsg_SkipPreChat}</p>
+                    </div>
+                </div>                            
+                <!-- This block will render a spinner image to indicate table loading in the UI -->
+                <div class="loadingSectionStyle" style="padding-left: 40%;">
+                    <img src="/img/loading.gif" />
+                    <span class="waitingDescription"> {!$Label.LOADING_HUM}</span>
+                </div>
+            </div>
+            
+            <form class="go-form x1" id="go365-formvalidation" method="post">
+
+                <div id="prechatform" style="display: none;">
+                  <div id="prechatMessage" class="seventeen columns x1-left">
+                    <p class="x1">{!$Label.Go365_Thank_You_Msg}</p>
+                  </div>
+                  <div class="go-form-group">
+                    <p class="x1">
+                      <div class="" id="errPanelForPlanName">
+                        <label for="PlanNameSelect" class="text-input">
+                          <img alt="Required" class="required-icon" id="planNameRequired" src="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/images/forms/required.png')}"/>
+                          <img alt="error" class="hidden error-icon displayStyle" id="planNameError" src="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/images/forms/error.png')}"/>
+                          {!$ObjectType.LiveChatTranscript.Fields['Category__c'].Label}<br/>
+                          <span class="hidden  field-validation-error displayStyle" id="planNameErrMsg">{!$Label.HUMRequiredErrMsg}</span>
+                        </label>
+                        <apex:actionRegion >
+                          <div class="selector fixedWidth focus">
+                            <span class="userSelectWebKit" id="PlanNameSpan">{!$Label.HUMSelectLabel}</span>
+                            <select id="PlanNameSelect" multiselect="false" name="liveagent.prechat:PlanNameID" onFocus="removeErrorMessage(this);" onchange="onSelectingPlanName(this.options[this.selectedIndex]);" size="1" >
+
+                              <option value="Select">{!$Label.HUMSelectLabel}</option>
+                            </select>
+                          </div>
+                        </apex:actionRegion>
+                      </div>
+                    </p>
+
+                    <p class="x1">
+                      <div class="x0" id="errPanelForCategorySelect">
+                        <label for="CategorySelect" class="text-input">
+                          <img alt="Required" class="" id="categorySelectRequired" src="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/images/forms/required.png')}"/>
+                          <img alt="error" class="hidden error-icon displayStyle" id="categorySelectError" src="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/images/forms/error.png')}"/>
+                          {!$ObjectType.LiveChatTranscript.Fields['Subject__c'].Label}<br/>
+                          <span class="hidden field-validation-error displayStyle" id="categorySelectErrMsg">{!$Label.HUMRequiredErrMsg}</span>
+                        </label>
+                        <div class="selector fixedWidth focus">
+                          <span class="userSelectWebKit" id="categorySelectSpan">{!$Label.HUMSelectLabel}</span>
+                          <select id="CategorySelect" onFocus="removeErrorMessage(this);" onchange="fnHandleCategoryChange(this.options[this.selectedIndex]);" size="1" multiselect="false" >
+                            <option value="1">{!$Label.HUMSelectLabel}</option>
+                          </select>
+                        </div>
+                      </div>
+                      <span class="field-validation-valid" data-valmsg-for="TextLabel" data-valmsg-replace="true"></span>
+                    </p>
+                  </div>
+                  <div id="chatAvailable">
+                    <div class="go-form-group">
+                      <p class="">
+                        <label for="Textarea" class="text-input">
+                          {!$Label.HUMIssueLabel}
+                        </label>
+
+                        <textarea class="go-form-input" cols="5" id="issue" name="liveagent.prechat:Issue" onfocus="removeErrorMessage(this);" onkeyup="textLimit(this,200);" rows="7"/>
+
+                        <span class="field-validation-valid" data-valmsg-for="Textarea" data-valmsg-replace="true"></span>
+                        <span class="hidden error-icon left p1-right">
+                          <img src="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/images/forms/error.png')}" alt="error" />
+                        </span>
+                      </p>
+                    </div>
+                    <p>
+                      {!$Label.HUMTermsOfUse1} <a href="#" onclick="fnGoToTermsOfUse();" class="go-default-link">{!$Label.HUMTermsOfUse2}</a>
+                    </p>
+                    <br/>
+                    <br/>
+                    <button type="submit" onclick="return createSubmitURL();" class="go-strong-button">
+                      <span>{!$Label.HUMStartChat}</span>
+                    </button>
+
+                    <a href="javascript:postMessageAndClose();" class="go-primary-button">
+                      <span>{!$Label.HUMCancel}</span>
+                    </a>
+                  </div>
+              </div>
+              <!-- MF-22 Accolade Chat -->
+              <div id="acclImpactTile" class="row" style="display: none;">
+                                
+                <div class="row message-container">
+                    <div class="box-content row module-dashboard-box">
+                        <div class="small-12"><apex:outputText value="{!mapAccoladeSettings['SSO_Message']}" escape="false" /></div>
+                    </div>
+                </div>
+        
+                <div class="row box-container accolade-card">
+                    <div class="row dashboard-header-image" style="padding: 1.25rem;">
+                        <a href="#">
+                            <apex:image url="{!URLFOR($Resource.HUMLiveAgentCSS,'/library/images/logos/AccoladeLogo.png')}" alt="Accolade Logo" width="210" height="53" />
+                        </a>
+                    </div>
+                    <div class="dashboard-box-heading row">
+                        <div class="small-12 columns box-header">
+                            <span class="box-label">Personalized help with Accolade</span>
+                        </div>
+                    </div>
+                    <div class="box-content row module-dashboard-box">
+                        <div class="small-12 box-item ">{!mapAccoladeSettings['Tile_Message']}</div>
+                    </div>
+                
+                    <div class="accolade-data cta-container row box-content">
+                        <div class="box-cta small-12 box-item column">
+                            <div class="row links">
+                                <!-- <a id="acclSSOLink" href="{! mapAccoladeSettings['SSO_URL_GO365']}" class="arrow-link small-12" 
+									target="_blank" rel="noopener noreferrer" onclick="window.close()">Connect with your Health Assistant </a> -->
+                                <a id="go365ssoLink" href="#" class="arrow-link small-12" 
+                                      onclick="document.getElementById('go365Form').submit(); window.close()">Connect with your Health Assistant</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div id="acclNonSSO" class="row" style="display: none;">
+                <div class="small-12 columns x2">
+                    <div class="row message-container">
+                        <div class="box-content row module-dashboard-box">
+                            <div class="small-12"><apex:outputText value="{!mapAccoladeSettings['Non_SSO_Message']}" escape="false" /></div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+              <!-- MF-22 Accolade Chat -->
+              <input name="liveagent.prechat:Plan Name" type="hidden" value="" id="PlanNameLabel" />
+              <input name="liveagent.prechat.save:Plan Name" type="hidden" value="Category__c"/>  
+              <input name="liveagent.prechat:Category" type="hidden" value="CategoryValue" id="CategoryValue" />
+              <input name="liveagent.prechat.save:Category" type="hidden" value="Subject__c"/>
+              <input name="liveagent.prechat.save:Issue" type="hidden" value="Issue__c"/>   
+              <input name="liveagent.prechat:URL" id="testURI" type="hidden" value=""/>
+              <input name="liveagent.prechat.save:URL" type="hidden" value="URL__c"/>
+              <input name="liveagent.prechat:AccountId" id="accountid" type="hidden" value=""/>			  
+              <input name="liveagent.prechat:InteractionId" id="interactionid" type="hidden" value=""/>
+              <input name="liveagent.prechat:InteractionName" id="interactionname" type="hidden" value=""/>
+              <input name="liveagent.prechat:SecChatID" id="secchatid" type="hidden" value=""/>
+              <input name="liveagent.prechat.findorcreate.map:Account" type="hidden" value="Id,AccountId"/>			 
+              <input name="liveagent.prechat.findorcreate.saveToTranscript:Account" type="hidden" value="Account"/>			  
+              <input name="liveagent.prechat.findorcreate.map.doFind:Account" type="hidden" value="Id,true"/>
+              <input name="liveagent.prechat:customAccountId" type="hidden" id="customAccountId" value=""/>			  
+              <input name="liveagent.prechat.save:customAccountId" type="hidden" value="AccountId__C"/>
+              <input name="liveagent.prechat.findorcreate.map:Interaction__c" type="hidden" value="Id,InteractionId"/>
+              <input name="liveagent.prechat.findorcreate.saveToTranscript:Interaction__c" type="hidden" value="Interaction__c"/>
+              <input name="liveagent.prechat.findorcreate.map.doFind:Interaction__c" type="hidden" value="Id,true"/>
+              <input name="liveagent.prechat.findorcreate.map:LiveChatTranscript" type="hidden" value="Secondary_Chat_ID__c,SecChatID"/>
+              <input name="liveagent.prechat.findorcreate.map.doFind:LiveChatTranscript" type="hidden" value="Secondary_Chat_ID__c,true"/>
+              <input name="liveagent.prechat.save:SecChatID" type="hidden" value="Secondary_Chat_ID__c"/> 
+              <input name="liveagent.prechat:MemberGenKey" id="MemberGenKey" type="hidden" value =""/>
+              <input name="liveagent.prechat:sLSessionID" id="sLSessionID"  type="hidden" value=""/>
+              <input name="liveagent.prechat:deployment_id" id="depId" type="hidden" value="{!sWebChatVarMap['DeploymentID'].value__c}"/>
+              <input name="liveagent.prechat:org_id" id="comId" type="hidden" value="{!sWebChatVarMap['CompanyID'].value__c}"/>
+              <input name="liveagent.prechat.findorcreate.displayToAgent:sLSessionID" type= "hidden" value= "false" />
+              <input name="liveagent.prechat.findorcreate.displayToAgent:MemberGenKey" type= "hidden" value= "false" />
+              <input name="liveagent.prechat.findorcreate.displayToAgent:AccountId" type= "hidden" value= "false" />
+              <input name="liveagent.prechat.findorcreate.displayToAgent:InteractionId" type= "hidden" value= "false" />
+              <input name="liveagent.prechat.findorcreate.displayToAgent:customAccountId" type= "hidden" value= "false" />
+              <input name="liveagent.prechat.findorcreate.displayToAgent:PlanNameID" type= "hidden" value= "false" />
+              <input name="liveagent.prechat:SelBtnId" type="hidden" id="SelButttonID" value=""/>
+              <input name="liveagent.prechat.findorcreate.displayToAgent:SelBtnId" type= "hidden" value= "false" />
+              <input name="liveagent.prechat.findorcreate.displayToAgent:SecChatID" type= "hidden" value= "false" />
+              <input name="liveagent.prechat.findorcreate.displayToAgent:deployment_id" type= "hidden" value= "false" />
+              <input name="liveagent.prechat.findorcreate.displayToAgent:org_id" type= "hidden" value= "false" />
+              <input id="dummy" name="dummy" type="hidden"/>
+              <input id="intMemberId"  type="hidden" value=""/>
+              <input name="liveagent.prechat:Skill Name" type="hidden" value="" id="SkillNameLabel" />
+			 
+            <input type="hidden" name="liveagent.prechat:Case Origin" id="caseOrigin" /> 
+            <input type="hidden" name="liveagent.prechat:Case Type" id="caseType" />
+            <input type="hidden" name="liveagent.prechat:InteractingWithType" id="interactingWithType" />
+			<input type="hidden" name="liveagent.prechat.findorcreate.map:Case" value="ChatKey__c,SecChatID;Origin,Case Origin;Interacting_With__c,AccountId;AccountId,AccountId;Interacting_With_Type__c,InteractingWithType;Interacting_About_Type__c,InteractingWithType;Type,Case Type" />
+			<input type="hidden" name="liveagent.prechat.findorcreate.map.doCreate:Case" value="ChatKey__c,true;Origin,true;Interacting_With__c,true;AccountId,true;Interacting_With_Type__c,true;Interacting_About_Type__c,true;Type,true" />
+			<input type="hidden" name="liveagent.prechat.findorcreate.saveToTranscript:Case" value="Case" />
+			<input type="hidden" name="liveagent.prechat.findorcreate.showOnCreate:Case" value="true" /> 
+            <input name="liveagent.prechat:ChatType" type="hidden" value="{!sChatTypeGo365}" id="ChatTypeValue" />
+            <input name="liveagent.prechat.save:ChatType" type="hidden" value="Chat_Type__c"/> 
+
+            <!-- MF-22 Accolade Chat: Added the following hidden variables -->
+            <input name="liveagent.prechat:VendorIdentifier" type="hidden" value="" id="VendorIdentifier" />
+            <input name="liveagent.prechat:VendorBenefitCode" type="hidden" value="" id="VendorBenefitCode" />
+			  <div class="row" id="chatUnav">
+                <p class="x1">
+                  {!$Label.HUMNoAgentAvailable}
+                </p>
+                <p class="x1">
+                  {!$Label.HUMAssistance1}
+                  <a class="go-default-link" href="#ContactUsLink">{!$Label.HUMContactCenter}</a>
+                  {!$Label.HUMAssistance2}
+                </p>
+                <br/>
+              </div>
+            </form>
+            <form id="go365Form" method="post" action="{! mapAccoladeSettings['SSO_URL_GO365']}" target="_blank">
+                <input id="partnerID" name="partnerID" type="hidden" value="AccoladeHum" />
+                <input id="customer" name="customer" type="hidden" value="HUM" />
+                <input id="customIdentifierKey" name="customIdentifierKey" type="hidden" value="memberId" />
+                <input id="sessionID" name="sessionID" type="hidden" />
+                <input id="customIdentifierValue" name="customIdentifierValue" type="hidden" />
+            </form>
+
+          </div>
+        </div>
+      </div>
+      <div class="row" id="memberNotFound">
+        <div class="thirteen columns x1-left">
+            <div class="row">
+                <div style="margin-right: 10px;">
+                <h4 style="color: black!IMPORTANT;">{!$Label.HUMMemberNotFound}</h4>
+                    <p class="x1"><span>{!$Label.HUMMemberNotFound1}</span>
+                    <a target="_blank" href="{!HTMLENCODE(sWebChatVarMap['ContactUsLink'].value__c)}">{!$Label.HUMContactCenter}</a>
+                    <span>{!$Label.HUMMemberNotFound2}</span></p>
+                    
+                    <br/>
+                    <span class="link-tertiary" onclick="javascript:window.close();">{!$Label.HPCloseWindow}</span>
+                </div>                                    
+            </div>
+        </div>
+    </div>
+    <div class="row" id="chatButtonNotFound">
+        <div class="thirteen columns x1-left">
+            <div class="row">
+                <div style="margin-right: 10px;">
+                <h4 style="color: black!IMPORTANT;">{!$Label.HUMChatButtonNotFound}</h4>
+                    <p class="x1"><span>{!$Label.HUMChatButtonNotFound1}</span>
+                    <a target="_blank" href="{!sWebChatVarMap['ContactUsLink'].value__c}">{!$Label.HUMContactCenter}</a>
+                    <span>{!$Label.HUMMemberNotFound2}</span></p>
+                    
+                    <br/>
+                    <span class="link-tertiary" onclick="javascript:window.close();">{!$Label.HPCloseWindow}</span>
+                </div>                                    
+            </div>
+        </div>
+    </div>
+      <div class="row" id="termsOfUse">
+        <div class="container" id="preChat">
+          <div class="chat-page-heading">
+            <h1>{!$Label.CHATLABEL_GO365_HUM}</h1>
+          </div>
+          <div class="thirteen columns x1-left">
+
+            <div class="row">
+              <ul class="go-list">
+                <li>
+                  <a class="go-default-link" href="{!$Label.TERMSPRVCYLINK_GO365_HUM}" target="_blank">{!$Label.HUMClickHere}</a>
+                  {!$Label.TERMSPRVCY_GO365_HUM}
+                </li>
+                <li>
+                  <a class="go-default-link" href="{!$Label.LINKPRVCYPRCTCE_GO365_HUM}" target="_blank">{!$Label.HUMClickHere}</a>
+                  {!$Label.TERMSTATEMENT_GO365_HUM}.
+                </li>
+                <li>{!$Label.TERMS3_GO365_HUM}</li>
+                <li>{!$Label.TERMS4_GO365_HUM}</li>
+                <li>{!$Label.TERMS5_GO365_HUM}</li>
+              </ul>
+            </div>
+            <div class="row x1">
+              <div class="eighteen columns">
+                <button type="button" onclick="fnGoBackToPreChat();" class="go-strong-button">
+                  <span>{!$Label.HUMBack}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+  <apex:includeScript value="{!URLFOR(sWebChatVarMap['DeploymentJS'].value__c)}"/>
+  <apex:includeScript value="{!URLFOR(sWebChatVarMap['PreChatJS'].value__c)}"/>
+  <apex:includeScript value="{!URLFOR($Resource.Go365LiveAgentCSS,'/library/HUMPreChat.js')}"/>
+  <script type="text/javascript">
+      /*
+          GBO Watson: Adding post message to help GBO Watson team to close the window
+      */
+      function postMessageAndClose() {
+          window.parent.postMessage('Close Window', '*');
+          setTimeout(function(){ window.close(); }, 1000);
+      }   //  end of postMessageAndClose
+
+    /*
+        MF-22: Accolade chat 
+            Added the following variables
+    */
+    var vendorId='';
+    var vendorCode='';
+    var memberIdBase='';
+    var dependentCode='';
+    var acclVendorIdentifier = '{! mapAccoladeSettings["Vendor_Identifier"]}';
+    var acclBenefitCode = '{! mapAccoladeSettings["Vendor_Benefit_Code"]}';
+    let accClassification = '{! mapAccoladeSettings["Classification"]}';
+    if(accClassification){
+        accClassification = JSON.parse(accClassification);
+    }
+
+    //Code related to Contact Us Link.
+    jQuery(document).ready(function(){
+    jQuery('a[href="#ContactUsLink"]').click(function(){
+    window.open('{!JSENCODE(sWebChatVarMap['Go365ContactUsLink'].value__c)}');
+    self.close();
+    });
+    });
+    //Code related to Code Metrics.
+    var src = "{!JSENCODE(sWebChatVarMap['CodeMetricsJS'].value__c)}";
+    if (window.location.host.substring(0, 2) == "qa")
+    {
+    src = "{!JSENCODE(sWebChatVarMap['CodeMetricsQaJS'].value__c)}";
+    }
+    else if (window.location.host.substring(0, 4) == "test")
+    {
+    src = "{!JSENCODE(sWebChatVarMap['CodeMetricsTestJS'].value__c)}";
+    }
+    document.write('<script src="' + src + '" type="text/javascript"><' + '/script>');
+
+      //default actions to hide error blocks & terms of use blocks
+      jQuery('#chatUnav').hide();
+      jQuery('#chatAvailable').show();
+      jQuery('#termsOfUse').hide();
+      jQuery('#memberNotFound').hide();
+      jQuery('#chatButtonNotFound').hide();
+  
+      var btnHashMap = JSON.parse('{!btnMapJson}');
+      var oBtnCallback = new Object();
+      var oBtnCallbackIdMap = new Map();
+
+      //global Dom elements to be used in the functionlity in JS resource
+      var sSecChatID = document.getElementById('secchatid');
+      var sSecondry_Chat_Id = '{!sSecondary_Chat_Id}';
+      document.getElementById('secchatid').value = sSecondry_Chat_Id ;
+      var sSelbtnId = document.getElementById('SelButttonID');
+      var sIssue = document.getElementById('issue');
+      var sCategorySelectSpan = document.getElementById("categorySelectSpan");
+      var sCategoryValue = document.getElementById("CategoryValue");
+      var sPlanNameSpan = document.getElementById("PlanNameSpan");
+      var sMemberGenKeyEle = document.getElementById("MemberGenKey");
+      var sLSessionIDEle = document.getElementById("sLSessionID");
+      var sDummy = document.getElementById('dummy');
+      var sUr = document.getElementById("testURI");
+      var sAccountId = document.getElementById('accountid');
+	  var sIntId = document.getElementById('interactionid');
+      var sInteractionName = document.getElementById('interactionname');
+      var sIntMemberId = document.getElementById('intMemberId');
+      var sTheForm = document.forms["go365-formvalidation"];
+      var stheFormToSubmit = document.getElementById("go365-formvalidation");
+      var sPlanNameLabel = document.getElementById('PlanNameLabel');
+      var sCustomAccountId = document.getElementById('customAccountId');
+      var sPlanName = document.getElementById("PlanNameSelect");
+      var sCategorySelect = document.getElementById("CategorySelect");
+      var sRemotingTarget = '{!$RemoteAction.HUMPreChatController.findAccountByPersonId}';
+      var sRemotingTargetOnLoadDecrypt = '{!$RemoteAction.HUMPreChatController.decryptUserIdentifiers}';
+      var sRemotingTargetOnLoadDecryptExt = '{!$RemoteAction.HUMPreChatController.decryptClientUserData}'; //  MF-22 Added as part of Accolade Impact
+      var sRemotingPreChatLogging = '{!$RemoteAction.HUMPreChatController.logPreChatVariables}';
+      var sSkillNameLabel = document.getElementById('SkillNameLabel');
+	  var sInteractingWithType = document.getElementById('interactingWithType');
+      var sCaseOrigin = document.getElementById('caseOrigin'); 
+      var sCaseType = document.getElementById('caseType');
+       var sEnableIntLogging = "{!sWebChatVarMap['LogPreChat'].value__c}";
+       var btnSkillHashMap = JSON.parse('{!btnSkillMapJson}');
+      /**
+      As Live Agent API Does not work when we include it in the Static resource, hence
+      we have kept the live agent and event firing related code on the page.
+      Rest event handlers and remoting methods are moved in static resource.
+      */
+      //liveagent preChatInit initialization
+      liveagent.details.preChatInit("{!JSENCODE(sWebChatVarMap['LiveChatURL'].value__c)}", 'detcall');
+
+      //dynamically setting callbacks for agent availability using javascript function method.
+      for (var key in btnHashMap)
+      {
+      oBtnCallback['callback_' + btnHashMap[key].Id.substring(0,15)] = new Function("return function " + "callback_" + btnHashMap[key].Id.substring(0,15) + "(arg1){var bId = arguments.callee.toString().match(/_([^\(]+)/)[1]; oBtnCallbackIdMap.set(bId, arg1);}")();
+      liveagent.showWhenOnline(btnHashMap[key].Id.substring(0,15),sDummy);
+      liveagent.addButtonEventHandler(btnHashMap[key].Id.substring(0,15), oBtnCallback['callback_' + btnHashMap[key].Id.substring(0,15)] );
+      }
+
+      //liveagent initialization
+      liveagent.init("{!JSENCODE(sWebChatVarMap['LiveChatURL'].value__c)}","{!JSENCODE(sWebChatVarMap['DeploymentID'].value__c)}","{!JSENCODE(sWebChatVarMap['CompanyID'].value__c)}", false, true);
+    </script>
+  </apex:page>

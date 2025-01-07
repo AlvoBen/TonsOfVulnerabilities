@@ -1,0 +1,31 @@
+﻿<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 09-12-2022
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <div>
+        <h3 class="slds-section__title slds-text-heading_small slds-box" style="background-color: #f5f1f3;">
+            <span>Task Information</span>
+        </h3>
+
+        <lightning-input class="Taskcheckbox" checked={isCreateTask} type="checkbox" label="Create Task" onchange={handleChange} disabled={isdisabled}></lightning-input>
+        <template if:true={isCreateTask}>
+           <lightning-combobox class="slds-m-bottom_x-small"
+            name="TaskType"
+            label="Task Type"
+            options={taskTypeOptions}
+            value={TaskTypeSelected}
+            required ="true"
+            onchange={handleOnChange} data-id="taskType" disabled={isdisabled}
+            ></lightning-combobox>
+            <lightning-input type="date" label="Due Date" onchange={handleOnChange} placeholder="Select date" value={sDueDate}  data-id="dueDate" date-style="short" min={today} disabled={isdisabled}>
+            </lightning-input>
+            <lightning-textarea placeholder="Enter Task Comment." label="Task Comment" value={sTaskComment} onchange={handleOnChange} data-id="comment" disabled={isdisabled}></lightning-textarea> 
+        </template>
+
+</div>
+
+</template>

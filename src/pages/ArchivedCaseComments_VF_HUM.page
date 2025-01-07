@@ -1,0 +1,39 @@
+﻿<!--
+Page Name        : ArchivedCaseComments_VF_HUM.page
+Version          : 1.0 
+Created Date     : 09/10/2022 
+Function         : VF page for archived case comments in Classic
+Modification Log :
+*  Developer          Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+Kajal/Ashish                           09/10/2022             Original version
+-------------------------------------------------------------------------------------------------------------------------------->
+<apex:page >
+    <!-- This is used to include the JS files that makes embedding a Lightning App in  VF page possible -->
+    <apex:includeLightning />
+    <apex:includeScript value="/support/console/35.0/integration.js" /> 
+
+        <!-- This is where the component gets embeded -->
+    <div id="lightning" />
+
+    <script>
+        
+    let caseDetailData = '{!$CurrentPage.parameters.Params}';
+    let parseedData =  JSON.parse(caseDetailData);
+                //1. Specify the Lightning App
+        $Lightning.use("c:CaseDetailCommentApp", function () {
+            $Lightning.createComponent("c:archivedCaseCommentsTableHum",
+                {
+                    recordId : parseedData.recordId,
+                    isClassic:true,
+                    noOfRecordsTofetch : parseedData.noOfRecordsTofetch,
+                    viewAllComments:true
+                },
+                "lightning",
+                function (cmp) {
+                }
+            );
+        });
+     
+    </script>
+</apex:page>

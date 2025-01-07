@@ -1,0 +1,75 @@
+﻿<!--
+Modification Log:
+* Developer Name                       	Date                        Description
+* Nirmal Garg                   		04/04/2022                  Initial Version
+* Abhishek Mangutkar					05/13/2022					US-3312839
+* Divya Bhamre                          07/28/2022                  US- 3581984
+* Jonathan Dickinson			        08/15/2022		            US-3699864
+* Divya Bhamre                          01/20/2023                  US - 4119977
+* Nirmal garg                           01/31/2023                  DF-7089
+*------------------------------------------------------------------------------------------------------------------------------
+-->
+<template>
+    <div class="slds-page-header slds-page-header_record-home">
+        <div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                    <div class="slds-media__figure">
+                        <lightning-icon icon-name={iconname} size={iconsize}></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h1>
+                                    <span>{headerline}</span>
+                                    <span class="slds-page-header__title slds-truncate"
+                                          title={subheaderline}>{subheaderline}</span>
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-page-header__col-actions">
+                <div class="slds-page-header__controls">
+                    <div class="slds-page-header__control">
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-grid slds-grid_align-end ">
+                <template if:true={showAlert}>
+                    <div class="slds-col">
+                        <c-generic-alerts-view-hum record-id={memberId} member-plan-record-id={recordid}
+                                                   other-page-name={otherPageName}></c-generic-alerts-view-hum>
+                    </div>
+                </template>
+
+                <template if:true={showloggingicon}>
+                    <div class="slds-col slds-m-left_x-small">
+                        <c-lightning-logging-component-hum record-id={recordid} auto-logging={autoLogging} type={type}
+                                                           subtype={subtype} attachmentkey={attachmentkey}
+                                                           attachmentdescription={attachmentdescription}>
+                        </c-lightning-logging-component-hum>
+                    </div>
+                </template>
+            </div>
+
+        </div>
+        <template if:true={headerfields}>
+            <div class="slds-page-header__row slds-page-header__row_gutters">
+                <div class="slds-page-header__col-details">
+                    <ul class="slds-page-header__detail-row">
+                        <template for:each={headerfields} for:item="item">
+                            <li class="slds-page-header__detail-block" key={item.label}>
+                                <div class="slds-text-title slds-wrap" title={item.label}>{item.label}</div>
+                                <div class="slds-wrap" title={item.value} style={item.style}>{item.value}</div>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>

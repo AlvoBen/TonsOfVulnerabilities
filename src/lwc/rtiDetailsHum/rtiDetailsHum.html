@@ -1,0 +1,173 @@
+﻿<!--
+LWC Name        : rtiDetailsHum
+Function        : LWC Component to display RTI Detail Section
+
+Modification Log:
+* Developer Name                  Date                          Description
+*------------------------------------------------------------------------------------------------------------------------------
+Jonathan Dickinson               07/14/2022                     REQ- 3317212
+Nirmal Garg                      07/14/2022                     REQ- 3317212
+Swapnali Sonawane                07/14/2022                     REQ- 3406771
+Aishwarya Pawar                  07/14/2022                     REQ- 3415268 and REQ-3318229
+Abhishek Mangutkar               10/12/2022                     US-3837985 RTI - attach to case upon resend  functionality
+Jonathan Dickinson               12/23/2022                     REQ- 4080910
+Divya Bhamre                      2/17/2022                      US - 4286513
+*****************************************************************************************************************************-->
+<template>
+    <section aria-describedby="dialog-body-id-113" aria-labelledby="dialog-heading-id-118"
+             class="slds-popover slds-popover_prompt_top-right" style={getStyle} role="dialog">
+        <div class="panel" style={displayStyle}>
+            <div class="slds-grid slds-utility-panel__header">
+                <div class="slds-col slds-size_1-of-2">
+                    <h2 class="slds-text-heading_small" id="dialog-heading-id-118">RTI (Communications)</h2>
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-clearfix">
+                    <div class="slds-float_right">
+                        <lightning-button-icon class="slds-m-left_x-small" icon-name="utility:close" variant="bare"
+                                               alternative-text="Close" title="Close" onclick={handleClose}></lightning-button-icon>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-popover__body slds-is-relative" id="dialog-body-id-113">
+                <div class="slds-media">
+                    <div class="slds-media__body">
+                        <div class="slds-p-around_medium">
+                            <div>
+                                <template if:false={loaded}>
+                                    <lightning-spinner variant="brand"></lightning-spinner>
+                                </template>
+                                <p class="slds-text-heading_small">Information</p>
+                                <div class="slds-grid slds-gutters slds-m-top_x-small">
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <lightning-combobox name="direction" label="Direction"
+                                                            options={directionOptions} value={selDirection} onchange={handleInputChange}
+                                                            data-field="direction">
+                                        </lightning-combobox>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <c-generic-date-selector dlabel="Start Date" dkeyname="startDate" dvalue=''
+                                                                 dminvalue={startMin} dmaxvalue={startMax} onsenddatedata={handleDateSent}
+                                                                 oninputchange={handleInputChange} data-field="startDate">
+                                        </c-generic-date-selector>
+                                    </div>
+                                </div>
+                                <div class="slds-grid slds-gutters slds-m-top_x-small">
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <lightning-combobox name="channel" label="Channel" options={channelOptions}
+                                                            value={selChannel} onchange={handleInputChange} placeholder="All"
+                                                            data-field="channel">
+                                        </lightning-combobox>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <c-generic-date-selector dlabel="End Date" dkeyname="endDate" dvalue=''
+                                                                 dminvalue={endMin} dmaxvalue={endMax} onsenddatedata={handleDateSent}
+                                                                 oninputchange={handleInputChange} data-field="endDate">
+                                        </c-generic-date-selector>
+                                    </div>
+                                </div>
+                                <div class="slds-grid slds-gutters slds-m-top_x-small">
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <template if:true={displayCategory}>
+                                            <lightning-combobox name="category" label="Category"
+                                                                options={categoryOptions} value={selCategory}
+                                                                onchange={handleInputChange} placeholder="All" data-field="category">
+                                            </lightning-combobox>
+                                        </template>
+                                        <template if:true={displayInteractingWith}>
+                                            <lightning-combobox name="interactingWith" label="Interacting With"
+                                                                options={interactingWithOptions} value={selCategory}
+                                                                onchange={handleInputChange} placeholder="All"
+                                                                data-field="interactingWith">
+                                            </lightning-combobox>
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="slds-clearfix">
+                                    <div class="slds-m-top_xx-small slds-float_right">
+                                        <lightning-button variant="brand-outline" label="Clear" onclick={handleReset}
+                                                          class="slds-m-left_x-small" disabled={isResetDisabled}>
+                                        </lightning-button>
+                                        <lightning-button variant="brand" label="Search" onclick={handleSearch}
+                                                          class="slds-m-left_x-small" disabled={isSearchDisabled}>
+                                        </lightning-button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="slds-m-top_small slds-m-bottom_large rti-border-bottom"></div>
+                            <template if:false={searching}>
+							  <template if:false={serviceError}>
+                                <template if:true={showResults}>
+                                    <div class="slds-grid slds-grid_align-spread">
+                                        <div class="slds-col">
+                                            <p class="slds-text-heading_small">Results</p>
+                                        </div>
+                                        <div class="slds-col">
+                                            <div class="slds-grid slds-grid_align-end slds-gutters">
+
+                                                <div class="slds-col">
+                                                    <p class="slds-float_right">Sort: {sortDirection}</p>
+                                                </div>
+                                                <div class="slds-col">
+                                                    <lightning-icon class="slds-float_right" icon-name={sortIconName}
+                                                        size="x-small" style="cursor:pointer;" onclick={handleSort}>
+                                                    </lightning-icon>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="slds-scrollable_y" style={popoverInnerDivStyle}>
+
+                                        <p class="slds-text-body_small slds-p-top_medium">{numItemsString}</p>
+
+                                        <template if:true={rtiTimelineData}>
+                                            <div class="full-container">
+                                                <ul class="slds-timeline">
+                                                    <template if:true={rtiTimelineData}>
+                                                        <c-generic-history-timeline-hum historytimelinedata={rtiTimelineData}
+                                                                                        onviewresendbuttonclick={handlecommnunication}
+                                                                                        onexistingcase={handleExistingCase}
+                                                                                        onattachnew={handleAttachNew}
+                                                                                        onexpandclick={handleExpandClicks}
+                                                                                        expandevent={fireExpandEvent}>
+                                                        </c-generic-history-timeline-hum>
+                                                    </template>
+                                                </ul>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                                <template if:false={showResults}>
+                                           <c-generic-illustration-component-hum type="nodata" message="No records to display">
+                                    </c-generic-illustration-component-hum> 
+                                    </template>
+								</template>
+								 <template if:true={serviceError}>
+                                    <div class="slds-scrollable_y" style={popoverInnerDivStyle}>
+                                      <c-generic-service-error-hum error-message={labels.serviceerrormessage}></c-generic-service-error-hum>
+                                   </div>
+                                </template>
+
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div data-id="divResendBox" class="slds-hide">
+          <c-generic-print-resend-hum item={rtiResendViewItem} viewlink={viewURL} rec-id ={recordId}
+                                        oncancelclickselect={handleCancelClickSelect}></c-generic-print-resend-hum>
+        </div>
+		<div data-id="divPrintExistingCasePopover" class="slds-hide">
+                <c-rti-existing-case-attach-popover-hum oncloseexistingcase={handlePrintCloseExistingCasePopover}
+                                                        record-id={recordId} called-from ='PrintAttachCase' onattachexisting={handlePrintAttachExisting}></c-rti-existing-case-attach-popover-hum>
+        </div>
+        <template if:true={showExistingCasePopover}>
+            <!-- attach-to={attachTo} -->
+            <c-rti-existing-case-attach-popover-hum oncloseexistingcase={handleCloseExistingCasePopover}
+                                                    record-id={recordId} onattachexisting={handleAttachExisting}></c-rti-existing-case-attach-popover-hum>
+        </template>
+    </section>
+</template>

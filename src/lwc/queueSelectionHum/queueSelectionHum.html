@@ -1,0 +1,45 @@
+﻿<template>
+    <lightning-card title="Queue Selection">
+        <lightning-layout multiple-rows >
+            <lightning-layout-item size="12" padding="around-small">
+                <lightning-record-edit-form record-id={userId} object-api-name="User" >
+                    <lightning-messages></lightning-messages>
+                    <template if:true={showNoQError}>
+                         <div  class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_xx-small" role="alert">
+                            <lightning-icon size="xx-small" class="slds-m-right_xx-small" icon-name="utility:error" variant="inverse" alternative-text="Error"></lightning-icon> 
+                            <lightning-formatted-rich-text value='No Queue is selected'></lightning-formatted-rich-text>
+                        </div>
+                    </template>
+                    <template for:each={fieldList} for:item="field">
+                        <div key={field} class="slds-grid" if:false={showEditField}>
+                            <div class="slds-col slds-size_11-of-12">
+                                <span class="slds-form-element slds-form-element_stacked" >
+                                    <span class="slds-form-element__label">Current Queue</span>
+                                    <div class="slds-form-element__control">
+                                        {currentQueue}
+                                    </div>
+                                </span>
+                            </div>
+                            <div class="slds-col slds-size_1-of-12">
+                                <lightning-button-icon icon-name="utility:edit" onclick={handleEdit}>
+                                </lightning-button-icon>
+                            </div>
+                        </div>
+                        <div key={field} class="slds-grid" if:true={showEditField}>
+                            <div class="slds-col slds-size_1-of-1">
+                                <lightning-combobox
+                                name="Select Work Queue"
+                                label="Select Work Queue"
+                                value={currentQueue}
+                                placeholder="Select Queue"
+                                options={queueList}
+                                onchange={handleChange} 
+                                ></lightning-combobox>
+                            </div>
+                        </div>
+                    </template>
+                </lightning-record-edit-form>
+            </lightning-layout-item>
+        </lightning-layout>
+    </lightning-card> 
+</template>

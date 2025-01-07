@@ -1,0 +1,34 @@
+﻿<!--
+Component Name   : InquiryNotes_CMP_HUM.component
+Version          : 1.0
+Created On       : 08/31/2020 
+Function         : VF Component to display Inquiry Notes
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*----------------------------------------------------------------------------------------------------------------------------
+* Sayali Nemade 							          09/05/2020 				 REQ - 1318083 MF 3 - Archived CCP Inquiry Detail Page - High Level (Overall Look)
+****************************************************************************************************************************
+-->
+<apex:component id="compInquiryNotesID" controller="InquiryDetails_C_HUM">
+<apex:includescript value="{!URLFOR($Resource.InquiryNotes_SR_HUM,'InquiryNotesJS.js')}"/> 
+    
+    <!--Table For Inquiry Notes-->
+    <apex:pageBlock mode="maindetail" id="pgBlockId">
+        <apex:pageblockSection title="Inquiry Notes" id="pbsNotes" columns="1" >
+            <div class="col-xs-12 " >
+                <div class="table-responsive" id="tableId">
+                    <table id="inquiryNotesTableId" class="table table-striped table-bordered width100 enable_logging" cellspacing="0" style = "width: 100%; font-size : 12px">
+                        <caption style="display:none">Inquiry Notes</caption>
+                            <thead>
+                                <tr>
+                                    <th title = "Type">Type</th>
+                                    <th title = "Notes">Notes</th>
+                                </tr>
+                            </thead>
+                    </table>
+                </div>
+            </div>
+       </apex:pageblockSection>
+   </apex:pageBlock>
+</apex:component>

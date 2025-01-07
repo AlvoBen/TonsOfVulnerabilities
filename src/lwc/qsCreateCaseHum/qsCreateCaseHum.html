@@ -1,0 +1,31 @@
+﻿<template>
+    <div style="margin-bottom: 0px;padding-top: 0.3px">
+        <header>
+            <div style="margin:3px; padding:1px;width:100%;">
+                <lightning-layout multiple-rows="true">
+                    <lightning-layout-item padding="around-small" size="12">
+                        <div style="margin:3px; padding:0px;" >
+                        <lightning-button variant="brand" label={btnName} title="Attach to Policy" 
+                        onclick={getCaseDetails}  disabled={disable}> </lightning-button>
+                        <span>&nbsp;&nbsp;</span>
+                        <lightning-button variant="brand"  label="Update Comments" title="Update Comments" 
+                        onclick={getCaseComments} disabled={disable}> </lightning-button>
+                        <span style="position:relative; top:-2px;"> 
+                         <lightning-helptext  icon-name="utility:info" content="This button will be used only for In-Progress and Pending cases when focus is on the case edit page."></lightning-helptext>
+                        </span>    
+                        <p style="color:green;font-weight:bold;">{successMsg}</p> 
+                                                               
+                        <lightning-input type="checkbox" disabled={disable}
+                        label="I want to create a case NOT associated to an available policy." 
+                                    onchange={handlechangeAssociateText} data-id='accountCheckbox' field-level-help="Cases should be created from the Policy Member page when the issue pertains to a policy. Check this box and create a case when there is no applicable policy available. Example: Test calls, unknown member, prospective member"> 
+                        </lightning-input>
+                        <template if:true={isShowLoading}>
+                            <lightning-spinner alternative-text="New case creation in progress"></lightning-spinner>
+                        </template>                                                           
+                        </div>      
+                    </lightning-layout-item>
+                </lightning-layout>    
+            </div>
+        </header>                   
+    </div>    
+</template>

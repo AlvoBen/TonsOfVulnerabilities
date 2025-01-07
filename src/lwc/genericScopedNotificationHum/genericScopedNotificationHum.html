@@ -1,0 +1,24 @@
+﻿<!--
+/******************************************************************************************************************
+LWC Name           : genericScopedNotificationHum.html
+Version            : 1.0
+Function           : Component to display generic scoped notification.
+Created On         : 05/13/2022
+*******************************************************************************************************************
+Modification Log:
+* Developer Name            Code Review                Date                       Description
+*-------------------------------------------------------------------------------------------------------------------------------
+* Nirmal garg                                     09/13/2022                Original Version
+*******************************************************************************************************************/
+-->
+
+<template>
+    <div class={customcss} role="status">
+        <div class="slds-media__figure">
+            <lightning-icon icon-name={iconname} variant={variant}></lightning-icon>
+        </div>
+        <div class="slds-media__body">
+          <p>{message}</p>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,34 @@
+﻿<!--*****************************************************************************************************************************
+LWC Name : linkedCaseDetails.html
+Function    : This LWC component serves to link the Cases for the purpose of Accordian Functionality.
+
+Modification Log: 
+Developer Name           Code Review              Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Swetha Thuti                                     12/10/2021                   Initial version
+*******************************************************************************************************************************--><template>
+	<lightning-card title={caseNumber}>
+		<div class="slds-var-p-around_medium">
+			<template if:false={nolinkedCases}>
+				<table border="2" style="pointer-events: none" class="no-hover">
+					<tr style="background:white; color:black;">
+						<th>Case ID</th>
+						<th>Linked By</th>
+						<th>Linked By Work Queue</th>
+					</tr>
+					<template for:each={linkedCaseList} for:item="linkedCase">
+						<tr key={linkedCase.caseNumber}>
+							<td class=""><a href='{linkedCase.caseUrl}' style="color: white">{linkedCase.caseNumber}</a></td>
+							<td class="">{linkedCase.linkedBy}</td>
+							<td class="">{linkedCase.linkedWorkQueue}</td>
+						</tr>
+					</template>
+				</table>
+			</template>
+			<template if:true={nolinkedCases}>
+				There are no linked Cases to display.
+			</template>
+		</div>
+	</lightning-card>
+
+</template>

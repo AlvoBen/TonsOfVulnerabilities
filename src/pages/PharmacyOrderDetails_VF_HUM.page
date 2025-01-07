@@ -1,0 +1,235 @@
+﻿<!--
+Page Name        : PharmacyOrderDetails_VF_HUM.page
+Version          : 1.0
+Created On       : 2017
+Function         : VF page to display Pharmacy Order detail information
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Avinash Choubey           87810	                 04/11/2017                 Original Version REQ 308314
+* Rajesh Chandgothia        94137                    05/17/2017                 REQ 311512 - 'current queue' hover over and 'blank' queue translation
+* Rajesh Keswani               		                 07/20/2017                 Implementation of REQ - 323389 - adding networkId in service request
+* Rajesh Chandgothia			 114002 	               07/25/2017					        REQ - 323485, CMO CR 5227 (CSI 587)-- 1) remove MTM hover; 2) add 'order status' column; 3) stop translating to OPEN; 4) add 'finished date' to summary
+* Sharan Shanmugam									               07/27/2017				          REQ - 323542 : Exception handling
+* AshokKumar Nutalapati    319140                  01/10/2019                 REQ - 377476: Adding 'Order Total' and 'Order Tax' Fields to the Order Details Page (RxRF) 
+* Ravi Prakash kantamneni  345989                  03/21/2019                 REQ-383718 - Automatically Record Order Details to Case: 'Save & Log' to New Case & Existing Case(RXRF)
+* Aaron Speakman                                     01/30/2020                  Defect Fix 454896 - Date sorting issue in order queue detail table on Order Details Page
+* Riya Agarwal								         08/18/2020			        REQ - 760189-PR00091606 - MF 4 - Finance Code Order Detail Page
+* AshokKumar Nutalapati                     		 09/01/2020                 REQ - 1327436 - Display OMS Originated Notes & Case Comments on the Order Details Page(RxRF)
+* AshokKumar Nutalapati                              01/19/2021                 REQ - 1826594 Display OMS Originated Notes & Case Comments on the Order Details Page - Query Null Check (CRMS)
+* Himalay Patel                                      01/27/2021                 REQ - 1735008 Display Quantity, Day Supply and Refills Remaining on Order Details Page (RxRF) (ID# 126)
+* Pallavi Shewale									 21/12/2020	    			 User Story 1669828 - PR00094226 - CR AEP readiness -Research - Critical Security Issues
+* AshokKumar Nutalapati                        		 03/05/2021                 REQ - 1985174 T1PRJ0002517 - MF 1 - TECH - Display OMS Originated Notes & Case Comments on the Order Details Page - Clean Up (CRMS) (ID# 120) 
+* Apurva Urkude                                      04/26/2021                REQ:2164003 - PRJ0002736 - 2021 MF6- TECH - SF  - CheckMarx Fix Part 2 - Pharmacy pages
+* Abhishek Mangutkar								 06/01/2021				  REQ - 2315809 - Omni-Carrier HP Solutions - HP CRM FedEx Shipment Method Changes
+* Pallavi Shewale                                    06/08/2021               USER STORY 1491784: T1PRJ0003815- CR 01 - Edit/Cancel/Release Links for Finance
+* Aishwarya Pawar                                    8/16/2021                REQ 1801217 – T1PRJ0002472 / 94010 - MVP MF 6 - Order Details page - Strides
+* Aishwarya Pawar                                    10/15/2021                Defect fix DF-3738
+* Nirmal Garg								   		 09/16/2021			 	Added browser logic for coveo
+* AshokKumar Nutalapati								 10/19/2021				  User Story - 660769: T1PRJ0002517 - MF 4 - Update Order Payment Method Fields (RxRF) (ID# 74)
+* Shaik Mujeebur Rahaman                                04/29/2022                US-3213649 T1PRJ0272548 - SF Legacy API Retirement Upgrade API Version for Integrationjs Pharmacy
+* Bhavani Tati								 		 05/20/2022				  User Story - 3175324: T1PRJ0200895 - MF 5 - TECH - Switch Clean Up - Update Order Payment Method Fields (CRMS) (ID# 74)
+* Pinky Vijur                      01/20/2023         3172071	T1PRJ0891339 - MF 5 - TECH - Pharmville Decommissioning - Custom Permission Usage 
+* Tharun Madishetti                07/14/2023           US-4635103: T1PRJ0891742 - VIT19761200 - TECH - Data Table Upgrade - Upgrade Moment.js Usage (Group 1)
+* Tharun Madishetti                07/14/2023                  US-4647281: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Pharmacy (Group 1)
+*********************************************************************************************************************************
+-->
+
+<apex:page id="thePage" tabStyle="Policy_Member__c" showHeader="false" sidebar="false" controller="PharmacyOrderDetail_C_HUM"  >
+    <head>
+
+        <apex:includeScript value="/support/console/54.0/integration.js" id="integrationJS"/>
+        <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}"/>
+
+        <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/Moment-2.29.4/moment.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/Sorting/datetime-moment.js')}" />
+
+        <apex:includeScript value="{!URLFOR($Resource.PharmacyOrderDetST_SR_HUM, 'PharmacyOrderDetST_JS_HUM.js')}" />
+       
+        <link rel="stylesheet" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/Bootstrap-3.3.6/css/bootstrap.min.css')}"/>
+        <link rel="stylesheet" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/DataTables-1.13.4/css/dataTables.bootstrap.min.css')}"/>
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.CRM_JQUERY,'jquery-ui.min.css')}"/>
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.PharmacyOrderDetST_SR_HUM, 'PharmacyOrderDetST_CSS_HUM.css')}" />
+        <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}" />
+    
+    </head>
+    <script type="text/javascript">
+        <!-- Please do not change this line as it breaks the JS tables. -->
+        //dont enable P9 Critical Fix              $j = jQuery.noConflict(true);
+    </script>
+          
+          <apex:outputpanel id="refreshOrderDiv">
+		  <apex:outputPanel id="pordercoveo" rendered="{!bCoveoUser}">
+			<div  style = "font-size: 12px; padding: 10px 5px 10px!important;" >
+                    <c:UnifiedSearch_CMP_HUM id="uniId" PolicyMemberId="{!JSENCODE(pmId)}" pageNameToPass="Order Details"/>       
+			</div>
+			</apex:outputPanel>
+          <apex:pageMessages escape="false"/>
+          
+            <div class="titleCss ">
+                <h4>Order Details</h4>
+            </div>
+            <div id="OrderDetailErrorMsgId"></div>
+            
+            <div id="OrderDetailLoadingImageId" class="imgAlign">
+                <img src="/img/loading.gif" /> <span class="waitingDescription">{!$Label.LOADING_HUM}</span>
+            </div>
+            
+            <apex:pageBlock mode="maindetail" id="pbOrderDetails">
+                <apex:pageBlockSection collapsible="true" columns="1" title="Order Details" id="thePageBlockSectionOrderDetails">
+                <apex:pageBlockSection columns="1">
+                <div id="orderDetailResultsDivId">
+                    <table id="orderDetailResultTable"
+                           class="table table-striped table-bordered orderSummaryTableStyle"></table>
+                </div>
+                <table class="selectDivWidth orderWidt75">
+                    <tr>
+                        <td class="shippingOrderWidth">
+                            <div id="OrderDetailShippingAddress" />
+                        </td>
+                        <td class="shippingOrderWidth">
+                            <div id="OrderDetailShippingNotes" />
+                        </td>
+                    </tr>
+                </table>
+                <div id="orderDetailsCurrentQueueDiv" class="padCurrentTable">
+                </div>
+                <div id="orderDetailsCapTypeDiv" class="CTypeDivClass"></div>
+                <div id="orderDetailsOTCDiv" class="OTCDivClass"></div>
+                <div id="SplitFromOrderDiv" class="CTypeDivClass"></div>
+                <div id="orderLinesDetailResultsDivId" class="OrderLinesDivClass">
+                    <table id="orderLinesDetailResult"
+                           class="table table-striped table-bordered orderSummaryTableStyle"></table>
+                </div>
+                <div id="SplitToOrderDiv" class="CTypeDivClass"></div>
+                <div id="ChildOrderDivId" class="OrderLinesDivClass">
+                    <table id="childOrderTable"
+                           class="table table-striped table-bordered orderSummaryTableStyle"></table>
+                </div>
+                <div id="orderQueueDetailResultsDivId" class="QueueDivClass">
+                    <table id="OrderDetailQueueDetails"
+                           class="table table-striped table-bordered "></table>
+                </div>
+                </apex:pageBlockSection>
+                </apex:pageBlockSection>
+
+                <apex:pageBlockSection collapsible="true" columns="1" title="Related Case Comments & OMS Originated Notes" id="thePageBlockSectionCaseCommentsOMS">                 
+                    <apex:pageBlockSection columns="1">
+                        <!-- Error panel -->
+                        <apex:outputPanel id="caseCommentsOMSErrorId" Styleclass="displayNone">
+                          <apex:PageMessage Summary="{!$Label.PHARMACYCASECOMMENTSOMS_ERROR}" severity="Error" Strength="2" title="Error:"  />
+                        </apex:outputPanel>
+                        <apex:outputPanel id="caseCommentsOMSWarningId" Styleclass="displayNone">
+                          <apex:PageMessage Summary="{!$Label.PHARMACYCASECOMMENTSOMS_NODATA}" severity="INFO" Strength="2" />
+                        </apex:outputPanel>
+                        <div id="CaseCommentsOMSLoadingImageId" class="imgAlignLoading">
+                            <img src="/img/loading.gif" /> <span class="waitingDescription">{!$Label.LOADING_HUM}</span>
+                        </div>
+                        <div id="CaseCommentsOMSDivId">
+                            <table id="CaseCommentsOMSResultTable" class="table table-striped table-bordered orderSummaryTableStyle"></table>
+                        </div>
+                                                                           
+                        <apex:form >
+                           <apex:actionFunction name="mergeCaseCommentsOMSData" action="{!mergeCaseCommentsOMSDataDTO}" oncomplete="passCaseCommentsOMSDataExists('{!caseCommentsFailed}','{!caseCommentsExists}','{!OMSExists}'); setmergeCaseCommentsOMSData({!sCaseCommentsJSON});" status="pleaseWait" rerender="errMsgSection">
+                                <apex:param name="oMSNotesDTO" value="" />
+                                <apex:param name="policyId" value="" />
+                                <apex:param name="orderNumber" value="" />
+                            </apex:actionFunction>
+                        </apex:form>
+                    </apex:pageBlockSection>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+            
+            <table class="selectTableDivWidth">
+                <tr>
+                    <td>
+                        <div id="RelAndCancelOrderError" class="canRelErrorDiv" />
+                        <div id="OrderDetailButtons" class="divWidth" />
+                    </td>
+                </tr>
+            </table>
+            
+            <apex:form >
+                <apex:actionFunction name="refreshOrderData"
+                                     action="{!refreshDetail}" reRender="refreshOrderDiv"
+                                     oncomplete="displayOrderDetail();" />
+            </apex:form>
+        </apex:outputPanel>        
+
+        
+        <div id="orderSummaryErrorMsgId" class="displayNone centerAlign"></div>
+        <div id="showRelOrdMessageDiv" class="RelOrCandMessageDiv">
+            <apex:outputPanel id="showRelOrdMessage">
+                <apex:form >
+                    <apex:outputPanel styleClass="popupBackgroundOrdDtl2"
+                                      layout="block" />
+                    <apex:outputPanel styleClass="custPopupOrdDtl2" layout="block">
+                        <div id="relOrderTitle" class="titleCSS">
+                            <h4>Release Order?</h4>
+                            <hr />
+                        </div>
+                        <div id="relMsgDiv"></div>
+                        <hr />
+                        <apex:commandButton value="Yes" id="relOrderYesBtn" onclick="checkOrderQueue('Release'); return false;" status="pleaseWait" styleclass="saveBtnCSS" />
+                        <apex:commandButton value="No" id="relOrderNoBtn" onclick="hideRelOrderDiv(); return false;"	styleclass="cancelBtnCSS" />
+                    </apex:outputPanel>
+                </apex:form>
+            </apex:outputPanel>
+        </div>
+        <div id="showCancelOrdMessageDiv" class="RelOrCandMessageDiv">
+            <apex:outputPanel id="showCancelOrdMessage">
+                <apex:form >
+                    <apex:outputPanel styleClass="popupBackgroundOrdDtl2"
+                                      layout="block" />
+                    <apex:outputPanel styleClass="custPopupOrdDtl2" layout="block">
+                        <div id="CancelOrderTitle" class="titleCSS">
+                            <h4>Cancel Order?</h4>
+                            <hr />
+                        </div>
+                        <div id="CancelMsgDiv"></div>
+                        <hr />
+                        <apex:commandButton value="Yes" id="CancelOrderYesBtn" onclick="checkOrderQueue('Cancel'); return false;"	status="pleaseWait" styleclass="saveBtnCSS" />
+                        <apex:commandButton value="No" id="CancelOrderNoBtn"	onclick="hideCancelOrderDiv(); return false;"	styleclass="cancelBtnCSS" />
+                    </apex:outputPanel>
+                </apex:form>
+            </apex:outputPanel>
+        </div>
+        
+        <script>
+          var orderDataRemote = '{!$RemoteAction.PharmacyOrderDetail_C_HUM.getOrderData}';
+          var orderQueueCheckRemote = '{!$RemoteAction.PharmacyOrderDetail_C_HUM.callGetOrder}';
+          var CancelAndRelOrderRemote = '{!$RemoteAction.PharmacyOrderDetail_C_HUM.sendRequestReleaseAndCancelOrder}';
+          var memberPrescriptionRemote = '{!$RemoteAction.PharmacyOrderDetail_C_HUM.invokeEpostMemberPrescription}';
+          var orderNumber ='{!JSENCODE(orderNumber)}';
+          var EnterpriseId = '{!JSENCODE(enterPriseID)}';
+          var startDate = '{!JSENCODE(ostartDate)}';
+          var endDate ='{!JSENCODE(oEndDate)}';
+          var capType = '{!JSENCODE(capType)}';
+          var sPayer = '{!JSENCODE(sPayer)}';
+          var source = '{!JSENCODE(source)}';
+          var webOrderNumber = '{!JSENCODE(webOrderNumber)}';
+          var oCreationDate = '{!JSENCODE(OcreationDate)}';
+          var oReleaseDate ='{!JSENCODE(oReleaseDate)}' ;
+          var orderSource = '{!JSENCODE(orderSource)}' ;
+          var orderTotal = '{!JSENCODE(orderTotal)}';
+          var orderCopay = '{!JSENCODE(orderCopay)}';
+          var orderTax = '{!JSENCODE(orderTax)}';
+          var orType = '{!JSENCODE(OTC)}';
+          var hoverImageIcon = '{!$Resource.HUMHoverOverQuestionMark}';
+          var netWorkId = '{!JSENCODE($User.Network_User_Id__c)}';
+          var orderShipDate ="{!JSENCODE(oShipDate)}";
+          var orderStatus ="{!JSENCODE(orderStatus)}";
+          var recordId = "{!JSENCODE(recordId)}";
+          var bSwitch='{!bSwitch}';
+          var omsRemote = '{!$RemoteAction.PharmacyOrderDetail_C_HUM.invokeOMSLogNotes}';
+          var pmId = '{!JSENCODE(pmId)}';
+          var switchFQ = '{!bSwitchERC}';
+          var switchShippmentMethod = '{!bSwitchShippmentMethod}';
+          displayOrderDetail();
+
+
+        </script>
+    </apex:page>

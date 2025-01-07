@@ -1,0 +1,46 @@
+﻿<!--
+Page Name        : Go365_VF_HUM.page
+Version          : 1.0
+Created On       : 08/10/2016
+Function         : VF page to display Go365
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Prachi Bhasin            35047                       08/10/2016                   Original Version
+* Prachi Bhasin                                        08/25/2016                   Entity Id related changes
+* Muralidhar Kollu         70895                       02/10/2017                   Add Component and custom links for REQ-300070
+* Gargey Sharma            70895                       02/02/2017                   Added Page Message, Components for REQ - 290967, 290969, 270199
+* Ranjeeth Nagishetty      70786                       02/23/2017                   REQ - 296929:Implement Switch by using the custom permission  for Go365 Permission set
+* Anupama Tavva            73690                       03/07/2017                   Fix for the defects 262289.0001(floating links) and 262167.0001(history link is not expanding)      
+* Ravikanth Samudrala                                  04/26/2022                  3213502 -T1PRJ0272548 - SF Legacy API Retirement Upgrade API Version for Integrationjs Go365
+****************************************************************************************************************************
+-->
+   <apex:page id="go365Page" tabStyle="Policy_Member__c" standardcontroller="Policy_Member__c" title="{!Policy_Member__c.Name}" showHeader="true" sidebar="false"  docType="html-5.0" extensions="Go365Links_X_HUM">
+    <script src="/support/console/54.0/integration.js"></script>
+    <script src="{!$Resource.Go365Detail_SR_HUM}"></script>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.Go365_CSS_SR_HUM)}"/>
+    <script type="text/javascript"> 
+     var tabTitle = "{!$Label.Go365_Details}";   
+     window.onload = setTabTitleToGo365();
+    </script>
+    
+    <div id="relatedlistMenuHeader"> 
+        <c:DynamicCustomLinksHorizontal_CMP_HUM DynamicLinkController="{!this}" sBirthDateLinks="{!Policy_Member__c.Member__r.Birthdate__c}" rendered="{!$Permission.Go365_page_Floatting_Links}"></c:DynamicCustomLinksHorizontal_CMP_HUM>            
+    </div>    
+   
+    <div class="sectionheader">
+        <apex:sectionHeader title="{!$Label.Go365}" subtitle="{!Policy_Member__c.Name}"/>
+    </div>
+    
+    <div class="fontstyle">
+        <apex:pageMessage summary="{!$Label.Go365_InfoMessage}" severity="Info" strength="3" rendered="{!$Permission.Go365_Info_Bar}"   />
+    </div>
+    
+    <a id="Go365Details" name="Go365 Details"></a>
+    <c:Go365_CMP_HUM sAccID="{!Policy_Member__c.Member__c}"  sMemberName="{!Policy_Member__c.Name}" groupnumber="{!Policy_Member__c.Group_Number__c}" groupname="{!Policy_Member__c.Group_Name__c}" sgroupnameid="{!Policy_Member__c.Policy__r.Group_Name__r.id}"></c:Go365_CMP_HUM>
+    <a id="Go365KidsDelegate" name="Go365 Kids Delegate"></a>
+    <c:Go365KidsDelegate_CMP_HUM sBirthDate="{!Policy_Member__c.Member__r.Birthdate__c}" sEnterpriseId="{!Policy_Member__c.Member__r.Enterprise_ID__c}" rendered="{!$Permission.Go365_Kids_Delegate}" ></c:Go365KidsDelegate_CMP_HUM>
+    <a id="Go365KidsDelegateHistory" name="Go365 Kids Delegate History"></a>
+    <c:Go365KidsDelegateHistory_CMP_HUM id="historySection" sBirthDateHis="{!Policy_Member__c.Member__r.Birthdate__c}" sEnterpriseIdHis="{!Policy_Member__c.Member__r.Enterprise_ID__c}" rendered="{!$Permission.Go365_Kids_Delegate_History}"></c:Go365KidsDelegateHistory_CMP_HUM>
+</apex:page>

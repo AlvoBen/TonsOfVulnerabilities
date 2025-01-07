@@ -1,0 +1,13 @@
+.full-container {
+    height: 100%;
+    width: 100%;
+}
+
+.hc-popover-top {
+    top: -35px;
+    left: -30px;
+}
+
+.custom-tooltip-icon:hover {
+    fill: var(--sds-c-button-text-color-hover, var(--lwc-brandAccessibleActive, rgb(0, 95, 178)))
+}

@@ -1,0 +1,148 @@
+﻿<!--
+LWC Name : AccountLegacyContactHistoryHum.html
+Function    : This component renders the legacy contact history table and it's filters on UI 
+
+Modification Log: 
+Developer Name           Code Review                      Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Ritik Agarwal                                           03/04/2021                    initial version(azure # 2039867)
+* Mohan Kumar                                             03/22/2021                    fixed HTML issues and designed UI
+* Ritik Agarwal                                           04/02/2021                    Added a logic for passing required data to inquiryDetails LWC to open it in subtab
+* Supriya Shastri                                         04/23/2021                    Added attributes for subtab filters, enabled scrolling
+* Ankima Srivastava                                       08/17/2021                    US: 2233885 - Label Change
+* Supriya                                                 08/23/2021                    US-2363825 Standardized icons
+* Supriya                                                 09/02/2021                    DF-3674
+* Supriya Shastri                                         09/06/2021                    Added grey headers to member detail table
+* Supriya Shastri                                         10/27/2021                   US: 2440592 : Account Detail Page Redesign
+* Ankima Srivastava                                       10/28/2021                    US :2581786 display of count
+* Abhishek Mangutkar									  08/09/2022                    DF - 5542
+-->
+<template>
+    <article class="slds-card slds-p-right_small slds-card_boundary slds-grid slds-grid--vertical full-container hc-standard-table-styles">
+        <div>
+            <header
+                class=" slds-card__header slds-grid slds-p-right_none slds-media slds-media_center slds-has-flexi-truncate slds-grid_align-spread">
+                <div class="slds-grid slds-grid_vertical-align-center">
+                    <div class="slds-media__figure">
+                        <lightning-icon icon-name="standard:call_history" size="small"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <h1 slot="title" class="slds-card__header-title">Legacy Contact History ({totalRecords})</h1>
+                    </div>
+                </div>
+            </header>
+            <div class="slds-grid slds-grid_vertical-align-center slds-p-around_x-small">
+                <lightning-icon class="info-alt-icon" icon-name="utility:info_alt" size="x-small">
+                </lightning-icon>
+                <span class="slds-m-left_x-small history-warn-msg">{labels.HUM_TimeFrameMsge}</span>
+            </div>
+            <div class="slds-grid slds-wrap slds-gutters slds-p-horizontal_small">
+                <div class="slds-grid">
+                    <div class="slds-col slds-grid slds-grid_vertical-align-center slds-p-around_x-small range-fields"
+                        style="display: inline-flex">
+                        <label for="lch-from"
+                            class="slds-form-element__label slds-no-flex">{labels.HUM_LegacyFrom}</label>
+                        <lightning-input type="text" data-id="fromField" class="dateVal"
+                            value={legacyHistoryTableModel.sStartDate} variant="label-hidden" maxlength="10"
+                            onfocus={closeDatePicker} onchange={formatDateVals} onblur={validateFromDate}
+                            onkeyup={formatDateOnKeyUp}>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-col slds-grid slds-grid_vertical-align-center slds-p-around_x-small 
+                     range-fields" style="display: inline-flex">
+                        <label for="lch-to" class="slds-form-element__label slds-no-flex">{labels.HUM_LegacyTo}</label>
+                        <lightning-input type="text" data-id="toField" maxlength="10" class="dateVal"
+                            onchange={formatDateVals} variant="label-hidden" value={legacyHistoryTableModel.sEndDate}
+                            onfocus={closeDatePicker} onkeyup={formatDateOnKeyUp}>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-col slds-p-vertical_small">
+                        <lightning-button class="" variant="brand-outline"
+                            disabled={legacyHistoryTableModel.dateNotExists} label="GO" onclick={handleDateValues}>
+                        </lightning-button>
+                    </div>
+                    <div class="slds-col slds-p-vertical_small">
+                        <lightning-button class="slds-p-right_small" variant="brand-outline" label="Clear"
+                            onclick={clearDateValues}>
+                        </lightning-button>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-grid slds-wrap slds-gutters slds-p-horizontal_small">
+                <div class="slds-grid">
+                    <div class="slds-col slds-p-bottom_small">
+                        <label for="lch-reference-num" class="slds-form-element__label slds-no-flex">
+                            {labels.HUM_LegacyRefNum}</label>
+                        <lightning-helptext content="This Reference Number refers to CCP Inquiries only"
+                            class="slds-is-relative slds-p-top_none">
+                        </lightning-helptext>
+                    </div>
+                    <div class="slds-col slds-p-bottom_small slds-p-left_none">
+                        <lightning-input type="text" id="lch-reference-num" data-id="refField"
+                            class="refID slds-m-left_small ref-num-filed" onfocus={closeDatePicker}
+                            variant="label-hidden">
+                        </lightning-input>
+                    </div>
+                    <div class="slds-col">
+                        <lightning-button class="slds-p-right_small" variant="brand-outline" label="GO"
+                            onclick={getCCPReferenceData}>
+                        </lightning-button>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-grid slds-wrap slds-gutters slds-p-horizontal_small">
+                <div class="slds-grid">
+                    <div class="slds-col ch-filter-keyword slds-p-bottom_small slds-p-around_x-small">
+                        <lightning-input type="text" value="" onchange={findByWord} onfocus={closeDatePicker}
+                            class="filter keyword-field" label="Filter by Keyword">
+                        </lightning-input>
+                    </div>
+                    <c-generic-date-range-picker label="Created On" ondatepickerclose={onDatePickerClose}
+                        placeholder={labels.caseHistoryDateSelect} filter-obj={filterObj} class="slds-p-around_x-small">
+                    </c-generic-date-range-picker>
+                    <div class="slds-col ch-picker-fields slds-p-around_x-small">
+                        <lightning-combobox class="inputfield type-field" name={constants.LEGACY_TYPE} label="Type"
+                            value="" options={filterFldValues.sType} onchange={selectFilter} onfocus={closeDatePicker}>
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-col ch-picker-fields slds-p-around_x-small" if:true={isGroup}>
+                        <lightning-combobox class="inputfield policy-field" name={constants.LEGACY_POLICY}
+                            label={labels.Group_Policy} value="" options={filterFldValues.sPolicy} onchange={selectFilter}
+                            onfocus={closeDatePicker}>
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-col ch-picker-fields slds-p-around_x-small" if:true={isMember}>
+                        <lightning-combobox class="inputfield policy-field" name={constants.LEGACY_POLICY}
+                            label={labels.Policy} value="" options={filterFldValues.sPolicy} onchange={selectFilter}
+                            onfocus={closeDatePicker}>
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-col ch-picker-fields slds-p-around_x-small" if:true={isAgencyProvider}>
+                        <lightning-combobox class="inputfield policy-field" name={constants.LEGACY_POLICY}
+                            label="Policy" value="" options={filterFldValues.sPolicy} onchange={selectFilter}
+                            onfocus={closeDatePicker}>
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-col ch-clear-filters slds-p-around_x-small">
+                        <div class="slds-p-top_large"  onclick={clearData}>
+                            <lightning-icon class="health-filter-icon slds-p-around_x-small" icon-name={iconName}
+                            size="x-small" alternative-text="Clear Filters"></lightning-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <c-standard-filter-pills-hum filter-config-obj={filterObj} filter-values={pillFilterValues}
+                    onremovepill={handleRemove}>
+                </c-standard-filter-pills-hum>
+            </div>
+        </div>
+        <div if:true={bDataLoaded} class="slds-grid full-container slds-is-relative slds-p-horizontal_none">
+            <c-standard-table-component-hum title={labels.HUM_LegacyHistoryTable} response={response}
+                templatemodal={legacyHistoryTable} show-view-all={showViewAll}
+                no-data-message={labels.Hum_NoResultsFound} b-hide-title=true name-of-screen="Legacy Contact History"
+                o-view-all-params={oViewAllParams} b-infinite-scroll={bInfiniteScroll} class="full-container hc-account-detail-standard-table" default-header-icon='standard:call_history' related-input-field={loggingRelatedField} screen-name={screeName}>
+            </c-standard-table-component-hum>
+        </div>
+    </article>
+    </template>

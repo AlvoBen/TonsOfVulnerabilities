@@ -1,0 +1,12 @@
+﻿<apex:page standardController="Member_Cache__c"  recordSetVar="Member_Cache__c" extensions="MemCacheSelDel_X_HUM">
+
+<apex:form >
+    <apex:actionPoller action="{!CacheDelete}" rerender="DisplayMsg,button" interval="5" enabled="{!blEnablePoller}" />
+    <apex:pageBlock id="pb"  >
+        <apex:outputText value="{!DisplayMessage}" id="DisplayMsg" style="font-style:italic;color:green;font-size:15px"  ></apex:outputText>
+        <br/><br/>
+        <apex:commandButton id="button" value="Back" action="{!URLFOR($Action.Member_Cache__c.List, $ObjectType.Member_Cache__c)}" disabled="{!blEnableButton}"/>
+    </apex:pageBlock>
+</apex:form>
+    
+</apex:page>

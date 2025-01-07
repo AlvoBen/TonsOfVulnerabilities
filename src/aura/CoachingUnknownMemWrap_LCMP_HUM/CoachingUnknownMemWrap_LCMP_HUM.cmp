@@ -1,0 +1,17 @@
+﻿<!--
+Component Name   : CoachingUnknownMemWrap_LCMP_HUM.Lightning Component
+Version          : 1.0
+Created On       : 06/04/2021
+Function         : Lightning Component to embed the Wellness Unknown Member LWC.
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *****************************************************************************************************************************
+ * Mohammed Noor                                      06/04/2021                 Initial version created for USER STORY 2081412. 
+ ****************************************************************************************************************************
+ -->
+<aura:component implements="lightning:isUrlAddressable">    
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <c:coachingUnknownMemberEditCmp oncloseTab="{!c.handleCloseTab}" onsaveEvent="{!c.handleSaveEvent}"/>
+</aura:component>

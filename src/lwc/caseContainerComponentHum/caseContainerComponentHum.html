@@ -1,0 +1,22 @@
+﻿<!--
+LWC Name        : caseContainerComponentHum.html
+Function        : LWC to display alerts on Case detail page.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Divya Bhamre                   02/03/2023                   US-4207055-T1PRJ0865978-  MF 23786 Lightning- NBA- Implementation & Testing of Alerts - Case detail
+
+****************************************************************************************************************************-->
+
+<template >
+    
+        <div class="slds-card" style="background-color:rgb(243, 243, 243);">
+            <div class="slds-m-top_x-small" style="width: 50px;height:50px">
+            <template if:true={showAlert}>
+        <c-generic-alerts-view-hum record-id={accountId} account-page-name={accountPageName}></c-generic-alerts-view-hum>
+    </template>
+    </div>
+</div>
+
+</template>

@@ -1,0 +1,15 @@
+﻿<!----------------------------------------------------------------------------------------------------------------------------
+Page Name        : QueueViewItemCreation_VF_HUM
+Version          : 1.0 
+Created Date     : Jun 1 2016
+Function         : This VF page is used to edit the queue
+Modification Log :
+*   Developer         Code Review       Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Sharan Shanmugam    29395         06/01/2016            Original Version
+-------------------------------------------------------------------------------------------------------------------------------->
+<apex:page standardController="Queue_View__c" id="thePage">
+    <apex:form id="theForm">
+        <c:QueueViewItemCreation_CMP_HUM id="queueViewItemCMP"/>       
+    </apex:form>
+</apex:page>

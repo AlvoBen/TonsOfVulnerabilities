@@ -1,0 +1,84 @@
+﻿<!-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------     
+Page Name:       : QuickStart_VF_AHT_HUM 
+Created Date     : 8/12/2019
+Function         : Create Quick Start Pretext from UI
+************************************************************************************
+**Modification Log
+* Developer Name          Code Review #         Date                       Description
+* Subhamay Mandal                               8/12/2019 			       Original Version REQ - 406018
+* Subhamay Mandal								01/28/2020				   731580|729526|729566 PR00091574 - Code merged for 2/28
+* Kavya Bondada									01/05/2021				   User Story 1745160: PR00091574 - MF 1 - AHT - Ability to configure Info/Warning Message on Quick Start using Business Configuration (CRM) : Clean up of Is Auto Logging Enabled (Is_Auto_Logging_Enabled__c) from Quick Start Pretext (Quick_Start_Pretext__c)
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+<apex:page standardController="Quick_Start_Pretext__c" extensions="QuickStartPretext_X_AHT_HUM" action="{!init}">
+    <apex:form >
+    	<apex:pageMessages />
+    	<input type="hidden" id="qspuiID" name="qspuiID" value="qspui"/>
+        <apex:pageBlock title="New Quick Start Pretext" mode="edit">
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton action="{!save}" value="Create"/>
+                <apex:commandButton action="{!reset}" value="Reset"/>
+                <apex:commandButton action="{!cancel}" value="Cancel"/>
+            </apex:pageBlockButtons>            
+            
+            <apex:pageBlockSection title="Selection of CTCI record(s)" columns="1">
+                <apex:outputPanel >
+                <ul type="square">
+                  <li>If only Classfication Type is selected, System will create all Quick Start Pretext record(s) with same details, for <b>all its Classfication and intent combination</b>.</li>
+                  <li>If Classfication Type and Classification are selected, System will create all Quick Start pretext record(s) with same details, for <b>all intent combination</b>.</li>
+                  <li>If Classfication Type, Classification and intent are selected, System will create Quick Start pretext record for <b>a particular CTCI combination</b>.</li>
+                </ul>
+                </apex:outputPanel>
+             
+                <apex:inputField value="{!quickStartPretext.Business_Groups__c}" style="width:250px;" required="true"/>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Classification Type</apex:outputLabel>
+                    <apex:outputPanel styleClass="requiredInput" layout="block">
+                    <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                    <apex:actionRegion >
+                    <apex:selectList id="inDropClassificationType" style="width:250px;" value="{!sClassificationTypeIdSelect}" size="1">
+                        <apex:selectOptions id="outDropOptnClassificationType" value="{!lstClassficationType}"/>
+                        <apex:actionSupport event="onchange" rerender="inDropClassification, inDropIntent" action="{!getClassifactions}"/>
+                    </apex:selectList>
+                    </apex:actionRegion>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Classification</apex:outputLabel>
+                    <apex:actionRegion >
+                    <apex:selectList id="inDropClassification" style="width:250px;" value="{!sClassificationIdSelect}" size="1" required="false">
+                        <apex:selectOptions id="outDropOptnClassification" value="{!lstClassficationOption}"/>
+                        <apex:actionSupport event="onchange" rerender="inDropIntent" action="{!getIntents}"/>
+                    </apex:selectList>
+                    </apex:actionRegion>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Intent</apex:outputLabel>
+                    <apex:actionRegion >
+                    <apex:selectList id="inDropIntent" style="width:250px;" value="{!sIntentIdSelect}" size="1" required="false">
+                        <apex:selectOptions id="outDropOptnIntent" value="{!lstIntentOption}"/>
+                    </apex:selectList>
+                    </apex:actionRegion>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Quick Start Pretext Details" columns="2">
+                <apex:inputField value="{!quickStartPretext.Complaint_GA_Setup__c}" style="width:250px;"/>
+                <apex:inputField value="{!quickStartPretext.is_Frequently_Used__c}"/>
+
+                <apex:inputField value="{!quickStartPretext.Informational_Message__c}" style="width:300px; height:100px;"/>
+                <br> </br>
+                <apex:inputField value="{!quickStartPretext.Soft_Warning_Message__c}" style="width:300px; height:100px;"/>
+                <apex:inputField value="{!quickStartPretext.Is_Allow_Multiple_Case__c}"/>
+                <apex:inputField value="{!quickStartPretext.Header_Message_Type__c}"/>
+                
+                <apex:inputField value="{!quickStartPretext.Header_Message__c}" style="width:300px; height:100px;"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    <script>
+    	window.onload = function() {
+		  document.getElementById("qspuiID").focus();
+		};
+    </script>
+</apex:page>

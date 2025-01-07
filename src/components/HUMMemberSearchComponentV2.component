@@ -1,0 +1,416 @@
+﻿<!--
+/*****************************************************************************************************************************************************************
+Apex Class Name : HUMMemberSearchComponentV2
+Version         : 2.0
+Created On      : 04/01/2014
+Function        : This is a custom component showing up on the custom search page for member search                
+                 
+Modification Log: 
+* Version          Developer Name             Code Review              Date                       Description
+*-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+*    2.0            Chaitanya Kumar/            25262                07/31/2015                 Code refactoring ( removing abstract layer - HUMSearchFieldHelper)
+                    Harshith Mandya 
+*    2.1            Shreya Choodamani           25262                07/31/2015                 Implementing Async Webservice Callout              
+*    2.2            Shreya Choodamani           26152                09/03/2015                 Added the new column ETL_Deleted__c for the Soft Delete functionality associated to REQ#: 218889
+*    2.3            Shreya Choodamani           26152                09/04/2015                 Added action status for the Reset button to fix defect#: 197004
+*    2.4            Shreya Choodamani           26492                09/18/2015                 Defect fix for 200317.0001 and 200318.0001. Updated the line number 182 and 177 to fix this.
+*    2.5            Prerna Prasad                                    05/09/2016                 Defect Fix for 224516.0001. Updated maxlength=14 from 10 for Phone Line 119.
+*    2.6            Subhamay Mandal                                  02/01/2017                 added reset all button
+*    2.7            Subhamay Mandal                                  02/13/2017                 REQ - 301404: Update Reset All button
+*    2.8            Subhamay Mandal                                  02/17/2017                 REQ - 301133: add new populateInteractionWithAndAboutDetails to merge Interaction With, About and open Account detail page
+*    2.9            Amar Gadewar                                     03/31/2017                 REQ - 305666 - Changing the name of the Reset All button to Clear All Search button (RF)
+*    3.0            Subhamay Mandal                                  04/05/2017                 REQ - 305673 Display active policy on search page
+*    3.1            Prafull Verma              84636                 04/05/2017                 REQ - 306322 : SF - TECH - Softphone routing optimization
+*    3.2            Subhamay Mandal                                  04/20/2017                 Defect fix for 274085.0001 refresh policy section
+*    3.3            Subhamay Mandal                                  05/01/2017                 REQ - 311389 Ability to open an account and Policy tab when Multiple Member Account search results are displayed on Member Search Page
+*    3.4            Subhamay Mandal                                  05/11/2017                 REQ - 313449 Provide universal reset button in search section to reset the search page(s) (CRM)
+*    3.5            Subhamay Mandal                                  05/11/2017                 REQ - 313453 interacting with and about need to be one button and open the account page (CRM) 
+*    3.6            Mohammed Noor             96594                  05/18/2017                 REQ - 311432 Softphone / CRM Results for All Family Members by searching using Member Id only and lauch optimization.
+*    3.7            Mohammed Noor             99521                  06/05/2017                 Defect fix for 291013.0001           
+*    3.8            Siddharth Mehta                                  06/15/2017                 REQ - 320598 Ability to distinguish and highlight the correct record from all available record when multiple lines return in the Search Results(RF)
+*    3.9            Subhamay Mandal                                  07/03/2017                 REQ - 321223 Ability to open account and Policy tab when policy selected from search page(CRM)
+*    4.0            Siddharth Mehta          113102                  07/24/2017                 REQ - 318368 - Ability to see the POA information by hovering over the Member name on the search page (RF) 
+*    4.1            Amar Gadewar                                     08/02/2017                 SF TECH Clean up and Defect fix for : 304918.0001 - Last Page does not show the buttons
+*    4.2            Amar Gadewar                                     01/14/2017                 REQ - 350393 - SF - TECH - Removal of Power Of Attorney and renaming Active Policies Component
+*    4.3            Amar Gadewar                                     07/06/2018                 REQ - 367754 - SF - TECH - Remove AHT Components Dependencies and Clean Up (RF + CRM)
+*    4.4            Archana Das                                      07/12/2018                 REQ - 367853 - Member Id Suffix - Change width and maxlength for CBIS members
+*    4.6            Moshitha Gunasekaran      262118                 06/28/2018                 REQ - 350472 ID Number field on the Unknown Account tab
+*    4.7            Lakshmi Madduri           289399                 9/05/2018                  REQ - 367752 Added PID field on member search
+*    4.7            Amol Patil                                       09/06/2018                 REQ - 373386 - Display Password Prior to Interaction Being Created
+*    4.8            Satyam Malviya            299404                 10/18/2018                 Fixed for Defect # 386515
+*    4.9            Darshan Sharma                                   01/02/2019                 REQ - 380553 - Eliminate multiple clicks on "interacting with and about" button after the first click on creatin an interaction (CRM)
+*    4.10           Prudhvi Pamarthi                                 02/06/2019                 REQ - 361155 - Not allowing case creation on Legacy Deleted policies
+*    5.0            Melkisan Selvaraj         340805                 02/27/2019                 REQ - 367741 - Ability to view middle initial
+*    5.1           Deepankar Binjola          341599                 03/01/2019                 REQ - 386854 The info in the Provider and unkonwn Provider pop up are not cleared  
+*    5.2           Mohammed Noor                                     07/15/2019                 REQ - 403695 - Fix for Incident 8364762  
+*    5.3           Santhi Mandava                                    09/04/2019                 REQ - 408313 -Included member Icons component.
+*    5.4           Santhi Mandava                                                               REQ - 409718 - Implemented medicare supplement icon logic 
+*    5.5           Amar Gadewar                                      10/29/2019                 REQ - 411303 Quality - 2020 New Member Indicator (CRM)
+*    5.6           Santhi Mandava                                    11/15/2019                 REQ - 415960 Implemented configurable member icon changes
+*    5.7            Amar Gadewar                                     01/29/2019                 USER STORY 729633 PR00091574 - MF 1 - Quality - All Users - Display Icons on Search Page (CRM)
+*    5.8			Riddhi Mittal									 07/06/2020					Switchonoff functionality for suffix and add suffix on member search page (Merging my 7_17_2020 release branch changes)
+*    5.9            Navajit Sarkar                                   02/12/2021                 Req - Clicktodial for member 
+*    6.0           Ankit Avula                                       03/28/2021                 US 1987365 Contract Protected Data
+*    6.1            Atia Uzma                                        05/20/2021                 User Story 2325460: T1PRJ0001827 - MF 1 - Quality - Ability to display "Standardized Greeting" message on the Search Page (RF)
+*    6.2            Atia Uzma                                        07/23/2021                 User Story 2482100: T1PRJ0001827 - MF 1 - Quality - Ability to display "Standardized Greeting" message on the Search Page (RF)
+*    6.3            Atia Uzma                                        12/22/2021                 User Story 2975230: T1PRJ0002736 - MF 6 - Defect Fix - DF 4267 - Member search page hover over alignment (CRM)
+*    6.4	          Ajay Chakradhar                                  08/17/2022                 USER STORY 2860577: T1PRJ0100059 - MF 3 - Agnostic Customer Record Type
+*******************************************************************************************************************************************************************/
+ -->
+
+<apex:component controller="HUMMemberSearchControllerV2" allowDML="true" id="memberSearchComponent">
+  <script>
+    var zipCode = '{!$Component.memberSearchComponent.pbMemberSearch.pbsSearchCrit.postalCode}';
+    var lastName = '{!$Component.memberSearchComponent.pbMemberSearch.pbsSearchCrit.lName}';
+    var firstName = '{!$Component.memberSearchComponent.pbMemberSearch.pbsSearchCrit.fName}';
+    var memberId = '{!$Component.memberSearchComponent.pbMemberSearch.pbsSearchCrit.pbSearchCritID.mId}';
+    var phoneNumber = '{!$Component.memberSearchComponent.pbMemberSearch.pbsSearchCrit.phone}';
+    var groupNumber = '{!$Component.memberSearchComponent.pbMemberSearch.pbsSearchCrit.grpNumber}';
+    var dateOfBirth = '{!$Component.memberSearchComponent.pbMemberSearch.pbsSearchCrit.pbSearchCritBirthDate.birthDate}';
+    var memberSearchState = '{!$Component.memberSearchComponent.pbMemberSearch.pbsSearchCrit.pbsSearchCritItem.mSState}';
+    var errorMemberMessage='{!$Component.memberSearchComponent.errMemSearchMsgs}';
+    var membersuffix = '{!$Component.memberSearchComponent.pbMemberSearch.pbsSearchCrit.pbSearchCritID.suffix}';
+    var memIdAlphaError = '{!$Component.memberSearchComponent:memberSearchComponent:memberIdErrID}';
+    var memIdLengthError = '{!$Component.memberSearchComponent:memberSearchComponent:memberIdLengthErrID}';
+    var suffixError = '{!$Component.memberSearchComponent:memberSearchComponent:suffixErrID}';
+    var suffixLengthError = '{!$Component.memberSearchComponent:memberSearchComponent:suffixLengthErrID}';
+    var fNameAlphaError = '{!$Component.memberSearchComponent:memberSearchComponent:fNameErrorID}';
+    var lNameAlphaError = '{!$Component.memberSearchComponent:memberSearchComponent:lNameErrorID}';
+    var lNameLengthError = '{!$Component.memberSearchComponent:memberSearchComponent:lNameLengthErrID}';
+    var birthDateError = '{!$Component.memberSearchComponent:memberSearchComponent:birthDateErrID}';
+    var postalCodeError = '{!$Component.memberSearchComponent:memberSearchComponent:postalCodeErrID}';
+    var groupNumberError = '{!$Component.memberSearchComponent:memberSearchComponent:groupNumberErrID}';
+    var phoneError = '{!$Component.memberSearchComponent:memberSearchComponent:phoneErrID}';
+    var phoneLengthError = '{!$Component.memberSearchComponent:memberSearchComponent:phoneLengthErrID}';
+    var birthDateGreaterError = '{!$Component.memberSearchComponent:memberSearchComponent:birthDateGreaterErrID}';
+    var PIDNumber = '{!$Component.memberSearchComponent:pbMemberSearch:pbsSearchCrit.pbSearchCritPID1.pidNumber}';   
+    
+  </script>
+  <!--  Current page specific business logic is incorporated into the Javascript file -->
+  <apex:includeScript value="{!URLFOR($Resource.HUMMemberSearchComponent, 'HUMMemberSearchComponent/HUMMemberSearchScript.js')}" />
+  <apex:StyleSheet value="{!URLFOR($Resource.HUMMemberSearchComponent, 'HUMMemberSearchComponent/HUMMemberSearchCSS.css')}" />
+  <apex:attribute name="HUMSearchController"
+      type="HUMSearchControllerV2"
+      assignTo="{!searchController }"
+      required="false"
+      description="The controller for the page." />
+  <apex:attribute name="searchName"
+      type="String"
+      assignTo="{!key}"
+      required="false"
+      description="Search Context name ,like , Member ,Group etc"/>
+  <!--US 2082644 a new attribute is added to fetch the boolean value from HUMCustomSearchV2 vfpage-->
+  <apex:attribute name="showGNACallCatergoryAlert"
+      default="false"
+      type="Boolean"
+      required="false"
+      description=""/>
+  <apex:stylesheet value="{!$Resource.CustomSearchCSS}"/>
+  <apex:includeScript value="/support/console/29.0/integration.js"/>
+  <apex:includeScript value="/support/api/29.0/integration.js"/>
+  <!-- Show Error Messages -->
+  <apex:outputpanel id="errMemSearchMsgs" >
+    <apex:pageMessages escape="true" rendered="{!bIsMemberError}"/>
+  </apex:outputpanel>
+  <apex:pageBlock mode="edit" title="Member Search" id="pbMemberSearch" >
+    <apex:actionStatus id="pleaseWait" onstart="disableButtons(true)" onstop="disableButtons(false)" >
+      <apex:facet name="start">
+        <div class="waitingSearchDiv waitingSearchDivOpacity outerDIVStyle" ></div>
+        <div id="searchingStatus" class="waitingSearchDiv innerDIVStyle" >
+          <div class="waitingHolder innermostDIVStyle" style="top: 300px; width: 110px;cursor:pointer;">
+            <img class="waitingImage" src="/img/loading.gif"/>
+            <span class="waitingDescription">{!$Label.HUM_Account_MemberSearch}</span>
+          </div>
+        </div>
+      </apex:facet>
+      <apex:facet name="stop"/>
+    </apex:actionStatus>
+    <apex:actionStatus id="reset">
+      <apex:facet name="start">
+        <div class="waitingSearchDiv waitingSearchDivOpacity" style="width: 100%; height: 100%; display: block; opacity: 0.90" ></div>
+        <div id="searchingStatus" class="waitingSearchDiv" style="width: 100%; height: 100%; display: block;">
+          <div class="waitingHolder" style="top: 300px; width: 110px;">
+            <img class="waitingImage" src="/img/loading.gif"/>
+            <span class="waitingDescription">{!$Label.HUMSearchResetStatus}</span>
+          </div>
+        </div>
+      </apex:facet>
+      <apex:facet name="stop"/>
+    </apex:actionStatus>
+    <apex:pageBlockButtons location="top">
+      <apex:commandbutton value="{!$Label.HUMSearchButtonLabel}" status="pleaseWait"  onclick="validateInputs(); return false;"  reRender="results" />  <!-- removed the action method and add the JS method for client side input validation -->
+      <apex:commandButton action="{!reset}" value="{!$Label.HUMResetButtonLabel}" status="reset" oncomplete="resetMemberState();" reRender="errMemSearchMsgs,pbMemberSearch" />
+      <apex:commandButton value="{!$Label.HUMSearchEnrollmentButtonLabel}" onclick="openSearchEnrollment(); return false;" reRender="tabPanel"/>
+      <apex:commandButton value="{!$Label.HUMClearAllSearchBtnLabel}" styleclass="resetAllBtn" status="reset" onclick="getAllNavigationTabs()"/>
+    </apex:pageBlockButtons>
+    
+    <!-- Standardized Greeting message begin--> 
+    <apex:outputpanel id="standardizedGreetingMsgs" rendered="{!$Permission.CRMS_684_Medicare_Customer_Service_Access && $Permission.RapidForceUser_AHT_HUM && bCallGreetings}">
+      <table  id="greetMsg">
+        <tr >
+            <th style="text-align:center; width:50%">
+              <div class="pbSubheader brandTertiaryBgr tertiaryPalette" >
+                <h3>{!$Label.SEARCH_AUTHENTICATED_AHT_HUM}</h3>
+              </div>
+            </th>
+            <th style="text-align:center;">
+              <div class="pbSubheader brandTertiaryBgr tertiaryPalette" >
+                <h3>{!$Label.SEARCH_UNAUTHENTICATED_AHT_HUM}</h3>
+              </div>
+            </th>
+        </tr>
+        <tr style=" text-align:center;">
+            <td >
+                <apex:outputText id="authMsg" value="Thank you for calling Humana. My name is {!$User.FirstName}. How may I help you today?"></apex:outputText>
+            </td>
+            <td >
+                <apex:outputText id="unauthMsg" value="Thank you for calling Humana. My name is {!$User.FirstName}. Who am I speaking with and how may I help you today?"></apex:outputText>
+            </td>
+        </tr>
+      </table>
+    </apex:outputpanel>
+    <!-- Standardized Greeting message end -->
+    <!-- ? Help Feature in search fields section begin  -->
+    <div class="pbSubheader brandTertiaryBgr tertiaryPalette" id="MemberSearchPopUp1" style="stylePanelMemberSearch">
+      <h3>
+        Search Fields
+        <img src="{!$Resource.HUMHoverOverQuestionMark}" onmouseover="openMemberPopSearch();" onmouseout="clearMemberPopSearch();"/>
+      </h3>
+    </div>
+    <div id="MemberPopUpSearch" class="stylePanelMemberSearch">
+      <SPAN id='MemberPopUpTextSearch'></SPAN>
+    </div>
+
+    <!-- ? Help Feature in search fields section end -->
+    <!-- Search Criteria section begin -->
+    <apex:pageBlockSection columns="2" id="pbsSearchCrit">
+      <apex:pageblockSectionItem id="pbSearchCritID">
+        <apex:outputLabel value="ID"/>
+        <apex:outputPanel id="memberIdOP">
+          <apex:inputText id="mId" maxlength="17" tabIndex="1" value="{!oSearchWrapper.sMemberId}" onfocus="setBorder('mId');" onblur="removeBorder();" label="ID" onkeypress="return noMemberEnter(event);" />
+          <apex:inputText id="suffix" style="width:30px;" maxlength="3" tabIndex="2" value="{!oSearchWrapper.sSuffix}" onfocus="setBorder('suffix');" onblur="removeBorder();" onkeypress="return noMemberEnter(event);"  />
+          <apex:image styleClass="imageStyle" value="{!$Resource.HUMHoverOverQuestionMark}" onmouseover="openMemberPopID();" onmouseout="clearMemberPopID();"/>
+          <div id="MemberPopUpID" class="stylePanelID">
+            <SPAN id='MemberPopUpTextID'></SPAN>
+          </div>
+          <apex:outputPanel id="MemberPopUpID" styleClass="stylePanelID">
+          </apex:outputPanel>
+          <apex:outputText id="MemberPopUpTextID" value=""></apex:outputText>
+          <apex:inputCheckbox id="unknownCheck" value="{!unKnownMemberCheck}"/>
+          <apex:outputLabel value="Unknown Member" for="unknownCheck">
+          </apex:outputLabel>
+        </apex:outputPanel>
+      </apex:pageblockSectionItem>
+      <apex:pageblockSectionItem id="pbSearchCritPID1">
+        <apex:outputLabel value="PID"/>
+        <apex:outputPanel >
+          <apex:inputText id="pidNumber" maxlength="17" tabIndex="7" label="PID" value="{!oSearchWrapper.sPID}" onfocus="setBorder('pidNumber');" onblur="removeBorder();" onkeypress="return noMemberEnter(event);"/>
+                    <span>
+                    <a href="#" style="cursor: default !important; text-decoration: none;" helpText="{!$Label.PID_HOVEROVER_MESSAGE}">
+                        <apex:image height="12" width="12" value="{!$Resource.HUMHoverOverQuestionMark}" />
+                    </a>
+                    </span>
+        </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:inputText id="fName" maxlength="12" tabIndex="2" required="false" value="{!oSearchWrapper.sFirstName}" label="First Name" onfocus="setBorder('fName');" onblur="removeBorder();" onkeypress="return noMemberEnter(event);"  />
+        <apex:inputText id="grpNumber" maxlength="13" tabIndex="7" value="{!oSearchWrapper.sGroupNumber}" onfocus="setBorder('grpNumber');" onblur="removeBorder();" label="Group Number" onkeypress="return noMemberEnter(event);"  />
+        <apex:inputText id="lName" maxlength="36" tabIndex="3" required="false" value="{!oSearchWrapper.sLastName}" label="Last Name" onfocus="setBorder('lName');" onblur="removeBorder();" onkeypress="return noMemberEnter(event);"  />
+        <apex:inputText id="phone" maxlength="14" tabIndex="8" value="{!oSearchWrapper.sPhone}" label="Phone" onfocus="setBorder('phone');" onblur="phoneFormating(); removeBorder();" onkeydown="if (event.keyCode==13) phoneFormating();" onkeypress="return noMemberEnter(event);" />
+        <apex:pageblockSectionItem id="pbSearchCritBirthDate">
+          <apex:outputLabel value="Birthdate"/>
+          <apex:outputPanel >
+            <apex:inputText onkeyup="dateSlash(this,event)" id="birthDate" maxlength="10" tabIndex="4" value="{!oSearchWrapper.sBirthdate}" label="Birth Date"  onfocus="setBorder('birthDate');" onblur="dateFormat(); removeBorder();" onkeydown="if (event.keyCode==13) dateFormat();" onkeypress="return noMemberEnter(event);" />
+            <apex:image styleClass="imageStyle" value="{!$Resource.HUMHoverOverQuestionMark}" onmouseover="openMemberPopBirthDate();" onmouseout="clearMemberPopBirthDate();"/>
+            <div id="MemberPopUpBirthDate" class="{!If($Permission.RapidForceUser_AHT_HUM && $Permission.CRMS_684_Medicare_Customer_Service_Access,'stylePanelBirthDateRF','stylePanelBirthDate')}">
+              <SPAN id='MemberPopUpTextBirthDate'></SPAN>
+            </div>
+            <apex:outputPanel id="MemberPopUpBirthDate" styleClass="{!If($Permission.RapidForceUser_AHT_HUM && $Permission.CRMS_684_Medicare_Customer_Service_Access,'stylePanelBirthDateRF','stylePanelBirthDate')}">
+            </apex:outputPanel>
+            <apex:outputText id="MemberPopUpTextBirthDate" value=""></apex:outputText>
+          </apex:outputPanel>
+        </apex:pageblockSectionItem><apex:pageBlockSection ></apex:pageBlockSection>
+        <apex:pageblockSectionItem id="pbsSearchCritItem">
+          <apex:outputlabel for="MemberState" value="State"></apex:outputlabel>
+          <apex:selectlist id="mSState" tabIndex="5" value="{!oSearchWrapper.sState}" multiselect="false" size="1" styleClass="selectlistStyle" onfocus="setBorder('mSState');" onblur="removeBorder();" onkeypress="return noMemberEnter(event);">
+            <apex:selectoptions value="{!lstMemberStateValue}"  ></apex:selectoptions>
+          </apex:selectlist>
+        </apex:pageblockSectionItem>
+        <apex:pageblockSectionItem >
+        </apex:pageblockSectionItem>
+        <apex:inputText id="postalCode" maxlength="5"  tabIndex="6" value="{!oSearchWrapper.sPostalCode}" label="Zip Code"  onblur="removeBorder();" onfocus="setBorder('postalCode');" onkeypress="return noMemberEnter(event);"/>
+      </apex:pageBlockSection>
+      <!--US 2082644 the output pannel below will show the alert message -->
+      <apex:outputPanel rendered="{!showGNACallCatergoryAlert}">
+          <div style= "margin:0px 20px 4px 20px;"> <br/>
+              <apex:pageMessage summary="{!$Label.US2082644_OGO_InfoMessageGNALabel}"  severity="info" strength="3">
+        </apex:pageMessage>
+          </div>
+      </apex:outputPanel>
+    <!-- Search Criteria section end -->
+    <!-- ? Help Feature in result section begin -->
+    <div class="pbSubheader brandTertiaryBgr tertiaryPalette" id="MemberSearchPopUp3" style="stylePanelMember">
+      <h3>
+        Result
+        <img src="{!$Resource.HUMHoverOverQuestionMark}" onmouseover="openMemberPop();" onmouseout="clearMemberPop();"/>
+      </h3>
+    </div>
+    <div id="MemberPopUp" class="stylePanelMember">
+      <SPAN id='MemberPopUpText'></SPAN>
+    </div>
+
+    <!-- ? Help Feature in result section end -->
+    <apex:pageBlockSection id="results" columns="1">
+    <apex:outputPanel >
+        <table style="width:100%;">
+        <tr>
+        <td id="tdResults" style="width:{!tdSearchResultWidth}%;">
+      <apex:pageBlockTable value="{!lstAccount}" var="record" width="100%" rendered="{!(lstAccount.size > 0)}" >
+        <apex:column headerValue="" width="3%" rendered="{!lstAccount.size > 1 && NOT(contractprotecteddataonoff)}">
+          <input type="radio" id="{!record.id}" name="selAcount" onclick="highlightRecord('{!record.id}','{!lstAccount.size}')" />
+        </apex:column>
+        <!--New Logic start US1987365 for Contract Protected Data-->
+        <apex:column headerValue="" width="4%" rendered="{!contractprotecteddataonoff}">
+            <apex:outputPanel rendered="{!lstAccount.size > 1}">
+            	<input type = "radio" id="{!record.id}" name="selAcount" onclick="highlightRecord('{!record.id}','{!lstAccount.size}')"/>    
+            </apex:outputPanel>
+            <!--Added a below blank space for alignment-->
+            <apex:outputText value=" " rendered="{!!mapRecordHaveAccess[record.Id]}" />
+            <apex:image value="{!URLFOR($Resource.HumLockIcon_SR_HUM,'Lock_RGB_Gold.png')}" alt="Lock" width="20" height="20" title="{!$Label.US1987365LockMessage}" rendered="{!!mapRecordHaveAccess[record.Id]}"/>
+        </apex:column>
+          <!--New Logic End -->
+        <apex:column headerValue="First Name" width="12%">
+          <apex:commandlink onclick="showPasswordPopupMemberSearch('FirstName','{!record.id}',{!mapRecordHaveAccess[record.Id]},'{!HTMLENCODE(record.RecordType.Name)}'); highlightRecord('{!record.id}','{!lstAccount.size}'); return false;" value="{!record.Individual_First_Name__c}"  />
+        </apex:column>
+        <apex:column headerValue="Middle Initial" width="5%">
+         <apex:commandlink onclick="showPasswordPopupMemberSearch('MiddleName','{!record.id}',{!mapRecordHaveAccess[record.Id]},'{!HTMLENCODE(record.RecordType.Name)}'); highlightRecord('{!record.id}','{!lstAccount.size}'); return false;" value="{!record.MiddleName}"  />
+        </apex:column>
+        <apex:column headerValue="Last Name" width="12%">
+          <apex:commandlink onclick="showPasswordPopupMemberSearch('LastName','{!record.id}',{!mapRecordHaveAccess[record.Id]},'{!HTMLENCODE(record.RecordType.Name)}'); highlightRecord('{!record.id}','{!lstAccount.size}'); return false;" value="{!record.Individual_Last_Name__c}" />
+          <apex:facet name="header">
+            <apex:commandLink action="{!viewData}" value="Last Name" rerender="results"/>
+          </apex:facet>
+        </apex:column>
+		<apex:column headerValue="Suffix" width="12%" rendered="{!suffixonoff }" >
+       {!IF((record.RecordType.Name == 'Member') || (record.RecordType.Name == 'Unknown Member'), record.Suffix, NULL)}
+         </apex:column>
+        <apex:column headerValue="Birthdate" width="6%" rendered="{!!contractprotecteddataonoff}">
+          {!IF(NOT(mapRecordHaveAccess[record.Id]) && record.Home_Office_Account__c == true, NULL, record.Birthdate__c)}
+        </apex:column>
+        <!--No need to mask Birthdate for Contract Protected Data and HO Accounts -->
+        <apex:column headerValue="Birthdate" width="6%" value="{!record.Birthdate__c}" rendered="{!contractprotecteddataonoff}"></apex:column>
+        <apex:column headerValue="State" width="9%" rendered="{!!contractprotecteddataonoff}">
+          {!IF(NOT(mapRecordHaveAccess[record.Id]) && record.Home_Office_Account__c == true, NULL, record.PersonMailingState)}
+        </apex:column>
+        <!--No need to mask State for Contract Protected Data and HO Accounts -->
+        <apex:column headerValue="State" width="9%" value="{!record.PersonMailingState}" rendered="{!contractprotecteddataonoff}"></apex:column>
+        <apex:column headerValue="Zip Code" width="5%" rendered="{!!contractprotecteddataonoff}">
+          {!IF(NOT(mapRecordHaveAccess[record.Id]) && record.Home_Office_Account__c == true, NULL, record.PersonMailingPostalCode)}
+        </apex:column>
+        <!--No need to mask Zip Code for Contract Protected Data and HO Accounts -->
+        <apex:column headerValue="Zip Code" width="5%" value="{!record.PersonMailingPostalCode}" rendered="{!contractprotecteddataonoff}"></apex:column>
+        <apex:column headerValue="Phone" width="8%" rendered="{!!contractprotecteddataonoff}">
+            <support:clickToDial number="{!IF(NOT(mapRecordHaveAccess[record.Id]) && record.Home_Office_Account__c == true, NULL, record.PersonHomePhone)}"/>
+        </apex:column>
+        <!--No need to mask Phone for Contract Protected Data and HO Accounts -->
+        <apex:column headerValue="Phone" width="8%" rendered="{!contractprotecteddataonoff}">
+            <support:clickToDial number="{!record.PersonHomePhone}"/>
+        </apex:column>
+        <apex:column headerValue="Record Type" width="9%" value="{!record.RecordType.Name}"/>
+        <apex:column width="7%" value="{!record.ETL_Record_Deleted__c}">
+          <apex:facet name="header">
+            <div style="DeleteFlagRecordStyle">
+              <h3 style="font-size:.9em !important">
+                {!$Label.HUMSearchResultsLegacyDeleteLabel}
+                <img src="{!$Resource.HUMHoverOverQuestionMark}" height="12px" width="12px" onmouseover="openRecordDeletedPanelPopup();" onmouseout="clearRecordDeletedPanelPopup();"/>
+              </h3>
+            </div>
+            <div id="DeletedRecordStylePanel" class="DeleteFlagRecordStyle">
+              <SPAN id='DeletedRecordStylePanelText'></SPAN>
+            </div>
+          </apex:facet>
+        </apex:column>
+        <apex:column HeaderValue="Select" width="5%">
+          <apex:commandbutton status="pleaseWait" onclick="showPasswordPopupMemberSearch('intWithAndAbout','{!record.id}','{!mapRecordHaveAccess[record.Id]}','{!HTMLENCODE(record.RecordType.Name)}');highlightRecord('{!record.id}','{!lstAccount.size}', this); return false;" value="Interacting With & About" disabled="{!record.ETL_Record_Deleted__c}"/>
+        </apex:column>
+
+        <apex:column HeaderValue="Select" width="5%" rendered="{!NOT(record.RecordType.Name == 'Agnostic Customer')}">
+          <apex:commandbutton status="pleaseWait" onclick="interactionWithDetails('Member',false,null,'{!record.id}'); highlightRecord('{!record.id}','{!lstAccount.size}', this); return false;" value="Interacting With" disabled="{!record.ETL_Record_Deleted__c}"/>
+        </apex:column>
+          <apex:column HeaderValue="Select" width="5%" rendered="{!(record.RecordType.Name == 'Agnostic Customer')}">
+          <apex:commandbutton status="pleaseWait" onclick="interactionWithDetails('Agnostic Customer',false,null,'{!record.id}'); highlightRecord('{!record.id}','{!lstAccount.size}', this); return false;" value="Interacting With" disabled="{!record.ETL_Record_Deleted__c}"/>
+        </apex:column>
+        <apex:column HeaderValue="Select" width="5%" rendered="{!NOT(record.RecordType.Name == 'Agnostic Customer')}">
+          <apex:commandbutton status="pleaseWait" onclick="interactionAboutDetails('Member',false,null,'{!record.id}'); highlightRecord('{!record.id}','{!lstAccount.size}', this); return false;" value="Interacting About" disabled="{!record.ETL_Record_Deleted__c}"/>
+        </apex:column>
+        <apex:column HeaderValue="Select" width="5%" rendered="{!(record.RecordType.Name == 'Agnostic Customer')}">
+          <apex:commandbutton status="pleaseWait" onclick="interactionAboutDetails('Agnostic Customer',false,null,'{!record.id}'); highlightRecord('{!record.id}','{!lstAccount.size}', this); return false;" value="Interacting About" disabled="{!record.ETL_Record_Deleted__c}"/>
+        </apex:column>        
+      </apex:pageBlockTable>
+      </td>
+      <td id="tdIcons" style="block;width:{!tdIconsWidth}%;{!IF(objIconsVisibility.bIconsPresnt,'border: solid 1px gray;vertical-align:  middle;background-color:  white;','')}">
+          <apex:outputPanel id="idMemberIcons" >
+             <apex:outputPanel rendered="{!(lstAccount.size == 1 && objIconsVisibility.bIconsPresnt)}">
+                 <apex:repeat value="{!objIconsVisibility.lstMemberIcons}" var="newIcon">
+                     <apex:image width="35px" height="35px" title="{!newIcon.sIconLabel}" value="{!'/servlet/servlet.FileDownload?file='+newIcon.sDocumentId}"></apex:image> 
+                </apex:repeat>
+        </apex:outputPanel>
+        </apex:outputPanel>
+      </td>
+      </tr>
+      </table>
+      
+      </apex:outputPanel>
+      
+      <apex:outputPanel layout="block" styleClass="pSearchShowMore" id="thePaginationSection" rendered="{! OR(setAccount.hasPrevious,setAccount.hasnext)}">
+        <apex:commandButton action="{!setAccount.first}" value="First" disabled="{!!setAccount.hasPrevious}" reRender="pbMemberSearch" />
+        <apex:commandButton action="{!setAccount.previous}" value="Previous" disabled="{!!setAccount.hasprevious}" reRender="pbMemberSearch" />
+        <apex:commandButton action="{!setAccount.next}" value="Next" disabled="{!!setAccount.HasNext}" reRender="pbMemberSearch" />
+        <apex:commandButton action="{!setAccount.last}" value="Last" disabled="{!!setAccount.hasnext}" reRender="pbMemberSearch" />
+        {!setAccount.PageNumber} of {!CEILING(setAccount.ResultSize/setAccount.PageSize)} Pages
+      </apex:outputPanel>
+
+      <c:MemberActivePolicies_CMP_HUM id="MemberPolicies" AccountId="{!$CurrentPage.parameters.strMemberAccountId}" />
+
+    </apex:pageBlockSection>
+  </apex:pageBlock>
+
+  <apex:actionFunction name="displayMemberPolicy" rerender="MemberPolicies">
+    <apex:param name="strMemberAccountId" value=""/>
+  </apex:actionFunction>
+  <!-- Added action function for PID -->
+  <apex:actionFunction action="{!invokeMBEPlusService}" name="invokePIDSearch" status="pleaseWait" reRender="results,errMemSearchMsgs" />
+  <apex:actionFunction action="{!datasearchSoftPhone}" name="searchMemberonAction" status="pleaseWait"  reRender="results,pbsSearchCrit,errMemSearchMsgs" />   <!--  action mapping changed for softphone from 'dataSearch()' to datasearchSoftPhone()-->
+  <apex:actionFunction action="{!searchManual}" name="searchMember" status="pleaseWait"  reRender="results,errMemSearchMsgs" onComplete="if ({!!bIsMemberError}) searchConsumer();" />  <!--  action mapping changed from 'Search' to 'searchManual' on enter hit search ' -->
+  <apex:actionFunction action="{!SearchConsumer}" name="searchConsumer" status="pleaseWait" reRender="results,errMemSearchMsgs"  />
+  
+  <apex:actionFunction action="{!dataErrors}" name="validationError"  reRender="results,errMemSearchMsgs" status="pleaseWait"/>
+  <apex:inputHidden value="{!memberIdErr}" id="memberIdErrID"/>
+  <apex:inputHidden value="{!memberIdLengthErr}" id="memberIdLengthErrID"/>
+  <apex:inputHidden value="{!suffixErr}" id="suffixErrID"/>
+  <apex:inputHidden value="{!suffixLengthErr}" id="suffixLengthErrID"/>
+  <apex:inputHidden value="{!fNameError}" id="fNameErrorID"/>
+  <apex:inputHidden value="{!lNameError}" id="lNameErrorID"/>
+  <apex:inputHidden value="{!lNameLengthErr}" id="lNameLengthErrID"/>
+  <apex:inputHidden value="{!birthDateErr}" id="birthDateErrID"/>
+  <apex:inputHidden value="{!birthDateGreaterErr}" id="birthDateGreaterErrID"/>
+  <apex:inputHidden value="{!postalCodeErr}" id="postalCodeErrID"/>
+  <apex:inputHidden value="{!groupNumberErr}" id="groupNumberErrID"/>
+  <apex:inputHidden value="{!phoneErr}" id="phoneErrID"/>
+  <apex:inputHidden value="{!phoneLengthErr}" id="phoneLengthErrID"/>
+  
+  <!-- Added for reseting the component on click of 'X' button -->
+  <apex:actionStatus id="pleaseWaitIntModal">
+              <apex:facet name="start">
+                <div class="waitingSearchDiv waitingSearchDivOpacity outerPanel" ></div>
+                <div id="searchingStatus" class="waitingSearchDiv innerPanel">
+                  <div class="waitingHolder" style="imageClass">
+                    <img class="waitingImage" src="/img/loading.gif"/>
+                    <span class="waitingDescription">Loading....</span>
+                  </div>
+                </div>
+              </apex:facet>
+              <apex:facet name="stop"/>
+            </apex:actionStatus>
+  <apex:actionFunction name="resetAccLookup"  status="pleaseWaitIntModal" reRender="" oncomplete="closeAccPopUp();"/>
+  <!-- Added for reseting the component on click of 'X' button --> 
+</apex:component>

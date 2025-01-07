@@ -1,0 +1,43 @@
+﻿<!--
+*******************************************************************************************************************************
+VisualForce Page Name   : HUMAgeCalculatorPage
+Version                 : 1.0
+Created On              : 12/17/2014
+Function                : This page is created to allow the user to calculate the age of the member account being accessed.
+                  
+Modification Log: 
+* Developer Name          Code Review                  Date                       Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Shreya Choodamani        20381                      12/17/2014                 Original Version
+* Reena Rajan              20381                      01/13/2015                 Added reference to js file
+*******************************************************************************************************************************
+-->
+
+<apex:page standardcontroller="Account" showHeader="false">
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.HUMAgeCalculator, 'HUMAgeCalculator/Main.css')}" />
+    <apex:includescript value="{!URLFOR($Resource.HUMAgeCalculator, 'HUMAgeCalculator/Main.js')}" />
+    <!-- Minimum script that should remain on the page to call the age calculation method. The rest have been moved to static resource. -->
+    <script type="text/javascript">
+//dont enable P9 Critical Fix        var j$ = jQuery.noConflict();
+        jQuery(document).ready(function(){
+          calculateAge();
+          jQuery('.dataCol').addClass('ageclass');            
+        });   
+    </script>    
+    
+    <apex:form >   
+    <apex:pageblock mode="maindetail">
+    <apex:pageblocksection columns="2">
+    <apex:pageblocksectionitem >
+    <apex:outputLabel value="{!$Label.HUMAge}" style="margin-right:0.7em;"></apex:outputLabel>
+    <apex:outputField style="font-size:20px !important;" id="dob" value="{!account.Birthdate__c}"></apex:outputField>
+    </apex:pageblocksectionitem>
+        <apex:pageBlockSectionItem labelStyle="display:none;" dataStyle="display:none;">
+           <apex:outputText >&nbsp;</apex:outputText>
+           <apex:outputText >&nbsp;</apex:outputText>
+        </apex:pageBlockSectionItem>   
+    </apex:pageblocksection>
+    </apex:pageblock> 
+    </apex:form>
+</apex:page>

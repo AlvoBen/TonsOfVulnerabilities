@@ -1,0 +1,48 @@
+﻿<!--
+/*
+LWC Name        : Go365 Kids Delegation History.html
+Function        : LWC to display Go365 Kids Delegation History Details.
+
+Modification Log:
+* Developer Name                  Date                         Description
+* Pallavi Shewale				  02/25/2022				   US-2557646 Original Version
+***************************************************************************************************************************/
+-->
+<template>
+    <h4 class="slds-var-m-left_x-small slds-m-horizontal_medium ">
+        <div class="slds-text-title_bold" style="font-size: 16px;">Go365 Kids Delegation History</div>
+    </h4>
+    <template if:true={loaded}>
+        <lightning-layout>
+            <lightning-layout-item size="12" padding="around-mediam">
+                <div style="float: left;" class="slds-var-m-left_small slds-var-m-top_large slds-m-horizontal_medium">
+                    <div class="slds-text">{totalCount} item(s) displayed</div>
+                </div>
+            </lightning-layout-item>
+        </lightning-layout>
+        <template if:true={bDataPresent}>
+            <lightning-layout>
+                <div style="width: auto;" class="slds-var-p-around_medium" onscroll={handleScroll}>
+                    <lightning-datatable key-field="id" columns={columns} data={kidsHistorydata} hide-checkbox-column
+                                         sorted-by={sortedBy} onsort={onHandleSort} sorted-direction={sortedDirection}
+                                         enable-infinite-loading onloadmore={loadMoreData} resize-column-disabled>
+                    </lightning-datatable>
+                </div>
+            </lightning-layout>
+        </template>
+        <template if:false={bDataPresent}>
+            <div class="slds-var-m-top_large">
+                <lightning-datatable columns={columns} key-field="id" hide-checkbox-column="true"
+                                     class="slds-var-m-around_mediam" resize-column-disabled>
+                </lightning-datatable>
+            </div>
+            <div class="slds-var-m-around_mediam slds-m-horizontal_small">
+                No data available in table.
+            </div>
+            <div class="slds-border_bottom slds-var-p-around_x-small"></div>
+        </template>
+    </template>
+    <template if:false={loaded}>
+        <lightning-spinner alternative-text="Loading...."></lightning-spinner>
+    </template>
+</template>

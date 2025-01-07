@@ -1,0 +1,105 @@
+﻿<!--
+Component Name   : InquiryDetails_CMP_HUM.component
+Version          : 1.0
+Created On       : 08/31/2020 
+Function         : VF Component to display Inquiry Details 
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*----------------------------------------------------------------------------------------------------------------------------
+* Sayali Nemade 							          09/05/2020 				 REQ - 1318083 MF 3 - Archived CCP Inquiry Detail Page - High Level (Overall Look)
+* Sayali Nemade 							          09/16/2020 				 DF - 1635 DCN Link Removed
+****************************************************************************************************************************
+-->
+<apex:component controller="InquiryDetails_C_HUM" id="compInquiryDetailsID" >
+<apex:includescript value="{!URLFOR($Resource.InquiryDetails_SR_HUM,'InquiryDetailsJS.js')}"/>
+    <apex:pageBlock mode="maindetail" id="pageBlockId">
+        <apex:pageBlockSection title="Inquiry Details" columns="2" id="pageBlockSectionId">
+          
+            <apex:pageBlockSectionItem id="pbsItemCreatedBy">
+                <apex:outputpanel >
+                    <apex:outputLabel value="Created By" style="font-size:12px;"/>
+                </apex:outputpanel>
+                <span id="Created By"/>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem id="pbsItemPriority">
+                <apex:outputpanel >
+                    <apex:outputLabel value="Priority" style="font-size:12px;"/>
+                </apex:outputpanel>
+                <span id="Priority"/>
+           </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem id="pbsItemCreatedDate">
+                <apex:outputpanel >
+                    <apex:outputLabel value="Created Date" style="font-size:12px;"/>
+                </apex:outputpanel>
+                <span id="Created Date"/>
+           </apex:pageBlockSectionItem>
+           
+           <apex:pageBlockSectionItem id="pbsItemServiceCenter">
+                <apex:outputpanel >
+                    <apex:outputLabel value="Service Center" style="font-size:12px;"/>
+                </apex:outputpanel>
+                <span id="Service Center"/>
+           </apex:pageBlockSectionItem>
+
+           <apex:pageBlockSectionItem id="pbsItemStatus">
+                <apex:outputpanel >
+                    <apex:outputLabel value="Status" style="font-size:12px;"/>
+                </apex:outputpanel>
+                <span id="Status"/>
+           </apex:pageBlockSectionItem>
+           
+           <apex:pageBlockSectionItem id="pbsItemDepartment">
+                <apex:outputpanel >
+                    <apex:outputLabel value="Department" style="font-size:12px;"/>
+                </apex:outputpanel>
+                <span id="Department"/>
+           </apex:pageBlockSectionItem>
+           
+           <apex:pageBlockSectionItem id="pbsItemCategory">
+                <apex:outputpanel >
+                    <apex:outputLabel value="Category" style="font-size:12px;"/>
+                </apex:outputpanel>
+                <span id="Category"/>
+           </apex:pageBlockSectionItem>
+           
+           <apex:pageBlockSectionItem id="pbsItemTeam">
+                <apex:outputpanel >
+                    <apex:outputLabel value="Team" style="font-size:12px;"/>
+                </apex:outputpanel>
+                <span id="Team"/>
+           </apex:pageBlockSectionItem>
+           
+           <apex:pageBlockSectionItem id="pbsItemReason">
+                <apex:outputpanel >
+                    <apex:outputLabel value="Reason" style="font-size:12px;"/>
+                </apex:outputpanel>
+                <span id="Reason"/>
+           </apex:pageBlockSectionItem>
+           
+           <apex:pageBlockSectionItem id="pbsItemUser">
+                <apex:outputpanel >
+                    <apex:outputLabel value="User" style="font-size:12px;"/>
+                </apex:outputpanel>
+                <span id="User"/>
+           </apex:pageBlockSectionItem>
+           
+           <apex:pageBlockSectionItem id="pbsItemDisposition">
+                <apex:outputpanel >
+                    <apex:outputLabel value="Disposition" style="font-size:12px;"/>
+                </apex:outputpanel>
+                <span id="Disposition"/>
+           </apex:pageBlockSectionItem>
+           
+           <apex:pageBlockSectionItem id="pbsItemDCN" html-log_this="false">
+                <apex:outputpanel html-log_this="false">
+                    <apex:outputLabel value="DCN" style="font-size:12px;" html-log_this="false"/>
+                </apex:outputpanel>
+                <div id="DCN" log_this="false"/>
+           </apex:pageBlockSectionItem>
+          
+        </apex:pageBlockSection>
+      </apex:pageBlock>    
+</apex:component>

@@ -1,0 +1,51 @@
+﻿<!--
+Component Name   : CRMRetailTask_Contacted_LCMP_HUM.Lightning Component
+Version          : 1.0
+Created On       : 09/23/2021
+Function         : Lightning Component is used to show Delete function of One-On-One Object
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*****************************************************************************************************************************
+* Vinoth L                      				  	   09/23/2021           		User Story 2635072 -T1PRJ0001894 - MF 12 - CRM Storefront Task Management: Action Required Prompt
+* Vinoth L                                     		   11/28/2022                   REQ-4012388 T1PRJ0154546 / SF/ MF9 Storefront - Ability to View First Time Visit - Currebnt CY in Storefront
+****************************************************************************************************************************
+-->
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId" controller="CRMRetail_Contacted_HUM">    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>	
+    <aura:attribute name="currLocation" type="String"/>
+    <aura:attribute name="listOfNotifications" type="List"/>    
+    <aura:attribute name="isNotificationModalActive" type="Boolean" default="false" />
+    <aura:attribute name="notificationData" type="object"/>
+    <aura:attribute name="isWaiverDateRecAvailable" type="boolean" default="false"/>
+    <aura:attribute name="Spinner" type="boolean" default="false" />
+    <aura:attribute name="nameOfPage" type="String" default="TaskPage"/>
+    <aura:attribute name="switchMap" type="Map"/>
+    
+    <aura:if isTrue="{!v.Spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" 
+                 role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>    
+    <aura:if isTrue="{!v.isNotificationModalActive}">
+        <c:storefrontNotificationLWCHUM switchMap = "{!v.switchMap}" notificationWrapData="{!v.notificationData}" onnotificationack="{!c.ackNotification}" pageName="{!v.nameOfPage}"/>           
+    </aura:if> 
+    <aura:html tag="style">
+        .slds-modal__container{
+        max-width: 100rem !important;
+        width:100% !important;        
+        }
+        .modal-body {
+        background: rgba(0, 0, 0, 0) !important;
+        box-shadow: none !important;
+        }
+        .closeIcon {
+        display:none !important;
+        }
+    </aura:html>
+</aura:component>

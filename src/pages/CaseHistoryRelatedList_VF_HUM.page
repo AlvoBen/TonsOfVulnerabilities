@@ -1,0 +1,18 @@
+﻿<!--
+Page Name        : CaseHistoryRelatedList_VF_HUM
+Version          : 1.0 
+Created Date     : July 5 2016
+Function         : Page to Accomodate Component related to Case History for Accounts detail page
+Modification Log :
+*       Developer                   Code Review            Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Praveen Kumar Parimi             32594               07/05/2016            Original Version
+*   Amar Gadewar					 61963				 02/08/2016			   Added Bifurcation logic for the AHT Project.
+*   Siddharth Mehta    									 07/25/2017            REQ - 323549 : SF - TECH - Remove AHT Components Dependencies (RF) 
+*   Pallavi Ravishankar                                  04/12/2018          REQ - 323439 - CaseHistoryDatatable - changed t reference to reusable component as part of Resolution Project
+------------------------------------------------------------------------------------------------------------------------------>
+
+<apex:page standardController="Account" docType="html-5.0" showheader="false" >
+<!-- Embedding Case History Component -->
+<c:CaseHistory_CMP_RT_HUM />
+</apex:page>

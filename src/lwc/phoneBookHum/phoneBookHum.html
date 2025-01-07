@@ -1,0 +1,250 @@
+﻿<!--******************************************************************************************************************************
+LWC Name : phoneBookHUM.html
+Function    : This LWC component contains the phonebook related functionality
+
+Modification Log: 
+Developer Name           Code Review              Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Arpit Jain/Navajit Sarkar                     04/16/2021                  Original version
+* Arpit Jain                                    07/12/2021                  US-2357061 : IVR Call End or Transfer           
+* Harshada Kamble                               08/19/2022                  User Story 3653389: PCC Genesys Migration - Transfer to Provider Survey
+*******************************************************************************************************************************-->
+<template>
+    <template if:true={Switch_2649919}>
+        <template if:true={isPhoneBook}>
+            <div style="text-align:right;margin-right: 40px;padding-top: 15px;">
+                <img src={PhoneBookImgGreen} style="padding-right: 5px;" width="30" height="30" alt="PhoneBook"
+                    onclick={displayPhoneBook} />
+                <img src={SecurePayImg} width="30" height="30" alt="Secure Pay" onclick={displaySecurePay} />
+            </div>
+        </template>
+        <template if:true={isSecurePay}>
+            <div style="text-align:right;margin-right: 40px;padding-top: 15px;">
+                <img src={PhoneBookImg} style="padding-right: 5px;" width="30" height="30" alt="PhoneBook"
+                    onclick={displayPhoneBook} />
+                <img src={SecurePayImgGreen} width="30" height="30" alt="Secure Pay" onclick={displaySecurePay} />
+            </div>
+        </template>
+    </template>
+    <div class="slds-p-around_none slds-m-top_x-small slds-m-bottom_medium slds-m-horizontal_none">
+        <template if:true={loadSpinner}>
+            <lightning-spinner alternative-text="Loading..." variant="brand">
+            </lightning-spinner>
+        </template>
+        <lightning-layout multiple-rows>
+            <div class="phoneBookTab">
+                <template if:true={displayError}>
+                    <lightning-layout multiple-rows>
+                        <lightning-layout-item size="11">
+                            <div class="slds-notify slds-theme_error"
+                                style="background-color:rgb(255, 255, 201);border-style: solid;border-color: orange;border-width: thin;min-width : 100%;display: inline-flex;padding : 10px;margin:0.5rem;border-radius: 0.25rem;">
+                                 <span class="slds-assistive-text">Warning</span>
+                                 <div class="slds-notify__content">
+                                    <lightning-layout multiple-rows>
+                                        <lightning-layout-item size="1">
+                                            <lightning-icon icon-name="utility:warning" alternative-text="Warning!"
+                                                title="Warning" variant="warning">
+                                            </lightning-icon>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="10" class="slds-m-left_small">
+                                                            <b>
+                                                <h5 class="slds-text-heading_small" style="color:black">Warning :</h5>
+                                            </b>
+                                            <p class="slds-align_absolute-center" style="color:black">{errorMsg}</p>
+                                        </lightning-layout-item>  
+                                    </lightning-layout>        
+                                </div>
+                            </div>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </template>
+                <lightning-layout multiple-rows>
+                    <lightning-layout-item size="6" padding="around-small">
+                        <label for="caller" style="font-size: 13px;
+                color: black;"><b>Caller Type:</b></label>
+                        <template if:true={activeCall}>
+                            <template if:true={activeOutboundCall}>
+                                <lightning-combobox variant="label-hidden" id="outboundinactive" name="callerType"
+                                    value={callervalue} placeholder="Select" options={calleroptions}
+                                    onchange={handleCallerChange} disabled>
+                                </lightning-combobox>
+                            </template>
+                            <template if:false={activeOutboundCall}>
+                                <lightning-combobox variant="label-hidden" id="calleractive" name="callerType"
+                                    value={callervalue} placeholder="Select" options={calleroptions}
+                                    onchange={handleCallerChange}>
+                                </lightning-combobox>
+                            </template>
+                        </template>
+                        <template if:false={activeCall}>
+                            <lightning-combobox variant="label-hidden" id="callerinactive" name="callerType"
+                                value={callervalue} placeholder="Select" options={calleroptions}
+                                onchange={handleCallerChange} disabled>
+                            </lightning-combobox>
+                        </template>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="6" padding="around-small">
+                        <label for="phonebook" style="font-size: 13px;
+                color: black;"><b>Phone Book:</b></label>
+                        <lightning-combobox variant="label-hidden" id="phonebook" name="phonebook" value={phonevalue}
+                            placeholder="Select" dropdown-alignment="auto" options={PHoptions} onchange={handleChange}>
+                        </lightning-combobox>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="4" padding="around-small">
+                        <label for="searchfor" style="font-size: 13px;
+                color: black;"><b>Search For:</b></label>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="8" class="slds-p-bottom_small slds-p-right_small slds-p-top_x-small">
+                        <lightning-input id="searchfor" name="search-for" type="search" label="Search for:"
+                            placeholder={searchForLabel} variant="label-hidden" onchange={handlesearch}>
+                        </lightning-input>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="12" padding="around-small">
+                        <div class="customDatatable"
+                            style="max-height: 200px; overflow-y: auto;border: 1px solid rgb(38, 122, 248)">
+                            <lightning-datatable class="customphtable" key-field="id" data={data} columns={columns}
+                                max-row-selection="1" onrowselection={getSelectedName} onrowaction={getRowAction}>
+                            </lightning-datatable>
+                        </div>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="3" padding="around-small">
+                        <label for="dial" style="font-size: 13px;
+                color: black;"><b>Number:</b></label>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="7" class="slds-p-bottom_small slds-p-right_small slds-p-top_x-small">
+                        <template if:true={activeCall}>
+                            <lightning-input id="dial" name="DialNo" type="tel" label="Number:" placeholder="123456789"
+                                variant="label-hidden" onchange={handledialChange} maxlength="10">
+                            </lightning-input>
+                        </template>
+                        <template if:false={activeCall}>
+                            <lightning-click-to-dial value={dialNo}></lightning-click-to-dial>
+                        </template>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="2">
+                    </lightning-layout-item>
+                    <template if:true={activeCall}>
+                        <lightning-layout-item size="3">
+                        </lightning-layout-item>
+                        <lightning-layout-item size="7">
+                            <p style="color: rgb(0, 112, 210);"><b>Please enter 7 DD or 10 Digit phone number</b></p>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="2">
+                        </lightning-layout-item>
+                    </template>
+                    <lightning-layout-item size="6" padding="around-small" class="slds-align_absolute-center">
+                        <button class="slds-button slds-button_brand" onclick={handleConsultTransfer}
+                            disabled={isButtonDisabled} style="width:100%">Consult Transfer</button>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="6" padding="around-small" class="slds-align_absolute-center">
+                        <button class="slds-button slds-button_brand" onclick={handleBlindTransfer}
+                            disabled={isButtonDisabled} style="width:100%">Blind Transfer</button>
+                    </lightning-layout-item>
+                    <template if:true={isCRMSPCCPermissionSetUser}> 
+                        <template if:true={Switch_3653389}> 
+                            <template if:true={isSurveyButtonVisible}> 
+                                <lightning-layout-item size="6" padding="around-small" class="slds-align_absolute-center">
+                                    <button class="slds-button slds-button_brand" onclick={handleSurveyTransfer}
+                                        style="width:100%">VOC Survey Transfer</button>  
+                                </lightning-layout-item>   
+                            </template>               
+                        </template>  
+                    </template>
+                </lightning-layout>
+            </div>
+
+            <div class="SecurePayTab">
+                <lightning-layout multiple-rows>
+                    <template if:true={Switch_2484363}>
+                        <template if:true={Switch_2649919}>
+                            <lightning-layout-item size="12" class="slds-p-left_small">
+                                <div style="font-weight: 700;padding-bottom: 25px;">
+                                    <header>Secure Transfer</header>
+                                </div>
+                            </lightning-layout-item>
+                        </template>
+                        <lightning-layout-item size="5" padding="around-small">
+                            <label for="caller" style="font-size: 13px;
+                            color: black;"><b>Secure Payments</b></label>
+                            <template if:true={enableSecurePay}>
+                                <lightning-combobox variant="label-hidden" id="securepaymentId" name="securepayment"
+                                    value={securepaymentvalue} placeholder="Select" options={securepaymentoptions}
+                                    onchange={handleSecurePaymentChange} dropdown-alignment="bottom-left">
+                                </lightning-combobox>
+                            </template>
+                            <template if:false={enableSecurePay}>
+                                <lightning-combobox variant="label-hidden" id="securepaymentIdfalse"
+                                    name="securepayment" value={securepaymentvalue} placeholder="Select"
+                                    options={securepaymentoptions} onchange={handleSecurePaymentChange}
+                                    dropdown-alignment="bottom-left" disabled>
+                                </lightning-combobox>
+                            </template>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="7" class="slds-p-top_small slds-p-right_small slds-p-bottom_small">
+                            <label for="billingName" style="font-size: 13px;
+                            color: black;"><b>Card Holder Name</b></label>
+                            <lightning-layout>
+                                <lightning-input type="text" label="Billing Name" variant="label-hidden"
+                                    id='billingName' name="BillingName" placeholder='First Name'>
+                                </lightning-input> &nbsp;&nbsp;&nbsp;
+                                <lightning-input type="text" label="Billing Name" variant="label-hidden"
+                                    id='billingLastName' name="BillingLastName" placeholder='Last Name'>
+                                </lightning-input>
+                            </lightning-layout>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="6" padding="around-small" class="slds-align_absolute-center">
+                            <button class="slds-button slds-button_brand" onclick={handleSecureTransfer}
+                                disabled={isSecureButtonDisabled} style="width:100%">Secure Transfer</button>
+                        </lightning-layout-item>
+                    </template>
+                </lightning-layout>
+            </div>
+        </lightning-layout>
+        <template if:true={showInfoPopup}>
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header" style="border-bottom-style:none; padding:0">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                            title="Close" onclick={closeModal}>
+                            <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                                size="small"></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <table>
+                            <tr>
+                                <td class="label slds-text-title_bold slds-text-align_right slds-p-right_xx-small"
+                                    style="width: 150px;vertical-align: top;">
+                                    <label for="Contact">Transfer Number: </label></td>
+                                <td>{infoData.Contact}</td>
+                            </tr>
+                            <tr>
+                                <td class="label slds-text-title_bold slds-text-align_right slds-p-right_xx-small"
+                                    style="width: 150px;vertical-align: top;">
+                                    <label for="Shareable">Shareable Toll-Free: </label></td>
+                                <td>{infoData.ShareableNumber}</td>
+                            </tr>
+                            <tr>
+                                <td class="label slds-text-title_bold slds-text-align_right slds-p-right_xx-small"
+                                    style="width: 150px;vertical-align: top;">
+                                    <label for="Operation">Hours of Operation: </label></td>
+                                <td>{infoData.OperatingHours}</td>
+                            </tr>
+                            <tr>
+                                <td class="label slds-text-title_bold slds-text-align_right slds-p-right_xx-small"
+                                    style="width: 150px;vertical-align: top;">
+                                    <label for="Notes">Notes:
+                                    </label></td>
+                                <td>{infoData.Notes}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open">
+            </div>
+        </template>
+    </div>
+</template>

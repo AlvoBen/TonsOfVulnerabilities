@@ -1,0 +1,15 @@
+﻿<!-- *****************************************************************************************
+Page Name          : QueueViewActivateDeactivate_VF_HUM
+Version            : 1.0
+Function           : Page to Activate Queue View
+Created Date       : 06/13/2016
+
+Modification Log:
+*   Developer                   Code Review          Date                Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Harshith Mandya                                06/13/2016          Original Version
+******************************************************************************************************************************** -->
+
+<apex:page controller="QueueViewActivateDeactivate_C_HUM" action="{!activateDeactivate}" id="thePage">
+    <apex:pageMessages id="pageMessage"/>
+</apex:page>

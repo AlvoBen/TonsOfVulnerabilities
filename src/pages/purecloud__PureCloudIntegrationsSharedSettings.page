@@ -1,0 +1,41 @@
+﻿<apex:page sidebar="false" showHeader="false" controller="purecloud.PCFeatureController">
+    <!-- <apex:outputPanel rendered="{!campaignManagementEnabled}"> -->
+    <apex:outputPanel >
+        <apex:includeLightning />
+        <apex:slds />
+        <apex:includeScript value="{!$Resource.purecloud__jquery}"/>
+        <link href="{!URLFOR($Resource.PureCloudStaticResources, 'stylingResources/css/customCallCenterSettings.css')}" rel="stylesheet" />
+        <script type="text/javascript"> var sessionId = '{!$Api.Session_Id}';</script>
+        <script>
+            $Lightning.use("purecloud:PureCloudIntegrationsSharedSettingsLightningOutApp", function() {
+                
+                $Lightning.createComponent("purecloud:PCIntegrationsSharedSettings", { sessionId: sessionId}, "lightning", function(cmp) {
+                    $('#spinner-container').remove();
+                });
+                
+            });
+        </script>
+        <style>
+
+            body {
+                padding: 20px;
+            }
+            
+        </style>
+
+        <apex:sectionHeader title="Genesys Cloud for Salesforce" subtitle="Integrations Shared Settings"/>
+
+        <div id="spinner-container">
+            <div class="slds-spinner_container">
+              <div role="status" class="slds-spinner slds-spinner--large slds-spinner--brand">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+              </div>
+            </div>
+        </div>
+
+        <div id="lightning" />
+
+    </apex:outputPanel>
+</apex:page>

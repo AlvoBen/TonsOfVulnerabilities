@@ -1,0 +1,89 @@
+﻿<!--
+JS Controller        : pharmacyHpieOrderHistoryTimelineHum
+Version              : 1.0
+Created On           : 09/06/2023
+Function             : Component to display to pharmacy order history timeline
+
+Modification Log: 
+* Developer Name                      Date                         Description
+* Nirmal Garg                         09/06/2023                   Original Version
+* Jonathan Dickinson			      03/01/2024				   User Story 5645671: T1PRJ1374973 - DF8442-8443-8445; REGRESSION_Lightning_HPIE; History Timeline on Order Summary Detail populates all results instead of groups of 10 and History Timeline does not expand case comments
+*------------------------------------------------------------------------------------------------------------------------------
+-->
+<template>
+	<div>
+		<div class="">
+			<div class="slds-grid">
+				<div class="slds-col_bump-right">
+					<h4 class="slds-m-left_x-small">
+						<div class="slds-text-title_bold">History TimeLine</div>
+					</h4>
+				</div>
+				<div class="slds-col ">
+					<div class="slds-var-m-top_large slds-m-left_x-small">
+						<div class="slds-border_top">
+
+						</div>
+					</div>
+				</div>
+				<div>
+					<lightning-button class="slds-button" name='showmore' variant="neutral" label="Show More"
+						disabled={showbutton} onclick={handleShowMore}>
+					</lightning-button>
+				</div>
+				<div class="slds-col">
+					<div class="slds-var-m-top_large">
+						<div class="slds-border_top">
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="slds-p-bottom_large slds-p-top_small slds-grid slds-grid_align-end">
+				<div class="slds-col slds-size_3-of-12">
+					<template if:true={loaded}>
+						<template if:true={dataFound}>
+							<div class="slds-grid slds-grid_align-end">
+								<div class="slds-col">
+									<div class="slds-text">{filteredCount} of {totalCount} results</div>
+								</div>
+							</div>
+						</template>
+					</template>
+				</div>
+			</div>
+		</div>
+		<template if:true={loaded}>
+			<template if:true={dataFound}>
+				<div style="max-height: 200px;">
+					<lightning-layout class="infinite-scroll-cont slds-var-m-left_medium">
+						<lightning-layout-item flexibility="grow" size="12">
+							<div class="slds-grid full-container slds-is-relative slds-p-horizontal_none table-container full-container slds-scrollable_y"
+								style="height: 200px;" onscroll={handleScroll}>
+								<template if:true={historyTimelineData}>
+									<div class="slds-size_1-of-1">
+										<ul class="slds-timeline">
+											<template if:true={historyTimelineData}>
+												<c-generic-history-timeline-hum
+													historytimelinedata={historyTimelineData} onlinkclick={handleLinkClick}
+													onhandlescrollevent={handleScroll} filteredcount={filteredCount}
+													totalcount={totalCount} s-label="">
+												</c-generic-history-timeline-hum>
+											</template>
+										</ul>
+									</div>
+								</template>
+							</div>
+						</lightning-layout-item>
+					</lightning-layout>
+				</div>
+			</template>
+			<template if:false={dataFound}>
+				<div class="full-container">
+					<c-generic-scoped-notification-hum iconname="utility:info" message="No Order Notes Found">
+					</c-generic-scoped-notification-hum>
+				</div>
+			</template>
+		</template>
+	</div>
+</template>

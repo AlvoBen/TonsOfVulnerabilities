@@ -1,0 +1,40 @@
+﻿<!--
+*******************************************************************************************************************************
+LWC JS Name : commentsFormHum.html
+Function    : This LWC renders popup to create new comments for case comments section
+
+Modification Log: 
+Developer Name           Code Review                      Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Shailesh Bagade
+*********************************************************************************************************************************-->
+<template>
+    <div class="slds-p-horizontal_x-large">
+        <template if:false={deleteForm}>
+            <div class="slds-grid">
+                <div class="slds-col slds-size_1-of-1 slds-wrap">
+                    <div class="slds-p-vertical_medium">
+                        <span class="slds-text-color_error">*</span>
+                        <label class="slds-text-body_medium">{myLabels.label1}:</label>
+                        <lightning-textarea maxlength={inputLength} value={getComment} data-id='comments' class={commentErrorHighlights}>
+                        </lightning-textarea>
+                        <div class="slds-col">
+                            <div class="slds-text-body_medium message-container">
+                                <span>{maxLimitMsg}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template if:true={deleteForm}>
+            <div class="slds-grid slds-align_absolute-center">
+                <div class="slds-col">
+                    <div class="slds-var-p-vertical_medium">
+                        You are now deleting this comment. Are you sure you want to continue?
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>

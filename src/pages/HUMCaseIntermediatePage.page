@@ -1,0 +1,35 @@
+﻿<!--
+Page Name        : HUMCaseIntermediatePage
+Version          : 1.0 
+Created Date     : 08/25/2014 
+Function         : This Page is used for GCP CCP 
+Modification Log :
+*   Modification ID     Developer               Code Review             Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   1.0              Chaitanya Vegendla                                 08/22/2014           Original 
+*   2.0              Pranali Choudhari                                  08/25/2014           Seperated JS to static resource      
+-->
+
+<apex:page >
+
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+    <apex:includeScript value="/support/console/31.0/integration.js" />
+    <apex:includeScript value="{!URLFOR($Resource.HUMCaseIntermediate,'/HUMCaseIntermediate/HUMCaseIntermediate.js')}"/> 
+    <script>
+        //Get the URL Paramters to pass on to Custom Search Page
+        var urlString = window.location.search.toString();
+
+         //Current tab ID to close tab
+        var currentTabID;
+
+         //Store the Record ID of Case/Account
+        var recordID;
+
+         //Tab ID
+        var tabID;
+
+        window.onload = triggerTabRefresh;                           
+ 
+</script>
+
+</apex:page>

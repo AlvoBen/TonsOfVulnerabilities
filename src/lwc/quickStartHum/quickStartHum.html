@@ -1,0 +1,117 @@
+﻿<!--
+LWC Name        : quickStartHum.html
+Function        : LWC to display quickStart section.
+
+Modification Log:
+* Developer Name                  Date                         Description
+------------------------------------------------------------------------------------------------------------------------------
+* Disha Dole                    12/06/2022                     DF-6419 - On QuickStart+, Recommended Action section displays Icons that are too big and information icon next to them that is not part of the AC
+* Disha Dole					20/01/2023 					   US:4085171 - T1PRJ0865978 - C06, Lightning-Case Management- Quick Start-Associate to Policy, alignment & display issue fixes
+* Manohar Billa                 02/16/2023                     US:3272618 - Verify Demographics changes
+* Disha Dole					17/02/2023					   US:4217891 - T1PRJ0865978 - C06, Lightning-Case Management- Quick Start- Standardization of Scoped Notification
+* Manohar Billa                 02/19/2023                     US:4179702 -  Guidance Alert for QS
+* Pooja Kumbhar	                06/01/2023                     US:4583426 - T1PRJ0865978 - C06- Case Management - MF 26447 - Provider QuickStart- Implement Callback Number, G&A, Duplicated C/I logic
+* Pooja Kumbhar	                06/28/2023                     US4773013 - T1PRJ0865978 - INC2395527 - Lightning Command Center RAID#041: every time user  getting a call creating a task automatically.
+-------------------------------------------------------------------------------------------------------------------------------
+-->
+<template>
+	<br/>
+    <lightning-layout class="slds-text-color_success slds-m-right_xx-small">
+        <lightning-layout-item class="slds-m-left_x-small" size="12">
+            <c-qs-messaging-hum name="Messaging" msgs={errorList} stick-msgs={stickMsgList} stick-msgs-guid-alert={guidAlertMsgList}
+            onconfirmresponse={handleErrorConfirmation} reset={reset}></c-qs-messaging-hum>
+        </lightning-layout-item>
+    </lightning-layout>
+	
+    <lightning-layout>
+        <lightning-layout-item class="slds-m-left_xx-small" size="4">
+            <div class="slds-section slds-is-open slds-box">
+                <h3 class="slds-section__title slds-text-heading_small slds-box" style="background-color: #f5f1f3;">
+                    <span>Case Information</span>
+                </h3>
+
+                <lightning-combobox class="slds-m-bottom_x-small mandatory" disabled={disable} name="Classification"
+                    data-id="classificationQSlst" label="Classification" value={classificationValue}
+                    placeholder="--None--" options={classificationList} onchange={handleClassificationChange}
+                    ></lightning-combobox>
+
+                <lightning-combobox class="slds-m-bottom_x-small mandatory" disabled={disable} name="Intent" data-id="intentQAlst"
+                    label="Intent" value={intentValue} placeholder="--None--" options={intentList}
+                    onchange={handleIntentChange} ></lightning-combobox>
+
+            <template if:true={showOrHideMedicarePartD}>
+                    <lightning-combobox class="mandatory" disabled={disable} name="MedicareCallPartCPartD"
+                        data-id="medicarePartCPartDQSlst" label="Medicare Call Part C or Part D"
+                        value={medicarePartCPartDValue} placeholder="--None--" options={medicarePartCPartDList}
+                        onchange={handleMedPartCPartDChange} ></lightning-combobox>
+                </template>
+            </div>
+<!-- Recommended Action start  -->
+<template if:true={IsRecommendedActions}>
+                <div class="slds-section slds-is-open slds-box">
+                    <h3 class="slds-section__title slds-text-heading_small slds-box" style="background-color: #f5f1f3;">
+                        <span>Recommended Actions</span>
+                    </h3>
+<div class="icons-container slds-grid">
+
+    <template for:each={mapRAiconImages} for:item="mapicon">
+                       
+                        <div key={mapicon}
+
+                        class="member-icons slds-p-top_small slds-grid slds-p-right_xx-small slds-is-relative slds-list_horizontal">
+                        
+                           
+                        
+       
+                           <image  src={mapicon.value}  title={mapicon.key}></image>
+                         
+                    </div> 
+                    
+                    </template>
+</div>
+
+
+
+
+
+</div>
+</template>
+
+<!--Recommended Action end -->
+<div class="slds-section slds-is-open slds-box">
+    <h3 class="slds-section__title slds-text-heading_small slds-box" style="background-color: #f5f1f3;">
+                    <span>G&amp;A/Complaints</span>
+                </h3>
+                <c-qs-Gn-A-Complaint-Hum name='GnaComplaint' ci-gna-complaint-data={ciDataForGnAComplaint}
+                    ci-medicare-part={medicarePartCPartDValue} fetch-data={pullData} ondatafeed={handleGnaComplaintData}
+                    reset={reset} disable={disable} confirmed={confirmed} onremotepretext={getRemotePretextGnA}
+                    oncomplaintgnachange={getComplaintGnAChange} ci-buisness-group={businessGroup} 
+                    ongnaduplicategrievance={handleGnaDupGrievanceValidation}></c-qs-Gn-A-Complaint-Hum>
+
+        </div>
+        <div class="slds-section slds-is-open slds-box" if:false={isProviderUser}>
+            <c-qs-Task-Information-Section fetch-data={pullData} ondatafeed={handleTaskInformationData} reset={reset} disable={disable} taskreset={hidetask}>
+            </c-qs-Task-Information-Section>
+        </div>
+        <template if:true={bIsShowDocumentSec}>
+                <div class="slds-section slds-is-open slds-box">
+                    <c-qs-Mentor-Ref-Doc-Hum ci-ref-doc-list={lstReferenceDocuments}
+                        ci-mentor-doc-list={ciMentorlinkdata} reset={reset}></c-qs-Mentor-Ref-Doc-Hum>
+                </div>
+            </template>
+        </lightning-layout-item>
+        <lightning-layout-item size="8" class="slds-m-left_xx-small">
+            <c-qs-Case-Comment-Hum name="CaseComment" ci-complaint-gna-onchange={ciDataForcomGnAChange}
+                ci-gna-pretext-data={ciDataForCCGnAPretext} ci-pretxt-data={ciDataForCaseComment}
+                ci-buisness-group={businessGroup} fetch-data={pullData} ondatafeed={handleCaseCommentData} reset={reset}
+                disable={disable}></c-qs-Case-Comment-Hum>
+            <c-qs-Create-Case-Hum name="CreateCase" ondatarequest={handleCreateCase} casedetails={caseCreationData}
+	    oncasevalidation={handleCreateCaseValidation} disable={disable} error-confirmation={errorConfirmation}
+	    oncomponentreset={handleReset} reset={reset} oncasecreated={handleTaskRefresh}></c-qs-Create-Case-Hum>
+            <lightning-input if:false={isProviderUser} style="margin-left:19px;" type="checkbox" label="Ghost Call" onchange={setGhostCall}
+                data-id='gChbxId'
+                field-level-help="Select Ghost call if there was no one on the line when call was answered">
+            </lightning-input>
+        </lightning-layout-item>
+    </lightning-layout>
+</template>

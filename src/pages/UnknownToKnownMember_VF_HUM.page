@@ -1,0 +1,124 @@
+﻿<!---********************************************************************************************************************************************************
+Page Name        : UnknownToKnownMember_VF_HUM
+Version          : 1.0
+Created Date     : 2/1/2022
+Function         : This is the visualforce page which is used To Edit Interactions And Move Case to known  Member
+ Version                   Developer Name                  Date                       Description
+1.0                         Bhumika S                       2/1/2022           User Story 3010498: T1PRJ0314829 - MF 1 - Quality - Ability to move cases from an unknown to a known Member (RF)
+*****************************************************************************************************************************/-->
+<apex:page controller="UnknownToKnownMember_C_HUM" tabStyle="Interaction__c" id="PageId">
+  <apex:includeScript value="/support/console/53.0/integration.js"/>
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.UnknownToKnownMember_SR_HUM, 'Styles/UnknownToKnownMember_CSS.css')}"/>
+  <apex:includescript value="{!URLFOR($Resource.UnknownToKnownMember_SR_HUM,'Scripts/UnknownToKnownMember_JS.js')}"/>  
+  <script type="text/javascript">
+    var customInteractingAboutlookup = '';
+    var customInteractingWithlookup='';
+  </script>
+  <apex:form id="myForm">
+    <apex:pageblock title="Move To Known Member" mode="edit" id="pbId">
+      <apex:pageMessages id="myMessages"/>
+      <apex:outputPanel id="messageInteractingAbout" style="display: none;">
+        <apex:PageMessage summary="Enter Interacting About Value." severity="Error" strength="2" />
+      </apex:outputPanel>
+      <apex:outputPanel id="messageInteractingWith" style="display: none;">
+          <apex:PageMessage summary="Error: You must enter a value for Caller Name OR Interacting With." severity="Warning" strength="2" />
+      </apex:outputPanel>
+      <apex:outputPanel id="messageInteractingWithType" style="display: none;">
+          <apex:PageMessage summary="Error: Interacting With Type can't be an Unknown Member, Unknown Provider, Unknown Agent or Unknown Group." severity="Error" strength="2" />
+      </apex:outputPanel>
+      <apex:pageBlockButtons location="bottom">
+        <apex:actionStatus id="go">
+          <apex:facet name="stop">
+            <apex:commandButton value="Save & Move to Known Member" onclick="processMoveToMember(); return false;" status="go" reRender="{!$Component.myForm.myMessages},outCaseJs" />
+          </apex:facet>
+          <apex:facet name="start">
+            <apex:commandButton status="go" value="LOADING..." disabled="true" />
+          </apex:facet>
+        </apex:actionStatus>          
+        <apex:commandButton action="/{!JSENCODE($CurrentPage.parameters.Id)}" value="Cancel" immediate="true" status="go"/>
+      </apex:pageBlockButtons>
+      <apex:pageBlockSection title="Interaction Information" columns="2" id="pbSecId">
+        <apex:pageblockSectionItem >
+          <apex:outputText value="Name" />         
+          <apex:inputtext value="{!interactionRec.Caller_Name__c}" MaxLength="255" id="intCallerName" />
+        </apex:pageblockSectionItem>
+        <apex:pageblockSectionItem id="pbSecItemIntAboutId" >
+          <apex:outputLabel value="Interacting About" id="intAboutIdLabel"/>  
+          <apex:outputpanel id="opIntAbout" layout="block" styleClass="requiredInput"> 
+            <div class="requiredBlock"></div>                                                 
+            <apex:inputHidden value="{!oCase.AccountId}" id="hdnIntAboutId"/>
+            <apex:inputText id="ipIntAboutId" rendered="true" value="{!IntWithName}" />
+            <apex:outputPanel >
+              <a href="#" style="text-decoration:none;">
+                <apex:image styleClass="lookupIcon" value="/s.gif" onclick="getOpenAccountSearch(true,true,true,false);"/>
+              </a>
+            </apex:outputPanel>
+          </apex:outputPanel>
+        </apex:pageblockSectionItem>
+        
+        <apex:pageblockSectionItem id="pbSecItemIntrWithId">
+          <apex:outputLabel value="Interacting With" id="intWithIdLabel"/>                                      
+          <apex:outputPanel id="opIntWith">
+            <apex:inputHidden value="{!interactionRec.Interacting_With__c}"  id="hdnIntrWithId"/>
+            <apex:inputText id="ipInteractingWithId" rendered="true" value="{!IntWithName}" />
+            <apex:outputPanel >
+              <a href="#" style="text-decoration:none;">
+                <apex:image styleClass="lookupIcon" value="/s.gif" onclick="getOpenAccountSearch(true,true,false,true)"/>
+              </a>
+            </apex:outputPanel>
+          </apex:outputPanel>
+        </apex:pageblockSectionItem>
+        <apex:outputLabel />
+
+        <apex:inputField id="idInteractingWithType" value="{!interactionRec.Interacting_With_type__c}" required="true"/>        
+      </apex:pageBlockSection>    
+    </apex:pageblock>
+
+    <apex:actionFunction name="closePopUp" action="{!getopenAccountLookup}" reRender="updatePopUp"/>
+    <apex:outputPanel id="updatePopUp">
+      <script>
+          customInteractingAboutlookup =  '{!JSENCODE(IF(bIntAboutFlag, 'true', 'false'))}';
+          customInteractingWithlookup = '{!JSENCODE(IF(bIntWithFlag, 'true', 'false'))}';
+      </script>
+      <apex:inputHidden value="{!bIntAboutFlag}" id="hdncustomInteractingAboutlookupFlag" />
+      <apex:inputHidden value="{!bIntWithFlag}" id="hdncustomInteractingWithlookupFlag" />
+      <apex:outputPanel layout="block" rendered="{!viewAccountLookup}" styleClass="popupBackground"/>
+      <apex:outputPanel layout="block" rendered="{!viewAccountLookup}" styleClass="custPopup">
+        <apex:outputPanel >
+          <a href="#" style="text-decoration:none; text-align:right;">
+            <img src="/EXT/theme/sfdc/images/tabs/tab-close.gif" class="lookupCloseButton" onClick="resetAccLookup();"/>
+          </a></apex:outputPanel>
+        <div class="AccountLookup">
+          <c:CaseEdit_Account_Lookup_Component id="memberSearchComponent" rendered="{!bMemberFlag}"  />
+        </div>
+      </apex:outputPanel>
+    </apex:outputPanel>
+    
+    <apex:actionFunction action="{!editAndMove}" name="editAndMoveAF" reRender="myMessages,outCaseJs" status="go"/>
+    
+    <apex:actionFunction name="getOpenAccountSearch" rerender="updatePopUp">
+      <apex:param name="bViewAccountLookup" assignTo="{!viewAccountLookup}" value="" />
+      <apex:param name="bMemberFlag" assignTo="{!bMemberFlag}" value="" />
+      <apex:param name="customInteractingAboutlookup" assignTo="{!bIntAboutFlag}"  value="" />
+      <apex:param name="customInteractingWithlookup" assignTo="{!bIntWithFlag}" value="" />
+    </apex:actionFunction>   
+    
+    <apex:actionFunction name="closeAccPopUp" immediate="true" status="pleaseWaitIntModal" reRender="updatePopUp">
+      <apex:param name="bViewAccountLookup" assignTo="{!viewAccountLookup}" value="false" />
+    </apex:actionFunction>
+  </apex:form>
+  <apex:outputPanel id="outCaseJs">
+    <script type="text/javascript">
+      moveToKnownMember({!bIsSuccess}, '{!JSENCODE(sAccountId)}', '{!JSENCODE(sAccountName)}', '{!JSENCODE($CurrentPage.parameters.Id)}', '{!JSENCODE(sCaseNumber)}');          
+    </script>   
+  </apex:outputPanel>
+  <script type="text/javascript">
+    var callerNameId = document.querySelector("[id$='intCallerName']");
+    var interactingAboutId = document.querySelector("[id$='ipIntAboutId']");
+    var hdninteractingAboutId = document.querySelector("[id$='hdnIntAboutId']");
+    var interactingWithId = document.querySelector("[id$='ipInteractingWithId']");
+    var hdninteractingWithId = document.querySelector("[id$='hdnIntrWithId']");
+    var interactingWithTypeId = document.querySelector("[id$='idInteractingWithType']");
+  </script>
+</apex:page>

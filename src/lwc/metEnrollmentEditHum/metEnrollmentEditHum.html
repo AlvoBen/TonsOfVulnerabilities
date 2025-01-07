@@ -1,0 +1,103 @@
+﻿<template>  
+    <lightning-layout>
+        <lightning-layout-item size="9">
+    <template if:true={bIsWarningMsg}>
+        <div class="slds-notify slds-notify_alert slds-m-bottom_xx-small" role="alert">
+            <lightning-icon size="xx-small" icon-name="utility:warning" variant="inverse" alternative-text="Warning"></lightning-icon> &nbsp; <lightning-formatted-rich-text value={warningMsg}></lightning-formatted-rich-text>
+        </div>
+    </template>
+<div class="slds-grid slds-wrap">
+    <div class="slds-col slds-size_1-of-12"></div>
+    <div class="slds-col slds-size_1-of-12"></div>
+    <template if:true={showTrackID}>
+        <div class="slds-col slds-size_1-of-12">
+            <br/>
+                <lightning-formatted-text value="TrackID"></lightning-formatted-text> &nbsp;&nbsp;&nbsp;
+        
+</div>
+
+                      <template if:true={isTrackID}>
+                        <div class="slds-col slds-size_2-of-12">
+                            <br/>
+                                  <lightning-formatted-text value={TrackID} class="copy-Me"></lightning-formatted-text>  &nbsp;&nbsp;
+                                  
+                                  <lightning-button-icon variant="bare" class="slds-m-left_x-small" onclick={CopyToClipboard} onmouseover={omMouseOver} onmouseout={onMouseOut}
+                                      icon-name="utility:copy" si></lightning-button-icon>
+                                  <div class={popOverCss} role="tooltip"
+                                          id="custom-help" data-custom-help="custom-help">
+                                          <div class="slds-popover__body">
+                                              <lightning-formatted-rich-text value={helpText}></lightning-formatted-rich-text>
+                                          </div>
+                                      </div> 
+                                     
+                      </div>
+                      
+                        </template>
+    <template if:false={isTrackID}>
+                            <div class="slds-col slds-size_1-of-12"></div>
+                        </template>
+    </template>
+
+    <template if:true={showMETEntry}>
+<div class="slds-col slds-size_2-of-12">
+    <br/>
+    <label class="slds-p-left_x-small">{metEntryAssoLabel} </label>
+</div>
+<div class="slds-col slds-size_2-of-12">
+   
+    <lightning-combobox class="slds-m-left_x-small" data-id="metEntryAsso" name="metEntryAsso" value={MetEntryAssoVal} placeholder="--None--" options={MetEntryAssoOptions} onchange={MetEntryAssoChange} disabled={disableMETEntries}></lightning-combobox>
+    
+</div>
+</template>
+</div>
+
+<br/>
+</lightning-layout-item>
+</lightning-layout>
+
+<lightning-layout>
+    <lightning-layout-item size="9">
+<div class="slds-grid slds-wrap">
+    <div class="slds-col slds-size_1-of-12"></div>
+    <div class={showOrHidestyle}>
+        <label class="slds-p-left_x-small">Task</label>
+        <abbr title="required" class="slds-required">*</abbr>
+        <lightning-combobox name="Task" class={cssTaskID} value={Taskvalue} placeholder="--None--" options={Taskoptions} onchange={handleTaskChange} disabled={disableTask}></lightning-combobox>
+        <div if:true={isTaskError} class="ErrorHelp">Complete this field.</div>
+            </div>&nbsp;&nbsp;
+    <div class={showOrHidestyle}>
+        <label class="slds-p-left_x-small">Action</label>
+        <abbr title="required" class="slds-required">*</abbr>
+        <lightning-combobox name="Action" class={cssActionID} value={Actionvalue} placeholder="--None--" options={Actionoptions} onchange={handleActionChange} disabled={disableAction}></lightning-combobox>
+        <div if:true={isActionError} class="ErrorHelp">Complete this field.</div>
+            </div>&nbsp;&nbsp;
+    <div class={showOrHidestyle}>
+        <label class="slds-p-left_x-small">Source</label>
+        <abbr title="required" class="slds-required">*</abbr>
+        <lightning-combobox name="Source" class={cssSourceID} value={Sourcevalue} placeholder="--None--" options={Sourceoptions} onchange={handleSourceChange} disabled={disableSource}></lightning-combobox>
+        <div if:true={isSourceError} class="ErrorHelp">Complete this field.</div>
+            </div>&nbsp;&nbsp;
+    <div class={showOrHidestyle}>
+        <label class="slds-p-left_x-small">Status</label>
+        <lightning-input type="text" value="Completed" disabled></lightning-input>
+            </div>&nbsp;&nbsp;
+    <div class="slds-col slds-size_2-of-12">
+        <br/><br/>
+        <lightning-button variant="brand" label="Add Entry" onclick={handleNewEntryClick} class="slds-m-left_x-small" disabled={disableAddEntry}></lightning-button>
+    </div>
+</div>
+<br/><br/>
+    </lightning-layout-item>
+</lightning-layout>
+
+<lightning-layout>
+    <lightning-layout-item size="9">
+ <lightning-datatable class={sldsTable} min-column-width="150" key-field="id" data={METData} columns={METcolumns} hide-checkbox-column="false" wraptextmaxlines="10" onrowaction={handleRowAction}>
+        </lightning-datatable>
+<template if:true={NoMETData}>
+    <div class="slds-align_absolute-center" >No Records to Display</div>
+  </template>
+    </lightning-layout-item>
+</lightning-layout>
+
+</template>

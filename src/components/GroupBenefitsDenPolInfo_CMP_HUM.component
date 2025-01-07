@@ -1,0 +1,85 @@
+﻿<!--
+Component Name   : GroupBenefitsDenPolInfo_CMP_HUM.component
+Version          : 1.0
+Created On       : 04/11/2018 
+Function         : VF Component to display VOB Dental Policy Information
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+* Melkisan Selvaraj                                  04/11/2018             Cloned from BenefitsV1_VF_HUM for REQ - 360140
+* Samruddhi Rathi									02/10/2021				REQ - 1669824 - CR AEP Readiness Critical Security Issues 
+ ****************************************************************************************************************************
+ -->
+<apex:component id="comp">
+    <apex:attribute id="Policy__c.id" name="policyID" description="This is Person's ID" type="String" required="true"></apex:attribute>
+    <apex:includeScript value="{!URLFOR($Resource.GroupBenefitsDenPolInfo_SR_HUM,'GroupBenefitsDenPolInfo_JS_HUM.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.GroupBenefitsDenPolInfo_SR_HUM,'GroupBenefitsDenPolInfo_CSS_HUM.css')}"/>
+    
+    <script type="text/javascript">
+    Visualforce.remoting.timeout = "{!$Label.HUMMemWebActivityTimeout}"; // Set timeout at page level
+    vLabelDentalPolicyInfoError = '{!$LABEL.HUMWebActivityResponseErrors}';
+    sPolicyId = '{!JSENCODE(policyID)}';
+    </script>
+    
+    <!-- This block will render a spinner image to indicate table loading in the UI -->
+    <div class="loadingImgStyle" id="statusImageLoading">
+        <img src="/img/loading.gif"/>
+        <span class="waitingDescription">{!$Label.LOADING_HUM}</span>
+    </div>
+		<div id="responseErrors">
+        </div>
+
+    <div id="formDentalPolicyInfoId" style="display:none;">
+     
+       
+         <div id="DentalPolInfoPageBlockDiv">
+         <apex:outputLabel id="addlLabel" styleClass="addInfo" value="{!$Label.ADD_GRP_INFO}" html-log_this="false"/>
+        <apex:pageBlock id="DentalPolInfoPageBlock" >
+         <apex:pageBlockSection columns="2" id="DentalPolInfoPageBlockSection"  collapsible="false">    
+                 
+                  
+                    <apex:pageBlockSectionItem id="GroupDentalPolInfoGEC">
+                        <apex:outputpanel >                            
+                             <apex:outputLabel value="{!$Label.Group_Enrollment_Count_HUM}" />
+                        </apex:outputpanel>           
+                             <span id="GroupEnrollmentCount">
+                             </span>                                                            
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem id="GroupDentalPolInfoOEBD">
+                        <apex:outputpanel >                            
+                             <apex:outputLabel value="{!$Label.Open_Enrollment_Begin_Date_HUM}" />
+                        </apex:outputpanel>           
+                             <span id="OpenEnrolBegindate">
+                             </span>                                                            
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem id="GroupDentalPolInfoES">
+                        <apex:outputpanel >                            
+                             <apex:outputLabel value="{!$Label.Enrollment_Source_HUM}" />
+                        </apex:outputpanel>           
+                             <span id="EnrollmentSource">
+                             </span>                                                            
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem id="GroupDentalPolInfoOEED">
+                        <apex:outputpanel >                            
+                             <apex:outputLabel value="{!$Label.Open_Enrollment_END_Date_HUM}" />
+                        </apex:outputpanel>           
+                             <span id="OpenEnrolEnddate">
+                             </span>                                                            
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem id="GroupDentalPolInfoHR">
+                        <apex:outputpanel >                            
+                             <apex:outputLabel value="{!$Label.Hourly_Requirements_HUM}" />
+                        </apex:outputpanel>           
+                             <span id="HourlyReq">
+                             </span>                                                            
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+            </div>  
+			</div>
+</apex:component>

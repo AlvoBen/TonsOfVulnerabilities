@@ -1,0 +1,32 @@
+﻿<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 07-08-2020
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+  Modifications Log 
+  Ver   Date         Author                               Modification
+  1.0   07-08-2020   ChangeMeIn@UserSettingsUnder.SFDoc   Initial Version
+-->
+<template>
+    <lightning-card title={title} icon-name="custom:custom63">
+        <template for:each={summarySections} for:item="section">
+            <div class="summary-container slds-p-top_small" key={section.order}>
+                <div class="title-container">
+                    <h2>{section.title}</h2> 
+                </div>
+                <template for:each={section.fields} for:item="field">
+                    <div class="field-readonly-container" key={field.label}>
+                        <div class="account-readonly-label">
+                            <lightning-formatted-text value={field.label}></lightning-formatted-text>
+                        </div>
+                        <div class="empty-container"></div>
+                        <div class="account-readonly-value">
+                            <lightning-formatted-text value={field.value}></lightning-formatted-text>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+    </lightning-card>
+</template>

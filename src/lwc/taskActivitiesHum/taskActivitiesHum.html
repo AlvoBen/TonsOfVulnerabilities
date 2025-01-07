@@ -1,0 +1,54 @@
+﻿<!--
+*******************************************************************************************************************************
+LWC JS Name : TaskActivitiesHum.html
+Function    : This component is used show task associated to cases on case page
+
+Modification Log: 
+Developer Name           Code Review                      Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Shailesh Bagade                                        22/06/2022                  initial version
+* Shailesh Bagade                                        28/07/2022                  US-3560805 Close Tasks/Activity Section of Case Details 
+*********************************************************************************************************************************-->
+<template>
+    <template if:true={parentSpinner}>
+        <lightning-spinner alternative-text="Loading"></lightning-spinner>
+    </template>
+    <article class="slds-card slds-grid slds-grid--vertical full-container">
+        <div class="full-container slds-is-relative slds-p-horizontal_none"> 
+            <!-- //Edit task from case details page on activity section -->
+            <c-generic-modal-hum if:true={showTaskEditPanel} b-show-modal={showTaskEditPanel} onclose={cancelClicked}
+                title= {title} onsave={saveFormEdit}  buttons-config={buttonsConfig} b-spinner={showSpinner} >
+                <c-create-task_-l-w-c_-h-u-m invoked-flow-from = "Task" hide-footer-header = {hideFooterheader} onclose={closeModal} action = {action} refresh-page = {refreshCasePage} record-id = {currentTaskId} slot="content"></c-create-task_-l-w-c_-h-u-m>
+            </c-generic-modal-hum>
+
+
+            <div class="min-height-400">
+                <template if:true={loaded}>
+                    <lightning-layout class="infinite-scroll-cont">
+                        <lightning-layout-item flexibility="grow" size="12">
+                            <div class="slds-grid full-container slds-is-relative slds-p-horizontal_none table-container full-container min-height-400"
+                                onscroll={handleScroll}>
+                                <template if:true={historyTimelineData}>
+                                    <div class="slds-size_1-of-1">
+                                        <ul class="slds-timeline">
+                                            <template if:true={historyTimelineData}>
+                                                
+                                                <c-generic-history-timeline-hum onedittask = {handleEditTask} onclosetask = {handleCloseTask} oncreatedependenttask = {handleCreateDTask} b-log-code-visible={bLogCodeVisible} case-id={recordId} show-task-number-u-r-l = {showTaskNumberURL} onpasscommentid = {navigateToTaskPage}
+                                                can-expand case-comment-display loaded={loaded} showbutton={showbutton} historytimelinedata={historyTimelineData} loadcount={iOnloadCount} filteredcount={filteredcount} totalcount={iTotalcount} totalresults={totalresults}>
+                                                </c-generic-history-timeline-hum>
+                                            </template>
+                                        </ul>
+                                    </div>
+                                </template>
+                            </div>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </template>
+                <template if:false={loaded}>
+                    <lightning-spinner alternative-text="Loading"></lightning-spinner>
+                </template>
+            </div>
+        </div>
+    </br></br>
+    </article>
+</template>

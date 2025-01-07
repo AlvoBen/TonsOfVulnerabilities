@@ -1,0 +1,28 @@
+﻿<!--  
+Page Name            : RxConnect_VF_HUM
+Created Date         : 11/11/2019
+Function             : Intermediate Page for RxConnect Link
+
+**Modification Log
+* Developer Name          Code Review #         Date                       Description
+*********************************************************************************************************
+* Satyam Malviya								11/11/2019				   REQ-404584 - Original Version - Created new class for RX connect functionality
+* Riya Agarwal									10/20/2020				   REQ-1578355 - PR00094254 - CR AEP readiness -Research - Critical Security Issues
+* Tharun Madishetti             04/27/2022            US-3213651 - T1PRJ0272548 - SF Legacy API Retirement Upgrade API Version for Integrationjs linkouts
+********************************************************************************************************/ -->
+<apex:page id="RxLookup" Controller="RxConnect_C_HUM" showHeader="false" sidebar="false" >
+  <apex:includeScript value="/support/console/54.0/integration.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.RxConnect_SR_HUM, 'RxConnect_JS_HUM.js')}"/>
+   
+    <script type="text/javascript">
+      var accountId = "{!JSENCODE(IdForMember)}";  
+      var RxConnectURL = '{!JSENCODE(sURL)}';
+      var oneClickURL = '{!JSENCODE(HSS_ONECLICK_URL)}';
+      var oneClickTarget = '{!JSENCODE(HSS_ONECLICK_TARGET)}';
+      var sRxConnectFlag ='{!setRXConnectFlag}';
+      // make call which is encrpting your id and do a vf remoting call ; pass the id in the parameter.
+      var sEncryption = '{!$RemoteAction.RxConnect_C_HUM.invokeEncryptService}';
+      getEncryptURL();
+
+    </script> 
+</apex:page>

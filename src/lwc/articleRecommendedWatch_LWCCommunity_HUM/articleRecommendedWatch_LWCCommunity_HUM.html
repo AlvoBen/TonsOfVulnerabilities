@@ -1,0 +1,27 @@
+﻿<template>
+    <div class="body-container">
+        <div class="rec-container">
+            <h2 class="recWatch-heading" tabindex="0">{label.recommendedWatchLabel}</h2>
+            <div class="slds-grid slds-wrap recWatch-cont">
+                <div class="recWatch-arrow-left icon-container">
+                    <input class="arrow-image" type="image" src={prevImg} onclick={showPrev} disabled={disablePrev}/>
+                </div>
+                <div class="slds-grid slds-m-top_medium recWatch-cardcont">    
+                <template for:each={lstArticles} for:item="recWatch">  
+                    <div class="recWatch-card" key={recWatch.UrlName}>
+                        <img src={defaultImg} alt=””>
+                        <div class="slds-m-top_medium recWatch-content">
+                            <a class="recWatch-subheading" href={recWatch.url}>{recWatch.Title}</a>
+                        </div>
+                    </div>
+                </template>
+                
+            </div>
+                <div class="recWatch-arrow-right icon-container">
+                    <input class="arrow-image" type="image" src={nextImg} onclick={showNext} disabled={disableNext}/>
+            </div>
+            </div>
+        </div>
+        </div>
+
+</template>

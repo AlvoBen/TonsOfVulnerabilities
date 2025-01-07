@@ -1,0 +1,62 @@
+﻿<!--
+Componenet Name  : CRMCaseNotification_CMP_AHT_HUM
+Version          : 1.0 
+Created Date     : 04/21/2019
+Function         : Component to include in CRM Search page to display Case Notification count.
+         
+Modification Log :
+* Developer                Code Review              Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Subhamay Mandal                                   04/21/2019           Original Version
+* Subhamay Mandal                                   05/09/2019           REQ - 395551: Update CSS to resolve line separator bar.
+* Mohammed Noor                              		04/26/2021           US2163321 - Case Management Checkmarx Security violations - Case History & Case Misc
+-->
+<apex:component controller="CRMCaseNotification_C_AHT_HUM" allowDML="true">
+	
+	<div style="text-align: right;background-color:#D4EFDF; padding:5px;border-style: solid;border-width: 1px;border-color: grey;">
+		<apex:variable var="avc" value="{!mapCount['avc']}">
+			<apex:outputLink value="#" id="theLinkVC1" title="{!avc.sLabel}" onclick="showCaseList('{!avc.sLabel}', {!avc.IsViolated}); return false;"><b>{!avc.sLabel}</b></apex:outputLink>    
+		</apex:variable>&nbsp;&nbsp;|&nbsp;&nbsp;
+		<apex:variable var="vc" value="{!mapCount['vc']}">
+		    <apex:outputLink value="#" id="theLinkVC2" title="{!vc.sLabel}" onclick="showCaseList('{!vc.sLabel}', {!vc.IsViolated}); return false;"><b>{!vc.sLabel}</b></apex:outputLink>   
+		</apex:variable>
+    </div>
+    
+    <apex:actionFunction name="showCaseList" action="{!showPopUpCaseList}" rerender="PopUpCaseList">
+        <apex:param name="sParamLabel" assignTo="{!sParamLabel}" value=""/>
+        <apex:param name="bParamIsViolated" assignTo="{!bParamIsViolated}" value=""/>
+    </apex:actionFunction>
+
+    <apex:outputPanel id="PopUpCaseList" >
+        <apex:outputPanel styleClass="popupBackgroundNew" layout="block" rendered="{!bPopupCaseList}"/>
+        <apex:outputPanel styleClass="custPopupNewCaseNotification" style="width:800px;margin-left: -350px;" layout="block" rendered="{!bPopupCaseList}">
+            <apex:pageBlock title="{!sDisplayMessage}" >
+                <apex:outputPanel style="overflow-y: scroll; width: auto; height: 200px;" rendered="{!lstViewCMWrapper.size != 0}">
+                <apex:pageBlockTable value="{!lstViewCMWrapper}" var="record" id="theTable">
+                    <apex:column headerValue="Case Number">
+                        <apex:outputLink value="#" id="theLink" onclick="openCaseRecord('{!JSENCODE(record.objCaseMilestone.Case.Id)}', '{!JSENCODE(record.objCaseMilestone.Case.CaseNumber)}'); return false;">{!record.objCaseMilestone.Case.CaseNumber}</apex:outputLink>
+                    </apex:column>
+                    <apex:column value="{!record.objCaseMilestone.Case.Owner_Queue__c}" />
+                    <apex:column value="{!record.objCaseMilestone.Case.Owner.Name}" headerValue="Case Owner" rendered="{!NOT(bSpecialistUser)}"/>
+                    <apex:column value="{!record.objCaseMilestone.StartDate}" headerValue="Date/Time Opened"/>
+                    <apex:column value="{!record.objCaseMilestone.TargetDate}" headerValue="Target Closure Date"/>
+                    <apex:column value="{!record.sTimeSpentOnCase}" headerValue="Time Remaining"/>
+                </apex:pageBlockTable>
+                </apex:outputPanel>
+                <apex:pageBlockButtons location="bottom">
+                    <apex:commandButton value="Close" onclick="showCaseList();return false;"/>
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+        </apex:outputPanel>
+    </apex:outputPanel>
+    <style type="text/css">
+        .pbTitle {
+            white-space: nowrap;
+        }
+    </style>
+    <script>
+        function openCaseRecord(caseId, caseNumber) {
+            sforce.console.openPrimaryTab(null, '/' + caseId, true, caseNumber, '', caseId);
+        }
+    </script>
+</apex:component>

@@ -1,0 +1,127 @@
+﻿<template>
+    <lightning-card>
+        
+        <div class="slds-media__body " style="margin-left: 3%;">
+            <div class="slds-page-header__name">
+              <div class="slds-page-header__name-title">
+                <h1>
+                  <span class="slds-page-header__title slds-truncate" >  Recommendation Name : {recommendationName}</span>
+                </h1>
+              </div>
+            </div>
+        </div>
+           
+        <div slot="footer">
+                
+        </div>
+        <div>
+            <div class="slds-form-element">
+                
+                <div class="slds-form-element__control">
+                    <div class="slds-combobox_container">
+                        
+                        <div class={txtclassname} style="margin-left: 3%;" data-id="resultBox" aria-expanded="false" aria-haspopup="listbox" role="combobox">
+                            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon slds-input-has-icon_left-right" role="none">
+                                
+                                <div>
+                                    <span class="slds-icon_container slds-icon-utility-search slds-input__icon iconheight">
+                                     <!--   <lightning-icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" icon-name={iconName} size="x-small" alternative-text="icon" ></lightning-icon>
+                                   --> </span> 
+                                </div>
+                                <div class="slds-size_4-of-8" >
+                                    
+                                <lightning-input placeholder="Search Work Queue..." required={required} data-id="userinput" label={Label} name="searchText" onchange={searchField} class="leftspace"></lightning-input>
+                                <span class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right iconheight">
+                                  <!--  <lightning-icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" icon-name="utility:search" size="x-small" alternative-text="icon" ></lightning-icon>
+                                  -->  </span>
+                                  </div>
+                            </div>
+                            <br/>
+                            <div  class="slds-form-element__control slds-input-has-icon slds-input-has-icon slds-input-has-icon_left-right" role="none">
+                                <template for:each={selectedRecords} for:item="serecord">
+                                    <span key={serecord.recId}> &nbsp;
+                                    <lightning-pill style="margin-top:1%;" label={serecord.recName} name={serecord.recId} onremove={removeRecord}>
+                                        <!--    <lightning-icon icon-name={iconName} variant="circle" alternative-text={serecord.recName}></lightning-icon>
+                                        --> </lightning-pill>
+                                    </span>
+                                </template>
+                            </div>
+                        
+                            <!-- Second part display result -->
+                            <div id="listbox-id-1" class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid" role="listbox">
+                                <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                    <template for:each={searchRecords} for:item="serecord">
+                                        <li role="presentation" key={serecord.recId}>
+                                            
+                                            <div data-id={serecord.recId} data-name={serecord.recName} onclick={setSelectedRecord} class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta" role="option">
+                                                <span class="slds-media__figure">
+                                                    <span class="slds-icon_container slds-icon-standard-account">
+                                                <!--        <lightning-icon icon-name={iconName} class="slds-icon slds-icon slds-icon_small slds-icon-text-default" size="x-small"></lightning-icon>
+                                               -->     </span>
+                                                </span>
+                                                <span class="slds-media__body">
+                                                    <span class="slds-listbox__option-text_entity">{serecord.recName}</span>
+                                                   <!-- <span class="slds-listbox__option-meta">{objectName} • {serecord.recName}</span>-->
+                                                </span>
+                                            </div>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+                            <div if:true={messageFlag}>
+                                No result found.
+                            </div>
+                            <div if:true={LoadingText}>
+                                Loading...
+                            </div>
+                            <div>
+                            <div class="slds-p-top_medium slds-align_absolute-center">
+                                <lightning-button class="slds-m-top_small"
+								style="background-color:rgb(0, 95, 178);"
+								variant="brand"
+								name="save"
+								label="Save"
+								onclick={saveRecord}
+								>
+								</lightning-button> 
+								<lightning-button class="slds-m-top_small slds-m-left_large"
+								style="background-color:rgb(0, 95, 178);"
+								variant="brand"
+								name="Reset"
+								label="Reset"
+								onclick={resetRecord}
+								>
+								</lightning-button> 
+							</div>
+							</div>
+							<div class="spinner">
+								<template if:true={isLoading}>
+									 <lightning-spinner alternative-text="Loading" variant="brand" size="large">
+									 </lightning-spinner> 
+								</template>
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </lightning-card>
+    <template if:true={displayNoDataMessage}>
+        <br />
+        <div class="slds-notify_container slds-is-relative">
+            <div class="slds-notify_toast slds-theme_success" role="status">
+                <span class="slds-assistive-text">Success</span>
+                <div class="slds-notification__body">
+                    <h2 class="slds-text-heading_small ">WorkQueue associated to the mentioned recommendation</h2>
+                </div>
+                <div class="slds-notify__close">
+                    <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close"
+                        onclick={hideNoDataMsg}>
+                        <lightning-icon icon-name="utility:close" size="small" variant="inverse"> </lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+      </template>
+</template>

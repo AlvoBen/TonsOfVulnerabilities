@@ -1,0 +1,21 @@
+﻿<!-- *******************************************************************************************************************************
+Aura Cmp Name : HumEditButtonOverrideLightning.html
+Function    : This is used to invoke CaseInformationComponentHum LWC for Edit case  functionality
+
+Modification Log: 
+Developer Name           Code Review                      Date                         Description
+*********************************************************************************************************************************
+* Isha Gupta                                         2/17/2022                         initial version
+* Ritik Agarwal                                      3/23/2022               fixed wellness issue and use SF Button concept with URL
+********************************************************************************************************************************-->
+<aura:component
+    implements="flexipage:availableForRecordHome,force:hasRecordId,lightning:actionOverride,lightning:isUrlAddressable,flexipage:availableForAllPageTypes,force:lightningQuickAction"
+    access="global">
+    <aura:attribute name="recordId" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <div>
+        <c:caseInformationComponentHum recordId="{!v.recordId}" encodedData="{!v.recordId}">
+        </c:caseInformationComponentHum>
+    </div>
+</aura:component>

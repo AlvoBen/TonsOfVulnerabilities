@@ -1,0 +1,30 @@
+﻿<!--
+Component        : PharmacyBenefitssHum
+
+Modification Log:
+* Developer Name                    Date                         Description
+* Jonathan Dickinson                11/19/2021                   US-2721470-Original version
+* Kalyani Pachpol                   06/30/2022                   3377044
+* Kalyani Pachpol                   11/04/2022                   US-3578534
+*------------------------------------------------------------------------------------------------------------------------------
+-->
+<template>
+			<div class="slds-notify slds-notify_alert slds-m-bottom_x-small slds-theme_info" style="border-radius: 3px; background-color: rgb(84 105 141);" role="alert">
+				<div class="slds-grid slds-gutters_xxx-small slds-grid_align-center">
+					<div class="slds-col">
+					  <span>Card Status and Last 4 Digits is only provided for Solutran</span>
+					</div>
+					<div class="slds-col">
+					  <span class="lightningHelpTextCls"><lightning-helptext icon-name="utility:info" icon-variant="inverse" size="large" content="Card Status:  
+						1) Active- Card is ready to be used.
+						2) Waiting- Card needs to be activated before use.
+						3) Inactive- Card has been replaced and cannot be used or reactivated."></lightning-helptext></span>
+					</div>
+				</div>
+			</div>
+	
+			<div height="300px;">
+				<lightning-datatable key-field="id" data={totalRecords} columns={columns} hide-checkbox-column>
+				</lightning-datatable>
+			</div>
+</template>

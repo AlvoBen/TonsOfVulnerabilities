@@ -1,0 +1,23 @@
+﻿<!--
+LWC Name        : caseProcessDisplayMsgHum.html
+Function        : LWC to display Next Step Message.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Pavan Kumar M.                  06/27/2022                   initial version
+* Muthukumar                      09/08/2022                 US-3279519 update plan demographic
+****************************************************************************************************************************-->
+<template>
+    <div class="slds-box slds-theme_shade">
+            <div id="variants"  class="slds-p-vertical_x-small slds-grid slds-grid_vertical-align-center">
+                <lightning-icon icon-name={showIcon} alternative-text={showHelpText} 
+                title={showHelpText} size="small" class={iconColour}>
+                </lightning-icon>
+                    <span style="padding-left: 10px;font-size: 14px; color: rgb(1, 1, 1);">
+                    <b>{headerMessage}</b>
+                    {message}
+                    </span>
+            </div>
+    </div>
+</template>

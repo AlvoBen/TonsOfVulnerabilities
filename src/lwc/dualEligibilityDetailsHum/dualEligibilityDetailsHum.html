@@ -1,0 +1,58 @@
+﻿<!-- 
+Function   : Renders Dual status level and Deeming period sections
+
+Modification Log:
+* Developer Name                Date                       Description
+* Mohan Kumar N                 07/08/2021                 US: 2364782- Dual eligibity screen
+* Mohan Kumar N                 07/08/2021                 US: 2448831- Dual eligibity  formatting update
+* visweswararao j               05/25/2022                  UserStory 3346025:Account Management -Enrollment Search results & Dual Eligibility status not displaying properly
+-->
+<template>
+    <div if:true={bDataLoaded} class="hc-dual-details slds-grid card-styles">
+        <div class="slds-m-top_small slds-col hc-dual-item slds-m-around_x-small">
+            <div class="full-height slds-m-around_x-small">
+                <article class="slds-card slds-card_boundary slds-grid slds-grid--vertical full-height">
+                <div class="slds-card__header slds-grid">
+                    <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                        <div slot="title" class="slds-grid">
+                            <lightning-icon class="slds-m-right_x-small" icon-name="standard:relationship" size="small">
+                            </lightning-icon>
+                            <h2 class="slds-card__header-title">{labels.dualStatusLevel_Hum} ({aDualStatusLevel.length})
+                            </h2>
+                        </div>
+                    </header>
+                </div>
+                <div class="slds-grid full-height slds-is-relative">
+                    <c-standard-table-component-hum templatemodal={costShareInfoModel} data-id="dual-status"
+                        name-of-screen="dual-status" response={aDualStatusLevel} b-hide-title b-infinite-scroll>
+                    </c-standard-table-component-hum>
+                </div>
+                </article>
+            </div>
+        </div>
+        <div class="slds-m-top_small slds-col hc-dual-item slds-m-around_x-small">
+            <div class="full-height slds-m-around_x-small">
+                <article class="slds-card slds-card_boundary slds-grid slds-grid--vertical full-height">
+                <div class="slds-card__header slds-grid">
+                    <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                        <div slot="title" class="slds-media__body slds-grid">
+                            <lightning-icon class="slds-m-right_x-small" icon-name="standard:relationship" size="small">
+                            </lightning-icon>
+                            <h2 class="slds-card__header-title">{labels.deemingPeriod_Hum} ({aDeeminPeriods.length})
+                                &nbsp;
+                            </h2>
+                            <c-custom-tooltip-hum help-text={labels.deemingPeriodHelpText_Hum}>
+                            </c-custom-tooltip-hum>
+                        </div>
+                    </header>
+                </div>
+                <div class="slds-grid full-height slds-is-relative">
+                    <c-standard-table-component-hum templatemodal={deemingPeriodModel} data-id="deeming-period"
+                        name-of-screen="deeming-period" response={aDeeminPeriods} b-hide-title b-infinite-scroll>
+                    </c-standard-table-component-hum>
+                </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,112 @@
+﻿<!--
+Page Name        : DualEligibleDetails_VF_HUM
+Version          : 1.0 
+Created Date     : 05/18/2019
+Function         : Visualforce page for Dual/Moops service
+Modification Log :
+*  Developer          Code Review              Date                    Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Pavan Karnam                              05/18/2019               Original Version
+* Pinky Vijur								08/09/2021				USER STORY 1801161 T1PRJ0002472 - MVP MF 6 - Dual Eligible Details page - Strides
+* Nirmal Garg							    09/16/2021					Added browser logic for coveo
+* Venkata Nagasiva						    4/29/2022				User Story 3213674: T1PRJ0272548 - SF Legacy API Retirement Upgrade API version for Integrationjs Misc
+* Vivek										07/09/2022		           Updated the JS query to new Datatables to version to 1.12.1
+* Aaron Speakman                            04/11/2023               DF-7501 Bad Data Table Upgrade (see above)
+* Pinky Vijur                               08/05/2023                  User Story 4647299: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Miscellaneous (Group 2)
+-------------------------------------------------------------------------------------------------------------------------------->
+
+
+<apex:page controller="DualEligibleDetails_C_HUM"  action="{!initiateRequest}" showheader="true" sidebar="false" tabStyle="Policy__c" id="dualeligibledetails">
+    <meta content='maximum-scale=1.0, initial-scale=1.0, width=device-width' name='viewport'/>
+   <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+   <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}" /> <!--DT upgrade-->
+   <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}" /><!--DT upgrade-->
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}" />
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CSS/HoverOver.css')}" />
+    <apex:includeScript value="/support/console/54.0/integration.js" />
+	<apex:outputPanel id="dualcoveo" rendered="{!bCoveoUser}">
+		<div style="font-size: 12px;padding: 1px 1px 1px!important;margin-top: 2px;margin-bottom:2px !important" >
+			<c:UnifiedSearch_CMP_HUM id="uniId" policyMemberId="{!sPolicyMemberId}" pageNameToPass="Dual Eligible Details"/>
+		</div>
+	</apex:outputPanel>
+    <apex:form style="font-size:12px;">
+    <apex:actionFunction name="callDualService" oncomplete="loadTable();" rerender="pnlDualStatus,pnlDsnpPeriod"/>
+    <apex:pageBlock id="pgBlock" >
+     <apex:pageblockSection title="Dual Status Level/Cost Share Protection Information" columns="1" id="pbsDualStatus">  
+        <apex:outputPanel id="pnlDualStatus">
+        <table id="dualStatus" class="table table-striped table-bordered  table-hover responsive nowrap" style="width:100%;">    
+            <thead>
+                <tr>
+                    <th title="Effective Date">Effective Date</th>
+                    <th title="End Date">End Date</th>
+                    <th title="Value">Value</th>
+                    <th title="Cost Share Protection Indicator">Cost Share Protection Indicator</th>
+                </tr>
+            </thead>
+            <tbody>
+                 <apex:repeat value="{!lstDualEligibleStatusVals}" var="dualDetails" id="dualStatusRepeat">
+                     <tr>
+                         <td> {!dualDetails.sEffectiveDate} </td>
+                         <td> {!dualDetails.sEndDate} </td>
+                         <td> {!dualDetails.sValue} </td>
+                         <td> {!dualDetails.sIndicator} </td>
+                     </tr>
+                 </apex:repeat>
+                 
+            </tbody>
+        </table>
+      </apex:outputPanel>    
+      </apex:pageBlockSection> 
+     <apex:pageblockSection title="Deeming Period" columns="1" id="pbsDsnpPeriod">   
+     <apex:outputPanel id="pnlDsnpPeriod">
+      <table id="dsnpPeriod" class="table table-striped table-bordered  table-hover nowrap compact" cellspacing="0">    
+                        <thead>
+                            <tr>
+                                <th title = "Effective Date">Effective Date</th>
+                                <th title = "End Date">End Date</th>
+                                <th title = "Indicator">Indicator</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!lstDualEligibleDeemingVals}" var="dualDetails" id="dsnpPeriodRepeat">
+                                <tr>
+                                    <td>{!dualDetails.sEffectiveDateDeeming}</td>
+                                    <td>{!dualDetails.sEndDateDeeming}</td>
+                                    <td>{!dualDetails.sIndicatorDeeming}</td>  
+                                </tr>
+                            </apex:repeat>
+                        </tbody>
+                    </table> 
+                </apex:outputPanel>
+             </apex:pageBlockSection> 
+    </apex:pageBlock>
+    </apex:form>
+    
+   <script>
+//dont enable P9 Critical Fix     var j$ = jQuery.noConflict();
+     var dualStatusTable;
+     var dsnpPeriodTable;
+     jQuery(document).ready(function ()
+     {
+         callDualService();
+         sforce.console.setTabTitle('Dual Eligible Details - ' +'{!$CurrentPage.parameters.Name}');
+      });
+      
+      function loadTable()
+      {
+          dualStatusTable = jQuery('#dualStatus').DataTable({
+              "sPaginationType": "simple_numbers",
+			  "order": [[ 0, "desc" ]],
+              "dom": '<"row"<"col-sm-6"l><"col-sm-6"<"pull-right"p> \
+                <"btn-group pull-right"<"toolbar">>>>rt<"row"<"col-sm-6"i><"col-sm-6"p>>'
+          });
+          dsnpPeriodTable = jQuery('#dsnpPeriod').DataTable({
+              "sPaginationType": "simple_numbers",
+			  "order": [[ 0, "desc" ]],
+              "dom": '<"row"<"col-sm-6"l><"col-sm-6"<"pull-right"p> \
+                <"btn-group pull-right"<"toolbar">>>>rt<"row"<"col-sm-6"i><"col-sm-6"p>>'
+          }); 
+      }
+    </script>
+
+</apex:page>

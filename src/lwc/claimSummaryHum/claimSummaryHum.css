@@ -1,0 +1,54 @@
+:host .info {
+    /* --sds-c-icon-color-foreground: blue;
+    --sds-c-icon-color-background: #faf4a4;
+    --sds-c-icon-color-foreground-default: blue; */
+    background-color: #efefef;
+}
+
+.infoFlag {
+    /* background: #faf4a4;
+    border-color: blue;
+    border-style: solid;
+    border-width: thin;
+    border-radius: 5px; */
+    background-color: #efefef;
+}
+
+.blackIcon {
+    --sds-c-icon-color-foreground: blue;
+    --sds-c-icon-color-background: #f7f9f8;
+    --sds-c-icon-color-foreground-default: blue;
+    border-color: lightgrey;
+    border-style: solid;
+    border-width: thin;
+}
+.blackIconButtonNew {
+    --sds-c-icon-color-foreground: lightgrey;
+    --sds-c-icon-color-background: white;
+    --sds-c-icon-color-foreground-default: lightgrey;
+    border-color: lightgrey;
+    border-style: solid;
+    border-width: thin;
+}
+.hc-section {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.hc-custom-template {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    pointer-events: auto;
+}
+
+.hc-scrollable-content {
+    flex-grow: 1;
+    overflow: auto;
+}

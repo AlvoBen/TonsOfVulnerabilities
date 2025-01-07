@@ -1,0 +1,12 @@
+.line{
+    width: 102%;
+    margin-left:-16px;
+    height:5px;
+    border-bottom: 1px solid lightgrey;
+}
+.finish_Button{
+    float:right;
+    background-color:rgb(1, 118, 211);
+    border-radius:5px; margin-right:2px; 
+    margin-top:13px;
+}

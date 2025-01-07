@@ -1,0 +1,57 @@
+﻿<!--
+LWC Name        : closeCasHum.html
+Function        : LWC to display create case screen.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Gowthami Thota                                                06/20/2022                   initial version
+* Kalyani Pachpol                 2/17/2022                     US-4256639 
+-------------------------------------------------------------------------------------------------------------------------------
+-->
+
+<template>    
+    <template if:true={recordId}>
+        <template if:true={validationOccur}>
+            <div class="modal-header slds-modal__header slds-size_1-of-1">
+                <h4 class="title slds-text-heading--medium">Close Case</h4>
+            </div>
+            <div class="page-error-message "></div>
+            <div if:true={showInfoMsges} class="slds-box hc-info-text slds-m-horizontal_medium slds-m-top_small"></div>
+            <div class="slds-modal__content slds-p-around--x-small slds-align_absolute-center slds-size_1-of-1 slds-is-relative">                            
+                
+                <lightning-layout multiple-rows="true" class="slds-p-vertical_small">
+                    <lightning-layout-item padding="horizontal-small" size="12">
+                        <!----------------------------this is classification intent section ---->
+                        <c-classification-intent-modal-hum if:true={dbResponse} o-user-group={oUserGroup}
+                            o-case-object={dbResponse.caseData} record-id={recordId} onhpcommentvisibility={handleHPCaseComment} onhplogcodedetail={handleHPLogCode}>
+                        </c-classification-intent-modal-hum>&nbsp;
+
+                        <!----------------------------this is case comment section ---->
+                        <c-case-comments-form-hum if:true={dbResponse} o-user-group={oUserGroup}
+                            comment-data={dbResponse.caseCommentModal} o-case-object={dbResponse.caseData}
+                            oncommentsave={saveComments} hpcasecommentview={setHPCaseCommentView} hplogcode={setDefaultLogCode}>
+                        </c-case-comments-form-hum>
+                
+                        <!-----------------------------this is case G&A section-------------------------->
+                        <c-case-gna-component-hum if:true={dbResponse} o-case-object={dbResponse.caseData}
+                            o-user-group={oUserGroup}>
+                        </c-case-gna-component-hum>
+
+                        <!------------------this is case Texas section ---------------------------->
+                        <c-case-texas-letter-component-hum if:true={dbResponse} o-case-object={dbResponse.caseData}
+                            o-user-group={oUserGroup}>
+                        </c-case-texas-letter-component-hum>
+                    </lightning-layout-item>
+                </lightning-layout>           
+            </div>
+            <div class="modal-footer slds-modal__footer slds-size_1-of-1">
+                <lightning-button variant="neutral" label="Cancel" onclick={closeForm} class="slds-m-left_xx-small"></lightning-button>
+                <lightning-button variant="brand" label="Save" onclick={handleSave} class="slds-m-left_xx-small"></lightning-button>
+            </div>
+        </template>
+    </template>
+    <template if:true={spinnerVisible}>
+        <lightning-spinner alternative-text="Loading" variant="brand"></lightning-spinner>
+    </template>
+</template>

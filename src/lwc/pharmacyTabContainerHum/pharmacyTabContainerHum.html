@@ -1,0 +1,90 @@
+﻿<!--
+Modification Log:
+* Developer Name                       Date                         Description
+* Kalyani Pachpol	                  05/12/2022                    US-3185548
+* Kalyani Pachpol                     05/30/2022	                3464396
+* Nirmal Garg						  07/27/2023	                US4902305
+* Vishal Shinde                        08/28/2023                  US- 4833055-User Story 4833055 Mail Order Management: Pharmacy - Iconology- Authorization (Lightning)
+*-------------------------------------------------------------------------------------------------------------------------------->
+<template>
+	<lightning-card>
+		<template if:true={isError}>
+			<div class="slds-m-around_xx-large">
+				<c-generic-illustration-component-hum type="nodata" message={errorMessage} show-message-at-top
+													  illustration-size-class="slds-illustration_large">
+				</c-generic-illustration-component-hum>
+			</div>
+		</template>
+		<template if:false={isError}>
+			<div class="slds-m-around_xx-small">
+				<lightning-tabset style="position:relative; top: -10px;">
+					<lightning-tab label="Details">
+						<lightning-layout multiple-rows="true">
+							<lightning-layout-item size="12">
+								<c-pharmacy-account-details></c-pharmacy-account-details>
+							</lightning-layout-item>
+							<lightning-layout-item size="4">
+								<div class="slds-box" style="min-height:400px">
+									<c-pharmacy-health-and-allergy-details></c-pharmacy-health-and-allergy-details>
+								</div>
+							</lightning-layout-item>
+							<lightning-layout-item size="8">
+								<div class="slds-box" style="min-height:400px">
+									<c-pharmacy-address-hum enterprise-id={urlEnterpriceID}
+															network-id={netWorkId} record-id={accID}
+															calledfrom='Lightning'
+															onupdateaddress={handleUpdateDemographics}>
+									</c-pharmacy-address-hum>
+								</div>
+							</lightning-layout-item>
+						</lightning-layout>
+					</lightning-tab>
+					<lightning-tab label="History Timeline" title="History Timeline">
+						<lightning-layout-item size="12">
+							<c-pharmacy-history-timeline-filter-hum record-id={accID} omsdetails={pharmacyOMSDetails}
+																	show-view-all=true enterprise-id={urlEnterpriceID} network-id={netWorkId}>
+							</c-pharmacy-history-timeline-filter-hum>
+						</lightning-layout-item>
+					</lightning-tab>
+					<lightning-tab label="Prescriptions & Order Summary">
+						<lightning-layout class="detail-container">
+							<lightning-layout-item size="12" medium-device-size="12"
+												   class="detail-item slds-var-m-bottom_small">
+								<c-pharmacy-prescriptions-and-order-summary-hum pharmacydemographicdetails={pharmacyDemographicDetails} omsdetails={pharmacyOMSDetails}
+																				recordid={recordId} networkid={netWorkId} enterpriseid={urlEnterpriceID} payer={payer} onupdateaddress={handleUpdateDemographics}>
+								</c-pharmacy-prescriptions-and-order-summary-hum>
+							</lightning-layout-item>
+						</lightning-layout>
+					</lightning-tab>
+					<lightning-tab label="Pharmacy Benefits & Authorizations">
+						<lightning-layout class="detail-container">
+							<lightning-layout-item size="12" medium-device-size="12"
+												   class="detail-item slds-var-m-bottom_small">
+								<c-pharmacy-benefits-and-authorizations-tab-hum record-id={recordId}
+																				network-id={netWorkId}
+																				enterprise-id={urlEnterpriceID}
+																				account-id={accID}
+																				pharmacy-member-details={pharmacyMemberDetails}
+																				pharmacy-authorizations={pharmacyAuthorizations}
+																				pharm-auth-service-error={pharmAuthServiceError}>
+								</c-pharmacy-benefits-and-authorizations-tab-hum>
+							</lightning-layout-item>
+						</lightning-layout>
+					</lightning-tab>
+					<lightning-tab label="Finance">
+						<lightning-layout class="detail-container">
+							<lightning-layout-item size="12" medium-device-size="12"
+												   class="detail-item slds-var-m-bottom_small">
+								<c-pharmacy-finance-tab-hum pharmacydemographicdetails={pharmacyDemographicDetails}
+															recordid={recordId}
+															networkid={netWorkId}
+															enterpriseid={urlEnterpriceID}>
+								</c-pharmacy-finance-tab-hum>
+							</lightning-layout-item>
+						</lightning-layout>
+					</lightning-tab>
+				</lightning-tabset>
+			</div>
+		</template>
+	</lightning-card>
+</template>

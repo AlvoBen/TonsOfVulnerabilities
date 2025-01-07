@@ -1,0 +1,634 @@
+﻿<!-- 
+****************************************************************************************************
+Page Name          : CaseTaskView_VF_HUM
+Version            : 1.0
+Function           : Page to display list of Case/Task using Jquery table
+Created Date       : 10/10/2016
+
+Modification Log:
+*   Developer                   Code Review          Date                Description
+* ----------------------------------------------------------------------------------------------------------             
+*   Rajesh Keswani                 44250               10/10/2016          Original Version
+*   Rajesh Keswani                 45290               10/28/2016          Defect fix 246256.0001
+*   Rajesh Keswani                 45583               11/01/2016          Defect fix 246731.0001
+*   Rajesh Keswani                 46308               11/04/2016          Implemented Msg when there are more than 3500 records.
+*   Rajesh Keswani                 48725               11/21/2016          Defect fix of sorting icon
+*   Rajesh Keswani                 60675               02/06/2016          REQ - 300076 : CA Ticket -6533672 / 6554074 - Cases-Tasks tab not Refreshing appropriately
+*   Amar Gadewar                                       03/21/2017          REQ - 304842 Ability to have a hover over on the Cases/Tasks tab on each Case and Task ID to show the last Comment made on the work item
+*   Shreya Choodamani              90487               04/28/2017          REQ#: 311397 Updated the code to mimic the behavior for HP Supervisor and Specialist
+*   Sharan Shanmugam                                   06/13/2017          Defect fix 294841.0001
+*   Siddharth Mehta                                    08/01/2017          REQ - 323549 : Remove AHT Components Dependencies
+*   Prudhvi Pamarthi               194179              03/06/2017          REQ - 354356 : fix for CA-7189286-Issue with accepting all unassigned work from cases/tasks tab
+*   Prasanthi Kandula              199807              03/15/2018          REQ - 95977  Multiple Queue, View selections on Case/Task Page
+*   Prasanthi Kandula              221277              04/26/2018          REQ - 360037  View all assigned inventory from multi picklist search.
+*   Praveen Kumar Parimi           327240              01/10/2019          REQ - 382757  Showing timeout message when the remote request has been timed out.
+*   Subhamay Mandal                                    01/22/2019          REQ - 383490  Display the Cases and Tasks for WQ that a user is currently logged (RF).
+*   Subhamay Mandal                                    01/22/2019          REQ - 392197  AHT/Quality - All Users - Filter Cases/Tasks tab based on the current Work Queue assigned to the user (CRM)
+*   Subhamay Mandal                                    04/24/2019          REQ - 396217 Quality - MIR - Ability for CSR to see remaining SLA field on the Case/Tasks tab (RF)
+*   Sumanth Nardela                                    03/12/2020          User Story - 731476 MF 9 Case & Tasks Tab - Image Received Date Column
+*   Prudhvi Pamarthi                                   06/12/2020          US#800050 Close or Cancel two or more cases at once with case comments within CRM Service
+*   AshokKumar Nutalapati                              07/09/2020          REQ - 1098063 Open Policy Member and Humana Pharmacy Tabs When Accessing Case from Cases/Tasks Page (RxRF)
+*   AshokKumar Nutalapati                              07/20/2020          REQ - 1189747 Open Policy Member and Humana Pharmacy Tabs When Accessing Case from Cases/Tasks Page (CRMS)
+*   Prudhvi Pamarthi                                   07/23/2020          US#1045266 Transfer two or more cases at once with case comments within CRM Service
+*   Vinay Lingegowda                                   01/12/2021          USER STORY 1733817 PR00091574- IR 5050- Add New View option selection for case/tasks page - Specialist View (CRM)
+*   Vinay Lingegowda                                   02/05/2021          USER STORY 1684583 PR00091574 - IR 5050 - Add Owner column for supervisor view ( Cases/Tasks page) - (CRM)
+*   Vijaykumar										                     02/22/2021		       User story 1956905 T1PRJ0001827- IR 5050 - Case/tasks page: Supervisor: Add new filter by Age option( CRM)
+*   Vijaykumar										                     03/12/2021	     	   User story 2041570 T1PRJ0001827- IR 5050 - Add show/Hide columns on case/tasks page (CRM)
+*   Vijaykumar										                     03/22/2021	     	   User story 2041570 T1PRJ0001827- IR 5050 - Add show/Hide columns on case/tasks page (CRM)
+*   Vinay Lingegowda                                   03/29/2021          USER STORY 2107574 T1PRJ0001827 - IR 5050 - Tech Debt - Clean up switch for past releases(CRM)
+*   Vinay Lingegowda                                   04/28/2021          USER STORY 1970327 T1PRJ0001827- IR 5050 -  Ability for Supervisors to view Team's Inventory (CRM)
+*   Vinay Lingegowda                                   05/17/2021          USER STORY 2033042 T1PRJ0001827 - IR 5050 - Refresh results on Pull Work ("All other Queue Views") (CRM)
+*   Gourab Tewary                                      07/23/2021          User Story 2503627: T1PRJ0001827 - IR 5050 - Tech Debt - Clean up switch for past releases(CRM)
+*   Vinay Lingegowda                                   08/09/2021          USER STORY 1964685 T1PRJ0001827-IR 5050 - Update Show/Hide column options to Include Views (CRM)
+*   Tummala Vijaya Lakshmi							   09/30/2021 		   USER STORY 2578074 - T1PRJ0002980/PR00095219 - MF 5 - Supervisor Case Management --added conditions for contract protected data mapping from CASETASKVIEW_SR_HUM js file	-CPD switch
+*   Pinky Vijur                                        01/20/2023         3172071	T1PRJ0891339 - MF 5 - TECH - Pharmville Decommissioning - Custom Permission Usage
+*   Tharun Madishetti                                  07/14/2023         US-4647041: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Logging & Tasks (Group 1)
+*********************************************************************************************************** 
+-->
+
+<apex:page controller="CaseTaskView_C_HUM" id="thePage" action="{!initializeWorkQueue}" showChat="false" sidebar="false"  docType="html-5.0">
+  <div id="mainPanel">
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY,'bootstrap-datepicker-uni.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.DatePickerOverrides_SR_HUM, '/js/datePickerOverrides.js')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_JQUERY, 'bootstrap-datepicker-uni.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY,'jquery-ui.min.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/jquery-ui.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.DatePickerOverrides_SR_HUM,'/css/datePickerOverrides.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}" />
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}" />
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CSS/HoverOver.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CASETASKVIEW_SR_HUM, 'CASETASKVIEW_JS_HUM.js')}" />
+    <apex:includeScript value="/support/console/36.0/integration.js" />
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CASETASKVIEW_SR_HUM, 'CASETASKVIEW_CSS_HUM.css')}" />
+    <!--The Main Form Tag begins from here-->
+
+    <apex:outputPanel id="CaseTransfer"  style="display:none">
+      <apex:outputPanel layout="block"  styleClass="popupBackground"/>
+      <apex:outputPanel layout="block" styleClass="custPopup" id="transferPopup">
+        <c:ChangeCaseOwner_CMP_HUM id="idTransfer" Filter="{!Filterval}"/>
+      </apex:outputPanel>
+    </apex:outputPanel>
+    <apex:form id="addCriteria1" style="float: left">
+      <apex:pageBlock id="pgBlock" mode="detail" rendered="{!(!bShowData)}">
+        <!--The Page Block Tag begins from here-->
+
+        <apex:outputPanel id="CloseCasesPannel"  style="display:none">
+          <apex:outputPanel layout="block"  styleClass="popupBackground"/>
+          <apex:outputPanel layout="block" styleClass="custPopup">
+            <div>
+              <left style = "font-weight: 700">{!$Label.Close_case_Button}</left><br/>
+              <hr style = "border-color: lightgrey;"></hr><br/>
+              <div align="right">
+                <table Class = "font12Size">
+                  <tr>
+                    <td style="padding-right: 10px"><b>{!$Label.Close_case_Status}</b></td>
+                    <td style="padding-right: 170px"> <apex:selectList value="{!statusValue}" id="statusId" size="1">
+                        <apex:selectOptions value="{!statusOptions}" />
+                      </apex:selectList>
+                    </td></tr></table>
+              </div> <br/><br/><br/>
+              <apex:outputPanel id="opSecCcID1">
+                <apex:outputpanel />
+                <table Class = "font12Size">
+                  <tr>
+                    <td Class="ccStyleAlign">
+                      <div>{!$Label.CloseCase_Comments}</div>
+                    </td>
+                    <td>
+                      <div id="casecom">
+                        <apex:inputTextarea value="{!caseComment}" id="ccID" styleClass="ccStyle" label="{!$Label.case_comments}"/>
+                      </div>
+                    </td>
+                  </tr></table>
+              </apex:outputPanel><br/>
+              <apex:outputPanel id="cancelErrMsg" Styleclass="displayNoneErr">
+                <div style="color:red;">{!$Label.Unsaved_Changes_Msg}</div>
+              </apex:outputPanel><br/>
+              <apex:outputPanel id="saveErrMsg" Styleclass="displayNoneErr">
+                <div style="color:red;">{!$Label.CloseCase_SaveErrMsg}</div>
+              </apex:outputPanel><br/>
+              <apex:outputPanel >
+                <apex:commandButton id="saveBtn" value="Save" styleclass="saveBtnCSS" onclick="popUpSaveBtn();return false;"/>
+                <apex:commandButton value="Cancel" id="cmdCancelID" onclick="popUpCancelBtn();return false;"  styleclass="cancelBtnCSS" reRender="thePage"/>
+              </apex:outputPanel>
+            </div>
+          </apex:outputPanel>
+        </apex:outputPanel>
+        <apex:outputPanel id="pnlError">
+          <apex:pagemessages id="error" />
+        </apex:outputPanel>
+
+        <apex:outputPanel id="notUpdatedError" Styleclass="displayNoneErr">
+          <apex:PageMessage id="PCPHistoryErrorMsg1" Summary="<b>Warning:</b><br/>{!$Label.Close_case_update_error}" severity="Warning" Strength="3" escape="false">
+            <div id="PCPHistoryErrorMsg" class="errorMsg"/>
+          </apex:PageMessage>
+          <apex:pagemessages />
+        </apex:outputPanel>
+
+        <apex:outputPanel id="caseLimitError" Styleclass="displayNoneErr">
+          <apex:PageMessage Summary="<b>Error:</b><br/>{!$Label.CloseCase_LimitError}" severity="Error" Strength="3" escape="false"/>
+          <apex:pagemessages />
+        </apex:outputPanel>
+
+        <apex:outputPanel id="updateSuccessMsg" Styleclass="displayNoneErr">
+          <apex:PageMessage Summary="{!$Label.CloseCase_SuccessMsg}​" severity="Info" Strength="3" />
+          <apex:pagemessages />
+        </apex:outputPanel>
+        <apex:outputPanel id="notTransferredError" Styleclass="displayNoneErr">
+          <apex:PageMessage id="failCaseList" Summary="<b>Warning:</b><br/>{!$Label.transferCase_updateError}" severity="Warning" Strength="3" escape="false">
+            <div id="failCaseList1" class="errorMsg"/>
+          </apex:PageMessage>
+          <apex:pagemessages />
+        </apex:outputPanel>
+        <apex:outputPanel id="transferLimitError" Styleclass="displayNoneErr">
+          <apex:PageMessage Summary="<b>Error:</b><br/>{!$Label.transferCase_LimitError}" severity="Error" Strength="3" escape="false"/>
+          <apex:pagemessages />
+        </apex:outputPanel>
+        <apex:outputPanel id="transferSuccessMsg" Styleclass="displayNoneErr">
+          <apex:PageMessage Summary="{!$Label.transferCase_SuccessMsg}" severity="Info" Strength="3" />
+          <apex:pagemessages />
+        </apex:outputPanel>
+        <apex:outputPanel id="qaaErrMsg" Styleclass="displayNoneErr">
+          <apex:PageMessage Summary="{!$Label.transferCase_QAAerror}" severity="Error" Strength="3">
+            <div id="QAAcase" class="errorMsg"/>
+          </apex:PageMessage>
+          <apex:pagemessages />
+        </apex:outputPanel>
+        <apex:outputPanel id="noRecordError" Styleclass="displayNoneErr">
+          <apex:PageMessage Summary="{!$Label.NoWork_CaseTaskView_HUM}" severity="Error" Strength="3" />
+          <apex:pagemessages />
+        </apex:outputPanel>
+
+        <apex:outputPanel id="noRecordError1" Styleclass="displayNoneErr">
+          <apex:PageMessage Summary="{!$Label.NoWork_CCSupervisor_CaseTaskView_HUM}" severity="Error" Strength="3" />
+          <apex:pagemessages />
+        </apex:outputPanel>
+
+        <apex:outputPanel id="limitRecordError" Styleclass="displayNoneErr">
+          <apex:PageMessage Summary="{!$Label.CASELIMIT_MESSAGE_HUM}" severity="INFO" Strength="3" />
+          <apex:pagemessages />
+        </apex:outputPanel>
+
+        <apex:outputPanel id="TimeoutError" Styleclass="displayNoneErr">
+          <apex:PageMessage Summary="{!$Label.TIMEOUT_MESSAGE_HUM}" severity="INFO" Strength="3" />
+          <apex:pagemessages />
+        </apex:outputPanel>
+
+        <apex:outputPanel id="checkboxError" Styleclass="displayNoneErr">
+          <apex:PageMessage Summary="{!$Label.CheckBoxInput_CaseTaskView_HUM}" severity="Error" Strength="3" />
+          <apex:pagemessages />
+        </apex:outputPanel>
+
+        <apex:outputPanel id="invalidInputPullWork" Styleclass="displayNoneErr">
+          <apex:PageMessage Summary="{!$Label.InvalidInput_CaseTaskView_HUM}" severity="Error" Strength="3" />
+          <apex:pagemessages />
+        </apex:outputPanel>
+        <div id="caseTaskErrorId" class="errorMsg" />
+
+        <apex:outputPanel rendered="{!OR(bPharmacySpecialistUser, $Profile.Name == $Label.HUMAgencyCCS)}">
+          <div id="PullWork">
+            <nav class="navbar navbar-default">
+              <div style="margin:5px;">
+                <span class="navbar-brand panel-title">{!$Label.PullWork_TaskListView_HUM}</span>
+              </div>
+              <div class="btn-group">
+                <button id="bPullWorkQueue" type="button" class="btn btn-default btnFont" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false">
+                  {!$Label.HumWorkQueuesRT} <span class="caret"></span>
+                </button>
+                <div class="override dropdown-menu" style="padding-top: 0px;">
+                  <apex:selectCheckboxes id="pullWorkQueue" layout="pageDirection" value="{!lstSelPullWorkQueue}" styleClass="menuStyle" style="max-height: 340px;overflow-y: scroll;" onclick="changeInPullWorkQueue(this.value,this);">
+                    <apex:selectOptions value="{!PullWorkQueueOptions}" />
+                  </apex:selectCheckboxes>
+                </div>
+              </div>
+              <div class="btn-group">
+                <button id="bPullWorkView" type="button" class="btn btn-default btnFont" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" >
+                  {!$Label.HumViewsRT} <span class="caret"></span>
+                </button>
+                <div class="override dropdown-menu" style="padding-top: 0px;">
+                  <apex:outputpanel id="assignedViewPull">
+                    <apex:selectCheckboxes id="pullWorkView" layout="pageDirection" value="{!lstSelPullWorkView}" styleClass="menuStyle" style="max-height: 340px;overflow-y: scroll;" onclick="changeInPullWorkView(this);">
+                      <apex:selectOptions value="{!PullWorkViewOptions}" />
+                    </apex:selectCheckboxes>
+                  </apex:outputpanel>
+                </div>
+              </div>
+              <div class="btn-group">
+                <button id="bPullWorkFilterBy" type="button" class="btn btn-default btnFont" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" >
+                  {!$Label.FilterByRT} <span class="caret"></span>
+                </button>
+                <div class="override dropdown-menu" style="padding-top: 0px;">
+                  <apex:outputpanel >
+                    <apex:selectList id="pullWorkFilterBy" value="{!sSelPullWorkFilterBy}"  styleClass="menuStyle" onClick="changeInPullWorkFilterBy();">
+                      <apex:selectOptions value="{!pullWorkFilterByOptions}" />
+                    </apex:selectList>
+                  </apex:outputpanel>
+                </div>
+              </div>
+              <div class="btn-group">
+                <apex:commandButton styleClass="btn btn-default cmdBtn" value="Pull Work" id="pullWorkBtn" reRender="pnlError1" status="pleaseWait" onclick="pullWorkButtonClick();" />
+                <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea">
+                  <apex:commandLink onclick="javascript:void(O);" html-log_this="false">
+                    <apex:image id="lnkImg" styleClass="imgMargin hoverQuestionMark" value="{!$Resource.HUMHoverOverQuestionMark}" />
+                    <apex:outputPanel styleClass="hoverfontstyle">
+                      {!$Label.PullWorkToolTip_HUM}
+                    </apex:outputPanel>
+                  </apex:commandLink>
+                </apex:outputPanel>
+              </div>
+            </nav>
+          </div>
+
+          <div id="AssignedWork">
+            <nav class="navbar navbar-default">
+              <div style="margin:5px;">
+                <span class="navbar-brand panel-title">View My Assigned Work</span>
+              </div>
+              <div class="btn-group">
+                <button id="bWorkQueue" type="button" class="btn btn-default btnFont" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false">
+                  {!$Label.HumWorkQueuesRT}  <span class="caret"></span>
+                </button>
+                <div class="override dropdown-menu" style="padding-top:0px;">
+                  <apex:selectCheckboxes id="queueFilter"  layout="pageDirection" value="{!lstViewCategorydd1}" style="max-height: 340px;overflow-y:scroll;" styleClass="menuStyle" onclick="changeInQueue(this.value,this);">
+                    <apex:selectOptions value="{!categoriesdd1}" />
+                  </apex:selectCheckboxes>
+                </div>
+              </div>
+              <div class="btn-group">
+                <button id="bView" type="button" class="btn btn-default btnFont" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" >
+                  {!$Label.HumViewsRT} <span class="caret"></span>
+                </button>
+                <div class="override dropdown-menu" style="padding-top:0px;">
+                  <apex:outputpanel id="assignedView">
+                    <apex:selectCheckboxes id="Unassigndd2" layout="pageDirection" value="{!lstViewCategorydd2}" style="max-height: 340px;overflow-y: scroll;" styleClass="menuStyle" onclick="changeInView(this);" >
+                      <apex:selectOptions value="{!categoriesdd2}" />
+                    </apex:selectCheckboxes>
+                  </apex:outputpanel>
+                </div>
+              </div>
+              <div class="btn-group">
+                <button id="bFilterBy" type="button" class="btn btn-default btnFont" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" >
+                  {!$Label.FilterByRT}  <span class="caret"></span>
+                </button>
+                <div class="override dropdown-menu" style="padding-top:0px;">
+                  <apex:outputpanel id="assignedFilter">
+                    <apex:selectCheckboxes id="assignedFilterBy" layout="pageDirection" value="{!lstSelectedView}" styleClass="menuStyle" onClick="changeInFilterBy(this);" >
+                      <apex:selectOptions value="{!selectedView}" />
+                    </apex:selectCheckboxes>
+                  </apex:outputpanel>
+                </div>
+              </div>
+              <div class="btn-group">
+                <apex:commandButton styleClass="btn btn-default cmdBtn" value="View/Refresh Results" id="refresh" reRender="thePageBlockSection3,pnlError" status="pleaseWait" onclick="viewResultsButton();return false;" />
+                <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea1">
+                  <apex:commandLink onclick="javascript:void(O);" html-log_this="false">
+                    <apex:image id="lnkImg1" styleClass="imgMargin hoverQuestionMark" value="{!$Resource.HUMHoverOverQuestionMark}" />
+                    <apex:outputPanel styleClass="hoverfontstyle">
+                      {!$Label.CaseTaskView_RefreshToolTip_HUM}
+                    </apex:outputPanel>
+                  </apex:commandLink>
+                </apex:outputPanel>
+              </div>
+            </nav>
+          </div>
+        </apex:outputPanel>
+
+        <apex:pageBlockSection id="pgSec" >
+          <apex:outputpanel rendered="{!OR(bPharmacySupervisorUser, $Profile.Name == $Label.HUMAgencyCCSupervisor)}" >
+            <div id="supervisor" style="width:1300px;">
+              <nav class="navbar navbar-default">
+                <div style="margin:5px;">
+                  <span class="navbar-brand panel-title">{!$Label.ViewItems_TaskListView_HUM}</span>
+                </div>
+                <div class="btn-group">
+                  <button id="bWorkQueue" type="button" class="btn btn-default btnFont" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false">
+                    {!$Label.HumWorkQueuesRT}  <span class="caret"></span>
+                  </button>
+                  <div class="override dropdown-menu" style="padding-top:0px;">
+                    <apex:selectCheckboxes id="queueFilter"  layout="pageDirection" value="{!lstViewCategorydd1}" styleClass="menuStyle" style="max-height: 340px;overflow-y: scroll;" onclick="changeInQueue(this.value,this);" >
+                      <apex:selectOptions value="{!categoriesdd1}" />
+                    </apex:selectCheckboxes>
+                  </div>
+                </div>
+                <div class="btn-group">
+                  <button id="bView" type="button" class="btn btn-default btnFont" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" >
+                    {!$Label.HumViewsRT}  <span class="caret"></span>
+                  </button>
+                  <div class="override dropdown-menu" style="padding-top:0px;">
+                    <apex:outputpanel id="assignedView">
+                      <apex:selectCheckboxes id="Unassigndd2" layout="pageDirection" value="{!lstViewCategorydd2}" styleClass="menuStyle" style="max-height: 340px;overflow-y: scroll;" onclick="changeInView(this);"  >
+                        <apex:selectOptions value="{!categoriesdd2}" />
+                      </apex:selectCheckboxes>
+                    </apex:outputpanel>
+                  </div>
+                </div>
+                <div class="btn-group">
+                  <button id="bWorkItem" type="button" class="btn btn-default btnFont" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" >
+                    {!$Label.WorkItems_RT_HUM} <span class="caret"></span>
+                  </button>
+                  <div class="override dropdown-menu" style="padding-top:0px;">
+                    <apex:outputpanel id="assignedView1">
+                      <apex:selectCheckboxes id="supWorkItems" layout="pageDirection" value="{!lstWorkItems}" styleClass="menuStyle" style="max-height: 340px;overflow-y: scroll;" onClick="changeInWorkItem(this);">
+                        <apex:selectOptions value="{!selectedAssign}" />
+                      </apex:selectCheckboxes>
+                    </apex:outputpanel>
+                  </div>
+                </div>
+                  <div class="btn-group">
+                    <button id="bItemAge" type="button" class="btn btn-default btnFont" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" >
+                      {!$Label.Item_Age_HUM} <span class="caret"></span>
+                    </button>
+                    <div class="override dropdown-menu" style="padding-top: 0px;">
+                      <apex:outputpanel id="ItemAgeId">
+                        <apex:selectCheckboxes id="ItemAgeOpts" layout="pageDirection" value="{!lstItemAge}" styleClass="menuStyle" onClick="changeInItemAge(this);" >
+                          <apex:selectOptions value="{!ItemAge}" />
+                        </apex:selectCheckboxes>
+                      </apex:outputpanel>
+                    </div>
+                  </div>
+                <div class="btn-group">
+                  <button id="bFilterBy" type="button" class="btn btn-default btnFont" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" >
+                    {!$Label.FilterByRT}  <span class="caret"></span>
+                  </button>
+                  <div class="override dropdown-menu" style="padding-top: 0px;">
+                    <apex:outputpanel id="assignedFilter">
+                      <apex:selectCheckboxes id="assignedFilterBy" layout="pageDirection" value="{!lstSelectedView}" styleClass="menuStyle" onClick="changeInFilterBy(this);" >
+                        <apex:selectOptions value="{!selectedView}" />
+                      </apex:selectCheckboxes>
+                    </apex:outputpanel>
+                  </div>
+                </div>
+                <div class="btn-group">
+                  <button id="bCaseSec" type="button" class="btn btn-default btnFont" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false" >
+                    {!$Label.transferCase_SecurityFilter}  <span class="caret"></span>
+                  </button>
+                  <div class="override dropdown-menu" style="padding-top:0px;">
+                    <apex:outputpanel id="securityFilter">
+                      <apex:selectCheckboxes id="securityFilterBy" layout="pageDirection" value="{!lstSecurityView}" styleClass="menuStyle" onClick="changeInSecurity(this);" >
+                        <apex:selectOptions value="{!SecurityView}" id="securityId"/>
+                      </apex:selectCheckboxes>
+                    </apex:outputpanel>
+                  </div>
+                </div>
+                <apex:outputpanel rendered="{!isRCCPermissionSetUsr}">
+                  <div class="btn-group">
+                    <div class="btnFont" style="padding-left: 10px;height:08px;">
+                      <apex:inputCheckbox id="viewMyTeamInv" value="{!bMyTeamInvChk}" onclick="chkMyTeamInv(this);"/ >&nbsp;
+                      <label id="lblViewMyTeamInv" style="vertical-align:4px;" title="{!$Label.ViewMyTeamInventoryTitle}" >View my Team's Inventory&nbsp;</label>
+                    </div>
+                  </div>
+                  <div class="btn-group">
+                    <button id="myTeamMbrsBtn" type="button" class="btn btn-default btnFont" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      {!$Label.TeamMembers}   <span class="caret"></span>
+                    </button>
+                    <div class="override dropdown-menu" style="padding-top:0px;">
+                      <apex:outputpanel id="TeamMbrs">
+                        <apex:selectCheckboxes id="myTeamMbrs" layout="pageDirection" styleClass="menuStyle" style="max-height: 340px;overflow-y: scroll;" onClick="changeInUsrSel(this);" >
+                          <apex:selectOptions value="{!lstMyteamReportee}" />
+                        </apex:selectCheckboxes>
+                      </apex:outputpanel>
+                    </div>
+                  </div>
+                </apex:outputpanel>
+                <div class="btn-group">
+                  <apex:commandButton styleClass="btn btn-default cmdBtn" value="View/Refresh Results" id="refresh" reRender="thePageBlockSection3,pnlError" status="pleaseWait" onclick="viewResultsButton();return false;" />
+                  <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea">
+                    <apex:commandLink onclick="javascript:void(O);" html-log_this="false">
+                      <apex:image id="lnkImg" styleClass="imgMargin hoverQuestionMark" value="{!$Resource.HUMHoverOverQuestionMark}" />
+                      <apex:outputPanel styleClass="hoverfontstyle">
+                        {!$Label.CaseTaskView_RefreshToolTip_HUM}
+                      </apex:outputPanel>
+                    </apex:commandLink>
+                  </apex:outputPanel>
+                </div>
+              </nav>
+            </div>
+            </apex:outputPanel>
+          </apex:pageBlockSection>
+
+        <apex:actionStatus id="pleaseWait">
+          <apex:facet name="start">
+            <div class="waitingSearchDiv waitingSearchDivOpacity outerDIVStyle" />
+            <div id="searchingStatus" class="waitingSearchDiv innerDIVStyle">
+              <div class="waitingHolder innermostDIVStyle">
+                <img class="waitingImage" src="/img/loading.gif" />
+                <span class="waitingDescription">{!$Label.HUMPleaseWait}</span>
+              </div>
+            </div>
+          </apex:facet>
+          <apex:facet name="stop" />
+        </apex:actionStatus>
+
+        <apex:pageBlockSection collapsible="true" columns="1" id="thePageBlockSection3" title="Results">
+          <apex:outputLabel id="myTeamWarMsg" value="{!$Label.TeamMembersWarMsg} " style="color:red;font-size:12px"/>
+          <apex:outputPanel id="showBtnPnl" styleClass="btnPanelStyle">
+            <center>
+              <apex:outputPanel >
+                <apex:commandButton rendered="{!(($Profile.Name == $Label.HUMAgencyCCSupervisor) || (sPharmacyUser == $Label.PharmacyUserSupervisorYes_HUM))}" value="Accept Selected" id="Assing" reRender="thePageBlockSection3,pnlError" onclick="updateUnassignedOwner();return false;" status="pleaseWait" />
+                <apex:commandButton rendered="{!(bEnableCloseCaseButton && (($Profile.Name == $Label.HUMAgencyCCSupervisor) || (sPharmacyUser == $Label.PharmacyUserSupervisorYes_HUM)))}" value="{!$Label.Close_case_Button}" onclick="checkuserqueue();return false;" id="idClosebutton"  status="pleaseWait" styleClass="closeCasesbtn btn" />
+                <apex:commandButton rendered="{!(bEnableTransferButton && (($Profile.Name == $Label.HUMAgencyCCSupervisor) || (sPharmacyUser == $Label.PharmacyUserSupervisorYes_HUM)))}" value="{!$Label.Change_Case_Owner}" onclick="checkQAA();return false;" id="idTransferbutton"  status="pleaseWait" styleClass="transferCasesbtn btn" />
+              </apex:outputPanel>
+            </center>
+          </apex:outputPanel>
+          <script>
+            var resp;
+            var sRemoteActionMethodPulled = '{!$RemoteAction.CaseTaskView_C_HUM.pullWorkItems}';
+            var sRemoteActionMethod1 = '{!$RemoteAction.CaseTaskView_C_HUM.fetchCaseTask}';
+            var sAssignOwner = '{!$RemoteAction.CaseTaskView_C_HUM.updateOwnerOfAssignedRecords}';
+            var sAssignStatus = '{!$RemoteAction.CaseTaskView_C_HUM.updateStatusOfAssignedRecords}';
+            var scheckUserQueue = '{!$RemoteAction.CaseTaskView_C_HUM.checkUserQueue}';
+            var scheckQAA = '{!$RemoteAction.CaseTaskView_C_HUM.checkQAA}';
+            var sTransferCase = '{!$RemoteAction.CaseTaskView_C_HUM.transferOfAssignedRecords}';
+            var sprofile = '{!JSENCODE($Profile.Name)}';
+            var ccprofile = '{!$Label.HUMAgencyCCSupervisor}';
+            var sPharmacyUser = '{!JSENCODE(sPharmacyUser)}';
+            var sPharmacyUserSupervisorYes = '{!$Label.PharmacyUserSupervisorYes_HUM}';
+            var sUserCurrentQueue = '{!JSENCODE($User.Current_Queue__c)}';
+            var bMIRPilotUser = {!JSENCODE(IF($Permission.MemberIssueResolution_HUM, "true", "false"))};
+            var hpProfile = {!$Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME};
+            var isNonHpProfile = ({!$Profile.Name == $Label.HUMAgencyCCS} || {!$Profile.Name == $Label.HUMAgencyCCSupervisor});
+            var isPDPPermissionSet = {!JSENCODE(IF(isPDPPermissionSetUser, "true", "false"))};
+            var imagesrc = '{!$Resource.HUMHoverOverQuestionMark}';
+            var bswitch_JS_2578074 = {!bswitch_US2578074};
+          </script>
+
+
+          <!-- This is the block for MIR Pilot user, additional column Remaining SLA-->
+          <apex:outputPanel id="IdWithMIRRemaininSLA">
+            <table id="example" class="table table-striped table-bordered table-hover displayNoneErr gridWidth">
+              <thead>
+                <tr>
+                  <th class="dt-center" >
+                    <input name="select_all" value="1" id="example-select-all" type="checkbox" styleclass="inputClass" class="checkAll"/>
+                  </th>
+                  <th class="dt-center" >
+                    <div title="Case/Task ID">
+                      <span>
+                        {!$label.Case_CaseTaskView_HUM}<BR/>{!$label.Task_ID_CaseTaskView_HUM}
+                      </span>
+                    </div>
+                  </th>
+                  <th class="dt-center">
+                    <div title="Open Work Tasks">
+                      <span>
+                        {!$label.Open_CaseTaskView_HUM} {!$label.Work_CaseTaskView_HUM}<BR/>{!$label.Tasks_CaseTaskView_HUM}
+                      </span>
+                    </div>
+                  </th>
+                  <th class="dt-center">
+                    <BR/>{!$label.Status_CaseTaskView_HUM}
+                  </th>
+                  <th class="dt-center">
+                    <BR/>{!$label.Priority_CaseTaskView_HUM}
+                  </th>
+                  <th class="dt-center">
+                    <div title="Interacting With">
+                      <span>
+                        {!$label.Interacting_CaseTaskView_HUM}<BR/>{!$label.With_CaseTaskView_HUM}
+                      </span>
+                    </div>
+                  </th>
+                  <th class="dt-center">
+                    <div title="Interacting About">
+                      <span>
+                        {!$label.Interacting_CaseTaskView_HUM}<BR/>{!$label.About_CaseTaskView_HUM}
+                      </span>
+                    </div>
+                  </th>
+                  <th title="Classification" class="dt-center">
+                    <div title="Classification">
+                      <span>
+                        <BR/>{!$label.Classification_CaseTaskView_HUM}
+                      </span>
+                    </div>
+                  </th>
+                  <th class="dt-center">
+                    <BR/>{!$label.Intent_CaseTaskView_HUM}
+                  </th>
+                  <th title="Owner Queue" class="dt-center">
+                    <div title="Owner Queue">
+                      <span>
+                        <BR/>{!$label.case_Owner_Queue_field_label}
+                      </span>
+                    </div>
+                  </th>
+                  <th title="Owner" class="dt-center">
+                    <div title="Owner">
+                      <span>
+                        <BR/>{!$label.Case_Owner_label}
+                      </span>
+                    </div>
+                  </th>
+                  <th title="View" class="dt-center">
+                    <div title="View">
+                      <span>
+                        <BR/>{!$label.HumViewsRT}
+                      </span>
+                    </div>
+                  </th>
+                  <th class="dt-center">
+                    {!$label.Due_CaseTaskView_HUM}<BR/> {!$label.Date_CaseTaskView_HUM}
+                  </th>
+                  <th title="Item Age" class="dt-center">
+                    <div title="Item Age">
+                      <span>
+                        {!$label.Item_CaseTaskView_HUM}<BR/>{!$label.Age_CaseTaskView_HUM}
+                      </span>
+                      <img src="/s.gif" class="helpOrb" title="{!$label.HelpItemAge_CaseTaskView_HUM}" />
+                    </div>
+                  </th>
+                  <th title="Case Age" class="dt-center">
+                    <div title="Case Age">
+                      <span>
+                        {!$label.CaseOnly_CaseTaskView_HUM} <BR/>{!$label.Age_CaseTaskView_HUM}
+                      </span>
+                      <img src="/s.gif" class="helpOrb" title="{!$label.HelpCaseAge_CaseTaskView_HUM}" />
+                    </div>
+                  </th>
+                  <th title="Reopen Item Age" class="dt-center">
+                    <div title="Reopen Item Age">
+                      <span>
+                        {!$label.Reopen_CaseTaskView_HUM}<BR/>{!$label.Item_CaseTaskView_HUM} {!$label.Age_CaseTaskView_HUM}
+                      </span>
+                      <img src="/s.gif" class="helpOrb" title="{!$label.HelpReopenItem_CaseTaskView_HUM}" />
+                    </div>
+                  </th>
+                  <th title="Image Received Date" class="dt-center">
+                    <div title="Image Received Date">
+                      <span>
+                        {!$label.Image_CaseTaskView_HUM}<BR/>{!$label.ReceivedDate_CaseTaskView_HUM}
+                      </span>
+                    </div>
+                  </th>
+                  <th title="Date/Time Opened" class="dt-center">
+                    <div title="Date/Time Opened">
+                      <span>
+                        {!$label.Date_H_CaseTaskView_HUM}{!$label.Time_CaseTaskView_HUM}<BR/>{!$label.Opened_CaseTaskView_HUM}
+                      </span>
+                    </div>
+                  </th>
+                  <th title="Time Remaining" class="dt-center" id="timeRemainingId">
+                    <div title="Time Remaining">
+                      <span>
+                        Time<BR/>Remaining
+                      </span>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+            </table>
+          </apex:outputPanel>
+
+          <div class="loadingSectionStyle" id="statusImageTask">
+            <img src="/img/loading.gif" />
+            <span class="waitingDescription"> {!$Label.LOADING_HUM}</span>
+          </div>
+          <div id="overlayStyle" class="displayNoneErr">
+            <div class="waitingSearchDiv waitingSearchDivOpacity outerDIVStyle" />
+            <div id="searchingStatus" class="waitingSearchDiv innerDIVStyle">
+              <div class="waitingHolder innermostDIVStyle">
+                <img class="waitingImage" src="/img/loading.gif" />
+                <span class="waitingDescription">{!$Label.HUMPleaseWait}</span>
+              </div>
+            </div>
+          </div>
+          <apex:actionRegion >
+            <apex:actionFunction name="callFunAF" action="{!getComments}" reRender="commentsComponent" oncomplete="getPopupForComments('{!JSENCODE($CurrentPage.parameters.sobjectIdValue)}');">
+              <apex:param name="sobjectIdValue" value=""/>
+            </apex:actionFunction>
+
+            <apex:actionFunction name="reRenderQueueSelectionpage" reRender="queueSelectionPage" oncomplete="setOkbuttonvisibility();">
+              <apex:param name="reRenderQueueSelectionPage" value="true" assignTo="{!reRenderQueueSelectionPage}"/>
+            </apex:actionFunction>
+
+            <apex:actionFunction name="reRenderTransferPage" reRender="transferPopup" oncomplete="openTransferCasePopUp1();">
+              <apex:param name="FilterSec" value="" assignTo="{!Filterval}"/>
+            </apex:actionFunction>
+
+            <apex:actionFunction name="getPolicyAccountDetails" action="{!getPolicyAccountDetails}" oncomplete="setPolicyAccountDetails('{!JSENCODE(accountName)}','{!JSENCODE(policyId)}','{!JSENCODE(policyName)}','{!JSENCODE(if(bPolicyAccount,'true','false'))}');">
+                <apex:param name="tabId" assignTo="{!accountTabId}" value=""/>
+              </apex:actionFunction>
+              <apex:actionFunction action="{!getMyTeamUsers}" name="getMyTeamUsers"  reRender="myTeamMbrsBtn,myTeamMbrs" oncomplete="loadMyTeamMbrs();" >
+                <apex:param name="param" value="" assignTo="{!bMyTeamInvChk}"/>
+              </apex:actionFunction>
+
+            </apex:actionRegion>
+        </apex:pageBlockSection>
+        <apex:outputLabel value="{!$Label.CaseTaskHelpText}" style="color:red;font-size:12px" />
+      </apex:pageBlock>
+    </apex:form>
+    <div id="QueueSelectionDialog" title="Queue Selection" class="font12Size">
+      <apex:outputPanel id="queueSelectionPage">
+        <apex:outputPanel rendered="{!reRenderQueueSelectionPage}">
+          <apex:include pageName="HUMQueueSelection" />
+        </apex:outputPanel>
+        <button id="btnOk"  class ="btn button commandButton btnQueueOk" style="margin-left:45%;padding:6px 12px;display:none;border:1px solid transparent;" type="button" onclick="handleOKclick();">OK</button>
+      </apex:outputPanel>
+    </div>
+    <div id="commentPopUp" class="arrow_box">
+      <c:PopUpComments_CMP_HUM id="commentsComponent" objectId="{!$CurrentPage.parameters.sobjectIdValue}"/>
+    </div>
+  </div>
+</apex:page>

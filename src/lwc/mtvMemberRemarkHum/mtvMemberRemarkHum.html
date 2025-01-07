@@ -1,0 +1,24 @@
+﻿<!--
+LWC Name        : mtvMemberRemarkHum.html
+Function        : LWC to display MTV Remarks section on member plan pages.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Supriya Shastri                 07/02/2021                Original Version 
+* Supriya Shastri                 09/07/2021                US: 2483754 Table Formatting Updates
+* Vardhman Jain                 03/07/2022                 Logging stories Changes.
+****************************************************************************************************************************-->
+<template>
+    <lightning-card class="hc-standard-table-styles" if:true={isGbo}>
+        <h3 slot="title">
+            <lightning-icon icon-name="standard:account" size="small"></lightning-icon>
+            <span class="slds-p-left_x-small">{labels.mtvRemarksHum}</span>
+        </h3>
+        <div class="full-container slds-is-relative">
+            <c-standard-table-component-hum class="full-container hc-account-detail-standard-table" b-hide-title=false name-of-screen="MTV Remark"
+                response={oIntLst} no-data-message={labels.Hum_NoResultsFound} related-input-field={loggingRelatedField} screen-name="MTV Remark">
+            </c-standard-table-component-hum>
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,54 @@
+﻿<!--
+LWC Name        : pcpUpdateCurrentPcpHum.html
+Function        : LWC to display pcp provider search screen.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Nirmal Garg                     04/12/2023                initial version US4460894
+* Swapnali Sonawane               08/16/2023                US-4938422 PCP Change Template
+****************************************************************************************************************************-->
+<template>
+    <div class="slds-grid slds-gutters slds-m-bottom_large slds-wrap">
+        <div class="slds-col slds-size_1-of-1">
+            <div class="slds-text-heading_medium slds-m-top_small slds-m-bottom_small">
+                <b>Primary Care Physician</b>
+            </div>
+        </div>
+        <div class={customcss}>
+            <div class="slds-grid slds-grid_vertical">
+                <div class="slds-col">
+                    <span>
+                        <b>Current Primary Care Physician</b>
+                    </span>
+                </div>
+                <div class="slds-col">
+                    <span>
+                        <b>{currentpcpname}</b>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class={customcss}>
+            <lightning-combobox required name="Reason for PCP change" label="Reason for PCP change"
+                                data-question="What is the reason for the PCP change?" placeholder="--None--"
+                                options={changeReasonOptions} onchange={handleReasonChange} dropdown-alignment="auto"
+                                value={changeReason} class="validate slds-wrap slds-text-title_bold"
+                                message-when-value-missing={labels.required_msg_HUM}>
+            </lightning-combobox>
+        </div>
+        <div class={customcss}>
+            <lightning-input required onchange={handleEffectiveDateChange} type="date" date-style="short"
+                             data-question="Effective Date" label="Effective Date" value={effectiveDate}
+                             class="validate slds-text-title_bold">
+            </lightning-input>
+        </div>
+        <template if:true={otherInputEnabled}>
+            <div class={customOtherReasonCSS}>
+                <lightning-input type="text" label="Other" required class="validate slds-text-title_bold"
+                                 value={otherReason} data-question="Provide details for Other reason" onblur={handleOtherBlur}>
+                </lightning-input>
+            </div>
+        </template>
+    </div>
+</template>

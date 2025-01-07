@@ -1,0 +1,42 @@
+﻿<!--
+Page Name        : HUMEligibilityInfo
+Version          : 1.0 
+Created Date     : APRIL 02 2015
+Function         : Page used to display the indicators associated to the Policy Member record.
+Modification Log :
+* Developer                     Code Review              Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Harshith M L                   22313                 04/02/2015           Original Version
+-------------------------------------------------------------------------------------------------------------------------------> 
+<apex:page sidebar="false" showHeader="false" standardController="Policy_Member__c" extensions="HUMEligibilityInfoController" >
+<apex:styleSheet value="{!URLFOR($Resource.HumPolicyMemberEligibilityInformation, 'HumPolicyMemberEligibilityInformation/HumPolicyMemberEligibilityInformationPageStyle.css')}" />
+    <apex:pageblock rendered="{!bProcessFlag}">
+        <apex:outputText rendered="false">{!Policy_Member__c.Policy__r.Major_LOB__c}</apex:outputText>
+        <apex:panelGrid columns="2">
+            <apex:outputPanel >   
+                <div class="labelWidth floatLeft paddingDoubleLeft">
+                    <div class="floatRight fontBold ">
+                        {!$Label.HUMContractId}
+                    </div>
+                </div>
+                <div class="labelWidth floatLeft paddingLeft">
+                    {!Policy_Member__c.Policy__r.Contract_Number__c}
+                </div>
+            </apex:outputPanel> 
+            <apex:outputPanel >
+                <div class="labelWidth floatLeft paddingToNextColumn">
+                    <div class="floatRight fontBold">
+                        {!$ObjectType.Policy__c.Fields.PBP_Code__c.Label}
+                    </div>
+                </div>
+                <div class="labelWidth floatLeft paddingLeft">
+                    {!Policy_Member__c.Policy__r.PBP_Code__c}
+                </div>     
+             </apex:outputPanel>       
+        </apex:panelGrid>   
+        <br/>
+        
+        <c:HUMPolicyMemberEligibilityComponent mapEligibilityInfo="{!mapEligibilityInfo}" sectionPriorityList="{!lstSectionName}" 
+        fieldPriorityList="{!lstFieldNames}"/>  
+    </apex:pageblock>        
+</apex:page>

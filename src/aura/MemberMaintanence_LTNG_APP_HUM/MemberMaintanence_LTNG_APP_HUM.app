@@ -1,0 +1,19 @@
+﻿<aura:application access="GLOBAL" extends="ltng:outApp">
+    <aura:dependency resource="demographicNonCommercialComponent" />
+    <aura:dependency resource="demographicCommercialComponent" />
+    <aura:dependency resource="demographicDisplayComponent" />
+    <aura:dependency resource="demographicDriverComponent" />
+    <aura:dependency resource="demographicDrivenComponent" />
+    <aura:dependency resource="demographicSummaryComponent" />
+    <aura:dependency resource="demographicMedicareAvfComponent" />
+    <aura:dependency resource="demographicMedicaidAvfComponent" />
+    <aura:dependency resource="demographicLoadingComponent" />
+    <aura:dependency resource="errorDisplayComponent" />
+    <aura:dependency resource="modalComponent" />
+    <aura:dependency resource="pubsubComponent" />
+    <aura:dependency resource="crmserviceHelper" />
+    <aura:dependency resource="demographicUpdateFinishComponent" />
+    <aura:dependency resource="demographicUpdateHelper" />
+    <aura:dependency resource="demographicMessagesComponent" />
+    <aura:dependency resource="markup://force:*" type="EVENT"/>
+</aura:application>

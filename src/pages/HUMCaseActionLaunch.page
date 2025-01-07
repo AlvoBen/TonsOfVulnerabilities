@@ -1,0 +1,1134 @@
+﻿<!------------------------------------------------------------------------------------------------------------------------------
+Page Name        : HUMCaseActionLaunch
+Version          : 1.0 
+Created Date     : 08/11/2014 
+Function         : This Page holds side bar components which redirects to respective Case Action Guide pages.
+Modification Log :
+*   Modification ID     Developer               Code Review             Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   1.0              Vivek Batham                  17840            08/11/2014                 Original       
+*   2.0              Krishna Tadikonda             18415            10/08/2014                 Modified to hide the links for closed case layout.
+*   3.0              Shreya Choodamani             23334            05/19/2015                 Added code from line 35-71 for REQ - 123923 to show process links for Provider , Agent and Group
+*   4.0              Pooja Wadhwa                  23336            05/23/2015                 Modified to show 3 panels for Commercial, Medicare and Speciality.
+*   5.0              Rakesh Patni                  23345            05/25/2015                 Modified to show recommended process above available processes.
+*   6.0              SuryaKumari Medicherla        24122            06/12/2015                 Modified code to open Disenrollment Template in seperate Tab (REQ-105810) 
+*   7.0              Harshith Mandya               24122            06/16/2015                 Code added for making one process for case ( REQ - 187294 ) Line No 127-128
+*   8.0              Harshith Mandya               28341            01/12/2015                 Implemented REQ - 215100
+*   9.0              Harshith Mandya               28341            12/21/2015                 Removed outputlink specific to Medicare DAC - Defect #D26209
+*   10.0             Harshith Mandya               29578            01/29/2015                 Defect fix #214041.0001
+*   11.0             Sharan Shanmugam                               07/26/2016                 Defect fix 234810.0001
+*   12.0             Harshith Mandya                                10/12/2016                 Defect Fix #244647.0001
+*   13.0             Subhamay mandal                                02/27/2017                 Display Mentor Document links. REQ - 303482
+*   14.0             Albin Arul                     94816           05/19/2017                 Req - 303397 Hide links for Humana Pharmacy profile
+*   15.0             Subhamay Mandal                                05/25/2017                 Defect Fix #287355.0001
+*   16.0             Subhamay Mandal                                06/28/2017                 REQ - 321217, REQ - 321219, REQ - 321220. Mering into base codebase.
+*   17.0             Pallavi R                     141064           10/13/2017                 REQ 311453 - changes for Medical Good Cause Reinstatement form
+*   18.0             Asish Behera                                   02/12/2018                 REQ - 351006 PCP/PCD flow link added
+*   19.0             Bharath Rajappan              208658           03/22/2018                 REQ - 357304 Creditable Coverage Link added 
+*   20.0             Syed Mubarak                                   04/04/2018                 REQ - 350471 - Show Create letter EMME Link
+*   21.0             Darshan Sharma                                 04/09/2018                 REQ - 361047 - Ability to update Mentor Links in QuickStart via Business Configuration
+*   22.0             Subhamay Mandal                                04/25/2018                 REQ - 361039 Ability in SalesForce application to launch the PCP/PCD template from case edit page (CRM)
+*   23.0             Darshan Sharma                                 04/27/2018                 REQ - 361223 Ability to update Mentor Links in QuickStart via Business Configuration (CRM)
+*   24.0             Bharath Rajappan                               05/22/2018                 REQ - 361964 - Show recommended process for creditable Coverage
+*   25.0             Amar Gadewar                                   06/22/2018                 REQ - 367117 - Use the Custom Permission RSOMedicareFrontOfficeUser_HUM
+*   26.0             Asish Behera                                   07/10/2018                 REQ - 367881 - Add PCP/PCD Questions Process to the Recommended Process tab on the Case Detail Page (RF)
+*   27.0             Asish Behera                                   08/27/2018                 reg defect 378860.0001 fix.
+*   28.0               Prathyu Tushar                324032           01/02/2019                 REQ - 380419: Case Auto routing for Expidted and Part - D redetermination
+*   29.0             Asish Behera                                   1/23/2019                  REQ - 383628 - PCC - Assign functionalities access depending on Quick Start 650 Permission to RSO Medicare Only 684 Permission (CRM)
+*   30.0             Santhosh Ganji                                 01/24/2018                 REQ - 380499 & 380500: Added code to show Medicare process links under Recommended process Section
+*   31.0             Amar Gadewar                                   01/17/2019                 REQ - 383731 - Quality - Add PCP/PCD Questions Process to the Recommended Process tab on the Case Detail Page (CRM)
+*   32.0             Subhamay Mandal                                02/18/2019                 REQ - REQ - 383947 User Story B&E - Enable CI PAPI to the Case Page (RF) 
+*   32.0             Pallavi Ravishankar           338657           01/02/2019                 REQ - 383832 - Added code for Medicaid Good Cause Request Link    
+*   33.0             Asish Behera                                   03/26/2019                 REQ - 387558 - MIR - Ability to display Timer on Case Creation (Start Time) (RF)           
+*   34.0             Moshitha Gunasekaran          348700           03/25/2019                 REQ - 380742 - Ability to view Transaction Reply Report (TRR) Process data for a specific member on a Medicare case
+*   35.0             Santhosh Ganji                                 04/19/2019                 REQ - 386935 - 'Available Processes/Recommended Process� side panel sections hide for Non-MED Cases.
+*   36.0             Praveen Kumar Parimi                           06/20/2019                 REQ - 382701 - Removal of Pre-Existing Condition Template from Case Edit Page and Case Detail Page.
+*   37.0             Moshitha Gunasekaran                           01/29/2020                 Story - 725129 - DEAA Medicare Opt Out process display in CRM for DEAA (Dual Eligible Auto Assigned) cases
+*   38.0             Kapil Arora                                    03/18/2020                 US 857398 PR00091574 - MF 1 - AHT/Quality - Medicare Good Cause Reinstatement Template Auto Routing and AHT Updates (CRM)
+*   39.0             Jasmeen Shangari                               04/29/2020                 Rename iCreditableConstant to iProcessSeqNo to resolve Checkmarx error
+*   40.0             Pooja Kumbhar                                  05/29/2020                 Added Member Maintainance Demographics Links
+*   40.1             Pooja Kumbhar                                  06/09/2020                 DF-881 Fix On Member Maintainance
+*   40.2             Pooja Kumbhar                                  06/11/2020                 Defect Fix 883 Member Maintainance       
+*   40.3              Himalay Patel                                 10/14/2020                 REQ - 1135761  Access the 'Humana Pharmacy Web Issues' Guided Process (RxRF)
+*   40.4              Himalay Patel                                  01/26/2021                 REQ -  1689789 Access the 'Humana Pharmacy Web Issues' Guided Process (CRMS) (ID# 110)
+*   40.5              Himalay Patel                                  01/26/2021                 REQ -  1689789 Display Completed 'Humana Pharmacy Web Issues' Process on Case Detail Page (CRMS) (ID# 110)
+*   40.6              Y Sunil Kumar Reddy                            01/21/2021                 User Story 1763850: PR00091574 - MF 1 - Quality - "Medicaid PAR Provider Not Accepting" template and case validations (CRM)
+*   40.7              Atia Uzma                                      01/20/2021                 User Story 1186358: PR00091574 - MF 1 - Quality - "Medicare Expedited Appeals Template" Updates (CRM)
+*   40.8                  Atia Uzma                                      03/23/2021                 User Story 1898796: T1PRJ0001827 - MF 1 - RF Clean Up (RF)
+*   40.9              Moshitha Gunasekaran                           04/09/2021                 User Story 2163304: Case Management Checkmarx Security violations - Case Action and Process
+*   41.0          Jayeshkumar Solanki                03/22/2021         User Story 2016293: T1PRJ0001827 - MF 1 - RESEARCH - Medicare Disenrollment/Cancellation Template Implementation (RF)
+*   41.1         Mithra Bharadwaj                                                             US#2089572 SonarQube Changes
+*   41.2         Prudhvi Pamarthi                                     07/01/2021                US#2229116 Eliminate Old AVF Template in Case Page(s)
+*   41.3          Saikumar Boga                                        08/09/2021                US2482199 Remove Link "Medicare Disenrollment & Cancellation" Process from the Case Detail and Edit Page
+*   41.4        * Venkata Nagasiva                                05/17/2022                US-3367406 T1PRJ0010888 - MF [1] - Rebranding - Update text references from "Humana Pharmacy" to "Centerwell Pharmacy" - Web Issues Guided Flow - Process Name
+*------------------------------------------------------------------------------------------------------------------------------  -->
+<apex:page standardcontroller="Case" id="CaseActionLaunchSidePanelPageId" extensions="HumCaseActionLaunchController" >
+  <apex:includeScript value="/support/console/31.0/integration.js" />
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMCaseActionLaunch, 'HUMCaseActionLaunch/HUMCaseActionLaunchCSS.css')}"/>
+  <apex:pageblock rendered="{!$Permission.MemberIssueResolution_HUM}">
+    <apex:outputpanel id="milestoneId" >
+      <apex:milestoneTracker entityId="{!case.Id}" />
+    </apex:outputpanel>
+  </apex:pageblock>
+
+  <apex:variable value="{!1}" var="iSerialStartNumber"/>
+
+  <!-- Display Links when case record type is Medicare or closed Medicare  -->
+  <apex:outputpanel id="medicareCaseSidePanelId" rendered="{!bDisplayLink}">
+    <c:DynamicCustomLinks_CMP_HUM DynamicLinkController="{!this}"/>
+    <!-- Display creditable coverage link when case classification type is "Calls (RSO)" and its a Medicare case -->
+    <apex:pageblock rendered="{!(bShowCreditableCoverageLinks || bShowCreditableCoverageLinksUnKnown) && (($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)|| $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME) && NOT(($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor) && (bShowDemographicAvailable ||  bShowCommercialDemographicAvailable || bShowBothDemographicAvailable ) && bMemberCase)}">
+      <br/>
+      <h1> {!$Label.HUMAvailableProcess} </h1><br/>
+      <br/>
+      1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('ATTVF');getCaseId();return false;">{!$Label.HUMAttestationVerificationProcess}</apex:outputlink>
+      <br/>
+      <br/>
+      <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+        2. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputPanel>
+    </apex:pageblock>
+    <apex:pageblock rendered="{!(bShowMedicareDCTemplate) && NOT(bShowCreditableCoverageLinks || bShowCreditableCoverageLinksUnKnown) && bMemberCase && NOT(bShowDEAALink) && NOT(bShowDemographicAvailable)}">
+      <br/>
+      <h1> {!$Label.HUMAvailableProcess} </h1> <br/>
+      <br/>
+      <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+        1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputPanel>
+    </apex:pageblock>
+    <!-- Medicare OR Commercial Demoraphic links-->
+    <apex:pageblock rendered="{!(bShowCreditableCoverageLinks || bShowCreditableCoverageLinksUnKnown) && (($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)|| $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME) && (($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor) && (bShowDemographicAvailable ||  bShowCommercialDemographicAvailable) && !bShowBothDemographicAvailable  && bMemberCase)}">
+      <br/>
+      <h1> {!$Label.HUMAvailableProcess} </h1><br/>
+      <br/>
+      <apex:outputpanel rendered="{!bShowDemographicAvailable  && !bShowBothDemographicAvailable}">
+        1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputpanel>
+      <apex:outputpanel rendered="{!bShowCommercialDemographicAvailable  && !bShowBothDemographicAvailable}">
+        1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputpanel>
+      2. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('ATTVF');getCaseId();return false;">{!$Label.HUMAttestationVerificationProcess}</apex:outputlink>
+      <br/>
+      <br/>
+      <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+        3. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputPanel>
+    </apex:pageblock>
+    <!-- Medicare and Commercial Demographic both links-->
+    <apex:pageblock rendered="{!(bShowCreditableCoverageLinks || bShowCreditableCoverageLinksUnKnown) && (($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)|| $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME) && (($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor) && ( bShowBothDemographicAvailable ) && bMemberCase)}">
+      <br/>
+      <h1> {!$Label.HUMAvailableProcess} </h1><br/>
+      <br/>
+      1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+      <br/>
+      <br/>
+      2. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Commercial_Demographics}</apex:outputlink>
+      <br/>
+      <br/>
+      3. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('ATTVF');getCaseId();return false;">{!$Label.HUMAttestationVerificationProcess}</apex:outputlink>
+      <br/>
+      <br/>
+      <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+        4. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputPanel>
+    </apex:pageblock>
+
+    <apex:pageblock id="pbDEAALink" rendered="{!(bShowDEAALink) && (($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)|| $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME) && NOT(($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor) && (bShowDemographicAvailable ||  bShowCommercialDemographicAvailable || bShowBothDemographicAvailable ) && bMemberCase)}">
+      <br/>
+      <h1> {!$Label.HUMAvailableProcess} </h1>
+      <br/>
+      <br/>
+      <apex:outputlink target="_blank" onclick="openActionTab('DEAA');getCaseId();return false;">{!$Label.HUMDEAAMedicareOptOutProcess}</apex:outputlink>
+      <br/>
+      <br/>
+    </apex:pageblock>
+    <!-- Medicare OR Commercial Demoraphic links-->
+    <apex:pageblock id="pbDEAALinkDemo" rendered="{!(bShowDEAALink) && (($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)|| $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME) && (($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor) && (bShowDemographicAvailable ||  bShowCommercialDemographicAvailable) && !bShowBothDemographicAvailable  && bMemberCase)}">
+      <br/>
+      <h1> {!$Label.HUMAvailableProcess} </h1>
+      <br/>
+      <br/>
+      <apex:outputpanel rendered="{!bShowDemographicAvailable  && !bShowBothDemographicAvailable}">
+        <apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputpanel>
+      <apex:outputpanel rendered="{!bShowCommercialDemographicAvailable  && !bShowBothDemographicAvailable}">
+        <apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputpanel>
+      <apex:outputlink target="_blank" onclick="openActionTab('DEAA');getCaseId();return false;">{!$Label.HUMDEAAMedicareOptOutProcess}</apex:outputlink>
+      <br/>
+      <br/>
+    </apex:pageblock>
+    <!-- Medicare and Commercial Demographic both links-->
+    <apex:pageblock id="pbDEAALinkDemoBoth" rendered="{!(bShowDEAALink) && (($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)|| $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME) && (($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor) && ( bShowBothDemographicAvailable ) && bMemberCase)}">
+      <br/>
+      <h1> {!$Label.HUMAvailableProcess} </h1>
+      <br/>
+      <br/>
+      <apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+      <br/>
+      <br/>
+      <apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Commercial_Demographics}</apex:outputlink>
+      <br/>
+      <br/>
+      <apex:outputlink target="_blank" onclick="openActionTab('DEAA');getCaseId();return false;">{!$Label.HUMDEAAMedicareOptOutProcess}</apex:outputlink>
+      <br/>
+      <br/>
+    </apex:pageblock>
+
+    <!-- Medicare OR Commercial Demographic links (when existing condition fails)-->
+    <apex:pageBlock rendered="{!NOT(bShowDEAALink) && NOT((bShowCreditableCoverageLinks || bShowCreditableCoverageLinksUnKnown)) && NOT(($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly) || $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME) && ((bShowDemographicAvailable || bShowBothDemographicAvailable) && !bShowBothDemographicAvailable && bMemberCase && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor))}">
+      <br/>
+      <h1> {!$Label.HUMAvailableProcess} </h1>
+      <br/>
+      <br/>
+      <apex:outputpanel rendered="{!bShowDemographicAvailable  && !bShowBothDemographicAvailable}">
+        1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputpanel>
+      <apex:outputpanel rendered="{!bShowCommercialDemographicAvailable  && !bShowBothDemographicAvailable}">
+        1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputpanel>
+      <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+        2. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputPanel>
+    </apex:pageBlock>
+
+    <!-- Medicare and Commercial Demographic both links (when existing condition fails)-->
+    <apex:pageBlock rendered="{!NOT(bShowDEAALink) && NOT((bShowCreditableCoverageLinks || bShowCreditableCoverageLinksUnKnown)) && NOT(($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly) || $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME) && bShowBothDemographicAvailable && bMemberCase && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || NOT($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly))}">
+      <br/>
+      <h1> {!$Label.HUMAvailableProcess} </h1><br/>
+      <br/>
+      1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+      <br/>
+      <br/>
+      2. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Commercial_Demographics}</apex:outputlink>
+      <br/>
+      <br/>
+    </apex:pageBlock>
+
+    <!-- Medicare OR Commercial Demographic links (when existing condition fails)-->
+    <apex:pageBlock rendered="{!NOT(bShowDEAALink) && NOT((bShowCreditableCoverageLinks || bShowCreditableCoverageLinksUnKnown)) && (($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)|| $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME) && ((bShowDemographicAvailable || bShowBothDemographicAvailable) && !bShowBothDemographicAvailable && bMemberCase && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || ($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)))}">
+      <br/>
+      <h1> {!$Label.HUMAvailableProcess} </h1>
+      <br/>
+      <br/>
+      <apex:outputpanel rendered="{!bShowDemographicAvailable  && !bShowBothDemographicAvailable}">
+        1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputpanel>
+      <apex:outputpanel rendered="{!bShowCommercialDemographicAvailable  && !bShowBothDemographicAvailable}">
+        1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputpanel>
+      <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+        2. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputPanel>
+    </apex:pageBlock>
+
+    <!-- Medicare and Commercial Demographic both links (when existing condition fails)-->
+    <apex:pageBlock rendered="{!NOT(bShowDEAALink) && NOT((bShowCreditableCoverageLinks || bShowCreditableCoverageLinksUnKnown)) && (($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)|| $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME) && bShowBothDemographicAvailable && bMemberCase }">
+      <br/>
+      <h1> {!$Label.HUMAvailableProcess} </h1><br/>
+      <br/>
+      1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+      <br/>
+      <br/>
+      2. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Commercial_Demographics}</apex:outputlink>
+      <br/>
+      <br/>
+      <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+        3. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputPanel>
+    </apex:pageBlock>
+
+
+
+    <apex:pageblock rendered="{!((IF(LEN(sRecommendedProcess)>0 && bOpenCase,true,false)) && (($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)|| $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME)) || (if(AND(sRecommendedProcesslist != null, sRecommendedProcesslist.size>0),true,false) && bMemberCase && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || ($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)))}">
+      <!-- Recommended process url based on classification And intent values -->
+      <apex:outputPanel >
+        <div class="RecommendedProcessLink">
+          <apex:outputLabel >
+            <b>{!$Label.HUMRecommendedProcess}</b>
+          </apex:outputLabel>
+          <br/>
+          <br/>
+          <apex:repeat value="{!processlinkiter}" var="Pos" id="theRepeat" rendered="{!((bShowDemographicRecommended || bShowCommercialDemographicRecommended || bShowBothDemographicRecommended) && bMemberCase && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor ||($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)))}">
+            <apex:outputlink target="_blank" onclick="openActionTab('{!JSENCODE(sRecommendedLinklist[Pos])}');getCaseId();return false;" >
+              <apex:outputText value="{!sRecommendedProcesslist[Pos]}" />
+            </apex:outputlink>
+            <br/>
+            <br/>
+          </apex:repeat>
+          <apex:outputlink target="_blank" onclick="openActionTab(recProcess);getCaseId();return false;" >{!sRecommendedProcess}</apex:outputlink>
+
+        </div>
+        <br/>
+        <br/>
+        <div class="RecommendedBorder">
+        </div>
+      </apex:outputPanel>
+    </apex:pageblock>
+
+    <!-- Added to show the links for Pharmacy profile-->
+    <apex:pageblock rendered="{!(IF(LEN(sRecommendedProcess)>0 && bOpenCase,true,false)) && NOT (($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)) && NOT($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor ) && (if(AND(sRecommendedProcesslist != null, sRecommendedProcesslist.size>0),true,false) && bMemberCase && NOT($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor ) && NOT($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly))}">
+      <!-- Recommended process url based on classification And intent values -->
+      <apex:outputPanel >
+        <div class="RecommendedProcessLink">
+          <apex:outputLabel >
+            <b>{!$Label.HUMRecommendedProcess}</b>
+          </apex:outputLabel>
+          <br/>
+          <br/>
+          <apex:repeat value="{!processlinkiter}" var="Pos" id="theRepeat" rendered="{!((bShowDemographicRecommended || bShowBothDemographicRecommended || bShowCommercialDemographicRecommended) && bMemberCase && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || NOT($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)))}">
+            <apex:outputlink target="_blank" onclick="openActionTab('{!sRecommendedLinklist[Pos]}');getCaseId();return false;" >
+              <apex:outputText value="{!sRecommendedProcesslist[Pos]}" />
+            </apex:outputlink>
+            <br/>
+            <br/>
+          </apex:repeat>
+        </div>
+        <br/>
+        <br/>
+        <div class="RecommendedBorder">
+        </div>
+      </apex:outputPanel>
+    </apex:pageblock>
+  </apex:outputpanel>
+
+  <!-- Display Links when case record type is not equal to Medicare or closed Medicare  -->
+  <apex:form id="notMedicareCaseSidePanelId" rendered="{!(!bDisplayLink && bShowMemAvailableProcess)}">
+    <!-- Added this block for Pharmacy profile -->
+    <apex:pageblock rendered="{! (NOT($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly) && NOT($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor )) || (if(AND(sRecommendedProcesslist != null, sRecommendedProcesslist.size>0),true,false) && bMemberCase && NOT($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly) && NOT($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor ))}">
+      <!-- Recommended process url based on classification And intent values -->
+      <apex:outputPanel rendered="{!IF(LEN(sRecommendedProcess)>0 && bOpenCase,true,false) || (if(AND(sRecommendedProcesslist != null, sRecommendedProcesslist.size>0),true,false) && bMemberCase && NOT(($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)|| $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME))}">
+        <div class="RecommendedProcessLink">
+          <apex:outputLabel >
+            <b>{!$Label.HUMRecommendedProcess}</b>
+          </apex:outputLabel>
+          <br/>
+          <br/>
+          <apex:repeat value="{!processlinkiter}" var="Pos" id="theRepeat">
+            <apex:outputlink target="_blank" onclick="openActionTab('{!JSENCODE(sRecommendedLinklist[Pos])}');getCaseId();return false;" >
+              <apex:outputText value="{!sRecommendedProcesslist[Pos]}" />
+            </apex:outputlink>
+            <br/>
+            <br/>
+          </apex:repeat>
+        </div>
+        <br/>
+        <br/>
+        <div class="RecommendedBorder">
+        </div>
+      </apex:outputPanel>
+
+
+      <br/>
+      <br/>
+      <h1> {!$Label.HUMAvailableProcess} </h1>
+      <br/>
+      <br/>
+      <!-- Resetting Start number for the section -->
+      <apex:variable var="iSerialStartNumber" value="{!1}"/>
+
+      <apex:outputPanel rendered="{!(bShowDemographicAvailable && !bShowBothDemographicAvailable && bMemberCase && NOT(($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)|| $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME))}">
+        1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputPanel>
+
+      <apex:outputPanel rendered="{!(bShowCommercialDemographicAvailable && !bShowBothDemographicAvailable && bMemberCase && NOT(($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)|| $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME))}">
+        1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputPanel>
+
+      <apex:outputPanel rendered="{!(bShowBothDemographicAvailable && bMemberCase && NOT(($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)|| $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME))}">
+        1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+        <br/>
+        <br/>
+        2. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Commercial_Demographics}</apex:outputlink>
+        <br/>
+        <br/>
+      </apex:outputPanel>
+      <apex:outputPanel rendered="{!bShowWebIssuesAvailalble && (bIsCaseOwner || $Profile.Name == $Label.HUMAgencyCCSupervisor || $Permission.CRMS_300_HP_Supervisor_Custom)}">
+        {!iSerialStartNumber}. &nbsp;&nbsp;<apex:outputlink onclick="openActionTab('Centerwell Pharmacy Web Issues');getCaseId();return false;">{!$Label.Humana_Pharmacy_Web_Issues} </apex:outputlink>
+        <apex:variable var="iSerialStartNumber" value="{!iSerialStartNumber + 1}"/>
+        <br/>
+        <br/>
+      </apex:outputPanel>
+
+    </apex:pageblock>
+
+    <apex:pageblock rendered="{!(($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)|| $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME) || (if(AND(sRecommendedProcesslist != null, sRecommendedProcesslist.size>0),true,false)  && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || (($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly) || $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME))) }">
+      <!-- Recommended process url based on classification And intent values -->
+      <apex:outputPanel rendered="{!IF(LEN(sRecommendedProcess)>0 && bOpenCase,true,false) || (if(AND(sRecommendedProcesslist != null, sRecommendedProcesslist.size>0),true,false) && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || (($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly) || $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME)))}">
+        <div class="RecommendedProcessLink">
+          <apex:outputLabel >
+            <b>{!$Label.HUMRecommendedProcess}</b>
+          </apex:outputLabel>
+          <br/>
+          <br/>
+          <apex:repeat value="{!processlinkiter}" var="Pos" id="theRepeat" rendered="{!(bShowDemographicRecommended || bShowCommercialDemographicRecommended || bShowBothDemographicRecommended || (bShowWebIssuesRecommended && (bIsCaseOwner || $Profile.Name == $Label.HUMAgencyCCSupervisor || $Permission.CRMS_300_HP_Supervisor_Custom))) && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || (($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly) || $Profile.Name != $Label.PHARMACY_SPECIALIST_PROFILE_NAME))}">
+            <apex:outputlink target="_blank" onclick="openActionTab('{!JSENCODE(sRecommendedLinklist[Pos])}');getCaseId();return false;" >
+              <apex:outputText value="{!sRecommendedProcesslist[Pos]}" />
+            </apex:outputlink>
+            <br/>
+            <br/>
+          </apex:repeat>
+          <apex:outputlink target="_blank" onclick="openActionTab(recProcess);getCaseId();return false;" >
+            <apex:outputText value="{!sRecommendedProcess}" rendered="{!(NOT(bShowAddressverificationLink) && NOT(bShowOtherinsuranceLink)) }"/>
+            <apex:outputText value="{!sRecommendedProcess}" rendered="{!$Permission.HPTraditionalInsuranceUser_HUM && !bShowAddressverificationLink }"/>
+            <apex:outputText value="{!sRecommendedProcess}" rendered="{!$Permission.HPTraditionalInsuranceUser_HUM && !bShowOtherinsuranceLink }"/>
+          </apex:outputlink>
+
+
+        </div>
+        <br/>
+        <br/>
+        <div class="RecommendedBorder">
+        </div>
+      </apex:outputPanel>
+
+
+      <br/>
+      <br/>
+      <h1> {!$Label.HUMAvailableProcess}</h1>
+      <br/>
+      <br/>
+      <!-- Resetting Start number for the section -->
+      <apex:variable var="iSerialStartNumber" value="{!1}"/>
+
+      <!-- Added to show the links when existing condition fails -->
+      <apex:outputPanel rendered="{!((bShowDemographicAvailable && bMemberCase && !bShowBothDemographicAvailable) && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || ($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly))) && NOT(bShowCreditableCoverageLinks || bShowCreditableCoverageLinksUnKnown) && NOT(bShowPDPLinks) && NOT(bShowMedicareLinks) && NOT(bShowCommercialLinks && NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))) && NOT(bShowLinks && NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false)))}">
+        1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+        <br/>
+        <br/>
+        </apex:outputpanel>
+
+        <apex:outputPanel rendered="{!((bShowCommercialDemographicAvailable && bMemberCase && !bShowBothDemographicAvailable) && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || ($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly))) && NOT(bShowCreditableCoverageLinks || bShowCreditableCoverageLinksUnKnown) && NOT(bShowPDPLinks) && NOT(bShowMedicareLinks) && NOT(bShowCommercialLinks&& NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))) && NOT(bShowLinks && NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false)))}">
+          1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+          <br/>
+          <br/>
+          </apex:outputpanel>
+
+          <apex:outputPanel rendered="{!(bShowBothDemographicAvailable && bMemberCase && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || ($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly))) && NOT(bShowCreditableCoverageLinks || bShowCreditableCoverageLinksUnKnown) && NOT(bShowPDPLinks) && NOT(bShowMedicareLinks) && NOT(bShowCommercialLinks  && NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))) && NOT(bShowLinks&& NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false)))}">
+            1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+            <br/>
+            <br/>
+            2. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Commercial_Demographics}</apex:outputlink>
+            <br/>
+            <br/>
+            </apex:outputpanel>
+            <apex:outputPanel rendered="{!bShowWebIssuesAvailalble && (bIsCaseOwner || $Profile.Name == $Label.HUMAgencyCCSupervisor || $Permission.CRMS_300_HP_Supervisor_Custom) && !bShowLinks}">
+              {!iSerialStartNumber}. &nbsp;&nbsp;<apex:outputlink onclick="openActionTab('Centerwell Pharmacy Web Issues');getCaseId();return false;">{!$Label.Humana_Pharmacy_Web_Issues} </apex:outputlink>
+              <apex:variable var="iSerialStartNumber" value="{!iSerialStartNumber + 1}"/>
+            </apex:outputPanel>
+
+
+            <!-- Creditable coverage un-known member link show when case classification type is "Calls (RSO)"-->
+            <apex:outputPanel rendered="{!(bShowCreditableCoverageLinks || bShowCreditableCoverageLinksUnKnown) && (NOT(bShowPDPLinks) && NOT(bShowMedicareLinks) && NOT(bShowCommercialLinks && NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))) && NOT(bShowLinks && If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false)) && NOT(bShowLinks && NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false)))) && NOT((bShowDemographicAvailable || bShowCommercialDemographicAvailable || bShowBothDemographicAvailable) && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || ($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)) && bMemberCase ) }">
+              1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('ATTVF');getCaseId();return false;">{!$Label.HUMAttestationVerificationProcess}</apex:outputlink>
+              <br/>
+              <br/>
+            </apex:outputPanel>
+
+            <!-- Medicare OR Commercial Demoraphic links-->
+            <!-- Creditable coverage un-known member link show when case classification type is "Calls (RSO)"-->
+            <apex:outputPanel rendered="{!((bShowDemographicAvailable|| bShowCommercialDemographicAvailable) && bMemberCase && !bShowBothDemographicAvailable && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || ($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly))) && (bShowCreditableCoverageLinks || bShowCreditableCoverageLinksUnKnown) && (NOT(bShowPDPLinks) && NOT(bShowMedicareLinks) && NOT(bShowCommercialLinks && NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))) && NOT(bShowLinks && If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false)) && NOT(bShowLinks && NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))))}">
+              <apex:outputPanel rendered="{!bShowDemographicAvailable && bMemberCase && !bShowBothDemographicAvailable}">
+                1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!bShowCommercialDemographicAvailable && bMemberCase && !bShowBothDemographicAvailable}">
+                1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              2. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('ATTVF');getCaseId();return false;">{!$Label.HUMAttestationVerificationProcess}</apex:outputlink>
+              <br/>
+              <br/>
+            </apex:outputPanel>
+
+            <!-- Medicare AND Commercial Demoraphic both links-->
+            <!-- Creditable coverage un-known member link show when case classification type is "Calls (RSO)"-->
+            <apex:outputPanel rendered="{!(bShowBothDemographicAvailable && bMemberCase && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || ($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly))) && (bShowCreditableCoverageLinks || bShowCreditableCoverageLinksUnKnown) && (NOT(bShowPDPLinks) && NOT(bShowMedicareLinks) && NOT(bShowCommercialLinks && NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))) && NOT(bShowLinks && If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false)) && NOT(bShowLinks && NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))))}">
+              <apex:outputPanel rendered="{!bShowBothDemographicAvailable && bMemberCase}">
+                1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+                <br/>
+                <br/>
+
+                2. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Commercial_Demographics}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              3. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('ATTVF');getCaseId();return false;">{!$Label.HUMAttestationVerificationProcess}</apex:outputlink>
+              <br/>
+              <br/>
+            </apex:outputPanel>
+
+            <!-- Case record type is not equal to Medicare or closed Medicare  AND Record Type In (Group, Provide, Agent, HP Group, HP Agent, HP Group) AND profile is NOT Pharmacy Specialist-->
+            <apex:outputPanel id="op1" rendered="{!bShowLinks && NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))}">
+              <br/>
+              <br/>
+              {!iSerialStartNumber}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('COB');getCaseId();return false;">{!$Label.HUMActionCoordinationOfBenefits}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowWebIssuesAvailalble && (bIsCaseOwner || $Profile.Name == $Label.HUMAgencyCCSupervisor || $Permission.CRMS_300_HP_Supervisor_Custom)}">
+                <apex:variable var="iSerialStartNumber" value="{!iSerialStartNumber + 1}"/>
+                {!iSerialStartNumber}. &nbsp;&nbsp;<apex:outputlink onclick="openActionTab('Centerwell Pharmacy Web Issues');getCaseId();return false;">{!$Label.Humana_Pharmacy_Web_Issues} </apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!bShowCreditableCoverageLinks}">
+                {!iSerialStartNumber+1}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('ATTVF');getCaseId();return false;">{!$Label.HUMAttestationVerificationProcess}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+
+
+              {!iSerialStartNumber+1+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare/Medicaid Expedited Appeal');getCaseId();return false;">{!$Label.HUMMedicareExpeditedAppeal}</apex:outputlink>
+              <br/>
+              <br/>
+              {!iSerialStartNumber+2+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare OI');getCaseId();return false;">{!$Label.HUMMedicareOtherInsuranceForm}</apex:outputlink>
+              <br/>
+              <br/>
+              {!iSerialStartNumber+3+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare Part D');getCaseId();return false;">{!$Label.HUMMedicarePartD}</apex:outputlink>
+              <br/>
+              <br/>
+              {!iSerialStartNumber+4+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('QAA');getCaseId();return false;">{!$Label.HUMActionQAAComplaint}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                {!iSerialStartNumber+5+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+            </apex:outputPanel>
+
+            <!-- Case record type is not equal to Medicare or closed Medicare  AND Record Type In (Group, Provide, Agent, HP Group, HP Agent, HP Group) AND profile is Pharmacy Specialist-->
+            <apex:outputPanel id="opHP1" rendered="{!bShowLinks && If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false)}">
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowWebIssuesAvailalble && (bIsCaseOwner || $Profile.Name == $Label.HUMAgencyCCSupervisor || $Permission.CRMS_300_HP_Supervisor_Custom)}">
+                {!iSerialStartNumber}. &nbsp;&nbsp;<apex:outputlink onclick="openActionTab('Centerwell Pharmacy Web Issues');getCaseId();return false;">{!$Label.Humana_Pharmacy_Web_Issues} </apex:outputlink>
+                <apex:variable var="iSerialStartNumber" value="{!iSerialStartNumber + 1}"/>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!bShowCreditableCoverageLinks}">
+                {!iSerialStartNumber}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('ATTVF');getCaseId();return false;">{!$Label.HUMAttestationVerificationProcess}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+
+              {!iSerialStartNumber+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare/Medicaid Expedited Appeal');getCaseId();return false;">{!$Label.HUMMedicareExpeditedAppeal}</apex:outputlink>
+              <br/>
+              <br/>
+              {!iSerialStartNumber+1+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare OI');getCaseId();return false;">{!$Label.HUMMedicareOtherInsuranceForm}</apex:outputlink>
+              <br/>
+              <br/>
+              {!iSerialStartNumber+2+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare Part D');getCaseId();return false;">{!$Label.HUMMedicarePartD}</apex:outputlink>
+              <br/>
+              <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                {!iSerialStartNumber+3+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+            </apex:outputPanel>
+
+            <!-- Case record type is equal to Member Case  AND business description is 'GSO- Commercial' AND profile is NOT Pharmacy Specialist-->
+            <apex:outputPanel id="op2" rendered="{!bShowCommercialLinks && NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false)) && NOT((bShowDemographicAvailable || bShowCommercialDemographicAvailable || bShowBothDemographicAvailable) && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor) && bMemberCase)}">
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowCreditableCoverageLinks}">
+                1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('ATTVF');getCaseId();return false;">{!$Label.HUMAttestationVerificationProcess}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              {!iSerialStartNumber+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('COB');getCaseId();return false;">{!$Label.HUMActionCoordinationOfBenefits}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowPCPPCDLinks}">
+                {!iSerialStartNumber+1+iProcessSeqNo }. &nbsp;&nbsp; <apex:outputlink target="_blank" onclick="openActionTab('{!$Label.PCPPCDTemplateName_HUM}');getCaseId();return false;"  > {!$Label.PCPPCDTemplateName_HUM}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              {!iSerialStartNumber+1+iProcessSeqNo+iPCPPCDConstant }. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('QAA');getCaseId();return false;">{!$Label.HUMActionQAAComplaint}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                {!iSerialStartNumber+2+iProcessSeqNo+iPCPPCDConstant }. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+            </apex:outputPanel>
+
+            <!-- Medicare OR Commercial Demoraphic links-->
+            <apex:outputPanel id="op2Demo" rendered="{!((bShowDemographicAvailable || bShowCommercialDemographicAvailable) && !bShowBothDemographicAvailable && bMemberCase && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor)) && bShowCommercialLinks && NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))}">
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowDemographicAvailable && !bShowBothDemographicAvailable}">
+                1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!bShowCommercialDemographicAvailable && !bShowBothDemographicAvailable}">
+                1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!bShowCreditableCoverageLinks}">
+                2. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('ATTVF');getCaseId();return false;">{!$Label.HUMAttestationVerificationProcess}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              {!iSerialStartNumber+1+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('COB');getCaseId();return false;">{!$Label.HUMActionCoordinationOfBenefits}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowPCPPCDLinks}">
+                {!iSerialStartNumber+2+iProcessSeqNo }. &nbsp;&nbsp; <apex:outputlink target="_blank" onclick="openActionTab('{!$Label.PCPPCDTemplateName_HUM}');getCaseId();return false;"  > {!$Label.PCPPCDTemplateName_HUM}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              {!iSerialStartNumber+2+iProcessSeqNo+iPCPPCDConstant }. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('QAA');getCaseId();return false;">{!$Label.HUMActionQAAComplaint}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                {!iSerialStartNumber+3+iProcessSeqNo+iPCPPCDConstant }. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+            </apex:outputPanel>
+
+            <!-- Medicare AND Commercial Demoraphic both links-->
+            <apex:outputPanel id="op2DemoBoth" rendered="{!((bShowBothDemographicAvailable && bMemberCase ) && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor)) && bShowCommercialLinks && NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))}">
+              <br/>
+              <br/>
+              1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+              <br/>
+              <br/>
+              2. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Commercial_Demographics}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowCreditableCoverageLinks}">
+                3. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('ATTVF');getCaseId();return false;">{!$Label.HUMAttestationVerificationProcess}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              {!iSerialStartNumber+2+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('COB');getCaseId();return false;">{!$Label.HUMActionCoordinationOfBenefits}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowPCPPCDLinks}">
+                {!iSerialStartNumber+3+iProcessSeqNo }. &nbsp;&nbsp; <apex:outputlink target="_blank" onclick="openActionTab('{!$Label.PCPPCDTemplateName_HUM}');getCaseId();return false;"  > {!$Label.PCPPCDTemplateName_HUM}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              {!iSerialStartNumber+3+iProcessSeqNo+iPCPPCDConstant }. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('QAA');getCaseId();return false;">{!$Label.HUMActionQAAComplaint}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                {!iSerialStartNumber+4+iProcessSeqNo+iPCPPCDConstant }. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+            </apex:outputPanel>
+
+            <!-- Case record type is equal to Member case  AND business description is 'RSO- Medicare' AND Product Type not equal to 'PDP'-->
+            <apex:outputPanel id="op3" rendered="{!bShowMedicareLinks && NOT((bShowDemographicAvailable || bShowCommercialDemographicAvailable || bShowBothDemographicAvailable) && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || ($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)) && bMemberCase)}">
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowEnrollmentWelcomeCallLink}">
+                {!iSerialStartNumber}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Enrollment Welcome Call');getCaseId();return false;">{!$Label.Enrollment_Welcome_Call_Process}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!bShowCreditableCoverageLinks}">
+                {!iSerialStartNumber+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('ATTVF');getCaseId();return false;">{!$Label.HUMAttestationVerificationProcess}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+
+              {!iSerialStartNumber+iProcessSeqNo+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare/Medicaid Expedited Appeal');getCaseId();return false;">{!$Label.HUMMedicareExpeditedAppeal}</apex:outputlink>
+              <br/>
+              <br/>
+              {!iSerialStartNumber+1+iProcessSeqNo+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare OI');getCaseId();return false;">{!$Label.HUMMedicareOtherInsuranceForm}</apex:outputlink>
+              <br/>
+              <br/>
+              {!iSerialStartNumber+2+iProcessSeqNo+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare Part D');getCaseId();return false;">{!$Label.HUMMedicarePartD}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))}">
+                <apex:outputPanel rendered="{!bShowPCPPCDLinks}">
+                  {!iSerialStartNumber+3+iProcessSeqNo+iEnrollmentWelcomeCallConstant }. &nbsp;&nbsp; <apex:outputlink target="_blank" onclick="openActionTab('{!$Label.PCPPCDTemplateName_HUM}');getCaseId();return false;"  > {!$Label.PCPPCDTemplateName_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+                {!iSerialStartNumber+3+iProcessSeqNo+iPCPPCDConstant+iEnrollmentWelcomeCallConstant }. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('QAA');getCaseId();return false;">{!$Label.HUMActionQAAComplaint}</apex:outputlink>
+                <br/>
+                <br/>
+                <!--MCD-->
+                <apex:outputPanel rendered="{!bShowMCDLinks}">
+                  {!iSerialStartNumber+4+iProcessSeqNo+iPCPPCDConstant+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicaidGoodCauseRequest_HUM}');getCaseId();return false;">{!$Label.MedicaidGoodCauseRequest_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!bShowProviderNetwork}">
+                  {!iSerialStartNumber+4+iProcessSeqNo+iPCPPCDConstant+iMCDLinksConstant+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicaidPARProviderNotAccepting_HUM}');getCaseId();return false;">{!$Label.MedicaidPARProviderNotAccepting_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                  {!iSerialStartNumber+4+iProcessSeqNo+iPCPPCDConstant+iMCDLinksConstant+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+                <!--MCD ends-->
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))}">
+                <!--MCD-->
+                <apex:outputPanel rendered="{!bShowMCDLinks}">
+                  {!iSerialStartNumber+3+iProcessSeqNo+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicaidGoodCauseRequest_HUM}');getCaseId();return false;">{!$Label.MedicaidGoodCauseRequest_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                  {!iSerialStartNumber+3+iProcessSeqNo+iMCDLinksConstant+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+                <!--MCD ends-->
+              </apex:outputPanel>
+              <br/>
+              <br/>
+            </apex:outputPanel>
+
+            <!-- Medicare OR Commercial Demoraphic links-->
+            <apex:outputPanel id="op3Demo" rendered="{!bShowMedicareLinks && ((bShowDemographicAvailable ||bShowCommercialDemographicAvailable) && !bShowBothDemographicAvailable && bMemberCase && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || ($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)))}">
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowDemographicAvailable && !bShowBothDemographicAvailable}">
+                1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!bShowCommercialDemographicAvailable && !bShowBothDemographicAvailable}">
+                1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!bShowEnrollmentWelcomeCallLink}">
+                {!iSerialStartNumber+1+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Enrollment Welcome Call');getCaseId();return false;">{!$Label.Enrollment_Welcome_Call_Process}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!bShowCreditableCoverageLinks}">
+                {!iSerialStartNumber+iProcessSeqNo+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('ATTVF');getCaseId();return false;">{!$Label.HUMAttestationVerificationProcess}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              {!iSerialStartNumber+1+iProcessSeqNo+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare/Medicaid Expedited Appeal');getCaseId();return false;">{!$Label.HUMMedicareExpeditedAppeal}</apex:outputlink>
+              <br/>
+              <br/>
+              {!iSerialStartNumber+2+iProcessSeqNo+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare OI');getCaseId();return false;">{!$Label.HUMMedicareOtherInsuranceForm}</apex:outputlink>
+              <br/>
+              <br/>
+              {!iSerialStartNumber+3+iProcessSeqNo+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare Part D');getCaseId();return false;">{!$Label.HUMMedicarePartD}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!(NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false)))}">
+                <apex:outputPanel rendered="{!bShowPCPPCDLinks}">
+                  {!iSerialStartNumber+4+iProcessSeqNo+iEnrollmentWelcomeCallConstant }. &nbsp;&nbsp; <apex:outputlink target="_blank" onclick="openActionTab('{!$Label.PCPPCDTemplateName_HUM}');getCaseId();return false;"  > {!$Label.PCPPCDTemplateName_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+                {!iSerialStartNumber+4+iProcessSeqNo+iPCPPCDConstant+iEnrollmentWelcomeCallConstant }. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('QAA');getCaseId();return false;">{!$Label.HUMActionQAAComplaint}</apex:outputlink>
+                <br/>
+                <br/>
+                <!--MCD-->
+                <apex:outputPanel rendered="{!bShowMCDLinks}">
+                  {!iSerialStartNumber+5+iProcessSeqNo+iPCPPCDConstant+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicaidGoodCauseRequest_HUM}');getCaseId();return false;">{!$Label.MedicaidGoodCauseRequest_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!bShowProviderNetwork}">
+                  {!iSerialStartNumber+5+iProcessSeqNo+iPCPPCDConstant+iMCDLinksConstant+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicaidPARProviderNotAccepting_HUM}');getCaseId();return false;">{!$Label.MedicaidPARProviderNotAccepting_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+                <!--MCD ends-->
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))}">
+                <!--MCD-->
+                <apex:outputPanel rendered="{!bShowMCDLinks}">
+                  {!iSerialStartNumber+4+iProcessSeqNo+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicaidGoodCauseRequest_HUM}');getCaseId();return false;">{!$Label.MedicaidGoodCauseRequest_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+                <!--MCD ends-->
+                <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                  {!iSerialStartNumber+4+iProcessSeqNo+iMCDLinksConstant+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+              </apex:outputPanel>
+              <br/>
+              <br/>
+            </apex:outputPanel>
+
+            <!-- Medicare AND Commercial Demoraphic both links-->
+            <apex:outputPanel id="op3DemoBoth" rendered="{!bShowMedicareLinks && bShowBothDemographicAvailable && bMemberCase && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || ($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly))}">
+              <br/>
+              <br/>
+              1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+              <br/>
+              <br/>
+              2. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Commercial_Demographics}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowEnrollmentWelcomeCallLink}">
+                {!iSerialStartNumber+1+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Enrollment Welcome Call');getCaseId();return false;">{!$Label.Enrollment_Welcome_Call_Process}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!bShowCreditableCoverageLinks}">
+                {!iSerialStartNumber+1+iProcessSeqNo+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('ATTVF');getCaseId();return false;">{!$Label.HUMAttestationVerificationProcess}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              {!iSerialStartNumber+2+iProcessSeqNo+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare/Medicaid Expedited Appeal');getCaseId();return false;">{!$Label.HUMMedicareExpeditedAppeal}</apex:outputlink>
+              <br/>
+              <br/>
+              {!iSerialStartNumber+3+iProcessSeqNo+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare OI');getCaseId();return false;">{!$Label.HUMMedicareOtherInsuranceForm}</apex:outputlink>
+              <br/>
+              <br/>
+              {!iSerialStartNumber+4+iProcessSeqNo+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare Part D');getCaseId();return false;">{!$Label.HUMMedicarePartD}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!(NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false)))}">
+                <apex:outputPanel rendered="{!bShowPCPPCDLinks}">
+                  {!iSerialStartNumber+5+iProcessSeqNo+iEnrollmentWelcomeCallConstant }. &nbsp;&nbsp; <apex:outputlink target="_blank" onclick="openActionTab('{!$Label.PCPPCDTemplateName_HUM}');getCaseId();return false;"  > {!$Label.PCPPCDTemplateName_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+                {!iSerialStartNumber+5+iProcessSeqNo+iPCPPCDConstant+iEnrollmentWelcomeCallConstant }. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('QAA');getCaseId();return false;">{!$Label.HUMActionQAAComplaint}</apex:outputlink>
+                <br/>
+                <br/>
+                <!--MCD-->
+                <apex:outputPanel rendered="{!bShowMCDLinks}">
+                  {!iSerialStartNumber+6+iProcessSeqNo+iPCPPCDConstant+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicaidGoodCauseRequest_HUM}');getCaseId();return false;">{!$Label.MedicaidGoodCauseRequest_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!bShowProviderNetwork}">
+                  {!iSerialStartNumber+6+iProcessSeqNo+iPCPPCDConstant+iMCDLinksConstant+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicaidPARProviderNotAccepting_HUM}');getCaseId();return false;">{!$Label.MedicaidPARProviderNotAccepting_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                  {!iSerialStartNumber+6+iProcessSeqNo+iPCPPCDConstant+iMCDLinksConstant+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+                <!--MCD ends-->
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))}">
+                <!--MCD-->
+                <apex:outputPanel rendered="{!bShowMCDLinks}">
+                  {!iSerialStartNumber+5+iProcessSeqNo+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicaidGoodCauseRequest_HUM}');getCaseId();return false;">{!$Label.MedicaidGoodCauseRequest_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                  {!iSerialStartNumber+5+iProcessSeqNo+iMCDLinksConstant+iEnrollmentWelcomeCallConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+                <!--MCD ends-->
+              </apex:outputPanel>
+              <br/>
+              <br/>
+            </apex:outputPanel>
+
+            <!-- Case record type is equal to Member Case AND business description is 'RSO- Medicare' AND Product Type equal to 'PDP'-->
+            <apex:outputPanel id="op5" rendered="{!bShowPDPLinks && NOT((bShowDemographicAvailable || bShowCommercialDemographicAvailable || bShowBothDemographicAvailable) && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || ($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)) && bMemberCase)}">
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowCreditableCoverageLinks}">
+                {!iSerialStartNumber}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('ATTVF');getCaseId();return false;">{!$Label.HUMAttestationVerificationProcess}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+
+              {!iSerialStartNumber+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare/Medicaid Expedited Appeal');getCaseId();return false;">{!$Label.HUMMedicareExpeditedAppeal}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowGoodCauseReinstatementLink}">
+                {!iSerialStartNumber+1+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare Good Cause Reinstatement');getCaseId();return false;">{!$Label.HUMActionGoodCauseReinstatement}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              {!iSerialStartNumber+1+iProcessSeqNo+iMedicareGoodCause}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare OI');getCaseId();return false;">{!$Label.HUMMedicareOtherInsuranceForm}</apex:outputlink>
+              <br/>
+              <br/>
+              {!iSerialStartNumber+2+iProcessSeqNo+iMedicareGoodCause}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare Part D');getCaseId();return false;">{!$Label.HUMMedicarePartD}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))}">
+                {!iSerialStartNumber+3+iProcessSeqNo+iMedicareGoodCause}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('QAA');getCaseId();return false;">{!$Label.HUMActionQAAComplaint}</apex:outputlink>
+                <br/>
+                <br/>
+                <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                  {!iSerialStartNumber+4+iProcessSeqNo+iMedicareGoodCause}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))}">
+                <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                  {!iSerialStartNumber+3+iProcessSeqNo+iMedicareGoodCause}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+              </apex:outputPanel>
+              <br/>
+              <br/>
+            </apex:outputPanel>
+
+            <!-- Medicare OR Commercial Demoraphic links-->
+            <apex:outputPanel id="op5Demo" rendered="{!bShowPDPLinks && ((bShowDemographicAvailable || bShowCommercialDemographicAvailable)  && !bShowBothDemographicAvailable && bMemberCase && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || ($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)))}">
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowDemographicAvailable && !bShowBothDemographicAvailable}">
+                1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!bShowCommercialDemographicAvailable && !bShowBothDemographicAvailable}">
+                1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!bShowCreditableCoverageLinks}">
+                {!iSerialStartNumber+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('ATTVF');getCaseId();return false;">{!$Label.HUMAttestationVerificationProcess}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+
+              {!iSerialStartNumber+1+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare/Medicaid Expedited Appeal');getCaseId();return false;">{!$Label.HUMMedicareExpeditedAppeal}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowGoodCauseReinstatementLink}">
+                {!iSerialStartNumber+2+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare Good Cause Reinstatement');getCaseId();return false;">{!$Label.HUMActionGoodCauseReinstatement}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              {!iSerialStartNumber+2+iProcessSeqNo+iMedicareGoodCause}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare OI');getCaseId();return false;">{!$Label.HUMMedicareOtherInsuranceForm}</apex:outputlink>
+              <br/>
+              <br/>
+              {!iSerialStartNumber+3+iProcessSeqNo+iMedicareGoodCause}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare Part D');getCaseId();return false;">{!$Label.HUMMedicarePartD}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))}">
+                {!iSerialStartNumber+4+iProcessSeqNo+iMedicareGoodCause}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('QAA');getCaseId();return false;">{!$Label.HUMActionQAAComplaint}</apex:outputlink>
+                <br/>
+                <br/>
+                <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                  {!iSerialStartNumber+5+iProcessSeqNo+iMedicareGoodCause}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))}">
+                <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                  {!iSerialStartNumber+4+iProcessSeqNo+iMedicareGoodCause}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+              </apex:outputPanel>
+              <br/>
+              <br/>
+            </apex:outputPanel>
+
+            <!-- Medicare AND Commercial Demoraphic both links-->
+            <apex:outputPanel id="op5DemoBoth" rendered="{!bShowPDPLinks && (bShowBothDemographicAvailable && bMemberCase && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor || ($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME && !CaseReadonly)))}">
+              <br/>
+              <br/>
+              1. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Demographic Update');getCaseId();return false;">{!$Label.Update_Plan_Demographics}</apex:outputlink>
+              <br/>
+              <br/>
+              2. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Commercial Template');getCaseId();return false;">{!$Label.Update_Commercial_Demographics}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowCreditableCoverageLinks}">
+                {!iSerialStartNumber+1+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('ATTVF');getCaseId();return false;">{!$Label.HUMAttestationVerificationProcess}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+
+              {!iSerialStartNumber+2+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare/Medicaid Expedited Appeal');getCaseId();return false;">{!$Label.HUMMedicareExpeditedAppeal}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!bShowGoodCauseReinstatementLink}">
+                {!iSerialStartNumber+3+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare Good Cause Reinstatement');getCaseId();return false;">{!$Label.HUMActionGoodCauseReinstatement}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+              {!iSerialStartNumber+3+iProcessSeqNo+iMedicareGoodCause}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare OI');getCaseId();return false;">{!$Label.HUMMedicareOtherInsuranceForm}</apex:outputlink>
+              <br/>
+              <br/>
+              {!iSerialStartNumber+4+iProcessSeqNo+iMedicareGoodCause}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('Medicare Part D');getCaseId();return false;">{!$Label.HUMMedicarePartD}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputPanel rendered="{!NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))}">
+                {!iSerialStartNumber+5+iProcessSeqNo+iMedicareGoodCause}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('QAA');getCaseId();return false;">{!$Label.HUMActionQAAComplaint}</apex:outputlink>
+                <br/>
+                <br/>
+                <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                  {!iSerialStartNumber+6+iProcessSeqNo+iMedicareGoodCause}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+              </apex:outputPanel>
+              <apex:outputPanel rendered="{!(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false))}">
+                <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                  {!iSerialStartNumber+5+iProcessSeqNo+iMedicareGoodCause}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                  <br/>
+                  <br/>
+                </apex:outputPanel>
+              </apex:outputPanel>
+              <br/>
+              <br/>
+            </apex:outputPanel>
+
+            <!-- Case record type is equal to Member Case  AND business description is 'Specialty' -->
+            <apex:outputPanel id="op4" rendered="{!bShowSpecialityLinks  && NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false)) && NOT((bShowDemographicAvailable || bShowBothDemographicAvailable || bShowCommercialDemographicAvailable) && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor) && bMemberCase)}">
+              {!iSerialStartNumber+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('COB');getCaseId();return false;">{!$Label.HUMActionCoordinationOfBenefits}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputpanel rendered="{!bShowPCPPCDLinks}">
+                {!iSerialStartNumber+1+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.PCPPCDTemplateName_HUM}');getCaseId();return false;"  > {!$Label.PCPPCDTemplateName_HUM}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputpanel>
+              <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                {!iSerialStartNumber+1+iProcessSeqNo+iPCPPCDConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+            </apex:outputPanel>
+
+            <!-- Case record type is equal to Member Case  AND business description is 'Specialty' -->
+            <apex:outputPanel id="op4Demo" rendered="{!bShowSpecialityLinks && NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false)) && ((bShowDemographicAvailable || bShowCommercialDemographicAvailable) && NOT(bShowDemographicAvailable) && bMemberCase && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor))}">
+              {!iSerialStartNumber+1+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('COB');getCaseId();return false;">{!$Label.HUMActionCoordinationOfBenefits}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputpanel rendered="{!bShowPCPPCDLinks}">
+                {!iSerialStartNumber+2+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.PCPPCDTemplateName_HUM}');getCaseId();return false;"  > {!$Label.PCPPCDTemplateName_HUM}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputpanel>
+              <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                {!iSerialStartNumber+2+iProcessSeqNo+iPCPPCDConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputPanel>
+            </apex:outputPanel>
+            <!-- Case record type is equal to Member Case  AND business description is 'Specialty' -->
+            <apex:outputPanel id="op4DemoBoth" rendered="{!bShowSpecialityLinks && NOT(If($Profile.Name == $Label.PHARMACY_SPECIALIST_PROFILE_NAME,true,false)) && (bShowBothDemographicAvailable && bMemberCase && ($Profile.Name == $Label.HUMAgencyCCS ||  $Profile.Name == $Label.HUMAgencyCCSupervisor))}">
+              {!iSerialStartNumber+2+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('COB');getCaseId();return false;">{!$Label.HUMActionCoordinationOfBenefits}</apex:outputlink>
+              <br/>
+              <br/>
+              <apex:outputpanel rendered="{!bShowPCPPCDLinks}">
+                {!iSerialStartNumber+3+iProcessSeqNo}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.PCPPCDTemplateName_HUM}');getCaseId();return false;"  > {!$Label.PCPPCDTemplateName_HUM}</apex:outputlink>
+                <br/>
+                <br/>
+              </apex:outputpanel>
+              <apex:outputPanel rendered="{!bShowMedicareDCTemplate}">
+                {!iSerialStartNumber+3+iProcessSeqNo+iPCPPCDConstant}. &nbsp;&nbsp;<apex:outputlink target="_blank" onclick="openActionTab('{!$Label.MedicareDisenrollment_HUM}');getCaseId();return false;">{!$Label.MedicareDisenrollment_HUM}</apex:outputlink>
+                <br/>
+                <br/>
+                </apex:outputpanel>
+              </apex:outputPanel>
+            </apex:pageblock>
+
+    <apex:pageblock rendered="{!showEMMELink}">
+      <apex:outputPanel >
+        <apex:commandLink onclick="openEMMEWindow('{!JSENCODE(launchEmmeURL)}')">Create Letter - EMME</apex:commandLink>
+      </apex:outputPanel>
+    </apex:pageblock>
+
+    <apex:outputPanel id="divlinks" rendered="{!$Permission.QuickStartUser_HUM}">
+      <!-- Show all  mentor document links based on classification and Intent -->
+      <apex:pageblock rendered="{!bShowMentorLink}">
+        <h1>Mentor Documents</h1>
+        <br/>
+        <br/>
+        <apex:outputPanel id="links">
+          <apex:repeat var="mLink" value="{!listMentorLinks}">
+            <apex:commandLink value="{!mLink.Name}" onclick="openLink('{!mLink.Id}'); return false;" ></apex:commandLink>
+            <br></br>
+            <br></br>
+          </apex:repeat>
+        </apex:outputPanel>
+
+      </apex:pageblock>
+    </apex:outputPanel>
+
+    <apex:actionFunction name="mentorlinks" action="{!getMentorLinks}" rerender="divlinks" rendered="{!$Permission.QuickStartUser_HUM}">
+      <apex:param name="Classification" value=""/>
+      <apex:param name="Intent" value=""/>
+    </apex:actionFunction>
+
+  </apex:form>
+  <!-- To Avoid conflict with c:DynamicCustomLinks_CMP_HUM  component Jquery adding this tag at the end -->
+  <apex:includeScript value="{!URLFOR($Resource.HUMCaseActionLaunch, 'HUMCaseActionLaunch/HUMCaseActionLaunchJS.js')}" />
+  <!--Minimum script which has to be present on Page-->
+  <script >
+    var pageName = '{!$Page.HUMCaseActionProcessIntermediate}?ProcessType=';
+    var caseId = '';
+    var pageDACName;
+    var ActType;
+    var tabId;
+    var primaryTabId;
+    var recProcess = '{!JSENCODE(sRecommendedLink)}';
+    var sProcessTypeMedicare = 'Medicare DACPage';
+    var sCaseNumber = '{!JSENCODE(Case.CaseNumber)}';
+    var sClassification = '';
+    var sIntent = '';
+    var bIsRSOMedicareFrontOfficeUser = {!JSENCODE(IF($Permission.QuickStartUser_HUM, 'true', 'false'))};
+    var medicareDACProcess = 'Medicare DAC';
+    var medicareDACTitle = 'Medicare Disenrollment and Cancellation';
+    var creditableCoverageTitle = 'Creditable Coverage Attestation';
+    var CaseEdit = 'CaseEdit_VF_HUM';
+    var cid = '{!JSENCODE(Case.id)}';
+  </script>
+</apex:page>

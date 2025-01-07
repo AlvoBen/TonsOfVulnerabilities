@@ -1,0 +1,16 @@
+﻿<!-- *******************************************************************************************************************************
+Aura Cmp Name : reassignSenderCaseAuraHum.html
+Function    : This is used to invoke CaseTransferContainerHum LWC for Reassign Case   functionality
+
+Modification Log: 
+Developer Name           Code Review                      Date                         Description
+*********************************************************************************************************************************
+*Ritik Agarwal                                             21/03/2022                  Original version 
+********************************************************************************************************************************-->
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,flexipage:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global" >
+    <aura:attribute name="recordId" type="String" />
+
+    <div>
+        <c:caseTransferContainerHum recordId="{!v.recordId}" bReassignToSender="true" oncloseaction="{!c.closeQuickAction}"></c:caseTransferContainerHum>
+    </div>
+</aura:component>

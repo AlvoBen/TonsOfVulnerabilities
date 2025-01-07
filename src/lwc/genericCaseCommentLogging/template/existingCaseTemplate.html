@@ -1,0 +1,88 @@
+﻿<!--
+/*******************************************************************************************************************************
+LWC Name        : genericCaseCommentLogging.html
+Function        : LWC to display generic case comment logging.
+
+Modification Log:
+Developer Name           Code Review                      Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Abhishek Mangutkar                                      04/05/2022                 Original Version - US3198914
+* Jonathan Dickinson		                              09/27/2022		            REQ - 3751914
+* Jonathan Dickinson                                      06/14/2023                 User Story 4705843: T1PRJ0891339 2023 Arch Remediation-SF-Tech-Filter cases having template attached from existing case history logging for process logging
+*********************************************************************************************************************************/
+-->
+<template>
+    <div class="demo-only" style="height:24rem">
+        <section role="alertdialog" tabindex="0" aria-labelledby="prompt-heading-id"
+                 aria-describedby="prompt-message-wrapper" class="slds-modal slds-fade-in-open slds-modal_prompt"
+                 aria-modal="true">
+
+            <div class="slds-modal__container existingLoggingBox">
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-02" class="slds-modal__title slds-hyphenate">Existing Case</h2>
+                </header>
+                <div class="slds-scrollable_y" style="height: 550px;">
+                    <c-logging-existing-case-history record-id={recordId}
+                                                     onselectedcasedata={handleCaseCheckBoxSelect}
+                                                     filter-cases-having-template={filterCasesHavingTemplate}>
+                    </c-logging-existing-case-history>
+                </div>
+                <div class="slds-modal__footer slds-theme_default">
+                    <div class="slds-grid slds-gutters slds-grid_align-end slds-wrap">
+                        <div class="slds-col slds-size_3-of-12">
+                        </div>
+                        <div class="slds-col slds-size_5-of-12">
+                            <div class="slds-float_right slds-m-left_x-large">
+                                <p class="message">
+                                    Note: Please toggle switch between "New Case/Existing Case".
+                                </p>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <div class="slds-float_right slds-m-left_x-large">
+                                <label class="slds-checkbox_toggle slds-grid">
+                                    <span class="slds-form-element__label slds-m-bottom_none">Log To</span>
+                                    <input type="checkbox" name="checkbox-toggleLogTo" value="Log To"
+                                           aria-describedby="Log To" onchange={toggleLogTo} checked={logToExistingCase} />
+                                    <span id="checkbox-toggle-captype1" class="slds-checkbox_faux_container"
+                                          aria-live="assertive">
+                                        <span class="slds-checkbox_faux"></span>
+                                        <span class="slds-checkbox_on">Existing Case</span>
+                                        <span class="slds-checkbox_off">New Case</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        <template if:true={useSaveData}>
+                            <div class="slds-col slds-size_2-of-12">
+                                <button title="Save" onclick={handleSaveLogCase} class="slds-button slds-button_brand"
+                                    disabled={disableLogFinishButton}>Save</button>
+                            </div>
+                        </template>
+                        <template if:false={useSaveData}>
+                            <div class="slds-col slds-size_2-of-12">
+                                <button title="Save & Log" onclick={handleClick} class="slds-button slds-button_brand"
+                                    disabled={disableLogFinishButton}>Save
+                                    & Log</button>
+                            </div>
+                        </template>
+                        <div class="slds-col slds-size_6-of-12">
+                        </div>
+                        <div class="slds-col slds-size_6-of-12">
+                            <template if:true={loggingStarted}>
+                                <div class="exampleHolder">
+                                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                                </div>
+                                <div>
+                                    <p>{loggingMessage}</p>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </div>
+
+</template>

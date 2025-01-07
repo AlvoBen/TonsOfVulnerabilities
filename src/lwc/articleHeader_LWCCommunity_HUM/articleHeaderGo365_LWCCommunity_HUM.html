@@ -1,0 +1,40 @@
+﻿<template>
+    <div class="articleDetail-bodyContainer">
+        <div class="slds-m-bottom_medium" aria-label={label.articlePointsLabel}>
+            <span>
+                <img src={jewelIcon} alt="jewel Icon" class="icons" />
+            </span>
+            <span class="articleHeader1Go365" tabindex="0">
+                {label.articlePointsLabel}
+            </span>
+        </div>
+        <div class="slds-grid slds-wrap slds-size_1-of-1 articleHeaderContainer">
+            <div class="articleHeader2Go365" tabindex="0">{articleTitle}</div>
+            <div if:false={isBookmarked}>
+                <img src={starIconGo365} alt="Bookmark Article" title="Bookmark" onclick={handleBookmark}
+                    class="bookmarkIcon" />
+            </div>
+            <div if:true={isBookmarked}>
+                <img src={starSelectedIconGo365} alt="Bookmarked Article" title="Bookmarked" onclick={handleBookmark}
+                    class="bookmarkIcon" />
+            </div>
+        </div>
+        <div class="articleDetail-userInfo" tabindex="0">{createdBy} 
+        </div>
+        <div class="articleDetail-userInfo slds-grid slds-wrap">
+            <div class="slds-grid slds-wrap articleDetail-userInfoParent">
+                <div class="articleDetail-userInfoChild" tabindex="0">
+                    <img src={likeIconGo365} class="icons" /> {articleLikeCount} {label.articleLikesLabel}
+                </div>
+                <div class="articleDetail-userInfoChild" tabindex="0">
+                    <img src={commentIconGo365} class="icons" />
+                    {articleCommentsCount} {label.articleCommentsLabel}
+                </div>
+            </div>
+            <div tabindex="0">
+                <img src={followIconGo365} class="icons" />
+                {articleFollowersCount} {label.articleFollowersLabel}
+            </div>
+        </div>
+    </div>
+</template>

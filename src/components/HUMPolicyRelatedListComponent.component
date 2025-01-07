@@ -1,0 +1,494 @@
+﻿<!--
+Page Name        : HUMPolicyRelatedListComponent 
+Version          : 1.0 
+Created Date     : JULY 22 2014
+Function         : Component to display policies
+Modification Log :
+
+Developer         Code Review        Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Anil Pilaka         17169            07/22/2014            Original Version
+* Manuel Johnson      17169            07/28/2014            Updated link to open as subtab and fixed issues
+* Shruthi Karanth     18133            09/24/2014            Changes to enable and disable the navigation buttons
+* Shruthi Karanth     20349            01/15/2015            Fix for 168529.0001 : Added rerender property to Next and Previous pagination buttons
+* Shreya Choodamani                    10/22/2015            Modified the SOQL on Line#26 for the Soft Delete(REQ - 233770) US changes.  
+* Apoorv Jain                          3/2/2016              Added the Hover Functionality for ProductType Column (REQ-241753)
+* Shikhar Mehta       24223            3/31/2016             Defect#221159
+* Pradeepkumar Dani   25854            4/22/2016             Added changes for Defect#223236
+* Pallavi Ravishankar 44009            10/18/2016            Defect Fix 243438.0001
+* Amar Gadewar		    73794	           03/03/2017			       REQ - 301397 Display last Update date for Policy Member  on account page (RF)
+* Amar Gadewar        77041			       03/15/2017			       REQ - 304871 Display PDP coverage information on account under Policy section when member has MA and PDP Plan (RF)
+* Amar Gadewar						             06/14/2017			       REQ - 320464 Display last Update date for Policy Member  on account page - Remove RF Permission
+* Amar Gadewar						             07/3/2017			       REQ - 320483 - Displaying ProductType Code to RSO Front Office Users
+* Asish Behera						             06/11/2018			       REQ - 363373 - Remove ASO, EHB Term Date from Policies section on Member Account (RF)
+* Amar Gadewar						             06/21/2018			       REQ - 367013 - AHT - Remove ASO, EHB Term Date from Policies section on Member Account (CRM)
+* Amar Gadewar						             06/21/2018			       REQ - 366276 - AHT - Move Call Transfer button to the 1st column of the Policies Related List (RF)
+* Darshan Sharma					             06/28/2018			       REQ - 367781 - AHT - Move Call Transfer button to the 1st column of the Policies Related List (CRM)
+* Prathyu Tushar                       10/15/2018            Defect 387218.0001 fix for Account detail page
+* Santhosh Ganji                       02/13/2019            REQ - 379032 view all policies, but disable non-MED policy hyper-links for Pharmacy Users
+* Riddhi Mittal 						           06/24/2019				     REQ - 399985 Hide Product Type Code (CRMS Mainline-GBO Only)
+* Prudhvi Pamarthi                   	 07/15/2019            REQ - 396335
+* Mithra Bharadwaj                     09/16/2019            REQ - 404577 Adding Plan Name to Member search results.
+* Praveen Kumar Parimi                 10/31/2019            REQ - 415243 Fetching IAB plan name from Policy Member or Policy.
+* Yogesh Gupta									       13/01/2020				     REQ - 769549 Hover Over Policy Page for DEN and MED policies.
+* Vinay Lingegowda					           02/10/2020		         User story- 791019 PR00091574 - MF 1 - AHT - Display Termed policies in the chronological order on the Member Account page (RF)
+* Amar Gadewar                         03/09/2020            User Story 915384 PR00091574 - MF 1 - AHT - Display Termed policies in the chronological order on the Member Account page (CRM)
+* Yogesh Gupta									       3/11/2020				     REQ - 769549 Hover Over Policy Page for MED policies only , removing check for DEN policy as per parent story 754576.
+* Amar Gadewar                         04/03/2020            US 995046 PR00091574 - MF 1 - SF - TECH - On/Off Switch Cleanup - 4/10 and 4/24 Release (CRM)
+* Keerti Durbha                        04/23/2020            738134- PR00091318 - MF 9 - Medicare OSB Vision And Fitness
+* Sagar MN                             08/06/2020            USER STORY 1329433 EDW Reporting changes 
+* Asish Behera                         09/04/2020            PR00090588 - CR1727 - Display Medicare PDP Plan Name - Policy Section (Person Account Page)
+* Firoja Begam						             12/30/2021			       PR00094226 - Incident: INC0669657: SF - TECH - CRM - Policies section on Account page is getting collapsed when fields are logged
+* Shreya Agrawal/Isha Gupta						 01/30/2021			        PhoneBook Implementation
+* Ankit Avula                          03/08/2021            US 1911636 SonaqQube HTMLENCODE
+* Ankit Avula                          03/28/2021            US 1987365 Contract Protected Data
+* Ajay Chakradhar                      06/22/2021            REQ - 1755455 - Performance Improvement
+-------------------------------------------------------------------------------------------------------------------------------->
+
+<apex:component allowDML="true" controller="HUMPolicyMemberRelatedListController">
+    <apex:attribute name="AccountId" assignTo="{!sAccId}" description="The account Id of the policies" type="String" required="true"/>    
+    <!--  <apex:includeScript value="/support/console/30.0/integration.js"/> -->
+    <apex:includeScript value="{!URLFOR($Resource.HUMPolicyMemberRelatedList,'/HUMPolicyMemberRelatedList/main.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.MouseHoverPopUp_SR_HUM,'/MouseHoverPopUp_SR_HUM/main_css.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.MouseHoverPopUp_SR_HUM,'/MouseHoverPopUp_SR_HUM/PopUp_File.js')}"/>
+    <script>
+    function onmouseOverFunc() {
+        makeLinksDisabled();
+    }
+    
+    function makeLinksDisabled() {
+        if(jQuery("[id$='loginBtn']").val() == 'Cancel Logging' || jQuery("[id$='loginBtn']").is(":disabled")) {
+            jQuery("[id$='previousButton']").hide();
+            jQuery("[id$='nextButton']").hide();
+            jQuery("[id$='prevText']").show();
+            jQuery("[id$='nextText']").show();
+        }
+        else {
+            jQuery("[id$='previousButton']").show();
+            jQuery("[id$='nextButton']").show();
+            jQuery("[id$='prevText']").hide();
+            jQuery("[id$='nextText']").hide();
+        }
+        
+    }
+    //PhoneBook Implementation
+    function phoneBookPopup(eventMsg){
+        if ({!isGenesysUser} == true)
+        {
+            sforce.console.fireEvent('PhoneBookPopUpEvent', eventMsg );
+            return false;
+        }
+    }
+    
+    </script>
+    
+    <style>
+        .callClass{
+        padding: 2px 3px !important;
+        border: 1px solid #b5b5b5 !important;
+        border-bottom-color: #7f7f7f !important;
+        background: #e8e8e9 url('/img/alohaSkin/btn_sprite.png') repeat-x right top !important;
+        }
+        
+        .hiddenclass{
+        display:none;
+        visibility:hidden
+        }
+    </style>
+    <apex:pageMessages id="pgMsg"></apex:pageMessages>
+    <apex:actionFunction name="showrelatedTable" action="{!showrelatedTable}" reRender="pgBlock">
+        <apex:param name="rowNumber" value="" assignTo="{!rowNumber}" />
+        <apex:param name="policyId" value="" assignTo="{!sPolicyId}" />
+    </apex:actionFunction>
+    <apex:actionFunction name="removerelatedTable" action="{!removerelatedTable}" reRender="pgBlock">
+    </apex:actionFunction>
+    
+    <apex:actionFunction name="showrelatedTable_off" action="{!showrelatedTable}" reRender="pgBlock_off">
+        <apex:param name="rowNumber" value="" assignTo="{!rowNumber}" />
+        <apex:param name="policyId" value="" assignTo="{!sPolicyId}" />
+    </apex:actionFunction>
+    <apex:actionFunction name="removerelatedTable_off" action="{!removerelatedTable}" reRender="pgBlock_off"> 
+    </apex:actionFunction>
+    
+    
+    <apex:pageBlock id="pgBlock" rendered="{!(bSwitch1746305)}"> 
+        <apex:pageBlockTable value="{!lstPolicyAccessWrapper}" var="p">
+            <!-- Disabling the Policy Member ID hyper link And Call Transfer button for OSB product asa part of 754576 story-->
+            <apex:column headerValue="Action">
+                <apex:outputPanel rendered="{!(bSwitch1279870 && p.IsPDPPolicy=='true' && (p.hasAccess || NOT(contractprotecteddataonoff)))}">
+                    <apex:image value="{!URLFOR($Resource.ClaimDetails_JS_HUM,'/PlusImage.png')}" id="plusImage" onclick="showrelatedTable('{!p.rowNumber}','{!p.sPolicyId}');"/>
+                    
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!(bSwitch1279870 && p.IsPDPPolicy=='false')}">
+                    
+                    <apex:image value="{!URLFOR($Resource.ClaimDetails_JS_HUM,'/MinusImage.png')}" id="minusImage" onclick="removerelatedTable('{!p.rowNumber}');" />
+                </apex:outputPanel>
+                <!--Added the lock image for contract protected and home office -->
+                <apex:outputPanel rendered="{!(NOT(p.hasAccess) && contractprotecteddataonoff && p.sPlanName =='')}">
+                    <apex:image value="{!URLFOR($Resource.HumLockIcon_SR_HUM,'Lock_RGB_Gold.png')}" alt="Lock" width="20" height="20" title="{!$Label.US1987365LockMessage}"/>
+                </apex:outputPanel>
+            </apex:column>
+            
+            
+            <apex:column html-log_this="false" headerValue="{!$Label.HUMPlanNameHeaderValueLabel}" rendered="{!(bSwitch1279870 && p.sPlanName!='')}">
+                
+                <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea2" >
+                    <a onclick="javascript:return false;" html-log_this="true">
+                        
+                        <apex:outputText value="{!IF(LEN(p.sPlanName) > 24,LEFT(p.sPlanName,21)+'...',p.sPlanName)}"></apex:outputText>                         
+                        <apex:image id="lnkImg1" style="margin-top:-3px;" value="{!$Resource.HUMHoverOverQuestionMark}" rendered="{!p.sPlanName == 'Plan Name'}"/> 
+                        <apex:outputPanel rendered="{!LEN(p.sPlanName) > 24}" style="width:400px !important; font-weight:normal; font-size:12px; top:-61px !important; border:1px solid orange; background-color:#FEFDB9; margin-left:-39px; line-height:1em; height:40px; text-align: left;">
+                            {!p.sPlanName}                          
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!p.sPlanName == 'Plan Name'}" style="width:250px !important; font-weight:normal; font-size:12px; top:-61px !important; border:1px solid orange; background-color:#FEFDB9; margin-left:-39px; line-height:1em; height:40px; text-align: left;">
+                            {!$Label.PolicyGridHelp_HUM}
+                        </apex:outputPanel>
+                    </a>
+                </apex:outputPanel>
+                
+            </apex:column>
+            <apex:column html-log_this="false" headerValue="{!$Label.HUMEffDateHeaderValueLabel}" rendered="{!(bSwitch1279870 && p.sEffectiveDate!='')}" >
+                
+                <apex:outputPanel >
+                    <apex:outputText value="{!p.sEffectiveDate}"></apex:outputText> 
+                </apex:outputPanel>
+                
+            </apex:column>
+            <apex:column html-log_this="false" headerValue="{!$Label.HUMEndDtHeaderValueLabel}" rendered="{!(bSwitch1279870 && p.sEndDate!='')}">
+                
+                <apex:outputPanel >
+                    <apex:outputText value="{!p.sEndDate}"></apex:outputText> 
+                </apex:outputPanel>
+            </apex:column>
+            
+            <apex:column rendered="{!p.sPlanName ==''}"><apex:commandButton styleClass="callClass" value="{!$Label.HUMCallTransferButtonLabel}" disabled="{!if(p.policyMember.ETL_Record_Deleted__c==true,true,if(p.isCallTransferDisabled==true,true,false))}" onclick="getInteractionIDBtnClick('{!p.policyMember.id}');return false;" /> </apex:column>
+            <apex:column html-log_this="false" headerValue="">
+                <apex:facet name="header">
+                    <apex:outputPanel >
+                        <apex:outputLabel >
+                            <apex:outputText >{!$Label.HUMPolMemIdHeaderValue}</apex:outputText>
+                        </apex:outputLabel>
+                        <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea">
+                            <a onclick="javascript:return false;" html-log_this="true">
+                                <apex:image id="lnkImg" style="margin-top:-3px;" value="{!$Resource.HUMHoverOverQuestionMark}" />
+                                <apex:outputPanel style="width:375px !important; font-weight:normal; font-size:12px; top:-61px !important; left:-83px !important; border:1px solid orange; background-color:#FEFDB9; margin-left:-39px; line-height:1em; height:47px; text-align: left;">
+                                    {!$Label.POLICY_HOVERTEXT1} <br/>
+                                    {!$Label.POLICY_HOVERTEXT2}<br/>
+                                    {!$Label.POLICY_HOVERTEXT3}
+                                </apex:outputPanel>
+                            </a>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:facet>
+                <!-- Adding Span block to display hover over conditionaly for DEN And MED policies on account page-->
+                <!-- This section is now implemented for MED policy only so removing check for DEN for this section as per story 754576-->
+                <span class="vfHelpTextHover">
+                    <apex:outputLink rendered="{!p.hasAccess}" disabled="{!p.nPolicyLink}"  target="_blank"  onclick="openTabHUMPolicyRelatedListComponent('{!p.policyMember.id}', '{!HTMLENCODE(p.policyMember.Name)}'); return false" value="">{!p.policyMember.Name}
+                        <apex:outputPanel rendered="{!((p.policyMember.Product__c == 'MED') && (p.policyMember.policy__r.Contract_Number__c !='' ||  p.policyMember.policy__r.PBP_Code__c !='' || p.policyMember.policy__r.Medicare_Segment_ID__c !=''))}">{!IF((p.policyMember.policy__r.Contract_Number__c != ''),(p.policyMember.policy__r.Contract_Number__c) + ' / ' ,'/ ')}{!IF((p.policyMember.policy__r.PBP_Code__c != ''),(p.policyMember.policy__r.PBP_Code__c) + ' / ',   '  / ')}{!IF((p.policyMember.policy__r.Medicare_Segment_ID__c != ''),(p.policyMember.policy__r.Medicare_Segment_ID__c) ,' ')}</apex:outputPanel>
+                    </apex:outputLink>
+                    <!--Adding masking for policy member name for contract protected and home office -->
+                    <apex:outputText rendered="{!(NOT(p.hasAccess) && contractprotecteddataonoff && p.sPlanName =='')}" value="XXXX">
+                    </apex:outputText>
+                </span>
+            </apex:column>
+            <apex:column rendered="{!p.sPlanName ==''}" html-log_this="false" headerValue="{!$Label.HUMSearchResultsLegacyDeleteLabel}"> <apex:outputField value="{!p.policyMember.ETL_Record_Deleted__c}"/> </apex:column>
+            <apex:column html-log_this="false" headerValue="{!$Label.HUMProductHeaderValue}"> <apex:outputField value="{!p.policyMember.Product__c}"/> </apex:column>
+            <apex:column html-log_this="false" headerValue="{!$Label.HUMProductTypeHeaderValueLabel}"> 
+                <apex:outputLink styleClass="noLink" onmouseover="showVisionHover('{!p.policyMember.id}','{!HTMLENCODE(p.sProductType)}', '{!HTMLENCODE(p.policyMember.Product__c)}','{!HTMLENCODE(p.policyMember.policy__r.Product__r.Product_Line_Description__c)}');" value="javascript:void(0);" >
+                    {!p.sProductType}    
+                </apex:outputlink>
+            </apex:column>            
+            <apex:column html-log_this="false" headerValue="{!$Label.HUMProductTypeCodeHeaderValueLabel}"> <apex:outputField value="{!p.policyMember.policy__r.Product_Type__c}" rendered="{! NOT(AND($Permission.GBO_Mainline_Permission, OR(p.policyMember.Product__c == 'MED', p.policyMember.Product__c == 'DEN')))}" /> </apex:column>
+            <apex:column html-log_this="false" headerValue="">
+                <apex:facet name="header">
+                    <apex:outputPanel >
+                        <apex:outputLabel >
+                            <apex:outputText >{!$Label.HUMPlanNameHeaderValueLabel}</apex:outputText>
+                        </apex:outputLabel>
+                        <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea4" rendered="{!bSwitch1279870}">
+                            <a onclick="javascript:return false;" html-log_this="true">
+                                <apex:image id="lnkImg4" style="margin-top:-3px;" value="{!$Resource.HUMHoverOverQuestionMark}" />
+                                <apex:outputPanel style="width:278px !important; font-weight:normal; font-size:12px; top:-61px !important; border:1px solid orange; background-color:#FEFDB9; margin-left:-39px; line-height:1em; height:40px; text-align: left;">
+                                    {!$Label.PolicyGridHelp_HUM}
+                                </apex:outputPanel>
+                            </a>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:facet>
+                
+                <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea3" rendered="{!(bSwitch1279870 && p.policyMember.Product__c =='MED' && p.sProductType =='PDP'&& p.policyMember.policy__r.Product_Type__c='PDP' && p.hasAccess)}"> 
+                    <a onclick="javascript:return false;" html-log_this="true">
+                        
+                        <apex:outputText value="{!IF(LEN(p.policyMember.iab_description__c) > 24,LEFT(p.policyMember.iab_description__c,21)+'...',p.policyMember.iab_description__c)}"></apex:outputText> 
+                        <apex:outputPanel rendered="{!LEN(p.policyMember.iab_description__c) > 24}" style="width:370px !important; font-weight:normal; font-size:12px; top:-61px !important; border:1px solid orange; background-color:#FEFDB9; margin-left:-39px; line-height:1em; height:30px; text-align: left;">
+                            {!p.policyMember.iab_description__c}
+                            
+                        </apex:outputPanel>
+                    </a>
+                </apex:outputPanel>
+                <!--Adding masking for plan name for contract protected and home office -->
+                <apex:outputPanel rendered="{!(NOT(p.hasAccess) && contractprotecteddataonoff && p.sPlanName =='')}">
+                    <apex:outputText value="XXXX"></apex:outputText>
+                </apex:outputPanel>
+            </apex:column>
+            <apex:column html-log_this="false" headerValue="{!$Label.HUMASOHeaderValueLabel}" rendered="{!NOT($Permission.RSOMedicareFrontOfficeUser_HUM)}"> <apex:outputField value="{!p.policyMember.ASO__c}" rendered="{!p.hasAccess}"/> </apex:column>
+            <apex:column html-log_this="false" headerValue="{!$Label.HUMRelationshipHeaderValueLabel}">
+                <apex:outputField value="{!p.policyMember.Relationship__c}" rendered="{!p.hasAccess}"/>
+                <!--Adding masking for Relationship for contract protected and home office -->
+                <apex:outputText value="XXXX" rendered="{!(NOT(p.hasAccess) && contractprotecteddataonoff && p.sPlanName =='')}"/>
+            </apex:column>
+            <apex:column html-log_this="false" headerValue="{!$Label.HUMGroupNameHeaderValueLabel}"><apex:outputField value="{!p.policyMember.Group_Name__c}"/></apex:column>  
+            <apex:column html-log_this="false" headerValue="{!$Label.HUMGroupNumberHeaderValueLabel}"><apex:outputField value="{!p.policyMember.Group_Number__c}"/></apex:column>  
+            <apex:column html-log_this="false" headerValue="{!$Label.HUMEffDateHeaderValueLabel}">
+                <apex:outputField value="{!p.policyMember.Effective_Date__c}" rendered="{!p.hasAccess}"/> 
+                <!--Adding masking for effective date field for contract protected and home office -->
+                <apex:outputText value="XXXXXXXX" rendered="{!(NOT(p.hasAccess) && contractprotecteddataonoff && p.sPlanName =='')}"/>
+            </apex:column>
+            <apex:column html-log_this="false" headerValue="{!$Label.HUMEndDtHeaderValueLabel}">
+                <apex:outputField value="{!p.policyMember.End_Date__c}" rendered="{!p.hasAccess }"/>
+                <!--Adding masking for end date field for contract protected and home office -->
+                <apex:outputText value="XXXXXXXX" rendered="{!(NOT(p.hasAccess) && contractprotecteddataonoff && p.sPlanName =='')}"/>
+            </apex:column> 
+            <apex:column html-log_this="false" headerValue="{!$Label.HUMStatusHeaderValueLabel}">
+                <apex:outputField value="{!p.policyMember.Status__c}" rendered="{!p.hasAccess}"/>
+                <!--Adding masking for status field for contract protected and home office -->
+                <apex:outputText value="XXXX" rendered="{!(NOT(p.hasAccess) && contractprotecteddataonoff && p.sPlanName =='')}"/>
+            </apex:column>
+            <apex:column html-log_this="false" headerValue="{!$Label.HUMLastUpdatedHeaderValueLabel}">
+                <apex:outputField value="{!p.policyMember.LastModifiedDate}" rendered="{!p.hasAccess}"/>
+                <!--Adding masking for Last Updated field for contract protected and home office -->
+                <apex:outputText value="XXXXXXXX" rendered="{!(NOT(p.hasAccess) && contractprotecteddataonoff && p.sPlanName =='')}"/>
+            </apex:column>
+            <apex:column html-log_this="false" headerValue="{!$Label.HUMEHBTermDTHeaderValueLabel}" rendered="{!NOT($Permission.RSOMedicareFrontOfficeUser_HUM)}"><apex:outputField value="{!p.policyMember.EHB_Term_Date__c}" rendered="{!p.hasAccess}"/></apex:column>
+            <apex:column html-log_this="false" headerValue="Platform" headerClass="hiddenclass" styleClass="hiddenclass">
+                <apex:outputField value="{!p.policyMember.policy__r.Platform__c}" rendered="{!p.hasAccess}"/>
+            </apex:column>
+            <apex:column html-log_this="false" headerValue="" headerClass="hiddenclass" styleClass="hiddenclass">           
+                <apex:facet name="header">
+                    <apex:outputPanel >
+                        <apex:outputLabel >
+                            <apex:outputText >SourceCustKey</apex:outputText>
+                        </apex:outputLabel>
+                    </apex:outputPanel>
+                </apex:facet>
+                <apex:outputPanel >
+                    {!p.sSourceCustKey}
+                </apex:outputPanel>
+            </apex:column>
+            <apex:column html-log_this="false" headerValue="" headerClass="hiddenclass" styleClass="hiddenclass">           
+                <apex:facet name="header">
+                    <apex:outputPanel >
+                        <apex:outputLabel >
+                            <apex:outputText >SourceDivKey</apex:outputText>
+                        </apex:outputLabel>
+                    </apex:outputPanel>
+                </apex:facet>
+                <apex:outputPanel >
+                    {!p.sSourceDivKey}
+                </apex:outputPanel>
+            </apex:column>
+            <apex:column html-log_this="false" headerValue="BenefitCoverage" headerClass="hiddenclass" styleClass="hiddenclass">
+                <apex:outputField value="{!p.policyMember.policy__r.Benefit_Coverage__c}" rendered="{!p.hasAccess}"/>
+            </apex:column>
+            <apex:column html-log_this="false" headerValue="CoverageplanDate" headerClass="hiddenclass" styleClass="hiddenclass">
+                <apex:outputField value="{!p.policyMember.policy__r.Coverage_Plan_Effective_Date__c}" rendered="{!p.hasAccess}" />
+            </apex:column>
+        </apex:pageBlockTable>
+        <apex:actionFunction name="saveToController" action="{!saveDataForCallTransfer}" status="buttonStatus" rerender="pgBlock,pgMsg">
+            <apex:param assignTo="{!sInteractionId}" name="linkURL" value=""/>
+            <apex:param assignTo="{!sPolicyMemberId}" name="pmemid" value=""/>
+        </apex:actionFunction>
+        <!--PhoneBook Implementation-->
+            <apex:outputPanel id="messageEvt" rendered="{!phoneBookSwitch1726016}">
+                <script>
+                var msg = '{!msgValue}';
+                </script>
+                
+                <apex:actionFunction name="saveToController" oncomplete="phoneBookPopup(msg);" action="{!saveDataForCallTransfer}" status="buttonStatus" rerender="pgBlock,pgMsg">
+                    <apex:param assignTo="{!sInteractionId}" name="linkURL" value=""/>
+                    <apex:param assignTo="{!sPolicyMemberId}" name="pmemid" value=""/>
+                </apex:actionFunction>
+            </apex:outputPanel>
+        <apex:outputPanel >
+            <apex:commandButton value="{!$Label.HUMPreviousButtonLabel}" action="{!previous}" rendered="{!setConPolicies.hasprevious}" rerender="pgBlock" style="padding-right:20px"/>   
+            <apex:commandButton value="{!$Label.HUMNextButtonLabel}" action="{!next}"  rendered="{!setConPolicies.hasNext}" rerender="pgBlock" />
+        </apex:outputPanel>
+    </apex:pageBlock> 
+    
+    <apex:pageBlock id="pgBlock_off" rendered="{! NOT (bSwitch1746305)}"> 
+        <apex:pageblocksection columns="1">
+            <apex:pageBlockTable value="{!lstPolicyAccessWrapper}" var="p">
+                <!-- Disabling the Policy Member ID hyper link And Call Transfer button for OSB product asa part of 754576 story-->
+                <apex:column headerValue="Action">
+                    <apex:outputPanel rendered="{!(bSwitch1279870 && p.IsPDPPolicy=='true')}">
+                        <apex:image value="{!URLFOR($Resource.ClaimDetails_JS_HUM,'/PlusImage.png')}" id="plusImage" onclick="showrelatedTable_off('{!p.rowNumber}','{!p.sPolicyId}');"/>
+                        
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!(bSwitch1279870 && p.IsPDPPolicy=='false')}">
+                        
+                        <apex:image value="{!URLFOR($Resource.ClaimDetails_JS_HUM,'/MinusImage.png')}" id="minusImage" onclick="removerelatedTable_off('{!p.rowNumber}');" />
+                    </apex:outputPanel>
+                </apex:column>
+                
+                
+                <apex:column html-log_this="false" headerValue="{!$Label.HUMPlanNameHeaderValueLabel}" rendered="{!(bSwitch1279870 && p.sPlanName!='')}">
+                    
+                    <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea2" >
+                        <a onclick="javascript:return false;" html-log_this="true">
+                            
+                            <apex:outputText value="{!IF(LEN(p.sPlanName) > 24,LEFT(p.sPlanName,21)+'...',p.sPlanName)}"></apex:outputText>                         
+                            <apex:image id="lnkImg1" style="margin-top:-3px;" value="{!$Resource.HUMHoverOverQuestionMark}" rendered="{!p.sPlanName == 'Plan Name'}"/> 
+                            <apex:outputPanel rendered="{!LEN(p.sPlanName) > 24}" style="width:400px !important; font-weight:normal; font-size:12px; top:-61px !important; border:1px solid orange; background-color:#FEFDB9; margin-left:-39px; line-height:1em; height:40px; text-align: left;">
+                                {!p.sPlanName}                          
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!p.sPlanName == 'Plan Name'}" style="width:250px !important; font-weight:normal; font-size:12px; top:-61px !important; border:1px solid orange; background-color:#FEFDB9; margin-left:-39px; line-height:1em; height:40px; text-align: left;">
+                                {!$Label.PolicyGridHelp_HUM}
+                            </apex:outputPanel>
+                        </a>
+                    </apex:outputPanel>
+                    
+                </apex:column>
+                <apex:column html-log_this="false" headerValue="{!$Label.HUMEffDateHeaderValueLabel}" rendered="{!(bSwitch1279870 && p.sEffectiveDate!='')}" >
+                    
+                    <apex:outputPanel >
+                        <apex:outputText value="{!p.sEffectiveDate}"></apex:outputText> 
+                    </apex:outputPanel>
+                    
+                </apex:column>
+                <apex:column html-log_this="false" headerValue="{!$Label.HUMEndDtHeaderValueLabel}" rendered="{!(bSwitch1279870 && p.sEndDate!='')}">
+                    
+                    <apex:outputPanel >
+                        <apex:outputText value="{!p.sEndDate}"></apex:outputText> 
+                    </apex:outputPanel>
+                </apex:column>
+                
+                <apex:column rendered="{!p.sPlanName ==''}"><apex:commandButton styleClass="callClass" value="{!$Label.HUMCallTransferButtonLabel}" disabled="{!if(p.policyMember.ETL_Record_Deleted__c==true,true,if(p.isCallTransferDisabled==true,true,false))}" onclick="getInteractionIDBtnClick('{!p.policyMember.id}');return false;" /> </apex:column>
+                <apex:column html-log_this="false" headerValue="">
+                    <apex:facet name="header">
+                        <apex:outputPanel >
+                            <apex:outputLabel >
+                                <apex:outputText >{!$Label.HUMPolMemIdHeaderValue}</apex:outputText>
+                            </apex:outputLabel>
+                            <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea">
+                                <a onclick="javascript:return false;" html-log_this="true">
+                                    <apex:image id="lnkImg" style="margin-top:-3px;" value="{!$Resource.HUMHoverOverQuestionMark}" />
+                                    <apex:outputPanel style="width:375px !important; font-weight:normal; font-size:12px; top:-61px !important; border:1px solid orange; background-color:#FEFDB9; margin-left:-39px; line-height:1em; height:47px; text-align: left;">
+                                        {!$Label.POLICY_HOVERTEXT1} <br/>
+                                        {!$Label.POLICY_HOVERTEXT2}<br/>
+                                        {!$Label.POLICY_HOVERTEXT3}
+                                    </apex:outputPanel>
+                                </a>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                    </apex:facet>
+                    <!-- Adding Span block to display hover over conditionaly for DEN And MED policies on account page-->
+                    <!-- This section is now implemented for MED policy only so removing check for DEN for this section as per story 754576-->
+                    <span class="vfHelpTextHover">
+                        <apex:outputLink rendered="{!p.hasAccess}" disabled="{!p.nPolicyLink}"  target="_blank"  onclick="openTabHUMPolicyRelatedListComponent('{!p.policyMember.id}', '{!p.policyMember.Name}'); return false" value="">{!p.policyMember.Name}
+                            <apex:outputPanel rendered="{!((p.policyMember.Product__c == 'MED') && (p.policyMember.policy__r.Contract_Number__c !='' ||  p.policyMember.policy__r.PBP_Code__c !='' || p.policyMember.policy__r.Medicare_Segment_ID__c !=''))}">{!IF((p.policyMember.policy__r.Contract_Number__c != ''),(p.policyMember.policy__r.Contract_Number__c) + ' / ' ,'/ ')}{!IF((p.policyMember.policy__r.PBP_Code__c != ''),(p.policyMember.policy__r.PBP_Code__c) + ' / ',   '  / ')}{!IF((p.policyMember.policy__r.Medicare_Segment_ID__c != ''),(p.policyMember.policy__r.Medicare_Segment_ID__c) ,' ')}</apex:outputPanel>
+                        </apex:outputLink>
+                    </span>
+                </apex:column>
+                <apex:column rendered="{!p.sPlanName ==''}" html-log_this="false" headerValue="{!$Label.HUMSearchResultsLegacyDeleteLabel}"> <apex:outputField value="{!p.policyMember.ETL_Record_Deleted__c}"/> </apex:column>
+                <apex:column html-log_this="false" headerValue="{!$Label.HUMProductHeaderValue}"> <apex:outputField value="{!p.policyMember.Product__c}"/> </apex:column>
+                <apex:column html-log_this="false" headerValue="{!$Label.HUMProductTypeHeaderValueLabel}"> 
+                    <apex:outputLink styleClass="noLink" onmouseover="showVisionHover('{!p.policyMember.id}','{!p.sProductType}', '{!p.policyMember.Product__c}','{!p.policyMember.policy__r.Product__r.Product_Line_Description__c}');" value="javascript:void(0);" >
+                        {!p.sProductType}    
+                    </apex:outputlink>
+                </apex:column>            
+                <apex:column html-log_this="false" headerValue="{!$Label.HUMProductTypeCodeHeaderValueLabel}"> <apex:outputField value="{!p.policyMember.policy__r.Product_Type__c}" rendered="{! NOT(AND($Permission.GBO_Mainline_Permission, OR(p.policyMember.Product__c == 'MED', p.policyMember.Product__c == 'DEN')))}" /> </apex:column>
+                <apex:column html-log_this="false" headerValue="">
+                    <apex:facet name="header">
+                        <apex:outputPanel >
+                            <apex:outputLabel >
+                                <apex:outputText >{!$Label.HUMPlanNameHeaderValueLabel}</apex:outputText>
+                            </apex:outputLabel>
+                            <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea4" rendered="{!bSwitch1279870}">
+                                <a onclick="javascript:return false;" html-log_this="true">
+                                    <apex:image id="lnkImg4" style="margin-top:-3px;" value="{!$Resource.HUMHoverOverQuestionMark}" />
+                                    <apex:outputPanel style="width:250px !important; font-weight:normal; font-size:12px; top:-61px !important; border:1px solid orange; background-color:#FEFDB9; margin-left:-39px; line-height:1em; height:40px; text-align: left;">
+                                        {!$Label.PolicyGridHelp_HUM}
+                                    </apex:outputPanel>
+                                </a>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                    </apex:facet>
+                    
+                    <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea3" rendered="{!(bSwitch1279870 && p.policyMember.Product__c =='MED' && p.sProductType =='PDP'&& p.policyMember.policy__r.Product_Type__c='PDP')}"> 
+                        <a onclick="javascript:return false;" html-log_this="true">
+                            
+                            <apex:outputText value="{!IF(LEN(p.policyMember.iab_description__c) > 24,LEFT(p.policyMember.iab_description__c,21)+'...',p.policyMember.iab_description__c)}"></apex:outputText> 
+                            <apex:outputPanel rendered="{!LEN(p.policyMember.iab_description__c) > 24}" style="width:370px !important; font-weight:normal; font-size:12px; top:-61px !important; border:1px solid orange; background-color:#FEFDB9; margin-left:-39px; line-height:1em; height:30px; text-align: left;">
+                                {!p.policyMember.iab_description__c}
+                                
+                            </apex:outputPanel>
+                        </a>
+                    </apex:outputPanel>
+                </apex:column>
+                <apex:column html-log_this="false" headerValue="{!$Label.HUMASOHeaderValueLabel}" rendered="{!NOT($Permission.RSOMedicareFrontOfficeUser_HUM)}"> <apex:outputField value="{!p.policyMember.ASO__c}" rendered="{!p.hasAccess}"/> </apex:column>
+                <apex:column html-log_this="false" headerValue="{!$Label.HUMRelationshipHeaderValueLabel}"><apex:outputField value="{!p.policyMember.Relationship__c}" rendered="{!p.hasAccess}"/></apex:column>
+                <apex:column html-log_this="false" headerValue="{!$Label.HUMGroupNameHeaderValueLabel}"><apex:outputField value="{!p.policyMember.Group_Name__c}"/></apex:column>  
+                <apex:column html-log_this="false" headerValue="{!$Label.HUMGroupNumberHeaderValueLabel}"><apex:outputField value="{!p.policyMember.Group_Number__c}"/></apex:column>  
+                <apex:column html-log_this="false" headerValue="{!$Label.HUMEffDateHeaderValueLabel}"><apex:outputField value="{!p.policyMember.Effective_Date__c}" rendered="{!p.hasAccess}"/> </apex:column>
+                <apex:column html-log_this="false" headerValue="{!$Label.HUMEndDtHeaderValueLabel}"><apex:outputField value="{!p.policyMember.End_Date__c}" rendered="{!p.hasAccess }"/></apex:column> 
+                <apex:column html-log_this="false" headerValue="{!$Label.HUMStatusHeaderValueLabel}"><apex:outputField value="{!p.policyMember.Status__c}" rendered="{!p.hasAccess}"/></apex:column>
+                <apex:column html-log_this="false" headerValue="{!$Label.HUMLastUpdatedHeaderValueLabel}"><apex:outputField value="{!p.policyMember.LastModifiedDate}" rendered="{!p.hasAccess}"/></apex:column>
+                <apex:column html-log_this="false" headerValue="{!$Label.HUMEHBTermDTHeaderValueLabel}" rendered="{!NOT($Permission.RSOMedicareFrontOfficeUser_HUM)}"><apex:outputField value="{!p.policyMember.EHB_Term_Date__c}" rendered="{!p.hasAccess}"/></apex:column>
+                <apex:column html-log_this="false" headerValue="Platform" headerClass="hiddenclass" styleClass="hiddenclass">
+                    <apex:outputField value="{!p.policyMember.policy__r.Platform__c}" rendered="{!p.hasAccess}"/>
+                </apex:column>
+                <apex:column html-log_this="false" headerValue="" headerClass="hiddenclass" styleClass="hiddenclass">           
+                    <apex:facet name="header">
+                        <apex:outputPanel >
+                            <apex:outputLabel >
+                                <apex:outputText >SourceCustKey</apex:outputText>
+                            </apex:outputLabel>
+                        </apex:outputPanel>
+                    </apex:facet>
+                    <apex:outputPanel >
+                        {!p.sSourceCustKey}
+                    </apex:outputPanel>
+                </apex:column>
+                <apex:column html-log_this="false" headerValue="" headerClass="hiddenclass" styleClass="hiddenclass">           
+                    <apex:facet name="header">
+                        <apex:outputPanel >
+                            <apex:outputLabel >
+                                <apex:outputText >SourceDivKey</apex:outputText>
+                            </apex:outputLabel>
+                        </apex:outputPanel>
+                    </apex:facet>
+                    <apex:outputPanel >
+                        {!p.sSourceDivKey}
+                    </apex:outputPanel>
+                </apex:column>
+                <apex:column html-log_this="false" headerValue="BenefitCoverage" headerClass="hiddenclass" styleClass="hiddenclass">
+                    <apex:outputField value="{!p.policyMember.policy__r.Benefit_Coverage__c}" rendered="{!p.hasAccess}"/>
+                </apex:column>
+                <apex:column html-log_this="false" headerValue="CoverageplanDate" headerClass="hiddenclass" styleClass="hiddenclass">
+                    <apex:outputField value="{!p.policyMember.policy__r.Coverage_Plan_Effective_Date__c}" rendered="{!p.hasAccess}" />
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:actionFunction name="saveToController" action="{!saveDataForCallTransfer}" status="buttonStatus" rerender="pgBlock_off,pgMsg">
+                <apex:param assignTo="{!sInteractionId}" name="linkURL" value=""/>
+                <apex:param assignTo="{!sPolicyMemberId}" name="pmemid" value=""/>
+            </apex:actionFunction>
+            <!--PhoneBook Implementation-->
+            <apex:outputPanel id="messageEvt" rendered="{!phoneBookSwitch1726016}">
+                <script>
+                var msg = '{!msgValue}';
+                </script>
+                
+                <apex:actionFunction name="saveToController" oncomplete="phoneBookPopup(msg);" action="{!saveDataForCallTransfer}" status="buttonStatus" rerender="pgBlock_off,pgMsg">
+                    <apex:param assignTo="{!sInteractionId}" name="linkURL" value=""/>
+                    <apex:param assignTo="{!sPolicyMemberId}" name="pmemid" value=""/>
+                </apex:actionFunction>
+            </apex:outputPanel>
+            
+            <apex:outputPanel >
+                <apex:commandButton value="{!$Label.HUMPreviousButtonLabel}" action="{!previous}" rendered="{!setConPolicies.hasprevious}" rerender="pgBlock_off" style="padding-right:20px"/>   
+                <apex:commandButton value="{!$Label.HUMNextButtonLabel}" action="{!next}"  rendered="{!setConPolicies.hasNext}" rerender="pgBlock_off" />
+            </apex:outputPanel>
+        </apex:pageblocksection>
+    </apex:pageBlock> 
+    <c:HUMActionStatusComponent />
+</apex:component>

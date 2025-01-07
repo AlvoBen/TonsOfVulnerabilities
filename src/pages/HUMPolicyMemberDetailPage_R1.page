@@ -1,0 +1,28 @@
+﻿<!-- *****************************************************************************************
+Page Name          : HUMPolicyMemberDetailPage_R1
+Version            : 1.0
+Function           : This Page updates the exchange details of policy member
+Created On         : 06/27/2016
+
+Modification Log:
+*   Developer           Code Review              Date               Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Manish Kumar                                 06/27/2016          Original Version
+*   Riddhi Mittal								  02/08/2020		 Remove CCP functionality from VF to Controller
+****************************************************************************************** -->
+<apex:page standardcontroller="Policy_Member__c" extensions="HUMPolicyDetailsUpdateController_R1" id="pgId"  >
+<apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+<script>
+jQuery(document).ready(function() {
+pageLoad();
+});
+</script>
+
+<apex:form rendered="{!ccpOnOff }" >
+<apex:actionFunction name="pageLoad" action="{!getGBEInformationAsync}" id="updatePolicyDetailsAFId" reRender="pgId" /> 
+</apex:form>
+
+ <apex:form rendered="{!!ccpOnOff }" >
+<apex:actionFunction name="pageLoad" action="{!updatePolicyDetails}" id="updatePolicyDetailsAFId" reRender="pgId" /> 
+</apex:form>   
+</apex:page>

@@ -1,0 +1,186 @@
+﻿<!--
+Page Name        : WebActivityDetails_CMP_HUM 
+Function         : Component use to display Web Activity Details
+Modification Log :
+    * Developer                 Code review         Date                  Description
+    * ------------------------------------------------------------------------------------------------------------------------------                
+    * Amar Gadewar									02/13/2018			      REQ - 351010 - When Web Activity Section is loading avoiding a Refresh Side Panel Links as it impacts double loading
+    * Ranjeeth Nagishetty						    10/26/2018				  Reverted to old changes
+	* Prudhvi Pamarthi                              05/30/2019                REQ-396330 Fix for CA Ticket - 8172941 -Go365 link does Not show the first time the policy tab Is opened 
+    * Harish Gowda                                  02/07/2020                REQ - 790989 - Iconology - H1036 Icon (RF).
+    * Harish Gowda                                  04/02/2020                US - 903394 Added Humana.com link in MyHumana Details section on Policy Member page
+    * Amit Agarwal                                  06/05/2020                User Story 1163569: PR00091574 - MF 1 - AHT - Add Humana.com link on Account page and MyHumana Details section on Policy Member page (CRM)
+    * Ankit Avula                                   03/08/2021                User Story 1911636: HTMLENCODE SonarQube
+    * Ashok Kumar Nutalapati                        03/12/2021                User Story 1269088: T1PRJ0002517 - MF 2 - Display MemberGenKey in MyHumana Details Section (RxRF) (ID# 103)
+    * Aaron Speakman                                04/20/2021                User Story 2218997: T1PRJ0002517 - MF5 - TECH - INC1053778 - Web Emulation Link Not Displaying on Policy Member Page (CRMS)
+    * Amar Gadewar                                  05/03/2021                User Story 2215204: T1PRJ0001827 - MF 1 - Iconology - Web Registered Icon (CRM)
+	* Ashok Kumar Nutalapati                        05/17/2021                User Story 2192429: T1PRJ0002517 - MF 2 - Display MemberGenKey in MyHumana Details Section (CRMS) (ID# 103)
+	* Ajay Chakradhar                               06/22/2021                User Story 1755455 - Performance Improvement
+	-------------------------------------------------------------------------------------------------------------------------------->
+    <apex:component controller="MemberMbeService_S_HUM" > 
+        <apex:attribute id="accountID" name="accountID" description="This is Account's ID" type="String" required="true"></apex:attribute>   
+        <apex:attribute id="PolicyMemberID" name="PolicyMemberID" description="This is Policy Member ID " type="String" required="true"></apex:attribute>   
+        <apex:StyleSheet value="{!URLFOR($Resource.HUMMemberSearchComponent, 'HUMMemberSearchComponent/HUMMemberSearchCSS.css')}" />  
+        <!--<apex:includeScript value="/support/console/35.0/integration.js"/>-->
+        <script type="text/javascript">
+        var noaccessPCCCustomerService = {!NOT($Permission.CRMS_685_PCC_Customer_Service_Access)};
+        Visualforce.remoting.timeout = "{!$Label.HUMMemWebActivityTimeout}";
+    
+        function getMemberActivityDetails(){
+            var memAcctID = '{!JSENCODE(accountID)}';
+        	var  PolicyMemID = '{!JSENCODE(PolicyMemberID)}';                 
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.MemberMbeService_S_HUM.getWebInformation}',
+                memAcctID , PolicyMemID,
+                function (result, event) {
+                    if (event.status) {
+                        if(result !== null && result !== "" && result !== undefined) {
+                            if(result.sVitalityUpdated){
+                                sforce.console.fireEvent('refreshpanel');
+                            }  
+                        }
+                        document.getElementById("searchingStatus1").style.display= 'none';
+                        document.getElementById("loadingWeb").style.display= 'none'; 
+                        if(result!=null){
+                            if(result.IsWebRegistered =='true')
+                            {
+                                document.getElementById('webRegistered').innerHTML = 'Yes';
+                                document.getElementById('MemGenKey').innerHTML = result.MemberGenKey ;
+                                document.getElementById('MemGenKey').style.display='none';
+                                sforce.console.fireEvent('WebRegisteredEvent'); 
+
+                                if(noaccessPCCCustomerService){
+                                    if (result.MemberGenKey !== null && result.MemberGenKey !== "" && result.MemberGenKey !== undefined) {
+                                        document.getElementById('memberGenKey').innerHTML = result.MemberGenKey ; 
+                                    } 
+                                    else {
+                                        document.getElementById('memGenKeyCopy').style.display='none'; 
+                                    }
+                                }
+								
+                                ShowSection();
+
+                            }                       
+                            else
+                            {
+                                document.getElementById('webRegistered').innerHTML = 'No';
+                                if(noaccessPCCCustomerService){
+								    hideMemGenKeySec();		
+                                }						
+                            }
+                            if(result.LastLoginDateTime !=null 
+                               &&  result.LastLoginDateTime !=''
+                               && result.LastLoginDateTime.length >= 10) {
+                               
+                               var  positionOfSpace = result.LastLoginDateTime.indexOf(' ');
+                                
+                                    document.getElementById('lastLoggedIn').innerHTML = result.LastLoginDateTime.substr(0,positionOfSpace);  
+                                
+                            }
+                        } 
+                        else
+                        {
+                            document.getElementById('webRegistered').innerHTML = 'No';
+                        }          
+                    } else {
+                        document.getElementById("responseErrors").innerHTML =  "{!$Label.HUMWebActivityResponseErrors}";
+                        var pgblockhide = '{!$Component.testform.pgblock}'
+                        var pgblockhideID = document.getElementById(pgblockhide);   
+                        pgblockhideID.style.display = 'none';
+                        document.getElementById("searchingStatus1").style.display= 'none';
+                        document.getElementById("loadingWeb").style.display= 'none'; 
+                   }
+                }, 
+                {escape: true}
+            );
+                
+            HideSection();
+        }
+            
+        function HideSection(){    
+            var webEmulate= '{!$Component.testform.pgblock.sectiontest.sectioninside.webEmulateLink}'
+            var webEmulateID = document.getElementById(webEmulate);   
+            webEmulateID.style.visibility = 'hidden' ;
+            
+        }
+          
+        function ShowSection(){    
+            var webEmulate= '{!$Component.testform.pgblock.sectiontest.sectioninside.webEmulateLink}'
+            var webEmulateID = document.getElementById(webEmulate);
+            webEmulateID.style.visibility = 'visible' ;
+        }
+        
+        function openWebEmulate(){
+           var weblink= '{!JSENCODE(sWebEmulateLink)}';
+           var MemGenKey = document.getElementById('MemGenKey').innerHTML;
+           weblink = weblink +'?MemberGenKey=' + MemGenKey ;
+           window.open(weblink); 
+        }
+		
+		function hideMemGenKeySec() {    
+			var memberGenKey= '{!$Component.testform.pgblock.sectiontest.sectionMemberGenKey.memGenKeyLable}';
+			var memberGenKeyID = document.getElementById(memberGenKey);   
+			memberGenKeyID.style.visibility = 'hidden' ;
+			document.getElementById('memGenKeyCopy').style.display='none';	
+		}
+
+		function copyToClipboard() {
+			var copyMemGenKey = document.getElementById("memberGenKey");
+			var dummyMemGenKey = document.createElement("textarea");
+			dummyMemGenKey.value = copyMemGenKey.textContent;
+			document.body.appendChild(dummyMemGenKey);
+			dummyMemGenKey.select();
+			document.execCommand("Copy");
+			dummyMemGenKey.remove();
+		} 
+              
+        </script>
+		
+        <apex:form id="testform"> 
+        
+        <div id="responseErrors"></div>
+        <div id="loadingWeb" class="waitingSearchDiv waitingSearchDivOpacity outerDIVStyle" ></div>
+            <div id="searchingStatus1" class="waitingSearchDiv innerDIVStyle">
+                <div class="waitingHolder innermostDIVStyle">
+                    <img class="waitingImage" src="/img/loading.gif"/>
+                        <span class="waitingDescription">{!$Label.LOADING_HUM}</span>
+                </div>
+             </div>
+           
+            
+    
+        <apex:pageblock id="pgblock" mode="maindetail">
+            <apex:pageBlockSection html-log_this="false" id="sectiontest" columns="1">
+                <apex:pageblockSectionItem html-log_this="false" id="sectioninside">
+                    <apex:outputLabel html-log_this="false" value="{!$Label.MyHumanaRegistered_HUM}" style="margin-right:0.4em;"></apex:outputLabel>    
+                    <apex:panelGrid columns="3" id="webGrid"> 
+                        <span html-log_this="false" id="webRegistered" >  
+                        </span> 
+                        <apex:outputLink html-log_this="false" value="{!sHumanaLink}" id="openMyHumanaLink"  onclick="window.open('{!HTMLENCODE(sHumanaLink)}');return false;" style="margin-left:1.2em;">{!$Label.MyHumanaLink_Hum}</apex:outputLink>
+                        <apex:outputLink html-log_this="false" value="" id="webEmulateLink"  onclick="openWebEmulate();return false;" style="margin-left:1.2em;">{!$Label.WebEmulateLink_HUM}</apex:outputLink>
+                        <span html-log_this="false" id="MemGenKey" > 
+                         </span> 
+                    </apex:panelGrid>    
+                </apex:pageblockSectionItem>
+                
+				<apex:pageBlockSectionItem html-log_this="false" id="sectionsecond">    
+					<apex:outputLabel html-log_this="false" value="{!$Label.LastLoginDate_HUM}" style="margin-right:0.4em;"></apex:outputLabel> 
+					<span html-log_this="false" id="lastLoggedIn"></span>          
+				</apex:pageBlockSectionItem>
+				
+				<apex:pageBlockSectionItem html-log_this="false" id="sectionMemberGenKey" rendered="{!NOT($Permission.CRMS_685_PCC_Customer_Service_Access)}">    
+					<apex:outputLabel html-log_this="false" id="memGenKeyLable" value="{!$Label.MemberGenKey_Hum}" style="margin-right:0.4em;"></apex:outputLabel> 
+					<apex:panelGrid columns="3" id="webGenKeyGrid">
+						<span html-log_this="false" id="memberGenKey"></span>
+						<span id="memGenKeyCopy" class="copyHover" style="margin-left:0.6em; color: #3973ac; cursor: pointer;" onclick="copyToClipboard();">Copy</span>
+					</apex:panelGrid>       
+				</apex:pageBlockSectionItem>					
+            </apex:pageblocksection>
+        </apex:pageblock>
+        </apex:form>
+        <script>
+        window.onload=function(){
+            getMemberActivityDetails();
+        };
+        </script>
+    </apex:component>

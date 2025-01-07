@@ -1,0 +1,22 @@
+﻿<!--
+Page Name        : DentalInformationRedirect_VF_HUM.page
+Version          : 1.0
+Created On       :  13th April 2016
+Function         : VF page to redircet to CCP tooth History Application
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+
+* Avinash Choubey                                       04/13/2016                 Original Version
+* Avinash Choubey          30512                        06/17/2016                 Updated to redirect from JS instead of Controller
+* Rajesh Keswani		   38022						09/01/2016				   Added Environment variable.
+****************************************************************************************************************************
+-->
+<apex:page id="thePage" tabStyle="Policy_Member__c" showHeader="false" sidebar="false" controller="DentalInformationRedirect_C_HUM" doctype="html-5.0"  > 
+	<apex:includeScript value="{!URLFOR($Resource.DENTAL_INFO_REDIRECT_SR_HUM, 'DENTAL_INFO_REDIRECT_JS_HUM.js')}"/>
+	<script>
+	var sCCPAppURL = '{!sCCPAppURL}';
+	var sPolMemName = '{!sPmName}';
+	var sUserNWId = '{!sCrtdBy}';
+	redirectToTHApp('{!sCaseNumber}','{!sEnvVariable}');
+	</script> 
+</apex:page>

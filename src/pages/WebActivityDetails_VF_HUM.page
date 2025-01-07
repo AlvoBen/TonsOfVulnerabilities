@@ -1,0 +1,3 @@
+﻿<apex:page StandardController="Policy_Member__c">
+   <c:WebActivityDetails_CMP_HUM accountID="{!Policy_Member__c.Member__c}" PolicyMemberID="{!Policy_Member__c.id}"></c:WebActivityDetails_CMP_HUM>
+</apex:page>

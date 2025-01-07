@@ -1,0 +1,31 @@
+﻿<!--
+LWC Name        : H1MarketPlaceMemberDetailPageHUM.html
+Function        : To Open enrollment member record in seperate tab
+
+Modification Log:
+* Developer Name                     Date                         Description
+* Visweswararao Jayavarapu           30/08/2022                   User Story 3481400: Enrollment Search / H1 Market Place Tab - Detail Page Creation and Field Population
+* Visweswararao Jayavarapu           30/08/2022                   User Story 3483233: T1PRJ0170850- MF 20035- Lightning - - Enrollment Search / H1 Market Place - Applications Misc Tab fields population
+* Visweswararao Jayavarapu           30/08/2022                   User Story 3481578: T1PRJ0170850- MF 20035- Lightning - - Enrollment Search / H1 Market Place - Billing Information Tab fields population
+* Visweswararao Jayavarapu           30/08/2022                   User Story 3482496: T1PRJ0170850- MF 20035- Lightning - - Enrollment Search / H1 Market Place - Benefit & AgentTab fields population
+*-->
+<template>
+      <lightning-layout multiple-rows="true">
+        <lightning-layout-item padding="around-small" size="12">
+          <div class="slds-panel__header slds-theme_backgroundColor-white">
+            <lightning-icon icon-name="standard:account"></lightning-icon>
+            <h2 class="slds-panel__header-title slds-text-heading_small slds-m-left--x-small">
+              {memberDetails}<br>{panelName}</h2>
+          </div>
+        </lightning-layout-item>
+        <!-- left side column start-->
+        <lightning-layout-item padding="around-small" size="4">
+          <div class="custom-box slds-box slds-p-around_medium slds-theme_backgroundColor-white">
+            <c-display-fields-in-two-column-hum section-header={detail} section-data={data}></c-display-fields-in-two-column-hum>
+          </div>
+        </lightning-layout-item>
+        <lightning-layout-item padding="around-small" size="8">
+            <c-enrollment-member-detail-tab-h-u-m o-data={tabDetails}></c-enrollment-member-detail-tab-h-u-m>
+        </lightning-layout-item>
+      </lightning-layout>
+  </template>

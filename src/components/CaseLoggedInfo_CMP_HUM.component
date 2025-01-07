@@ -1,0 +1,47 @@
+﻿<!--
+Component Name   : CaseLoggedInfo_CMP_HUM.component
+Version          : 1.0
+Created On       : 10/10/2017
+Function         : VF Component to display Case Logged information table
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*---------------------------------------------------------------------------------------------------------------------------
+* Ashsih Upadhyay                                 11/10/2017                   Original version
+* Pradeepkumar Dani           149184              11/17/2017                   re-factoring
+* Mithra Bharadwaj                                                            US#1522825 SonarQube Changes
+* Prasuna Pattabhi								07/28/2022					User Story 3518085 : View Case Logged Information from Lightning
+---------------------------------------------------------------------------------------------------------------------------->
+<apex:component controller="CaseLoggedInfoDataTable_C_HUM"  id="cmpId" allowDML="true">
+    <apex:attribute name="caseRecordId" type="string" description="The Case Record ID"/>
+    <script src="{!URLFOR($Resource.CaseDetailResources_SR_HUM, '/CaseLoggedInfo/CaseLoggedInfo_JS_HUM.js')}"/>
+    
+    <div class="container-fluid" id="ScreenshotArea" style="background:white;">
+        <div class="row no-gutter">
+            <c:BaseDataTable_CMP_HUM jqueryvariable="jQuery" 
+            tableid="caseLoggedInfoDatatable" 
+            tablecontainerid="caseLoggedInfoTableContainer"  
+            enablesearch="f"                 
+            columnname="{!columnName}" 
+            htmlColumnName="createdBy"
+            objname="Attachment_Log__c" 
+            keyword="false" 
+            col1_accordian="false"  
+            col1_editDelete="true" 
+            col1_orderable="false"
+            columnHeader="{!columnHeader}" 
+            orderColumn="2"
+            orderDirection="desc"
+            orderingBool="true"
+            />
+        </div>
+    </div>
+    <script>
+        var sGetCaseLoggedInfoJSONData = '{!$RemoteAction.CaseLoggedInfoDataTable_C_HUM.getJSONData}';
+        var sDeleteLogAttachments = '{!$RemoteAction.CaseLoggedInfoDataTable_C_HUM.deleteLogAttachments}';
+        var sCaseId = '{!JSENCODE(caseRecordId)}';
+        var pageURL = '{!$Page.DisplayAttachmentLog_VF_HUM}';
+		var pageURLLWC = '{!$Page.displayLoggedInfoApp_LVF}';
+        Visualforce.remoting.timeout = '{!$Label.HUMMemWebActivityTimeout}'; // Set timeout at page level
+    </script>
+</apex:component>

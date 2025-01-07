@@ -1,0 +1,11 @@
+<design:component label="Pinned Header, Left sidebar and Main region">
+    <flexipage:template >
+      <flexipage:region name="header" defaultWidth="Large" />
+      <flexipage:region name="leftSidebarRegion" defaultWidth="Medium" />
+      <flexipage:region name="mainRegion" defaultWidth="Medium" />
+    </flexipage:template>
+    <design:supportedFormFactors>
+        <design:supportedFormFactor type="Large"/>
+        <design:supportedFormFactor type="Small"/>
+    </design:supportedFormFactors>
+</design:component>

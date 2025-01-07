@@ -1,0 +1,126 @@
+﻿<!--
+Component        : ProviderDisputesSummaryHum.js
+Version          : 1.0
+Created On       : 10/12/2022
+Function         : Component to display to Provider Disputes Summary data.
+
+
+* Developer Name                       Date                         Description
+* Aishwarya Pawar                   10/12/2022                   US-3825306
+*------------------------------------------------------------------------------------------------------------------------------
+-->
+<template>
+    <lightning-card>
+        <template if:false={recordsLoadComplete}>
+            <div class="exampleHolder slds-align_absolute-center">
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </div>
+        </template>
+        <!-- <h1>Provider Correspondence Dispute Cases</h1> -->
+        <div class="slds-var-p-left_medium slds-text-heading_medium">Medical Provider Correspondence Dispute Cases </div>
+        <template if:true={recordsLoadComplete}>
+            <template if:false={noRecordsAvailble}>
+                <div class="slds-var-p-left_medium slds-text-body_regular slds-m-bottom_medium">{filteredCount} of
+                    {totalCount} item(s) displayed</div>
+                <!--slds table-->
+                <div data-id="result" class="slds-table--header-fixed_container container">
+                    <div class="slds-scrollable_y " style="max-height: 500px;" onscroll={handleScroll}>
+                        <table
+                            class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered slds-table--header-fixed">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <template for:each={columns} for:item="col">
+                                        <th class="slds-is-resizable slds-is-sortable slds-cell-fixed" scope="col"
+                                            key={col.label} data-label={col.label} style={col.style} data-id={col.id}
+                                            data-sortable={col.sortable} onmouseenter={handleMouseEnter}
+                                            onmouseleave={handleMouseLeave} onclick={onHandleSort}
+                                            data-iconname={col.iconname}>
+                                            <div class="slds-p-top_x-small slds-wrap slds-cell-fixed slds-m-left_x-small"
+                                                style="width: 100%;">
+                                                {col.label}
+                                                <span>
+                                                    <template if:false={col.mousehover}>
+                                                        <template if:true={col.sorting}>
+                                                            <lightning-icon
+                                                                class="slds-var-m-left_small remove-display-sort-icon"
+                                                                icon-name={col.iconname}
+                                                                size="xx-small">
+                                                            </lightning-icon>
+                                                        </template>
+                                                    </template>
+                                                    <template if:true={col.mousehover}>
+                                                        <lightning-icon
+                                                            class="slds-var-m-left_small remove-display-sort-icon"
+                                                            icon-name={col.mousehovericon}
+                                                            size="xx-small">
+                                                        </lightning-icon>
+                                                    </template>
+                                                </span>
+                                            </div>
+                                        </th>
+                                    </template>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template if:true={noRecordsAvailble}>
+                                    <td colspan="8">
+                                        <c-generic-scoped-notification-hum iconname="utility:info"
+                                            message={labels.HUMNoRecords}></c-generic-scoped-notification-hum>
+                                    </td>
+                                </template>
+                                <template for:each={filteredPDRecords} for:item="item" for:index="index">
+                                    <tr key={item.sCase} class="slds-hint-parent">
+                                        <td>
+                                            <lightning-icon style="cursor: pointer;" icon-name="utility:chevronright"
+                                                size="x-small" onclick={handleRowClick} data-rowid={item.Index}>
+                                            </lightning-icon>
+                                        </td>
+                                        <td data-label="Case Number/Type">
+                                            <div class="slds-truncate">
+                                                {item.sCase} <c-generic-copy-icon-hum copycontent={item.sCase}>
+                                                </c-generic-copy-icon-hum>
+                                            </div>
+                                        </td>
+                                        <td data-label="Type">
+                                            <div class="slds-cell-wrap">{item.sType}</div>
+                                        </td>
+
+                                        <td data-label="Category">
+                                            <div class="slds-cell-wrap">{item.sCategory}</div>
+                                        </td>
+                                        <td data-label="Status">
+                                            <div class="slds-cell-wrap">{item.sStatus}</div>
+                                        </td>
+                                        <td data-label="Priority">
+                                            <div class="slds-cell-wrap">{item.sPriority}</div>
+                                        </td>
+                                        <td data-label="Due Date">
+                                            <div class="slds-cell-wrap">{item.sDueDate}</div>
+                                        </td>
+                                        <td data-label="Provider Name">
+                                            <div class="slds-cell-wrap">{item.sProviderName}</div>
+                                        </td>
+                                    </tr>
+                                    <tr key={item.sCase} data-key={item.Index} class="slds-hide">
+                                        <!--PD detail section-->
+                                        <td colspan="8">
+                                             <c-provider-dispute-details-hum item-detail={item}>
+                                            </c-provider-dispute-details-hum>
+                                            
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </template>
+            <template if:true={noRecordsAvailble}>
+                <div class="slds-var-p-left_medium">
+                    <c-generic-scoped-notification-hum iconname="utility:info" message="No records to display.">
+                    </c-generic-scoped-notification-hum>
+                </div>
+            </template>
+        </template>
+    </lightning-card>
+</template>

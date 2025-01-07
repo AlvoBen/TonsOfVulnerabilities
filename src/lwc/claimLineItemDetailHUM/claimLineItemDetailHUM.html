@@ -1,0 +1,86 @@
+﻿<!--*******************************************************************************************************************************
+LWC JS Name : claimLineItemDetailHUM.html
+Function    : This HTML serves as controller to claimLineIteamDetailHum.JS
+Modification Log: 
+  Developer Name           Code Review                      Date                       Description
+*-------------------------------------------------------------------------------------------------------------------------------- 
+* Apurva Urkude												04/18/2023				  US-4399890: Claims- Filter Functionality on Claims Detail Page
+* Apurva Urkude												06/15/2023				  US-4724857: Switch Clean up Claims- Filter Functionality on Claims Detail Page  
+* Apurva Urkude                             				06/30/2023                US-4757243: INC2390166  - Go Live Incident Line items component error RAID 03
+* Sagar G      									                          25/08/2023          US-5008473: T1PRJ0865978 - MF 4796385 - C03, Contact Servicing- Code Editing update
+**********************************************************************************************************************************-->
+<template>
+    <lightning-card title="Line Items">		
+		<div class="demo-only demo-only--sizing slds-grid slds-wrap">
+
+			<div class="slds-size_7-of-12">
+				
+			  </div>
+			  <div class="slds-size_5-of-12">
+				<lightning-layout>
+					
+					<lightning-layout-item>
+					
+						<div>
+						<lightning-layout>	
+							<lightning-helptext icon-name="utility:info" class="icon"  content="Last Processed Date : The most recent processing of a claim will always display as the default view. Select other process date options to see previous processing details.Note: the related sequesnce will appear in parenthesis when available."></lightning-helptext>
+							<lightning-combobox name="Last Processed Date"
+							label="Last Processed Date"
+							value={value}
+							options={lastProcessedoptions} 
+							onchange={onChangeLastProcessValue} 
+							 ></lightning-combobox></lightning-layout>	</div>
+						
+				
+			</lightning-layout-item>
+
+		    <lightning-layout-item>
+				
+				<div class="slds-size_2-of-12">
+					<div class="slds-col ch-filter-keyword" style="width:200px;margin-right:6px;"><div >
+							
+						<lightning-layout>
+						
+							<lightning-helptext icon-name="utility:info" content="Keyword"  ></lightning-helptext>
+                     <lightning-input class="inputfield keyword-field state-field"  label ="Keyword" type="search" name="keyword"
+						value={keyword} onchange={findByWord}  ></lightning-input>
+												
+					</lightning-layout>
+					
+				
+			  </div></div>
+			</div>
+			</lightning-layout-item>
+			</lightning-layout>
+		</div>
+		</div>	
+		<template if:false={bIsLoading}>
+			<template if:true={bResponse}>
+				<lightning-layout-item size="8" style="padding-top: 10px; margin-left:15px">
+					{CurrentlyShowingRecords} item(s) displayed
+				</lightning-layout-item>
+			</template>
+			<div class="slds-grid full-container slds-is-relative slds-p-horizontal_none">
+				<template if:true={bResponse}>
+					<c-claims-table-component-hum class="full-container" templateaccordian=true ongetaccordiandata={getaccordiandata} name-of-screen="ClaimDetails"
+						response={oData} responsedata={claimResponse} claimdetailresposne={claimDetailResponse} totallastprocdate={value} templatemodal={oCaseHistoryModel} show-view-all={showViewAll} no-data-message="Loading Records to Display..."
+						b-hide-title=true b-infinite-scroll={bInfiniteScroll} 
+						title={title} o-view-all-params={oViewAllParams} filtered-result={serveresult} claimplatformcode={claimPlatformCode}
+						related-input-field="Claim " screen-name={loggingScreenName} claim-number={sClaimnbr} diag-indicator={diagIndicator}>
+					</c-claims-table-component-hum>   
+				</template> 
+				<template if:false={bResponse}>
+					<div >
+					  <c-search-no-result-hum no-result-message={noDataMsg}   message-with-icon="true"></c-search-no-result-hum>
+				  </div>
+				  </template>
+			</div>
+		</template>
+        <template if:true={bIsLoading}>
+            <div style="height: 300px;"></div>
+            <div class="loading-spinner" >
+                <lightning-spinner alternative-text="Loading" variant ="Brand" size="Large"></lightning-spinner>
+            </div>
+        </template>
+    </lightning-card>
+</template>

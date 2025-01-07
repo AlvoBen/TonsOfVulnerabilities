@@ -1,0 +1,533 @@
+﻿<!-- *****************************************************************************************
+Page Name          : TRRSearchDetail_VF_HUM
+Version            : 2.0
+Function           : Page to display TRR Details
+Created On         : 08/14/2015
+
+Modification Log:
+*   Developer                   Code Review           Date               Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+
+*   Seema Kaulgi                               03/15/2019          REQ - 381422 SF - Ability for all CRM users to SEARCH for member specific Transaction Reply Reports (TRR) in CRM
+*   Seema Kaulgi                               03/15/2019          REQ - 381422 Defect Fix
+*   Mohammed Noor                              07/15/2019          REQ - 403695 - Fix for Incident 8364762  
+*   Vardhman Jain                              08/18/2021          REQ - US 2098896  - Add Fields to TRR Reply Detail
+*   Ajay Chakradhar                            07/02/2022          REQ - US 3210977 - Classic Updating Branding from LIS to Extra Help in CRM Service
+*   Nilesh Gadkar			                   05/18/2023	       User Story 4407442: T1PRJ0191994- MF 128, 129- Display Member Race and Ethnicity in CRM Service- ‘TRR Reply Detail’ page (Classic)
+******************************************************************************************************************************* -->
+
+<apex:page controller="TRRDetail_C_HUM"  id="TRRSearchDetailPage" tabStyle="Account">
+    
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>    
+    <apex:includeScript value="/soap/ajax/30.0/connection.js"/>
+    <apex:includeScript value="/support/console/30.0/integration.js"/>
+    <apex:styleSheet value="{!URLFOR($Resource.TRRSearchDetail_SR_HUM, 'TRRSearchDetails_SR_CSS_HUM.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.TRRSearchDetail_SR_HUM, 'TRRSearchDetails_SR_JS_HUM.js')}" />
+    
+    
+        <apex:pageBlock id="pgBlockTRR" title="TRR Reply Detail">
+        <apex:form >
+        <apex:actionFunction action="{!displayDetails}" name="displayDetails" reRender="pgBlockTRR" status="buttonStatus1">
+                <apex:param assignTo="{!TRRenrollmentDetails}" name="TRRenrollmentDetails" value=""/>
+         </apex:actionFunction>
+         </apex:form>   
+
+            <apex:pageBlockSection title="Member Demographics" columns="3" id="memberdemographics">
+                
+             <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumMedClaim}" ></apex:outputlabel>                    
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sMedicareClaim}" ></apex:outputText>                                           
+             </apex:pageBlockSectionItem>              
+             <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel />
+             </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel />
+             </apex:pageBlockSectionItem>
+             
+              
+                
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HUMemberSearchLabelLastName}"></apex:outputlabel>                    
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sLastName}" ></apex:outputText>                    
+            </apex:pageBlockSectionItem>                        
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HUMLabelFirstName}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sFirstName}"></apex:outputText>                
+            </apex:pageBlockSectionItem> 
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">            
+                <apex:outputlabel value="{!$Label.HumInitial}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sMiddleInitial}"></apex:outputText>                
+            </apex:pageBlockSectionItem>  
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HUMSearchEnrollmentDOB}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sDOB}"></apex:outputText>                
+            </apex:pageBlockSectionItem>                                    
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HUMSearchEnrollmentGender}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sGender}"></apex:outputText>               
+            </apex:pageBlockSectionItem>            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumCountryCode}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sCountyName }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            
+             
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumstCode}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sState}"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData" rendered="{!SwitchRaceAndEthinicity}">
+                <apex:outputlabel value="{!$Label.HumRace}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.raceCd}"></apex:outputText>
+             </apex:pageBlockSectionItem>
+             <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData" rendered="{!SwitchRaceAndEthinicity}">
+                <apex:outputlabel value="{!$Label.HumEthinicity}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.ethinicityCd}"></apex:outputText>
+             </apex:pageBlockSectionItem>
+                      
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="Plan Information" columns="3" id="idplaninformation">
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumContract}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sContract}"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumPBP}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sPBP}"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumSegment}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sSegmentNumber}"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            
+            
+             
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HUMSearchEnrollmentEffDate}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sEffectiveDate}"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HUMEndDtHeaderValueLabel}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sEndDate}"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            
+           <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputLabel />
+             </apex:pageBlockSectionItem>
+           
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Reply Code Information" columns="3" id="pgreplycode">
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumReplycode}"></apex:outputlabel>
+                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sReplyCode}"></apex:outputText>
+                
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumTranccode}"></apex:outputlabel>
+                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sTransactionCode}"></apex:outputText>
+                
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumEleCode}"></apex:outputlabel>
+                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sElectionTypeCode}"></apex:outputText>
+                
+            </apex:pageBlockSectionItem>
+
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumIndicator}"></apex:outputlabel>
+                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sDedupIndicator}"></apex:outputText>
+                
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumUIFlag}"></apex:outputlabel>
+                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sUIInitialChangeFlag}"></apex:outputText>
+                
+            </apex:pageBlockSectionItem>
+              
+            <!--US 2098896-- TRR Detail change-->
+                 <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData"  rendered="{!trrSwitch}">
+             <apex:outputlabel value="{!$Label.HUMSEP}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sSEPReasCode }"></apex:outputText>
+            </apex:pageBlockSectionItem>
+           
+                
+           
+                                   
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumErrMsg}"></apex:outputlabel>
+                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sErrorMessage}"></apex:outputText>
+                
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumEnroll}"></apex:outputlabel>
+                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sEnrollmentSourceCode}"></apex:outputText>
+                
+            </apex:pageBlockSectionItem>
+                <!--US 2098896-- TRR Detail change-->
+			 <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumUIOrg}"></apex:outputlabel>
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sUIOrganization}"></apex:outputText>
+             </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumAppDt}"></apex:outputlabel>
+                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sApplicationDate}"></apex:outputText>
+                
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumSId}"></apex:outputlabel>
+                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sSourceId}"></apex:outputText>
+                
+            </apex:pageBlockSectionItem>
+                
+               <!--US 2098896-- TRR Detail change-->
+			<apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumVar}"></apex:outputlabel>
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sVariable}"></apex:outputText>
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumRcvdDt}"></apex:outputlabel>
+                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sHumanaReceivedDate}"></apex:outputText>
+                
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumTransDt}"></apex:outputlabel>
+                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sTransactionDate}"></apex:outputText>
+                
+            </apex:pageBlockSectionItem>
+                
+                <!--US 2098896-- TRR Detail change-->
+			
+			<apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumPPBP}"></apex:outputlabel>
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sPriorPBP}"></apex:outputText>   
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumApDtInd}"></apex:outputlabel>
+                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sApplicationDateIndicator }"></apex:outputText>
+                
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumTRC}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sTRCShortName}"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+			
+             <!--US 2098896-- TRR Detail change-->
+			
+			<apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumTS}"></apex:outputlabel>
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sCMSProcessingTimestamp}"></apex:outputText>
+            </apex:pageBlockSectionItem>
+          </apex:pageBlockSection>
+            
+            
+            
+           <apex:pageBlockSection title="Creditable Coverage/LEP Information" columns="3" id="pbcreditablecoverage">
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumCCFlag}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sCreditableCoverageFlag}"></apex:outputText>                
+            </apex:pageBlockSectionItem>            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumCCMonths}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sCumulativeNumberofUncoveredMonths }"></apex:outputText>                
+            </apex:pageBlockSectionItem>            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumSubMonths}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sSubmittedNumberofUncoveredMonths }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+           
+
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumPenalty}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sPartDPenaltyAmount }"></apex:outputText>                
+            </apex:pageBlockSectionItem>            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumPenaltyWaved}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sPartDPenaltyWaivedAmount }"></apex:outputText>                
+            </apex:pageBlockSectionItem>            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumPenaltyAmt}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sPartDPenaltySubAmount }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+               
+             </apex:pageBlockSection>
+             
+             
+             <apex:pageBlockSection title="4Rx Information" columns="3" id="pbrxinfo">
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumDRX}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sPartDRxBIN }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumPCN}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sPartDRxPCN }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumRxGroup}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sPartDRxGroup }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumRxId}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sPartDRxId }"></apex:outputText>                
+            </apex:pageBlockSectionItem>           
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Extra Help Information" columns="3" id="pblisinfo">
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumLISPrem}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sLISPremiumLevel }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumLISCopay}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sLISCopayCategory }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumLISEffDt}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sLISPeriodEffectiveDate }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+                        
+            
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumLISAmt}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sLISPremAmount }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumLISEndDt}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sLISPeriodEndDate }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumLISSrcCode}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sLISSourceCode }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumEnrolleType}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sLISEnrolleeTypeCode }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+           
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Secondary Insurance Information" columns="3" id="pbsecondaryinsurance">            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumDrugFlag}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sSecondaryInsDrugFlag }"></apex:outputText>                
+            </apex:pageBlockSectionItem>            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumSecRx}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sSecondaryRxId }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumSecGroup}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sSecondaryRxGroup }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumSecBIN}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sSecondaryRxBIN }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumSecPCN}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sSecondaryRxPCN }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem>
+             
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Other Indicators" columns="3" id="pbothers">
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumEmplyoee}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sEmployerSubsidyOverrideFlag }"></apex:outputText>                
+            </apex:pageBlockSectionItem>            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumEGHP}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sEGHPIndicator }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumESRD}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sESRDIndicator }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+                        
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumPartDFlag}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sPartDOptOutFlag }"></apex:outputText>                
+            </apex:pageBlockSectionItem>            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumOOFlag}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sOutOfAreaFlag }"></apex:outputText>                
+            </apex:pageBlockSectionItem>            
+             <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumPremCD}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sPremiumWithholdOptionCode }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            
+             <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumBeneCPrem}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sPartCPremiumAmount }"></apex:outputText>                
+            </apex:pageBlockSectionItem>            
+             <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumBenePrem}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sPartDPremiumAmount }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+            <apex:outputLabel />
+            </apex:pageBlockSectionItem> 
+                       
+             <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumWA}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sWAIndicator }"></apex:outputText>                
+            </apex:pageBlockSectionItem>            
+             <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumEntitlement}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sEntitlementTypeCode }"></apex:outputText>                
+            </apex:pageBlockSectionItem>            
+             <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumMSP}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sMSPStatusFlag }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            
+             
+             <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumDisability}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sDisabilityIndicator }"></apex:outputText>                
+            </apex:pageBlockSectionItem>            
+             <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumHospice}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sHospiceIndicator }"></apex:outputText>                
+            </apex:pageBlockSectionItem>            
+             <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumInsit}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sInstitutionalIndicator }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+           
+            
+             <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumDiffAmt}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sDeMinimisDifferentialAmount}"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumPrevTroop}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sPrevTROOPPBP }"></apex:outputText>                
+            </apex:pageBlockSectionItem>            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumDistrict}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sDistrictOfficeCode }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumTransTrackId}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sSystemAssignedTransTrackingId }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumPlanAssigned}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sPlanAssignedTransTrackingId }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumDRC}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sDisenrollmentReasonCode }"></apex:outputText>                
+            </apex:pageBlockSectionItem>
+            
+            
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData">
+                <apex:outputlabel value="{!$Label.HumFAOp}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sFADemoOptOut }"></apex:outputText>                
+            </apex:pageBlockSectionItem> 
+               <!--US 2098896-- TRR Detail change-->
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData" rendered="{!trrSwitch}">
+             <apex:outputlabel value="{!$Label.HUMPFL}"></apex:outputlabel>                
+                <apex:outputText value="{!TRRenrollmentDetailWrapper.sPrefLangcode }"></apex:outputText>
+            </apex:pageBlockSectionItem> 
+            <apex:pageBlockSectionItem dataStyleClass="outputTextData" labelStyleClass="outputLabelData" rendered="{!trrSwitch}">
+                <apex:outputlabel value="{!$Label.HUMACF}"></apex:outputlabel>
+             <apex:outputText value="{!TRRenrollmentDetailWrapper.sAccessibleFmtCode }"></apex:outputText>
+            </apex:pageBlockSectionItem> 
+            
+
+            </apex:pageBlockSection>
+            <apex:actionStatus id="buttonStatus1">           
+            <apex:facet name="start">
+                <div class="waitingSearchDiv waitingSearchDivOpacity"
+                    style="width: 100%; height: 100%; display: block; opacity: 0.99" />
+                <div id="searchingStatus" class="waitingSearchDiv"
+                    style="width: 100%; height: 100%; display: block;">
+                    <div class="waitingHolder" style="top: 300px; width: 110px;">
+                        <img class="waitingImage" src="/img/loading.gif" /> <span
+                            class="waitingDescription">{!$Label.HUMLoadingStatus}</span>
+                    </div>
+                </div>
+            </apex:facet>
+            <apex:facet name="stop" />
+       </apex:actionStatus>
+ 
+        </apex:pageBlock> 
+        <script>
+			var uniqueTRRID = getTRRUrlVars()["uniqueId"];
+			window.onload = function(){	
+				if(uniqueTRRID != null && uniqueTRRID != "undefined" && uniqueTRRID != "") {			
+					// Listener to get response		
+					sforce.console.addEventListener('responseTRRJSON' + uniqueTRRID, TRRlistener);
+										
+					// Fire Event from Detail page of Search page
+					sforce.console.fireEvent('requestTRRJSON', uniqueTRRID);					
+				}
+			}
+		</script>
+                     
+</apex:page>

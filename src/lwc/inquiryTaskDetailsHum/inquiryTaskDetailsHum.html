@@ -1,0 +1,49 @@
+﻿<!-- **********************************************************************************
+Function    : This component is used as a container fof Inquiry details and task details
+Modification Log: 
+Developer Name                    Date                       Description
+*--------------------------------------------------------------------------------
+* Mohan kumar N                 04/22/2021                  US: 2023678 
+* Supriya Shastri               10/07/2021                  US: 2732069
+*************************************************************************************** -->
+ <template>
+    <lightning-layout class="detail-page layout-flex-column">
+        <lightning-layout-item class={stickyHeaderCss}>
+            <div class="slds-card jump-links">
+                <template for:each={jumpLinks} for:item="linkItem">
+                   <span key={linkItem} data-link-id={linkItem.dataId} onclick={handleJumpLinkClick}>
+                       {linkItem.title}</span>
+                </template>
+             </div>
+        </lightning-layout-item>
+        <lightning-layout-item class="full-width">
+            <lightning-layout class="slds-m-top_small">
+                <lightning-layout-item class="full-heigh slds-size_3-of-12">
+                    <div if:true={bInquiryPage}>
+                        <c-account-detail-form-hum title={labels.inquiryDetailsHum} o-params={oParams}></c-account-detail-form-hum>
+                        <c-account-detail-form-hum title={labels.webResponseHum} o-params={oParams} custom-class="web-response"></c-account-detail-form-hum>
+                    </div>
+                    <div if:false={bInquiryPage}>
+                        <c-account-detail-form-hum title={labels.taskDetailsHum} o-params={oParams}></c-account-detail-form-hum>
+                    </div>
+                </lightning-layout-item>
+                <lightning-layout-item class="full-height slds-size_9-of-12 slds-p-left_small">
+                    <div if:true={bInquiryPage} class="layout-flex-column">
+                        <template for:each={inquiryItems} for:item="record">
+                            <c-inquiry-task-table-container-hum key={record.title} class={record.css}
+                                show-view-all title={record.title} name-of-screen={record.dataId}
+                                o-params={oParams} data-id={record.dataId}
+                                b-accordian-table={record.bAccordianTable}>
+                            </c-inquiry-task-table-container-hum>
+                        </template>
+                    </div>
+                    <div if:false={bInquiryPage} class="layout-flex-column">
+                        <c-inquiry-task-table-container-hum class="jump-views slds-m-top_small"
+                            show-view-all=true name-of-screen="taskdetails" o-params={oParams}>
+                        </c-inquiry-task-table-container-hum>
+                    </div>
+                </lightning-layout-item>
+            </lightning-layout>
+        </lightning-layout-item>
+    </lightning-layout>
+</template>

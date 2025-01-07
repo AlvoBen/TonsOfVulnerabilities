@@ -1,0 +1,110 @@
+﻿<!--
+LWC Name        : qsCaseCommentHum.html
+
+Modification Log:
+* Developer Name                  Date                         Description
+------------------------------------------------------------------------------------------------------------------------------
+* Disha Dole					20/1/2023 					   US:4085171 - T1PRJ0865978 - C06, Lightning-Case Management- Quick Start-Associate to Policy, alignment & display issue fixes
+* Disha Dole					17/02/2023					   US:4217891 - T1PRJ0865978 - C06, Lightning-Case Management- Quick Start- Standardization of Scoped Notification
+* Pooja Kumbhar	                                06/01/2023                                         US:4583426 - T1PRJ0865978 - C06- Case Management - MF 26447 - Provider QuickStart- Implement Callback Number, G&A, Duplicated C/I logic
+------------------------------------------------------------------------------------------------------------------------------->
+<template>
+            <div class="slds-section slds-is-open slds-box">
+                <div class={showOrHidestyle} >
+                    <h3 class="slds-section__title slds-text-heading_small">
+                        <span>Previous Notes</span>
+                    </h3>
+                    <lightning-textarea class="inTxtaPreviousNotes" id="inTxtaPreviousNotes" readonly disabled=true style="height:auto !important;"></lightning-textarea>
+                    <br/>
+                
+                </div>
+
+<h3 class="slds-section__title slds-text-heading_small slds-box" style="background-color: #f5f1f3;">
+    <span>Case Comments</span>
+</h3>
+<template if:true={bIsInfoMsg}><br/>
+                                <div class="slds-scoped-notification slds-media slds-media_responsive slds-scoped-notification_light" role="status">
+									<div class="slds-media__figure">
+										<lightning-icon size="xx-small" icon-name="utility:info" alternative-text="Info"></lightning-icon> 
+									</div>
+									<div class="slds-media__body">
+										<lightning-formatted-rich-text value={sInformationalMessage}></lightning-formatted-rich-text>
+									</div>
+								</div>
+                            </template>
+<template if:false={isProviderUser}><br/>						
+<div class="slds-grid slds-wrap">  
+<div class="slds-col slds-size_1-of-2">
+    <lightning-input id="inChkOnPOAOnFile" name="CheckedOnPOAOnFile" type="checkbox" label="POA on File" disabled={isdisabled}></lightning-input><br/>
+    <lightning-input id="inChkOnVerbalConsent" name="CheckedOnVerbalConsent " type="checkbox" label="Verbal Consent Obtained" disabled={isdisabled}></lightning-input>
+</div>
+<div class="slds-col slds-size_1-of-2">
+    <lightning-input id="inChkOnConsentOnFile" name="CheckedOnConsentOnFile" type="checkbox" label="Consent on File" disabled={isdisabled}></lightning-input><br/>
+    <lightning-input id="inChkOnILLTSS" name="CheckedOnILLTSS" type="checkbox" label="IL LTSS (MCD Policies Only)" disabled={isdisabled}></lightning-input>
+</div>
+</div>
+<br/>
+</template>
+
+<div class="slad-col" style="margin-bottom: 5px;">
+
+</div>
+<div class="slds-col" style="margin-bottom: 5px;">
+    <lightning-input type="text" class="inTxtCallback" id="inTxtCallback" label="Callback Number" disabled={isdisabled}></lightning-input>
+</div>
+
+<div class="slds-col" style="margin-bottom: 5px;">
+    <lightning-textarea class="inTxtaConcern" id="inTxtaConcern" label="Caller's Issue or Concern" disabled={isdisabled}></lightning-textarea>
+</div>
+
+<div class="slds-col" style="margin-bottom: 5px;">
+    <template if:true={bPreTextCEOlabel}>
+                                <label>Caller's Expected Outcome</label>
+                                </template>
+    <lightning-textarea class="inTxtaExpected" placeholder={sPlaceholderCEO} label="Caller's Expected Outcome" disabled={isdisabled}></lightning-textarea>
+    <div data-id="dy_ceo" lwc:dom="manual"></div>
+
+</div>
+
+<div class="slds-col" style="margin-bottom: 5px;">
+    <template if:true={bPreTextATlabel}>
+        <label>Action Taken</label>
+        </template>
+    <lightning-textarea class="inTxtaActions" placeholder={sPlaceholderAT} label="Action Taken" disabled={isdisabled}></lightning-textarea>
+    <div data-id="dy_at" lwc:dom="manual"></div>
+</div>
+
+<div class="slds-col" style="margin-bottom: 5px;">
+    <template if:true={bPreTextATlabel}>
+<label>Associate Resolution</label>
+</template>
+    <template if:false={bPreTextATlabel}>
+<label class="slds-form-element__label" for="textarea-id-01">Associate Resolution</label>
+    </template>
+    <template if:true={bIsSoftWarningMsg}>
+<div class="slds-notify slds-notify_alert slds-m-bottom_xx-small" role="alert" style="background-color: #FFB75D;">
+    <lightning-icon class="my-icon" size="xx-small" icon-name="utility:warning" alternative-text="Warning"></lightning-icon> &nbsp; <lightning-formatted-rich-text class = "formattedText" value={sSoftWarningMessage} style="color:black;"></lightning-formatted-rich-text>
+</div>
+</template>
+
+    <div class="slds-form-element__control">
+        <textarea name="inTxtaResolution" placeholder={sPlaceholderAR} class="inTxtaResolution slds-textarea" disabled={isdisabled}></textarea>
+    </div>
+
+    <div data-id="dy_ar" lwc:dom="manual"></div>
+
+
+    <template if:true={isbGnApretextData}>
+        <br/>
+        <label>Grievance/Appeal Details</label>
+    <br></br>
+        </template>
+
+    <div id="dy_gna" class="dy_gna" lwc:dom="manual"></div>
+</div>
+
+<div class="slds-col">
+    <lightning-input id="inChkOnLoggedInformation" style="font-weight:bold;" name="CheckedOnLoggedInformation" type="checkbox" label="Please see logged information." disabled={isdisabled}></lightning-input>
+</div>
+</div>
+</template>

@@ -1,0 +1,66 @@
+﻿<!--
+/*
+LWC Name        : Go365 Kids Delegation.js
+Function        : LWC to display Go365 Kids Delegation Details.
+
+Modification Log:
+* Developer Name                  Date                         Description
+* Pallavi Shewale				  02/25/2022			       US-2557646 Original Version
+* Swapnali Sonawane			      07/13/2023				   US-4812119
+***************************************************************************************************************************/
+-->
+<template>
+    <lightning-card title="Go365 Kids delegation">
+        <div class="slds-grid slds-wrap slds-m-horizontal_medium">
+            <div class="slds-col slds-size_1-of-1">
+                <div class="slds-scoped-notification slds-media slds-media_center slds-scoped-notification_light"
+                     role="status">
+                    <div class="slds-media__figure">
+                        <lightning-icon icon-name="utility:info"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <ul class="slds-list_dotted">
+                            <li>
+                                This member is a delegate to recieve Go365 information for the member(s) listed below.
+                            </li>
+                            <li>Adult member Go365 information cannot be shared with anyone else on the policy</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <template if:true={loaded}>
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1">
+                    <div style="float: left;"
+                         class="slds-var-m-left_small slds-var-m-top_large slds-m-horizontal_medium">
+                        <div class="slds-text">{totalCount} item(s) displayed</div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template if:true={loaded}>
+            <div style="width: auto;" class="slds-var-p-around_medium">
+                <template if:false={bDataPresent}>
+                    <lightning-datatable columns={columns} key-field="id" hide-checkbox-column="true"
+                                         class="slds-table_fixed-layout slds-table_striped" resize-column-disabled>
+                    </lightning-datatable>
+                    <div class="slds-var-p-top_small">
+                        No data available in table.
+                    </div>
+                    <div class=" slds-border_bottom slds-var-p-around_x-small"></div>
+                </template>
+                <template if:true={bDataPresent}>
+                    <lightning-datatable data={filteredKidsDelegation} columns={columns} key-field="id"
+                                         sorted-by={sortedBy} sorted-direction={sortedDirection} onsort={onHandleSort}
+                                         hide-checkbox-column="true" class="slds-table_col-bordered" onloadmore={handleLoadMore}
+                                         enable-infinite-loading resize-column-disabled>
+                    </lightning-datatable>
+                </template>
+            </div>
+        </template>
+        <template if:false={loaded}>
+            <lightning-spinner alternative-text="Loading...."></lightning-spinner>
+        </template>
+    </lightning-card>
+</template>

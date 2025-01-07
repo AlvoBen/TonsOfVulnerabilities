@@ -1,0 +1,20 @@
+﻿<!--
+LWC Name        : memberPlanDetailsHUM.html
+Function        : LWC to display plan tab values under Plan Member Page
+
+Modification Log:
+* Developer Name                Date                       Description
+* Muthukumar                   15/03/2021                  US: 3043287 Member Plan Logging stories Changes.
+****************************************************************************************************************************-->
+<template>
+    <template if:true={memValues}>
+        <template if:false={isCCS}>
+            <c-custom-record-form-hum  record-id={recordId} type='Member Plan Information'  ovalues={memValues}></c-custom-record-form-hum>
+            <c-custom-record-form-hum  record-id={recordId} type='Policy Details' screen-name='Policy Details' ovalues={memValues}></c-custom-record-form-hum>
+            <c-custom-record-form-hum  record-id={recordId} type='Member Ids' screen-name='Member Ids' ovalues={memValues}></c-custom-record-form-hum>
+        </template>
+        <template if:true={isCCS}>
+            <c-custom-record-form-hum  record-id={recordId} type='Member Plan Information CCS'  ovalues={memValues}></c-custom-record-form-hum>
+        </template>
+    </template>
+</template>

@@ -1,0 +1,28 @@
+﻿<!--
+Page Name        : HUMCaseCloneOverride
+Version          : 1.0 
+Created Date     : October 01 2014
+Function         : Page used for overriding the Clone Case button
+
+Modification Log :
+*   Developer Name           Code Review              Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*  Manuel Johnson              18329                10/01/2014              Original Version
+*  Prachi Bhasin							 35929							  08/17/2016						Fix for defect 236597.0001
+*  Harshith Mandya 						 35929								08/23/2016						Fix for defect 238838.0001
+*  Mithra Bharadwaj                                            US#1522825 SonarQube Changes
+-------------------------------------------------------------------------------------------------------------------------------------->
+<apex:page standardController="Case" extensions="HUMCaseCloneOverrideExtension">
+<apex:includeScript value="/support/console/34.0/integration.js" />
+<apex:includeScript value="{!$Resource.CaseCloneOverride_SR_HUM}"/> 
+<script type="text/javascript">
+	window.onload=function()
+	{
+		init();
+	}	
+</script>
+<apex:form id="theForm" >
+	<apex:actionFunction action="{!cloneCase}" name="SaveCase"  onComplete="caseOpenSubtab('{!JSENCODE(caseID)}','{!JSENCODE(sCaseNumber)}'); return false;">
+	</apex:actionFunction>
+</apex:form>
+</apex:page>

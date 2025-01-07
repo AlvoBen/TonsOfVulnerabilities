@@ -1,0 +1,27 @@
+﻿<!--
+
+Page Name        : HUMInquiryHistory
+Version          : 1.2
+Created On       : 5/09/2014
+Function         : VF page to display retrieve history from the controller HUMInquiryHistoryController
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         DESCription
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Srikant Joshi              17175                    05/15/2014                 Original Version
+ * Srikant Joshi              17175                    07/21/2014                 Added Launching GCP part
+ * Shruthi Karanth            18180                    09/25/2014                 Added setFocusOnLoad function in JavASCript so that the focus is not shifted to 
+                                                                                  Start Date on load of Account detail page.
+ * Vishal Verma               18994                    11/05/2014                 Remove .(dot) from the page ,  Fix for defect 160234.0001
+ * Vishal Verma               22273                    04/03/2015                 Req  - 166509 -1.Added Date , Reference Id filters as mandatory parameters .
+                                                                                     		     2. Moved the reusable code to HUMInquiryHistoryComponent
+ ****************************************************************************************************************************
+ -->
+
+<apex:page id="thePage" standardController="Account" tabStyle="Account" sidebar="false" docType="html-5.0">
+	<apex:includescript value="{!URLFOR($Resource.HUMInquiryHistory,'/HUMInquiryHistory/HUMInquiryHistory.JS')}"/> 
+    <c:HUMInquiryHistoryComponent />
+    <script type='text/javascript'>
+    	var sInquiryHistoryPageName = '{!$Page.HUMInquiryHistory}';
+    </script>
+</apex:page>

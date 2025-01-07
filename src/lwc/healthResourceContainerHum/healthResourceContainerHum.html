@@ -1,0 +1,98 @@
+﻿<!--
+LWC HTML Name : HealthResourceContainerHum.HTML
+Function    : show enrolled and available programs 
+Modification Log: 
+Developer Name                       Date                         Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Ritik Agarwal                    10/04/2021                    initial version - US 2686683
+* Ritik Agarwal                    10/07/2021                    filter on Available table
+* Ritik Agarwal                    10/11/2021                    filter carryover to subtab
+* Pavan Kumar M                    07/14/2022                    US:3374875
+* Pavan Kumar M                    07/21/2022		             Bug: 3652037
+* Vardhman Jain                  09/02/2022                US: 3043287 Member Plan Logging stories Changes.
+*-->
+
+
+<template>
+    <template if:true={isData}>
+        <div if:false={showEnroll} class="full-container slds-is-relative">
+            <article
+                class="slds-card slds-card_boundary slds-grid slds-grid--vertical full-container slds-m-top_medium">
+                <div class="hc-standard-table-styles">
+                    <header
+                        class=" slds-card__header slds-grid slds-p-right_none slds-media slds-media_center slds-has-flexi-truncate slds-grid_align-spread">
+                        <div class="slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-media__figure">
+                                <lightning-icon icon-name="standard:service_resource" size="small"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <h2 class="slds-card__header-title hc-enrolled-pgrams">{labels.Enroll_Program_HUM} ({hlthResCount.enrollCount})</h2>
+                            </div>
+                        </div>
+                    </header>
+                    <div
+                    class="slds-grid slds-col slds-grid_align-end slds-grid_vertical-align-end slds-m-bottom_small slds-m-right_small">
+                    <label class="slds-form-element__label slds-no-flex">{labels.HUM_FilterByWord}</label>
+                    <lightning-input class="inputfield1" type="text" name="EnrollPrograms" label={labels.HUM_FilterByWord}
+                        value="" onchange={findByWord} variant="label-hidden">
+                    </lightning-input> &nbsp; &nbsp;
+                    <div onclick={resetIcon} data-id="EnrollPrograms">
+                        <lightning-icon class="health-filter-icon slds-p-around_x-small" icon-name={iconName} data-id="enrolliconid"
+                            size="x-small"></lightning-icon>
+                    </div>
+                </div>
+                </div>
+                <div class="slds-grid full-container slds-is-relative slds-p-horizontal_none">
+                    <c-standard-table-component-hum class="full-container enrolled"
+                        show-view-all={showEnrolledViewAll} title="Enrolled Programs" templatemodal={enrollResponseModal}
+                        response={enrollResponse} name-of-screen="Enrolled Programs"
+                        no-data-message={labels.Hum_NoResultsFound} b-hide-title=true
+                        b-infinite-scroll={bInfiniteScroll} default-header-icon='standard:service_resource'
+                        o-view-all-params={oViewAllParams.enrollPrograms} related-input-field={loggingRelatedFieldEnrl} screen-name="Enrolled Programs">
+                    </c-standard-table-component-hum>
+                </div>
+            </article>
+        </div>
+
+        <div if:false={showAvail} class="full-container slds-is-relative">
+            <article
+                class="slds-card slds-card_boundary slds-grid slds-grid--vertical full-container slds-m-top_medium">
+                <div class="hc-standard-table-styles">
+                    <header
+                        class=" slds-card__header slds-grid slds-p-right_none slds-media slds-media_center slds-has-flexi-truncate slds-grid_align-spread">
+                        <div class="slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-media__figure">
+                                <lightning-icon icon-name="standard:service_resource" size="small"></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <h2 class="slds-card__header-title hc-available-pgrams">{labels.Available_Program_HUM} ({hlthResCount.availableCount})</h2>
+                            </div>
+                        </div>
+                    </header>
+                    <div
+                        class="slds-grid slds-col slds-grid_align-end slds-grid_vertical-align-end slds-m-bottom_small slds-m-right_small">
+                        <label class="slds-form-element__label slds-no-flex">{labels.HUM_FilterByWord}</label>
+                        <lightning-input class="inputfield" type="text" name="AvailablePrograms" label={labels.HUM_FilterByWord}
+                            value="" onchange={findByWord} variant="label-hidden">
+                        </lightning-input> &nbsp; &nbsp;
+                        <div onclick={resetIcon} data-id="AvailablePrograms">
+                            <lightning-icon class="health-filter-icon slds-p-around_x-small" icon-name={iconName} data-id="availableiconid"
+                                size="x-small"></lightning-icon>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="slds-grid full-container slds-is-relative slds-p-horizontal_none">
+                    <c-standard-table-component-hum class="full-container available" show-view-all={showAvailViewAll}
+                        title="Available Programs" templatemodal={availableResponseModal} response={availableResponse}
+                        name-of-screen="Available Programs" no-data-message={labels.Hum_NoResultsFound}
+                        o-view-all-params={oViewAllParams.availablePrograms} b-hide-title=true
+                        b-infinite-scroll={bInfiniteScroll} default-header-icon='standard:service_resource' related-input-field={loggingRelatedFieldAvl} screen-name="Available Programs">
+                    </c-standard-table-component-hum>
+                </div>
+            </article>
+        </div>
+    </template>
+    <c-search-no-result-hum if:true={serviceFailure} no-result-message={serviceFailureMsg}>
+    </c-search-no-result-hum>
+</template>

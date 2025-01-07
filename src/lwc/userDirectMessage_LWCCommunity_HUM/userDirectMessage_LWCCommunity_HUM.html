@@ -1,0 +1,92 @@
+﻿<template>
+  <template if:true={isButtonVisible}>
+    <lightning-button
+      label="Send A Message"
+      class="sendMessageButton slds-m-left_medium"
+      variant="brand"
+      onclick={openmodal}
+    ></lightning-button>
+  </template>
+    <!--Desktop View-->
+    <template if:true={isModalOpen}>
+        <div class="messageBox ssp-desktopView">
+            <div class="slds-grid slds-wrap slds-m-bottom_x-large slds-grid_align-spread slds-size_1-of-1">
+                <div class="header">{label.sendMessageLabel}</div>
+                <div>
+                    <span class="closeText" >{label.closeLabel}</span>
+                    <lightning-button-icon
+                      id="closeIconIdDesktop"
+                      icon-name="utility:close"
+                      size="large"
+                      onclick={closemodal}
+                      alternative-text="Close"
+                      class="ssp-generalInformationCardCrossIcon"
+                    ></lightning-button-icon>
+                  </div>
+            </div>
+            <div class="textArea">
+                <lightning-textarea name="msgbox" class="msg" placeholder={label.PlacehlderText} required></lightning-textarea>
+            </div>
+            <div class="sendButton">
+                <lightning-button
+                    label="Send"
+                    data-device="desktop"
+                    class="sendButton"
+                    variant="brand"
+                    onclick={sendmessage}
+                 ></lightning-button>
+            </div>
+        </div>
+    </template>
+    <!--Mobile View-->
+    <template if:true={isModalOpen}>
+        <section
+          role="dialog"
+          aria-haspopup="dialog"
+          tabindex="-1"
+          aria-labelledby="modal-heading-01"
+          aria-modal="true"
+          aria-describedby="modal-heading-01"
+          class="slds-modal slds-fade-in-open ssp-mobileView"
+        >
+          <div class="slds-modal__container">
+            <header
+              id="modal-heading-01"
+              class="slds-modal__header slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-grid slds-wrap"
+            >
+              <div class="slds-size_1-of-2">
+                <span class="modalHeader" tabindex="0">{label.sendMessageLabel}</span>
+              </div>
+              <div class="slds-size_1-of-2">
+                <span class="closeButton" >{label.closeLabel}</span>
+                <lightning-button-icon
+                  id="closeIconId"
+                  icon-name="utility:close"
+                  size="large"
+                  onclick={closemodal}
+                  alternative-text="Close"
+                  class="ssp-generalInformationCardCrossIcon"
+                ></lightning-button-icon>
+              </div>
+            </header>
+            <div class="slds-modal__content" tabindex="0">
+              <div class="ssp-modalContent bodyPadding" id="modal-content-id-1">
+              <div class="textArea">
+                  <lightning-textarea name="msgbox" class="msg" placeholder={label.PlacehlderText} required></lightning-textarea>
+              </div>
+                 <div class="sendButton">
+                  <lightning-button
+                      label="Send"
+                      class="sendButton"
+                      data-device="mobile"
+                      variant="brand"
+                      onclick={sendmessage}
+                   ></lightning-button>
+              </div>
+              </div>
+            </div>
+          </div>
+        </section>
+         <div class="slds-backdrop slds-backdrop_open ssp-mobileView"></div>
+      </template>
+</template>

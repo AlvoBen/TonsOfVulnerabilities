@@ -1,0 +1,43 @@
+﻿<!--*****************************************************************************************************************************
+LWC Name : genericDropDownHum.html
+Function    : This LWC component serves as input for to search member data in CRM strides
+
+Modification Log: 
+Developer Name           Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Supriya Shastri       02/04/2021                   Initial version
+* Mohan Kumar           02/04/2021                	Original Version
+* Mohan kuamr N         06/01/2021                	DF-3167
+* Mohan kuamr N         09/01/2021                	US:2337436 Adding Accessibility
+* Mohan kuamr N         09/29/2021                	DF: 3812
+*******************************************************************************************************************************-->
+<template>
+    <div class="hc-dropdown hc-generic-dropdown" aria-expanded={showList} aria-haspopup="listbox">
+        <div class="slds-is-relative" role="none">
+            <label class="slds-form-element__label hc-generic-dropdown slds-p-right_none">{label}
+                <input name="input" role="textbox" onkeyup={onKeyUpHandler} class={inputClass} type="text"
+                    onfocus={onFocusHandler} onfocusout={onFocusOutHandler} placeholder={placeholder} onblur={onBlurHandler} onreset={onResetValue}
+                    aria-label={label} onclick={onTriggerClick}/>
+            </label>
+            <lightning-icon class="hc-dropdown-arrow hc-generic-dropdown slds-input__icon" onclick={onTriggerClick}
+                icon-name="utility:down" tabindex="-1" size="xx-small"></lightning-icon> 
+            <div if:true={isSelected} class="slds-input hc-dropdown-selection">
+                <span class="slds-truncate" title={selectedValue}>{selectedValue}</span>
+                <lightning-button-icon class="close-icon" onclick={onSelectionClear}
+                    variant="bare" icon-name="utility:clear" size="medium">
+                </lightning-button-icon>
+            </div>
+        </div>
+        <div if:true={bShowErrorMsg} role="alert" class="has-error slds-form-element__help">{labels.required_msg_HUM}
+        </div>
+        <template if:true={showList}>
+            <ul class="slds-listbox slds-listbox_vertical 
+        slds-dropdown slds-dropdown_fluid slds-dropdown_left list-scroll" role="listbox" aria-label={label}>
+                <template for:each={listItems} for:item="liItem" for:index="index">
+                    <li key={liItem.value} onclick={onSelection} class="slds-media slds-listbox__option slds-media_center 
+                slds-media_small slds-listbox__option_plain" data-options-id={index} role="option">{liItem.label}</li>
+                </template>
+            </ul>
+        </template>
+    </div>
+</template>

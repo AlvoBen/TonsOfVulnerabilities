@@ -1,0 +1,235 @@
+﻿<!-- 
+ * Copyright (c) 2012, Salesforce.com, Inc.  All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ * 
+ *   * Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 
+ *   * Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in
+ *     the documentation and/or other materials provided with the
+ *     distribution.
+ * 
+ *   * Neither the name of Salesforce.com nor the names of its
+ *     contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<apex:page controller="HSU_UserAccessDetailsController" setup="true">
+  <apex:stylesheet value="{!URLFOR($Resource.HSU_UserAccessDetails_jQuery2, 'css/smoothness/jquery-ui-1.8.16.custom.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.HSU_UserAccessDetails, 'css/HSU_UserAccessDetails.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.HSU_GuidedTour, 'css/hopscotch.min.css')}"/>
+
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.HSU_UserAccessDetails_jQuery2, 'js/jquery-ui-1.8.16.custom.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.HSU_UserAccessDetails, 'js/HSU_UserAccessDetails.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.HSU_GuidedTour, 'js/hopscotch.js')}"/>  
+   <script type="text/javascript">
+var tour = {
+      id: "UserAccessDetailsTour",
+      showPrevButton: true,
+      arrowWidth: 5,
+      steps: [
+        {
+          title: "Welcome to User Access Details",
+          content: "User Access Details provides a visualization of a user's complete set of access rights including the users profile and permission sets.",
+          target: "TourHeader",
+          placement: "right",
+          xOffset: 200,
+          yOffset: -10
+        },
+        {
+          title: "User Permissions",
+          content: "This section displays the User's Application and System Permissions.",
+          target: "TourUserPermissions",
+          placement: "top",
+          yOffset: -50
+        },        
+        {
+          title: "The Total Access Row",
+          content: "The top row, TOTAL ACCESS, provides you the full information on what permissions this user has.",
+          target: "TourUserPermissions",
+          placement: "top",
+          yOffset: 40
+        },
+        {
+          title: "The Profile",
+          content: "The 2nd row provides you the permissions that are granted at the Profile.",
+          target: "TourUserPermissions",
+          placement: "top",
+          yOffset: 40
+        },
+        {
+          title: "The Permission Sets",
+          content: "The 3rd row and remaining rows provide you the permissions that are granted at the Permission Set.",
+          target: "TourUserPermissions",
+          placement: "top",
+          yOffset: 40
+        },
+        {
+          title: "Object Information",
+          content: "This section displays the Object Permissions.  The rows follow the same logic as the User Permissions",
+          target: "TourObjectInformation",
+          placement: "top"          
+        },
+        {
+          title: "Org Wide Defaults and Sharing",
+          content: "However, please be aware that Record Level Org Wide Defaults and Sharing Rules are not accounted for in this view.",
+          target: "TourOWDSharing",
+          placement: "bottom",
+          yOffset: 20          
+        },
+        {
+          title: "Field Level Security",
+          content: "You can click on the object name to load the Field Level Security for the object.",
+          target: "TourFieldLevelSecurity",
+          placement: "top",
+          xOffset: 250
+        },
+        {
+          title: "Apex Classes",
+          content: "This section lists the Apex Classes this user has access to.",
+          target: "TourApexClasses",
+          placement: "top"
+        },
+        {
+          title: "Visual Force Pages",
+          content: "This section lists the Visual Force Pages this user has access to.",
+          target: "TourVFPages",
+          placement: "top"
+        },
+        {
+          title: "Tour Completed",
+          content: "If you want to take this tour again, please use the 'Launch Tour' button.",
+          target: "TourHeader",
+          placement: "top"
+        }
+      ]
+    };
+  </script>
+  <apex:form >
+   
+    <apex:outputPanel layout="none">
+      <span id="TourHeader"/>
+      <apex:sectionHeader title="User Access Details" subtitle="{!userFullName}">
+        <apex:commandButton id="btnLaunchTour" value="Launch Tour" onclick="hopscotch.startTour(tour,0); return false;" />
+      </apex:sectionHeader>    
+
+      <apex:pageBlock title="User Permissions">
+        <span id="TourUserPermissions"/>
+        <c:HSU_UserAccess_PermsetAccessTable tableClass="userPermTable" 
+                              rows="{!permsetInfo}" 
+                              headings="{!userPermLabels}" 
+                              enabledCols="{!userPermStatus}">
+          <div style="width: 21px">
+            <apex:image value="/img/checkbox_checked.gif" alt="Checked" styleClass="checkImg" 
+                        title="Checked" rendered="{!userPerms[row.Id][heading.apiName]}"/>
+          </div>
+        </c:HSU_UserAccess_PermsetAccessTable>
+      </apex:pageBlock>
+      <span id="TourObjectInformation"/>
+      <apex:pageBlock title="Object Information">
+        <span id="TourOWDSharing">
+          <b>This does not take into account any OWD or Sharing rules</b>
+        </span>
+        <p>&nbsp;</p>
+          
+        <apex:pageBlockButtons location="top">
+          <!-- We don't actually have any buttons, but this gives us an easy way to include a legend -->
+          <b>Legend:</b>
+          <span class="permissionscreate_true">Create</span>,
+          <span class="permissionsread_true" style="color: white">Read</span>,
+          <span class="permissionsedit_true">Edit</span>,
+          <span class="permissionsdelete_true">Delete</span>,
+          <span class="permissionsviewallrecords_true">View All Records</span>,
+          <span class="permissionsmodifyallrecords_true">Modify All Records</span>
+        </apex:pageBlockButtons>
+      
+        <span id="TourFieldLevelSecurity"/>
+        <c:HSU_UserAccess_PermsetAccessTable tableClass="objectPermTable" columnClass="objectColumn"
+                              rows="{!permsetInfo}"
+                              headings="{!objectLabels}"
+                              enabledCols="{!objectPermStatus}">
+          <table class="objectPermDetail" cellpadding="0" cellspacing="0">
+            <tr>
+              <apex:repeat var="perm" value="{!objectPermFieldNames}">
+                <td class="obj_{!heading.apiName}">
+                  <div class="objectPermField {!perm}_{!objectPerms[row.Id][heading.apiName][perm]}">
+                    &nbsp;
+                  </div>
+                </td>
+              </apex:repeat>
+            </tr>
+          </table>
+        </c:HSU_UserAccess_PermsetAccessTable>
+        <!-- Defines a JavaScript function we can call to reload the FLS table -->
+        <apex:actionFunction action="{!loadFls}" name="loadFls" rerender="flsTable" 
+                             oncomplete="drawCanvas(event);">
+          <apex:param name="flsObjectType" assignTo="{!flsObjectType}" value=""/>
+          <apex:param name="eventTarget" value=""/>
+        </apex:actionFunction>
+        
+        <apex:outputPanel layout="block" styleClass="flsInfo" rendered="{!NOT(ISNULL(flsObjectType))}">
+          <!-- Gives us someplace to draw our cool, attention-getting polygon -->
+          <div id="canvasDiv" style="height: 24px">
+            <canvas height="24px" class="fls-canvas"/>
+          </div>
+          <apex:outputPanel id="flsTable" layout="block" styleClass="flsTableContainer">
+            <div class="flsTableContainerHeading">Field Level Security: {!flsObjectType}</div>
+          <br/>
+          <br/>
+            <c:HSU_UserAccess_PermsetAccessTable tableClass="flsTable" columnClass="flsColumn"
+                                  rows="{!permsetInfo}" 
+                                  headings="{!fieldLabels}"
+                                  enabledCols="{!fieldStatus}"
+                                  displayHiddenColumns="True">
+              <table class="flsDetail" cellpadding="0" cellspacing="0">
+                <tr>
+                  <apex:repeat var="perm" value="{!flsPermFieldNames}">
+                    <td class="fls_{!heading.apiName}">
+                      <div class="flsCell {!perm}_{!fls[row.Id][heading.apiName][perm]}">&nbsp;</div>
+                    </td>
+                  </apex:repeat>
+                </tr>
+              </table>
+            </c:HSU_UserAccess_PermsetAccessTable>
+          </apex:outputPanel>
+        </apex:outputPanel>
+      </apex:pageBlock>
+      <span id="TourApexClasses"/>
+      <apex:pageBlock title="Apex Classes">
+        <c:HSU_UserAccess_PermsetAccessTable tableClass="apexClassTable" rows="{!permsetInfo}" headings="{!classNames}"
+                              enabledCols="{!classStatus}">
+          <div style="width: 21px">
+            <apex:image value="/img/checkbox_checked.gif" alt="Checked" styleClass="checkImg" 
+                        title="Checked" rendered="{!apexClasses[row.Id][heading.apiName]}"/>
+          </div>
+        </c:HSU_UserAccess_PermsetAccessTable>
+      </apex:pageBlock>
+       <span id="TourVFPages"/>
+      <apex:pageBlock title="Visual Force Pages">
+        <c:HSU_UserAccess_PermsetAccessTable tableClass="vfPageTable" rows="{!permsetInfo}" headings="{!pageNames}"
+                              enabledCols="{!pageStatus}">
+          <div style="width: 21px">
+            <apex:image value="/img/checkbox_checked.gif" alt="Checked" styleClass="checkImg" 
+                        title="Checked" rendered="{!pages[row.Id][heading.apiName]}"/>
+          </div>
+        </c:HSU_UserAccess_PermsetAccessTable>
+      </apex:pageBlock>
+    </apex:outputPanel>
+  </apex:form>
+</apex:page>

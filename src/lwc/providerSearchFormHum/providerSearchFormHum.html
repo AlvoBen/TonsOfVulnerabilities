@@ -1,0 +1,123 @@
+﻿<!--*****************************************************************************************************************************
+LWC Name    : providerSearchFormHum.html
+Function    : This component is to display the search form of provider account. 
+
+Modification Log: 
+Developer Name           Code Review                      Date                         Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Pradeep Dani                                          12/18/2020                    initial version
+* Supriya Shastri                                       02/24/2021                   Added generic dropdown
+* Saikumar Boga                                         06/14/2021                    Changes Related to Unknown Provider Form
+* Mohan Kumar N                                         08/09/2021                US: 2363825 - standardizing icons
+* Firoja Begam                 			                10/08/2021                   Character Limits Provider Search
+* Pavan Kumar M                                         07/14/2022               US : 3334298
+******************************************************************************************************************************-->
+<template>
+    <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_2-of-12 ">
+            <div class="provider-form">
+                <div class="form-header">
+                    <lightning-icon icon-name="standard:medication_ingredient" size="small"></lightning-icon>
+                    <h1 class="slds-var-p-left_x-small slds-var-p-right_xx-small">{labels.Hum_Provider_Search}</h1>
+                    <c-custom-tooltip-hum help-text={labels.Hum_Provider_Search_help}></c-custom-tooltip-hum>
+                </div>
+                <div class="slds-is-relative">
+                    <lightning-input class="inputfield" type="text" label="Tax ID" name="pTaxID" maxlength="9"
+                        data-id="sTaxID" value={sTaxID} onchange={onFieldChange} onkeyup={enterSeach}>
+                    </lightning-input>
+                    <lightning-helptext content={labels.Hum_Provider_TaxHelp} class="start-help-text slds-is-absolute">
+                    </lightning-helptext>
+                </div>
+
+                <lightning-input class="inputfield" type="text" label="NPI" name="pNPI" value={sNPI} maxlength="10"
+                    data-id="sNPI" onchange={onFieldChange} onkeyup={enterSeach}>
+                </lightning-input>
+
+                <lightning-input class="inputfield" type="text" label="Facility / Provider Group" name="pFacilityName"
+                    max-length="105" data-id="sFacilityName" onchange={onFieldChange} value={sFacilityName}>
+                </lightning-input>
+
+                <label class="slds-form-element__label slds-no-flex">First Name</label>
+                <lightning-input class="NameHighlightProvider inputfield" type="text" label="First Name"
+                    data-id="sFirstName" name="pFirstName" value={sFirstName} max-length="25" onfocus={highlightFieldsProvider}
+                    onblur={removehighlightProvider} onchange={onFieldChange} variant="label-hidden"
+                    onkeyup={enterSeach}>
+                </lightning-input>
+
+                <label class="slds-form-element__label slds-no-flex">Last Name</label>
+                <lightning-input class="NameHighlightProvider inputfield" type="text" label="Last Name" name="pLastName"
+                    data-id="sLastName" value={sLastName} max-length="25" onfocus={highlightFieldsProvider}
+                    onblur={removehighlightProvider} onchange={onFieldChange} variant="label-hidden"
+                    onkeyup={enterSeach}>
+                </lightning-input>
+
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col slds-size_1-of-2">
+                        <c-generic-drop-down-hum options={stateOptions} value={sState} placeholder={labels.HUMSelectLabel}
+                            onfocus={highlightFieldsProvider} has-selection={stateValue}
+                            onselect={stateSelectionHandler} onclear={clearStateHandler}
+                            onblur={removehighlightProvider} label="State" is-valid={showValidationMsg}>
+                        </c-generic-drop-down-hum>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input type="text" class="inputfield" onfocus={highlightFieldsProvider}
+                            onblur={removehighlightProvider} name="pZipCode" data-id="sPostalCode" label="Zip Code"
+                            value={sPostalCode} maxlength="5" onchange={onFieldChange} onkeyup={enterSeach}>
+                        </lightning-input>
+                    </div>
+                </div>
+				<div if:true={showValidationMsg} class="slds-col">
+					<div class="slds-text-color_error message-container">
+						<span>{labels.Hum_State_Name}</span>
+					</div>
+                </div>
+                <c-generic-drop-down-hum options={specialityOpts} value={sSpeciality} placeholder={labels.dropdownPlaceholderHum}
+                    onfocus={highlightFieldsProvider} onselect={specialtySelectionHandler} onclear={clearSpecialtyHandler}
+                    onblur={removehighlightProvider} label="Specialty" has-selection={specialtyValue}
+                    is-valid={showSpecialityError}></c-generic-drop-down-hum>
+                <div if:true={showSpecialityError} class="slds-col">
+                    <div class="slds-text-color_error message-container">
+                        <span>{labels.Hum_Specialty_Name}</span>
+                    </div>
+                </div>
+
+                <div class="slds-clearfix slds-p-top_xx-large">
+                    <div class="slds-grid slds-grid_vertical">
+                        <div class="slds-col">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col">
+                                    <button class="slds-button slds-button_stretch slds-button_neutral"
+                                        onclick={handleResetProvider}>{labels.HUMResetButtonLabel}</button>
+                                </div>
+                                <div class="slds-col slds-var-p-left_small">
+                                    <button class="slds-button slds-button_stretch slds-button_brand"
+                                        onclick={handleSearch}>{labels.HUMSearchButton}</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div if:true={showErrorMsg} class="slds-col">
+                            <div class="slds-text-color_error message-container" id="error">
+                                {labels.HUM_Provider_Search_Fields_Not_Entered}</div>
+                        </div>
+                        <div class="slds-col ">
+                            <div class="slds-p-top_x-large">
+                                <button class="slds-button slds-button_stretch slds-button_neutral no-padding"
+                                    onclick={handleUnknownSearch}>{labels.HUMProvider_Unknown_Search}</button>
+                            </div>
+                        </div>
+                        <div class="slds-col ">
+                            <div class="slds-var-p-top_small">
+                                <button
+                                    class="slds-button slds-button_stretch slds-button_neutral no-padding" onclick={handleCreate} name="btnCreate">{labels.HUMProvider_Unknown_Create}</button>
+                            </div>
+                        </div>
+						<c-unknown-provider-form-hum  onselected={handleCreateSearch}>{labels.HUMProvider_Unknown_Search}</c-unknown-provider-form-hum>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_10-of-12">
+            <c-provider-search-tables-hum></c-provider-search-tables-hum>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,76 @@
+﻿<apex:page controller="DpaasWebServiceClient" tabStyle="Account">
+    <script>
+        function confirmCancel(){
+            var foundCancel = confirm("Are you sure you want to cancel?");
+            if(foundCancel){
+                return true;
+            }
+            return false;
+        }
+    </script>
+    
+    <apex:sectionHeader title="DPaaS Wizard: Decryption & Detokenization" subtitle="Step 2 of 2"/>
+    <apex:form >
+      <apex:outputLabel >Result status is : {!resultStatus}</apex:outputLabel>.
+      <apex:panelGrid rendered="{!isError}">
+        <b>Following Exception has been Throwed by Salesforce</b><br/> 
+        <div class="searchResultsMessageContainer">
+            <div class="message warningM4" id="">
+            <table class="messageTable" border="0" cellpadding="0" cellspacing="0">
+            <tbody>
+            <tr>
+            <td><img src="/s.gif" alt="Warning" class="msgIcon" title="Warning"/></td>
+            <td class="messageCell">
+            <apex:outputLabel >{!status}</apex:outputLabel>.    
+                
+                  
+            </td>
+            </tr>
+            </tbody>
+            </table>
+            </div>
+            <div class="searchResultsTipsContainer">
+             <div class="searchResultsTipsHeader">Note:</div>
+                 <ul>
+                     <li>Look for the Remote Site Settings,Your Server IP should be in the Remote Site URLs List.</li>
+                     <li>Look for End Point Url in Custom Settings which has to Point your Server.</li>
+                 </ul>
+            </div>
+        <br/><br/>    
+        <center><apex:commandButton action="{!finish}" value="Finish"/></center>
+        </div>                  
+      </apex:panelGrid>
+      
+      <apex:pageBlock title="Detokenization Field Wizard" mode="edit" rendered="{!render}">
+          <apex:pageBlockButtons location="bottom">
+              <apex:commandButton action="{!detokenizationFinish}" value="Finish"/>
+          </apex:pageBlockButtons>
+          
+          <apex:pageBlockSection >
+              <apex:panelGrid columns="2" id="DetokenizationGrid" width="500px">
+                  <apex:pageBlock >
+                  <apex:repeat value="{!detokenizedTokens}" var="dpaasDecryptedFieldVo" rendered="{!!ISBLANK(detokenizedTokens)}">
+                      <apex:pageBlock >
+                      <apex:pageBlockSection >
+                          <apex:outputLabel value="Application Name" for="cipherTextValue"/>
+                          <apex:outputText id="applicationName" value="{!dpaasDecryptedFieldVo.applicationName}"/>
+                      
+                          <apex:outputLabel value="CipherText Value" for="cipherTextValue"/>
+                          <apex:outputText id="cipherTextValue" value="{!dpaasDecryptedFieldVo.cipherTextValue}"/>
+                          
+                          <apex:outputLabel value="ClearText Value" for="clearTextValue"/>
+                          <apex:outputText id="clearTextValue" value="{!dpaasDecryptedFieldVo.clearTextValue}"/>
+                          
+                          <apex:repeat value="{!dpaasDecryptedFieldVo.errorMessage}" var="errorMessage" rendered="{!!ISBLANK(dpaasDecryptedFieldVo.errorMessage)}">
+                          <apex:outputLabel value="Error Message" for="errorMessage" style="color:red"/>
+                          <apex:outputText id="errorMessage" value="{!errorMessage.message}" style="color:red"/>
+                        </apex:repeat>
+                      </apex:pageBlockSection>
+                      </apex:pageBlock>
+                  </apex:repeat>    
+                  </apex:pageBlock>
+              </apex:panelGrid>
+          </apex:pageBlockSection>
+      </apex:pageBlock>
+    </apex:form>
+</apex:page>

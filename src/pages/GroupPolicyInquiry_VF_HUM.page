@@ -1,0 +1,35 @@
+﻿<!--
+Page Name        : GroupPolicyInquiry_VF_HUM
+Version          : 1.0
+Created On       : 11/20/2015
+Function         : VF page to display retrieve history Button
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Sruthi Adivikolanu          28156                   11/20/2015                    Original Version
+ * Pallavi R                   71716                   02/14/2017                    REQ 300069 - Async callout changes
+ * Sayali Nemade                                       07/24/2020                    REQ - 1212111 : MF 3 - CRM User Access to CCP    GCP Data in Repository (Legacy Contact History Section - Group) 
+ * Sayali Nemade 								       09/03/2020                REQ - 1170241 DF -1509 Not able to see data on UI for Group, Provider and Agent/Broker 
+ * Sayali Nemade 					   				   09/12/2020                REQ - 1138575 Logging Component for Inquiry Details
+ * Tharun Madishetti							       03/01/2024				   US-5318077 : Consumer Mgt-Classic-VIT Remediation Member Plan and Verify Demographics; VIT37935988,VIT37935989
+ ****************************************************************************************************************************
+ --> 
+
+<apex:page id="thePage" standardController="Policy__c" tabStyle="Policy__c" sidebar="false" docType="html-5.0"  extensions="GroupPolicyInquiry_C_HUM">
+    <apex:includescript value="{!URLFOR($Resource.HUMInquiryHistory,'/HUMInquiryHistory/HUMInquiryHistory.JS')}"/>
+    <c:HUMInquiryHistoryConponent_R1 rendered="{!bSwitchlegacyContactHistory == false}"/>
+	<c:InquiryHistory_CMP_HUM rendered="{!bSwitchlegacyContactHistory == true}" sInteractingAboutCCPGCP="{!sInteractingAboutCCPGCP}" sSelectedPolicy="{!sSelectedPolicy}" sAccName="{!sAccName}" sProductName="{!sProductName}" sEnterpriseID="{!sEnterpriseID}" sRecordId="{!$CurrentPage.parameters.id}" sMemberId="{!sMemberId}"/>
+   
+    <script type='text/javascript'>
+        var sInquiryHistoryPageName = '{!$Page.GroupPolicyInquiry_VF_HUM}';
+		var sPageName = '{!sPageName}';
+		var sInteractingAboutCCPGCP = '{!JSENCODE(sInteractingAboutCCPGCP)}';
+        var sSelectedPolicy = '{!sSelectedPolicy}';
+        var sAccName = '{!JSENCODE(sAccName)}'; 
+        var sProductName = '{!JSENCODE(sProductName)}';
+		var sEnterpriseID = '{!JSENCODE(sEnterpriseID)}';
+		var sRecordId = '{!$CurrentPage.parameters.id}';
+        var sMemberId = '{!sMemberId}';
+    </script>
+</apex:page>

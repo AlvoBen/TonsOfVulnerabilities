@@ -1,0 +1,287 @@
+﻿<!--
+Page Name        : HUMLiveChatWindow
+Version          : 1.0 
+Created Date     : SEPTEMBER 18 2014
+Function         : Custom Chat Window page for Live Agent 
+Modification Log :
+*   Modification ID     Developer          Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*           1.0         Sagar Tapadia       18240           09/18/2014               Original Version
+*           2.0         Sagar Tapadia       18240           09/18/2014               Javascripts are kept on page and not moved into static resource. Reason: Liveagent related JS are loaded after static resource loads. It is using attributes which is dependent on liveagent variable. If liveagent is moved into static resource, it is throwing error as liveagent undefined because deployment.js file is loaded after static resource and liveagent attribute is defined in deployment.js file.
+*           3.0         Sagar Tapadia       18732           10/22/2014               Added Space between waiting screen message.    
+*           4.0         Sagar Tapadia       18975           10/30/2014               Updated Code for changes related to CR-50, Humana Analytics with Chat.    
+*           5.0         Sagar Tapadia       19849           12/10/2014               Fix for Defect:158671: Instead of Using page URL, Use of URL query string to get deployment and company Id.                                                                          
+*           6.0         Isaac Lehr          Quick Fix       12/19/2014               Removed style="display: none;" from line 150
+*			7.0			Sagar Tapadia		20293			01/12/2015				 Updated Page to handle Creation of Chat transcript custom on click of End Chat button.
+*			8.0			Sagar Tapadia		20302			01/13/2015				 Changes done to set owner of custom record as agent with whom chat is being done.
+*			9.0			Sagar Tapadia		21883 			03/26/2015			     CA Ticket#4974139: Move Core metrics code to Page rather than keep it inside static resource.
+*			10.0		Sagar Tapadia		23562			05/28/2015				 CA5027355:Updated Code to create custom chat transcript record when agent accepts the chat and not on chat end.
+*			11.0		Pradeepkumar Dani	29608			02/01/2016			     Done changes for REQ-241101: Storing the values from the prechat page
+*			1.14		Pradeepkumar Dani	34627	  		08/04/2016			 	 Updated page with VF standards - REQ - 270091
+*			2.1         Rajesh C	        144547		    11/03/2017               REQ - 321230 CRM will expose the unique identifier(s) that can be used to link Chat and Web Data sets
+*           3.1         Rajesh CG           158171 			12/15/2017          	 REQ - 337743 Configure Customer Alert Setting for Live Agent CR-701
+*			3.2         Rajesh C        	171913									 REQ - 350669 CR735: Securing the Save Chat Option - Live Chat & Post Chat Windows
+*           3.3         Prafull Verma	    328794	        12/28/2018               REQ - 380424: Web Chat Windows Display Proportionately on Small Glass.
+*   	    3.4         Praveen Kumar Parimi 	            11/01/2019			     REQ - 409545 - Adding Tealium Script to the Chat Pages.
+*           3.5         Akshay Pai                          01/18/2021               REQ - 1685604 - Visual Cue for New Messages in Chat Window - MyHumana
+*			3.6			Lakshmi Madduri						2/16/2021				 REQ-1685604 Switch Creation
+*           3.7         T. Prasanna Sai Kumar               04/05/2021               REQ - 1915569  Live Agent Security Vulnerabilities for SonarQube Scan - MyHumana Secure Live Agent
+-------------------------------------------------------------------------------------------------------------------------------->
+<apex:page controller="HUMPreChatController" showHeader="false" id="pageID" standardStyleSheets="false" action="{!initVariable}">
+    <!-- JS Cannot be moved to Static Resource as Live agent JS loads after static resource and 
+	liveagent attribute is defined in deployment.js file which will load after static resource.
+	It will throw error as liveagent is undefined if JS moved into static resource.
+	-->
+	<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <script type="text/javascript">
+		//Code related to Code Metrics.
+        var src = "{!JSENCODE(sWebChatVarMap['CodeMetricsJS'].value__c)}";
+        if (window.location.host.substring(0, 2) == "qa") 
+        {
+            src = "{!JSENCODE(sWebChatVarMap['CodeMetricsQaJS'].value__c)}";
+        } 
+        else if (window.location.host.substring(0, 4) == "test") 
+        {
+            src = "{!JSENCODE(sWebChatVarMap['CodeMetricsTestJS'].value__c)}";
+        }
+        document.write('<script src="' + src + '" type="text/javascript"><' + '/script>');
+        
+      	//Storing values from the prechat page.
+        var sButtonId = '{!JSENCODE($CurrentPage.parameters.liveagent.prechat:SelBtnId)}';
+        var sOrgId = '{!JSENCODE($CurrentPage.parameters.liveagent.prechat:org_id)}'; 
+        var sDepId = '{!JSENCODE($CurrentPage.parameters.liveagent.prechat:deployment_id)}'; 
+        var sSecondaryChatId = '{!JSENCODE($CurrentPage.parameters.liveagent.prechat:SecChatID)}'; 
+		//liveagent Initialisation 
+		liveagent.chasitor.setOrgId(sOrgId);
+        liveagent.chasitor.setDeploymentId(sDepId);
+        liveagent.chasitor.setButtonId(sButtonId);
+        liveagent.addEventListener(liveagent.chasitor.Events.CHAT_REQUEST_SUCCESSFUL,chatRequestSuccess);
+        liveagent.addEventListener(liveagent.chasitor.Events.CHAT_ESTABLISHED,myCallBack);
+        liveagent.addEventListener(liveagent.chasitor.Events.AGENT_CHAT_TRANSFERRED,newagent);
+		
+		if({!bSwitch})
+		{
+			liveagent.addEventListener(liveagent.chasitor.Events.AGENT_CHAT_MESSAGE,newAgentMessage);        
+			//Getting custom label details
+			window.$Label = window.$Label || {};
+			$Label.HUMNewMsgDesktopNotification = '{!JSENCODE($Label.HUMNewMsgDesktopNotification)}';
+        }
+        //CHAT_REQUEST_SUCCESSFUL event callback helper function
+        function chatRequestSuccess() 
+        {
+            var details = liveagent.chasitor.getDetails();
+            console.log(details);
+            for(i=0;i<details.prechatDetails.length;i++)
+            {
+                if(details.prechatDetails[i].label=='MemberGenKey')
+                {
+                    HumAnalytics.regid = details.prechatDetails[i].value;
+                }
+                else if(details.prechatDetails[i].label=='sLSessionID')
+                {
+                    HumAnalytics.ssid = details.prechatDetails[i].value;
+                }
+                HumAnalytics.secid = sSecondaryChatId;
+            }
+        }
+		
+		//CHAT_ESTABLISHED event callback helper function
+        function myCallBack() 
+        {
+            var details = liveagent.chasitor.getDetails();
+            var agentName = details['agent']['agentName'];
+            document.getElementById('agNameId').style.display = '';
+            document.getElementById('sendBtn').style.display = '';
+            document.getElementById('agName').innerHTML = agentName;
+            var labels = {
+                AGENT_TYPING: agentName + ' is typing...',
+            };
+            SfdcApp.LiveAgent.Chasitor.loadLabels(labels);
+            commitTranscript();
+        }
+		
+		//AGENT_CHAT_TRANSFERRED event callback helper function
+        function newagent() 
+        {
+            var details = liveagent.chasitor.getDetails();
+            var agentName = details['agent']['agentName'];
+            document.getElementById('agName').innerHTML = agentName;
+            var agentName = details['agent']['agentName'];
+            var labels = {
+                AGENT_TYPING: agentName + ' is typing...',
+            };
+            SfdcApp.LiveAgent.Chasitor.loadLabels(labels);
+        }
+        
+        //Cannot Move it into static resource as it is using parameters that are related to live agent
+	    //Live agent components cannot be loaded inside static resource 
+	    function commitTranscript()
+	    {
+		    try
+		    {
+				Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.HUMPreChatController.onCommitTranscript}',liveagent.chasitor.getChatKey(),getAgentDetail(),function(result, event)
+				{
+					if (event.status) 
+					{
+					    return true;
+					} 
+					else
+					{
+						return false;
+					}
+			     }, 
+			     {
+			     	escape:true
+			     });
+		    }
+		    catch (ex) 
+		    {
+		        alert(ex.message);
+		        return false;
+		    }
+	    	return false;  
+	    }
+	    
+	    //commitTranscript helper function
+	    function getAgentDetail()
+	    {
+	    	var details = liveagent.chasitor.getDetails();
+	    	var tId='';
+	    	tId = details['agent']['userId'];
+	    	return tId;
+	    }
+	    
+	    //parsing the interaction info from liveagent details
+	    function getInteractionId()
+	    {
+	    	var details = liveagent.chasitor.getDetails();
+	    	var intId='';
+	    	for(i=0;i<details.prechatDetails.length;i++)
+            {
+	            if(details.prechatDetails[i].label=='InteractionId')
+	            {
+	            	intId = details.prechatDetails[i].value;
+	            }
+            }
+	    	return intId;
+	    }
+	    </script>    
+        <title>Chat</title>
+        
+        <!-- Loading CSS files received from digital team for Humana view standards -->
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveChatWindowCSS,'/LiveChatWindowCSS/base.css')}" />
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveChatWindowCSS,'/LiveChatWindowCSS/framework.css')}" />
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveChatWindowCSS,'/LiveChatWindowCSS/global.css')}" />
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveChatWindowCSS,'/LiveChatWindowCSS/global1.css')}" />
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveChatWindowCSS,'/LiveChatWindowCSS/humanacom.css')}" />
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveChatWindowCSS,'/LiveChatWindowCSS/lib.css')}" />
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveChatWindowCSS,'/LiveChatWindowCSS/styles.css')}" />
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveChatWindowCSS,'/LiveChatWindowCSS/renderings.css')}" />
+        <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMLiveChatWindowCSS,'/LiveChatWindowCSS/main.css')}" />
+           
+        <!-- Loading jQuery toolkit as per VF standards -->
+        <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+        <apex:outputText rendered="{!bSwitch}">
+            <apex:includeScript value="{!URLFOR($Resource.NewChatMsgNotification_SR_HUM,'NewChatMsgNotification/NewChatMsgNotification.js')}"/>   
+            <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.NewChatMsgNotification_SR_HUM,'NewChatMsgNotification/NewChatMsgNotification.css')}" />    
+        </apex:outputText>
+        
+    </head>
+    <!--Do not remove. Tealium code snippet for Humana analytics/metrics-->
+    <script type="text/javascript">
+    var utag_data = {};
+        if (typeof HumAnalytics == "undefined"){
+        	var HumAnalytics = window.HumAnalytics = {};}
+	HumAnalytics.appid = [];
+	HumAnalytics.autorenewflag = [];
+	HumAnalytics.copayexcflag = [];
+	HumAnalytics.prodcat = [];
+	HumAnalytics.prodid = [];      
+	HumAnalytics.prodname = [];
+	HumAnalytics.prodpkgqty = [];      
+	HumAnalytics.prodqty = [];
+	HumAnalytics.prodsav = [];   
+	HumAnalytics.prodtranstype = [];          
+	HumAnalytics.prodtype = []; 
+	HumAnalytics.produp = [];
+    </script>
+    <script type="text/javascript">
+    <!-- Loading script asynchronously -->
+        (function(a,b,c,d){
+            a='{!JSENCODE(sWebChatVarMap['HP_Tealium'].value__c)}';
+            b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c;d.async=true;
+            a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
+        })();
+    </script>
+    <liveAgent:clientchat >
+        <div class="row">
+            <div class="small-glass-container">
+                <div class=" columns x2 eighteen">
+                    <div class="row">
+                        <div class="eighteen columns ">
+                            <div class="lifeblock-heading">
+                                <h1
+                                    class="link-list-heading lifeblock core-green bl-tail tl-br-curve">
+                                    <span class="content">Humana Chat</span>
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                    <liveAgent:clientChatAlertMessage />
+                    <liveAgent:clientChatStatusMessage />
+                    <table id="waitingMessage" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td><script type="text/javascript">
+                                SfdcApp.LiveAgent.Chasitor.addQueueComponent("queuePosition");
+                                </script>
+                                
+                                <div class="hide_queuePos" id="liveAgentQueuePosition">
+                                    <span id="agnStatus">You are currently <span id="queuePosition" class="liveAgentQueuePosition"></span> in
+                                        the queue.&nbsp;&nbsp;</span>A chat specialist will be with you soon.
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="row">
+                        <div class="small-glass-container">
+                            <div class="row" style="display: none;" id="agNameId">
+                                <div class="seventeen columns x2-left">
+                                    <p class="x0 legal-copy">
+                                        You are now connected with <span id="agName" value=""></span>.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="seventeen columns scrollable-content x2-left">
+                                    <div class="section-content ">
+                                        <liveAgent:clientChatLog />
+                                        <apex:outputPanel rendered="{!bSwitch}">  
+											<div id="newAgentMessage" onclick = "scrollToBottom();">
+												<p id = "NewHUMMessage" align="right">{!$Label.HUMNewMsgNotification}</p>
+											</div>
+										</apex:outputPanel>	
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+							<div><liveAgent:clientChatLogAlertMessage /></div><br />
+							<div class="seventeen columns x1-top x2-left">
+                                   <liveagent:clientChatInput useMultiline="true" />
+                                </div>
+                            </div>
+                            <div class="row x2">
+                                <div class="eighteen columns x1-top x2-left">
+                                    <button class="link-primary x1-right" style="display: none;" id="sendBtn" onclick="SfdcApp.LiveAgent.Chasitor.sendMessage();" title="Send">
+                                        <span>Send</span>
+                                    </button>
+                                    <span class="link-tertiary x1-left"> <liveAgent:clientChatEndButton label="End Chat" /> </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>         
+    </liveAgent:clientchat>
+</apex:page>

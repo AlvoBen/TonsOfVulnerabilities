@@ -1,0 +1,40 @@
+.slds-modal__close 
+{
+    top: 1rem !important;
+    right: 1.0rem !important;
+}
+
+.modalP {
+    text-align: center;
+}
+.modalDiv{
+    padding: 2rem !important;
+}
+
+.barcodeDiv{
+	margin-left:20%;
+}
+
+.iconStyle{
+    --sds-c-icon-color-foreground-default: black;
+}
+.barcodeInput{
+    color: transparent !IMPORTANT;
+}
+
+.scanInfoTextInvalid {
+    color: red;
+    font-size: 1.2em;
+    font-weight: bold;
+    padding-left: 1.9em;
+}
+.buttonsDiv{
+    padding-top:30px;
+}
+.yesButton{
+    padding-right:15px;
+}
+.displayMsg {
+    font-size:14px;
+    padding-bottom:6px;
+}

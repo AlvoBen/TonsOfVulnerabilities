@@ -1,0 +1,111 @@
+﻿<!--
+Page Name   	: CRM_Retail_Custom_Dashboard_VF_HUM
+Version       	: 1.0
+Function     	: VF page to show custom dashboard for storefront users
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+* Lakshmi Madduri		                            2/17/2022                    Original version
+* Lakshmi Madduri		                            2/28/2022                    UI alignment Fix
+* Mohmaed Thameem		                            2/03/2023                    View Report/Refresh Fix
+ ****************************************************************************************************************************
+ -->
+ <apex:page showHeader="false" sidebar="false" id="thePage" controller="CRM_Retail_Custom_Dashboard_C_HUM" action="{!callActionMethod}" lightningStylesheets="true">
+    <script>
+    var isServiceAss = "{!bDisableLoc}";
+    var reportNamesAndIds = '{!sReportNamesAndIds}';
+    var sFreqVisitors = '{!sFrequentVisitors}';
+    var sCompeltedTaskDetails = '{!sTaskDetails}';
+    var sRemoteMethod = '{!$RemoteAction.CRM_Retail_Custom_Dashboard_C_HUM.fetchVisitorsAndTasks}';
+    var bNoHomeLoc = '{!bNoHomeLoc}';
+    var sToastMsg = '{!$Label.CRMRetail_CustomDashboardToastMsg}'; 
+    var userTimeZone="{!TEXT($User.TimeZoneSidKey)}";
+    </script>
+    <apex:form id="theform">
+        <base target="_top"/> 
+        <apex:actionFunction name="rerenderTopPanel" action="{!setReportFilter}" rerender="TopPanel,rf" oncomplete="tableRender();">
+            <apex:param name="sLocation" value="" assignTo="{!sLocation}"/> 
+            <apex:param name="bDisableLoc" value="" assignTo="{!bDisableLoc}"/> 
+            <apex:param name="fromDate" value="" assignTo="{!fromDate}"/>
+            <apex:param name="toDate" value="" assignTo="{!toDate}"/>
+        </apex:actionFunction>
+        <div style="display:{!If(bFunctionalitySwitch,'block','none')}">
+            <div>
+                <div class="headerStyle">
+                    <apex:outputpanel rendered="{!bDisableLoc}">
+                        <h1>
+                            {!$Label.CRM_Retail_Dashboard_Title_For_ServiceAssc}
+                        </h1>
+                    </apex:outputpanel>
+                    <apex:outputpanel rendered="{!NOT(bDisableLoc)}">
+                        <h1>
+                            {!$Label.CRM_Retail_Custom_Dashboard_Title_For_Business_Admins}
+                        </h1>
+                    </apex:outputpanel>
+                    <apex:outputText id="rf" value="{!$Label.CRMRetail_LastRefreshed} {!sLastRefreshed}"></apex:outputText>
+                </div>         
+                <div class="locationsDiv">                  
+                    {!$Label.CRMRetail_Locations} &nbsp;
+                    <apex:selectList id="locations" onchange="onLocationChange();" multiselect="false" size="1" value="{!sSelectedLocation}" disabled="{!bDisableLoc}">
+                        <apex:selectOptions value="{!locations}"></apex:selectOptions>
+                    </apex:selectList>        
+                    &nbsp;
+                    <apex:image id="refresh" url="{!URLFOR($Resource.CRMRetail_CustomDashboard_SR_HUM,'CRMRetail_RefreshIcon.png')}" title="Refresh" style="margin-bottom:-4px;" width="20" height="20" onclick="onLocationChange();"/>
+                </div>
+            </div> 
+            <br/>
+            <apex:outputPanel id="TopPanel" layout="block" style="margin-top:4em;">
+                <apex:variable value="{!0}" var="count"/>
+                <apex:repeat value="{!lstReports}" var="ct">
+                    <div class="reportBlock reportBlockCustom" style="padding-left:{!If(count==1,'17em','2em')};">
+                        <analytics:reportChart developerName="{!ct}" filter="{!If(ct=='No_Of_Health_Educator_1x1_Tracking',sFilterForHealthEducator,sFilter)}" size="medium" cacheResults="false"/>      
+                        <a href="#" class="reportclass" id="{!ct}">{!$Label.CRMRetail_ViewReport}</a>
+                    </div>
+                    <apex:variable var="count" value="{!count+1}"/>  
+                    <apex:outputPanel rendered="{!If(count==2,true,false)}">
+                        <br/>
+                        <apex:variable var="count" value="{!0}"/>  
+                    </apex:outputPanel>       
+                </apex:repeat>
+                <apex:outputPanel style="display:table-cell;padding-left:23.5em;" rendered="{!bDisableLoc}">
+                    <div>
+                        <h2>
+                            {!$Label.CRMRetail_Weekly_Frequent_Visitors}
+                        </h2>
+                        <table id="visitor">
+                            <tr>
+                                <td class="visitorRows">{!$Label.CRMRetail_NonMember}</td>
+                                <td class="visitorRows">{!$Label.CRMRetail_Member}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <br/>
+                    <a href="#" class="reportclass" id="Weekly_Frequent_Visitors">{!$Label.CRMRetail_ViewReport}</a>
+                </apex:outputPanel>
+                <apex:outputPanel style="display:table-cell;padding-left:21.6em;" rendered="{!NOT(bDisableLoc)}">
+                    <div>
+                        <h2>
+                            {!$Label.CRMRetail_CompletedTasksAndContactAttempts}
+                        </h2>
+                        <br/>
+                        <table id="tasks">
+                            <tr>
+                                <td class="taskRows">{!$Label.CRMRetail_TotalTaskRecords}</td>
+                                <td class="taskRows">{!$Label.CRMRetail_TotalContactAttempts}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <a href="#" class="reportclass" id="Completed_Tasks_Contact_Attempts">{!$Label.CRMRetail_ViewReport}</a>
+                </apex:outputPanel>
+            </apex:outputPanel> 
+        </div>
+        <apex:outputpanel rendered="{!NOT(bFunctionalitySwitch)}">
+            <h1>
+                {!$Label.CRMRetail_FeatureDisabled}              
+            </h1>
+        </apex:outputpanel>
+    </apex:form>
+    <apex:includeScript value="{!URLFOR($Resource.CRMRetail_CustomDashboard_SR_HUM, 'CRMRetail_CustomDashboard_JS_HUM.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.CRMRetail_CustomDashboard_SR_HUM, 'CRMRetail_CustomDashboard_CSS_HUM.css')}" />
+</apex:page>

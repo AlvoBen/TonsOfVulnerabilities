@@ -1,0 +1,13 @@
+﻿<!--
+Page Name        : UnsecureSaveChatTranscript_HUM
+Version          : 1.0 
+Created Date     : 
+Function         : Page to download chat transcript in text document.
+Modification Log :
+*   Modification ID     Developer          Code Review         Date                 Description
+*                       Joel George                            12/12/19             Unsecure Chat
+* ------------------------------------------------------------------------------------------------------------------------------         
+-->
+<apex:page showHeader="false" controller="UnsecuredPreChat_C_HUM" contentType="text/plain/#transcript.txt">
+<apex:outputText value="{!webChatTranscriptDetail}"/>
+</apex:page>

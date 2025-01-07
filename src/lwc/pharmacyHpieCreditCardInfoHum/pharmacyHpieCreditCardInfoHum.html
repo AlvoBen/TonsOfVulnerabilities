@@ -1,0 +1,66 @@
+﻿<!--
+/*****************************************************************************************************************************
+Component Name   : pharmacyHpieCreditCardInfoHum.html
+Version          : 1.0
+Function         : lwc to display credit card info tab
+
+Modification Log:
+* Developer Name           Code Review                 Date                         Description
+*---------------------------------------------------------------------------------------------------------------------
+* Jonathan Dickinson							       08/17/2023					User Story 4908778: T1PRJ0870026 - SF - Tech - C12 Mail Order Management - Pharmacy - Finance tab
+* Jonathan Dickinson			  					   09/04/2023					User Story 4999697: T1PRJ0870026 MF27456 HPIE/CRM - SF Tech- Mail Order Management - Pharmacy - Finance tab - Lightning - Edit Credit Card, One time payment
+*******************************************************************************************************************************************************************/
+-->
+<template>
+	<div class="main load">
+		<template lwc:if={financeDetails}>
+			<div class="slds-grid slds-wrap">
+				<div class="slds-col slds-size_1-of-1">
+					<div class="slds-grid slds-grid_align-spread">
+						<div class="slds-col">
+							<h3>
+								<span class="slds-page-header__title slds-truncate"
+									title="Credit Card Information">Credit
+									Card Information</span>
+							</h3>
+						</div>
+						<div class="slds-col">
+							<lightning-button variant="brand-outline" label="New Credit Card" title="New Credit Card"
+								class="slds-float_right" onclick={handleNewCreditCard}
+								disabled={disableNewCreditCardButton}>
+							</lightning-button>
+						</div>
+					</div>
+				</div>
+				<div class="slds-col slds-size_1-of-1 slds-m-top_small">
+					<div class="divcarddetails">
+						<c-pharmacy-hpie-credit-card-details-hum creditcarddata={financeDetails}
+							oneditclick={handleEditClick}>
+						</c-pharmacy-hpie-credit-card-details-hum>
+					</div>
+				</div>
+				<div class="slds-col slds-size_1-of-1 slds-m-top_small">
+					<div class="createeditcreditcard">
+						<template lwc:if={isCreateAndEditCreditCardVisible}>
+							<c-pharmacy-hpie-create-edit-credit-card-hum record-id={recordId}
+								enterprise-id={enterpriseId} network-id={networkId} user-id={userId}
+								component-mode={createAndEditCreditCardComponentMode} credit-card-data={financeDetails}
+								selected-row-data={selectedRowData} onsave={handleSave} oncancel={handleCancel}>
+							</c-pharmacy-hpie-create-edit-credit-card-hum>
+						</template>
+					</div>
+				</div>
+				<div class="slds-col slds-size_1-of-1 slds-m-top_small">
+					<c-pharmacy-hpie-credit-card-payment-hum creditcarddata={financeDetails}
+						balancedue={balanceDue} network-id={networkId} user-id={userId}
+						enterprise-id={enterpriseId} record-id={recordId}></c-pharmacy-hpie-credit-card-payment-hum>
+				</div>
+			</div>
+		</template>
+		<template lwc:else>
+			<div class="slds-align_absolute-center slds-is-relative slds-m-vertical_xx-large">
+				<lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+			</div>
+		</template>
+	</div>
+</template>

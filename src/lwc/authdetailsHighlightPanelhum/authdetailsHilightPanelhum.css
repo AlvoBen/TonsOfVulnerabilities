@@ -1,0 +1,13 @@
+.cloneIcon{
+    --sds-c-icon-color-foreground-default: rgb(43, 75, 204);
+    --sds-c-icon-color-background: rgb(251, 251, 251);
+}
+.blackIcon{
+--sds-c-icon-color-foreground-default: white;
+--sds-c-icon-color-foreground: white;
+--sds-c-icon-color-background: black;
+}
+.hr{
+    margin-bottom: 15px;
+    margin-top: 10px;
+}

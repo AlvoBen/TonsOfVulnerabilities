@@ -1,0 +1,212 @@
+﻿<!--
+/*****************************************************************************************************************************************************************
+Apex Class Name : MemberActivePolicies_CMP_HUM
+Version         : 1.0
+Created On      : Jan 14, 2018 
+Function        : This is a custom component showing active/future policies.                 
+                 
+Modification Log: 
+* Version          Developer Name             Code Review              Date                       Description
+*-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+*    1.0           Amar Gadewar                                        01/14/2018                 Original Version
+*	 1.1		   Amar Gadewar										   03/27/2018				  Path to the Static Resources
+*    1.2           Asish Behera                                        05/30/2018                 REQ - 363572 Preselect Policy from the Search Page (RF)
+*    1.3 		   Darshan Sharma						               06/25/2018		          REQ-367106 - Quality - Ability to clear Policy Selection on Search Screen (RF)		
+*    1.4	       Darshan Sharma				                       06/26/2018		          REQ-367008 - AHT - Preselect Policy from the Search Page (RF)
+* 	 1.5		   Subhamay Mondal									   09/26/2018				  Defect 384149 Fix for populate Medicare drop down on Quick Start.
+* 	 1.6		   Asish Behera									       01/02/2019				  REQ - 382805 Quality - Ability to clear Policy Selection on Search Screen (CRM)
+*    1.7       	   Mithra Bharadwaj                                    09/16/2019                 REQ - 404577 Adding Plan Name to Member search results.
+*    1.8           Praveen Kumar Parimi                                10/31/2019                 REQ - 415243 Fetching IAB plan name from Policy Member or Policy.
+*    1.9        Keerti Durbha                                          05/04/2020                 REQ 738134- Hide radio button for OSB products under Active and future policies on Search page
+*    2.0           Asish Behera                                        10/09/2020                 PR00090588 - CR1727 - Display Medicare PDP Plan Name - Policy Section (Person Account Page)
+* 	 2.1		   Jayesh Solanki    								   03/17/2021				  User Story 2056116: Ability to display Termed Policies information on the Member Search tab within the Search page (RF)
+*	 2.2		   Ankit Avula										   04/01/2021				  User Story 1987365 Contract Protected Data and Home Office
+* 	 2.3		   Jayesh Solanki									   05/25/2021				  User Story 2305573: T1PRJ0001827 - MF 1 - AHT - Ability to display Termed Policies information on the Member Search tab within the Search page (CRM)
+*	 2.4		   Ankit Avula										   06/04/2021			      User Story 2275855 T1PRJ0002980 - Protected Group - Policy auto selection logic update
+*    2.5           Samantha Tennyson       						       06/23/2021           	  User Story 2393164: T1PRJ0001827 - MF 1 - SF - TECH - On/Off Switch Cleanup for 6/11/21, 6/25/21, 7/9/21 and 7/23/21 releases (CRM)
+*    2.6		   Ajay Chakradhar                                     06/22/2022                 USER STORY 2860577 : T1PRJ0100059 - MF 3 - Agnostic Customer Record Type
+-->  
+<apex:component allowDML="true" controller="MemberActivePolicies_C_HUM">
+	<!--  Current page component  business logic is incorporated into the Javascript file -->
+    <apex:includeScript value="{!URLFOR($Resource.MemberActivePolicies_SR_HUM, 'MemberActivePolicies_JS_HUM.js')}" /> 
+    <apex:StyleSheet value="{!URLFOR($Resource.MemberActivePolicies_SR_HUM, 'MemberActivePolicies_CSS_HUM.css')}" /> 
+	<apex:attribute name="AccountId" assignTo="{!sAccId}" description="The account Id of the policies" type="String" required="true"/>
+	<apex:outputPanel rendered="{!NOT(ISBLANK(AccountId))}">
+	<div class="pbSubheader brandTertiaryBgr tertiaryPalette" id="MemberSearchActivePolicies" style="stylePanelMember">
+    	<h3>Active/Future/Most Recently Termed Policies&nbsp;<img src="{!$Resource.HUMHoverOverQuestionMark}" onmouseover="openActivePolicyMsg();" onmouseout="clearActivePolicyMsg();"/></h3> 
+    </div>
+   	</apex:outputPanel>
+   	<div id="ActivePolicyMsg" class="styleActivePolicy">
+ 		<SPAN id='ActivePolicyMsgText'></SPAN>
+  	</div>
+	<apex:outputPanel rendered="{!AND(NOT(ISBLANK(AccountId)), lstPolicyAccessWrapper.size == 0)}"><i>No Active or Future or Termed Policy Found.</i></apex:outputPanel>
+	<!-- RapidForce CRM Service view  -->
+	<!-- US1987365 switchon condition start -->
+	<apex:outputPanel rendered="{!AND(NOT(ISBLANK(AccountId)), lstPolicyAccessWrapper.size > 0, contractprotecteddataonoff )}">		
+		<table class="list" cellspacing="0" cellpadding="0"> 
+			<thead class="">
+			<tr class="headerRow">
+				<th  width="2%"><input type="button" value="Clear" onClick="removeSelectionPolicy();" class="btn"/></th>
+				<th>{!$Label.HUMPolMemIdHeaderValue}</th>
+				<th>{!$Label.HUMProductHeaderValue}</th>
+				<th>{!$Label.HUMProductTypeHeaderValueLabel}</th>
+				<th>{!$Label.HUMProductTypeCodeHeaderValueLabel}</th>
+        		<th>{!$Label.HUMPlanNameHeaderValueLabel}</th>
+				<th>{!$Label.HUMEffDateHeaderValueLabel}</th>
+				<th>{!$Label.HUMEndDtHeaderValueLabel}</th>
+				<th>{!$Label.HUMStatusHeaderValueLabel}</th>
+				<th>{!$Label.HUMGroupNameHeaderValueLabel}</th>
+				<th>{!$Label.HUMGroupNumberHeaderValueLabel}</th>
+				<th>{!$Label.HUMGroupSecurityHeaderValueLabel}</th>				
+				<th>{!$Label.HUMRelationshipHeaderValueLabel}</th>
+				<th>{!$Label.HUMASOHeaderValueLabel}</th>
+				<th>{!$Label.HUMEHBTermDTHeaderValueLabel}</th>
+				<th>{!$Label.HUMMedicareIDHeaderLabel}</th>
+			</tr>
+			</thead>
+			<tbody>
+        <apex:variable value="{!1}" var="hideOSBproductrow"/>
+        <apex:repeat value="{!lstPolicyAccessWrapper}" var="p" >
+
+          <tr class="dataRow" id="{!hideOSBproductrow}">
+            <td align="center">
+			<!-- //As per US 2275855 added the output pannel to hide and show the radio button depending on the access to the policies-->
+              	<apex:outputPanel rendered="{!p.hasAccess && radioButtonOnOff}">
+                    
+                        <apex:outputPanel rendered="{!p.hasHumanaProfileAccess == true}" >
+                        <input type="radio" id="{!p.sPreselect}" name="Policies" value="{!p.sSubTabName}|{!AccountId}"
+                               onClick="highlightPolicyRecord(this,'{!HTMLENCODE(p.sMedicareValue)}');" 
+                               forOSBProduct="{!p.policyMember.OSB_Indicator__c}"/>
+                    </apex:outputPanel> 
+         	       <apex:outputPanel rendered="{!p.hasHumanaProfileAccess == false && p.bNonHumanaPolicy == false}" >
+                        <input type="radio" id="{!p.sPreselect}" name="Policies" value="{!p.sSubTabName}|{!AccountId}"
+                               onClick="highlightPolicyRecord(this,'{!HTMLENCODE(p.sMedicareValue)}');" 
+                               forOSBProduct="{!p.policyMember.OSB_Indicator__c}"/>
+                    </apex:outputPanel>        
+           	     <apex:outputPanel rendered="{!p.hasHumanaProfileAccess == false && p.bNonHumanaPolicy == true}" >
+                        <input type="radio" id="{!p.sPreselect}" name="Policies" disabled="true" 
+                               forOSBProduct="{!p.policyMember.OSB_Indicator__c}"/>
+                    </apex:outputPanel> 
+                                                   
+                    <input type="hidden" id="hiddenPreSelectInput{!p.sPreselect}" value="{!p.sMedicareValue}" />
+				</apex:outputPanel>
+            </td>
+					<td>
+						<apex:outputField value="{!p.policyMember.Name}" rendered="{!p.hasAccess}" />
+						<!--Adding Masking for Policy Member Name as per User Story 1987365 -->
+						<apex:outputText value="XXXX" rendered="{!!p.hasAccess}" />
+					</td>
+					<td><apex:outputField value="{!p.policyMember.Product__c}"/></td>
+					<td>{!p.sProductType}</td>
+					<td><apex:outputField value="{!p.policyMember.policy__r.Product_Type__c}"/></td>
+          			<td>
+						<apex:outputField value="{!p.policyMember.iab_description__c}" rendered="{!p.IsPDPPolicy=='true' && p.hasAccess}"/>
+						<!--Adding Masking for Plan Name as per User Story 1987365 -->
+						<apex:outputText value="XXXX" rendered="{!!p.hasAccess}" />
+					</td>
+					<td>
+						<apex:outputField value="{!p.policyMember.Effective_Date__c}" rendered="{!p.hasAccess}" />
+						<!--Adding Masking for Effective Date as per User Story 1987365 -->
+						<apex:outputText value="XXXXXXXX" rendered="{!!p.hasAccess}" />
+					</td>
+					<td>
+						<apex:outputField value="{!p.policyMember.End_Date__c}"  rendered="{!p.hasAccess}"/>
+						<!--Adding Masking for End Date as per User Story 1987365 -->
+						<apex:outputText value="XXXXXXXX" rendered="{!!p.hasAccess}" />
+					</td>
+					<td style="color:{!(IF(p.policyMember.Status__c == 'Termed','red',''))};">
+						<apex:outputField value="{!p.policyMember.Status__c}" rendered="{!p.hasAccess}"/>
+						<!--Adding Masking for Status as per User Story 1987365 -->
+						<apex:outputText value="XXXX" rendered="{!!p.hasAccess}" />
+					</td>
+					<td><apex:outputField value="{!p.policyMember.Group_Name__c}"/></td>
+					<td><apex:outputField value="{!p.policyMember.Group_Number__c}"/></td>	
+					<td>
+					<!--Adding Security Groups and Masking as per User Story 1987365 -->
+						<apex:outputField value="{!p.policyMember.Policy__r.Group_Name__r.Security_Groups__c}" rendered="{!p.hasAccess}" />
+                        <apex:image value="{!URLFOR($Resource.HumLockIcon_SR_HUM,'Lock_RGB_Gold.png')}" width="20" height="20" rendered="{!!p.hasAccess}" />
+                        <apex:outputField value="{!p.policyMember.Policy__r.Group_Name__r.Security_Groups__c}" rendered="{!!p.hasAccess}"/>
+					</td>
+					<td>
+						<apex:outputField value="{!p.policyMember.Relationship__c}" rendered="{!p.hasAccess}"/>
+						<!--Adding Masking for Relationship as per User Story 1987365 -->
+						<apex:outputText value="XXXX" rendered="{!!p.hasAccess}" />
+					</td>
+					<td>
+						<apex:outputField value="{!p.policyMember.ASO__c}" rendered="{!p.hasAccess}"/>
+						<!--Adding Masking for ASO as per User Story 1987365 -->
+						<apex:outputText value="X" rendered="{!!p.hasAccess}" />
+					</td>					
+					<td>
+						<apex:outputField value="{!p.policyMember.EHB_Term_Date__c}" rendered="{!p.hasAccess}"/>
+						<!--Adding Masking for EHB Term Date as per User Story 1987365 -->
+						<apex:outputText value="XXXXXXXX" rendered="{!!p.hasAccess}" />
+					</td>
+					<td>
+						<apex:outputText value="{!p.sMemberIdName}" rendered="{!p.hasAccess}" /><!--{!p.sMemberIdName}-->
+						<!--Adding Masking for medicareID as per User Story 1987365 -->
+                        <apex:outputText value="XXXX" rendered="{!!p.hasAccess}" />
+					</td>
+				</tr>
+            <apex:variable var="hideOSBproductrow" value="{!hideOSBproductrow + 1}"/>
+            </apex:repeat>
+			</tbody>
+		</table>
+	</apex:outputPanel>	
+	<!-- US1987365 switchoff condition start -->
+    <apex:outputPanel rendered="{!AND(NOT(ISBLANK(AccountId)), lstPolicyAccessWrapper.size > 0, NOT(contractprotecteddataonoff))}">		
+		<table class="list" cellspacing="0" cellpadding="0"> 
+			<thead class="">
+			<tr class="headerRow">
+				<th  width="2%"><input type="button" value="Clear" onClick="removeSelectionPolicy();" class="btn"/></th>
+				<th>{!$Label.HUMPolMemIdHeaderValue}</th>
+				<th>{!$Label.HUMProductHeaderValue}</th>
+				<th>{!$Label.HUMProductTypeHeaderValueLabel}</th>
+				<th>{!$Label.HUMProductTypeCodeHeaderValueLabel}</th>
+        		<th>{!$Label.HUMPlanNameHeaderValueLabel}</th>
+				<th>{!$Label.HUMEffDateHeaderValueLabel}</th>
+				<th>{!$Label.HUMEndDtHeaderValueLabel}</th>
+				<th>{!$Label.HUMStatusHeaderValueLabel}</th>
+				<th>{!$Label.HUMGroupNameHeaderValueLabel}</th>
+				<th>{!$Label.HUMGroupNumberHeaderValueLabel}</th>
+				<th>{!$Label.HUMRelationshipHeaderValueLabel}</th>
+				<th>{!$Label.HUMASOHeaderValueLabel}</th>
+				<th>{!$Label.HUMEHBTermDTHeaderValueLabel}</th>
+				<th>{!$Label.HUMMedicareIDHeaderLabel}</th>
+			</tr>
+			</thead>
+			<tbody>
+        <apex:variable value="{!1}" var="hideOSBproductrow"/>
+        <apex:repeat value="{!lstPolicyAccessWrapper}" var="p" >
+
+          <tr class="dataRow" id="{!hideOSBproductrow}">
+            <td align="center">
+              <input type="radio" id="{!p.sPreselect}" name="Policies" value="{!p.sSubTabName}|{!AccountId}"
+                       onClick="highlightPolicyRecord(this,'{!HTMLENCODE(p.sMedicareValue)}');" forOSBProduct="{!p.policyMember.OSB_Indicator__c}"/>
+              <input type="hidden" id="hiddenPreSelectInput{!p.sPreselect}" value="{!p.sMedicareValue}" />
+            </td>
+					<td><apex:outputField value="{!p.policyMember.Name}"/></td>
+					<td><apex:outputField value="{!p.policyMember.Product__c}"/></td>
+					<td>{!p.sProductType}</td>
+					<td><apex:outputField value="{!p.policyMember.policy__r.Product_Type__c}"/></td>
+          			<td><apex:outputField value="{!p.policyMember.iab_description__c}" rendered="{!p.IsPDPPolicy=='true'}"/></td>
+					<td><apex:outputField value="{!p.policyMember.Effective_Date__c}"/></td>
+					<td><apex:outputField value="{!p.policyMember.End_Date__c}"/></td>
+					<td style="color:{!(IF(p.policyMember.Status__c == 'Termed','red',''))};"><apex:outputField value="{!p.policyMember.Status__c}" rendered="{!p.hasAccess}"/></td>
+					<td><apex:outputField value="{!p.policyMember.Group_Name__c}"/></td>
+					<td><apex:outputField value="{!p.policyMember.Group_Number__c}"/></td>	
+					<td><apex:outputField value="{!p.policyMember.Relationship__c}"/></td>
+					<td><apex:outputField value="{!p.policyMember.ASO__c}"/></td>					
+					<td><apex:outputField value="{!p.policyMember.EHB_Term_Date__c}"/></td>
+					<td>{!p.sMemberIdName}</td>
+				</tr>
+            <apex:variable var="hideOSBproductrow" value="{!hideOSBproductrow + 1}"/>
+            </apex:repeat>
+			</tbody>
+		</table>
+	</apex:outputPanel>
+
+	<script type="text/javascript">
+   		preselectMedPolicy();
+    </script>
+</apex:component>

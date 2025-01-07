@@ -1,0 +1,43 @@
+﻿<!--
+*******************************************************************************************************************************
+VisualForce Page Name   : HUMInteractionNotes
+Version                 : 1.0
+Created On              : 05/17/2014
+Function                : This Page is used in the Interaction notes section so that user can enter Interaction Notes here. As
+                          this is added as content source for Custom console component. It will hold data for the entire session.
+                  
+Modification Log: 
+* Modification Id       Developer Name           Code Review                     Date                       Description
+*------------------------------------------------------------------------------------------------------------------------------
+* 1.0                   Ninad Patil              16484                         05/17/2014                 Original Version
+* 1.1                   Ninad Patil              17100                         08/09/2014                 Resubmitting after coding standard correction.
+* 1.2                   Rakesh Patni             23048                         05/07/2015                 Changes made to fix defect # 181784.Replaced div with a textarea at line# 29 .Also enclosed the clear button inside a div at line# 25.CSS and javascript changes in the static resource.
+* 1.3                   Suresh KOkkeragadda			               19/06/2020		  User Story 1145685: PR00091574 - MF 1 - AHT - Ability to copy information from CRM (RF)
+* 1.4                   Suresh Kokkeragadda                                    07/16/2020                 User Story 1145685: PR00091574 - MF 1 - AHT - Ability to copy information from CRM (RF)_RollBack
+* 1.5                   Kavya Bondada                                          03/19/2021                 User Story 1875239: PR00091574 - MF 1 - AHT - Ability to copy information in CRM (RF)
+*******************************************************************************************************************************
+-->
+<apex:page showHeader="false" sidebar="false">
+    
+    <apex:stylesheet value="{!URLFOR($Resource.HUMInteractionLog,'/HUMInteractionLog/HUMInteractionNoteStyleSheet.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.HUMInteractionLog,'/HUMInteractionLog/HUMInteractionNotes.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CopyToClipBoard/CopyToClipBoard.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CopyToClipBoard/CopyToClipBoardCaptureEvent.js')}"/>
+    <apex:includescript value="/support/console/41.0/integration.js" /> 
+
+    <apex:form StyleClass="formStyle">
+        <!-- Empty output panel is created so as to avoid reRendering complete page on click of button -->
+        <apex:outputPanel id="temp" ></apex:outputPanel>
+        <div class="clear_button" >
+            <apex:commandButton id="Clear_Btn" onclick="clear_div('{!$Label.HUMNotesClearDialog}');" reRender="temp" value="{!$Label.HUMClearNotesBtnLabel}"/>
+        </div>
+        <body class="body" >
+            <textarea  rows="15" cols="70"  contenteditable="true" id="desc" ></textarea>
+        </body>
+    </apex:form>
+    <script>
+    sforce.console.addEventListener('CopyClipBoard', fnlistenerCopyClipBoard);
+    </script>
+    
+    
+</apex:page>

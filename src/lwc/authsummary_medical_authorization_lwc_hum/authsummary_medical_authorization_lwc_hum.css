@@ -1,0 +1,25 @@
+.lwcInputElement {
+    width: 30%;
+    display: block;
+}
+.lwcInputElement > label.slds-form-element__label {
+    font-family: 'Salesforce Sans', Arial, sans-serif;
+    color: #333;
+    font-size: 16px;
+    font-weight: bold;
+}
+.lwcInputInner {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.blackIcon {
+    --sds-c-icon-color-foreground: blue;
+    --sds-c-icon-color-background: white;
+    --sds-c-icon-color-foreground-default: blue;
+    --sds-c-icon-color-border: rgb(107, 104, 104);
+}
+.slds-form_horizontal .slds-form-element .slds-form-element__control {
+    padding-left: 0 !important;
+}

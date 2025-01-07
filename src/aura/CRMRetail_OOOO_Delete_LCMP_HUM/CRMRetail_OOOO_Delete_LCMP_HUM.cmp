@@ -1,0 +1,16 @@
+﻿<!--
+Component Name   : CRMRetail_OOOO_Delete_LCMP_HUM.Lightning Component
+Version          : 1.0
+Created On       : 09/02/2021
+Function         : Lightning Component is used to show Delete function of One-On-One Object
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*****************************************************************************************************************************
+* Vinoth L                                        09/02/2021          			User Story - 2508432 T1PRJ0001894 - MF 7 - CRM Storefront SDoH: Share Screening Results - Call DH&A 
+* Abhishek Maurya                                 09/02/2021         			User Story - 2599455 T1PRJ0001894 - MF 7 - CRM Storefront SDoH: Share Screening Results - Update Existing 1x1 Tracking
+****************************************************************************************************************************
+-->
+<aura:component implements="force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" >   
+   <c:cRMRetail_OOO_TrackingDel_LWC_HUM oooRecordId="{!v.recordId}" onclose="{!c.closeQA}" />       
+</aura:component>

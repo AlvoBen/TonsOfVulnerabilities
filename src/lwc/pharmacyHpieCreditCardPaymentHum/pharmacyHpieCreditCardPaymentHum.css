@@ -1,0 +1,15 @@
+.mainsection {
+    background-color: #F8F9F9;
+    height: 300px;
+    max-width: 100%;
+}
+
+.carddetails {
+    width: 324px;
+    height: 213px;
+    border-radius: 10px;
+    position: absolute;
+    background: linear-gradient(112.91deg, #D1EEFF 3.51%, #979797 111.71%);
+    box-shadow: 14.6469px 17.5762px 29.2937px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20.5056px)
+}

@@ -1,0 +1,98 @@
+.recWatch-card {
+    width: 32%;
+    flex: none;
+    box-shadow: 0 4px 8px 0 rgba(65, 64, 66, 0.2);
+    border: solid 1px #efeff0;
+    margin: 0 15px 16px 0;
+    padding: 1.5rem;
+}
+.recWatch-subheading {
+    font-size: 22px;
+    color: #007481;
+    text-decoration: underline;
+}
+
+.recWatch-cardcont{
+    overflow-x: hidden;
+    width: 90%;
+}
+
+.rec-container {
+    width: 100%;
+}
+
+.recWatch-cont {
+    align-items: center;
+}
+
+.body-container {
+    display: flex;
+    justify-content: center;
+}
+
+.arrow-image {
+    height: auto;
+    width: 100%;
+  }
+  .arrow-image[disabled] {
+    opacity: 0.5;
+  }
+  
+  .icon-container {
+    height: 3rem;
+    width: 5%;
+  }
+  
+.arrow-image:focus {
+    outline: none;
+}
+
+.recWatch-content {
+    height: 70px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+
+.rec-container .recWatch-heading{
+    color: #414042;
+    font-weight: 300;
+    font-size: 36px;
+}
+
+@media only screen and (max-width: 740px){
+    .bodyContainer{
+        margin: 0 15px;
+    }
+    .recWatch-card {
+        width: 100%;
+    }
+    .recWatch-cont {
+        width: 100%;
+    }
+    .recWatch-arrow-left {
+        display: none;
+    }
+    .recWatch-arrow-right {
+        display: none;
+    }
+    .recWatch-cardcont {
+        display: block;
+    }
+    .rec-container {
+        width: 100%;
+    }
+
+}
+@media only screen and (max-width: 1199px) and (min-width: 741px){
+    .rec-container {
+        width: 720px;
+    }
+
+    .recWatch-cardcont{
+        width: 610px;
+    }
+    
+}

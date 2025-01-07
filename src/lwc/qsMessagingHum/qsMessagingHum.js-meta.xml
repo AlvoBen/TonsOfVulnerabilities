@@ -1,0 +1,9 @@
+﻿<?xml version="1.0"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+	<apiVersion>52.0</apiVersion>
+	<isExposed>true</isExposed>
+	<description>This is used to show messages in different section of quick start component</description>
+	<targets>
+		<target>lightning__UtilityBar</target>
+	</targets>
+</LightningComponentBundle>

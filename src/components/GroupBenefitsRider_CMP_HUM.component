@@ -1,0 +1,34 @@
+﻿<!--
+Component Name   : GroupBenefitsRider_CMP_HUM.component
+Version          : 1.0
+Created On       : 05/04/2018 
+Function         : VF Component to display BenefitsRiders in GroupBenefits_VF page. 
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Prasad Jandhyala         249523                      05/04/2018              Cloned from  BenefitsRiderInfoV1_CMP_HUM for REQ - 361854
+ * Lakshmi Madduri			249523						06/06/2018				Modified for REQ - 360176 Policy Riders
+ ****************************************************************************************************************************
+ 
+ -->
+<apex:component controller="GroupBenefits_X_HUM" >
+    <apex:includeScript value="{!URLFOR($Resource.GroupBenefitsRiderInfo_SR_HUM, 'GroupBenefitsRiderInfo_JS_HUM.js')}"/>
+	<apex:stylesheet value="{!URLFOR($Resource.GroupBenefitsRiderInfo_SR_HUM,'GroupBenefitsRiderInfo_CSS_HUM.css')}"/>
+   
+    <!-- This block will render a spinner image to indicate table loading in the UI -->
+    <div id="statusImagePolicyRider" class="loadingImageDivCon">
+        <img src="/img/loading.gif" /> 
+        <span class="waitingDescription"> {!$Label.LOADING_HUM}</span>
+    </div>
+    
+    <div id="GBPolicyRider1" class="centerAlign">
+    </div> 
+   <!-- This block will render a table using jQuery during the page load-->
+    <div id="theMainFormBenefitRider" >   
+        <table id="BenefitRider" class="table table-striped table-bordered width100 enable_logging" title="{!$Label.GroupBenefitsPolicyRider_HUM}" >
+        <caption style="display:none">{!$Label.GroupBenefitsPolicyRider_HUM}</caption>
+        </table>
+    </div>
+
+</apex:component>

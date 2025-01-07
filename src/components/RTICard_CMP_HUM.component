@@ -1,0 +1,155 @@
+﻿<!--
+Page Name        : RTICard_CMP_HUM
+Version          : 1.0 
+Created Date     : January 09th, 2017
+Function         : This Component is used in RTI interaction side panel to display cards
+Modification Log :
+* Developer               Code Review           Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Pallavi Ravishankar       61268             09/01/2017           Original Version
+* Harika Devi Kalidindi     86349             03/02/2017           Date Format for RTI Cards
+* Kritika Popat             86349             03/02/2017           Print Page redirection
+* Kritika Popat             111075            07/18/2017           Message in Print Card
+* Sumit Pharande                              12/12/2018           Open RTI card in subtab iniframe
+*  Vijaya Koriprolu                           1/06/2020             P9 SIT Defect 452052.0001 Fix
+*  Anjani  Vaddadi                            21/02/2020           REQ- RTI VAT changes
+*  Anjani Vaddadi                             03/19/2020            Defect Fix-399
+*  Anjani Vaddadi                             03/26/2020            REQ-437065 RTI MF4  
+*  Imran                                      04/06/2020            REQ-956598 RTI MF4  Issues
+*  Prasanthi Kandula                          04/16/2020            US 1003374 - To display send link on RTI Detail page
+*  Anjani Vaddadi                             07/03/2020            US - 1125628- Pass Message Definition Code (MDC) on Outbound Communications attached to CRM Cases via RTI
+*----------------------------------------------------------------------------------------------------------------------------->
+
+<apex:component id="RTICardCmptId">
+    <apex:attribute name="IconPath" type="String" description="Card Icon Path" id="iconId"/>
+    <apex:attribute name="Title" type="String" description="Card main title" id="titleId"/>
+    <apex:attribute name="Subtitle" type="String" description="Card subtitle" id="subTitleId"/>
+    <apex:attribute name="Channel" type="String" description="Channel description" id="channelDescId"/>
+    <apex:attribute name="DateAndTime" type="String" description="Date and Time" id="datetimeId"/>
+    <apex:attribute name="ButtonLabel" type="String" description="view Link Label" id="viewLabelId"/>
+    <apex:attribute name="ButtonTarget" type="String" description="view link Target Url" id="viewTargetId"/>
+    <apex:attribute name="InteractionKey" type="String" description="Interaction Key Unique" id="interactionKeyId"/>
+    <apex:attribute name="DisplayName" type="String" description="Name detail here" id="nameID"/>
+    <apex:attribute name="ChannelCode" type="String" description="Channel Code" id="codeID"/>
+    <apex:attribute name="MessageDesc" type="String" description="Message Description" id="messageID"/>
+    <apex:attribute name="CampaignName" type="String" description="Campaign Name" id="campaignName"/>
+    <apex:attribute name="StatusDescription" type="String" description="Status" id="statusDescription"/>
+    <apex:attribute name="phoneNumber" type="String" description="Phone Number" id="phoneNumber"/>
+    <apex:attribute name="StatusCode" type="String" description="StatusCode" id="statusCode"/>
+    <apex:attribute name="subStatusDesc" type="String" description="subStatusDesc" id="subStatusDesc"/>  
+    <apex:attribute name="SourceCode" type="String" description="Source Code" id="sourceCode"/>
+    <apex:attribute name="AccntId" type="String" description="Account ID" id="accountID"/>
+    <apex:attribute name="TrackingId" type="String" description="TrackingID of RTI" id="trackingid"/>
+    <apex:attribute name="directionCode" type="String" description="Direction Code Of Interaction" id="directionCodeID"/>
+    <apex:attribute name="Index" type="String" description="Index of the component" id="indexID"/>
+    <apex:attribute name="MemberCardId" type="String" description="Member ID" id="memberCardId"/>
+    <apex:attribute name="DependentCode" type="String" description="Dependent Code" id="dependentCode"/>
+    <apex:attribute name="PlatformCode" type="String" description="Platform Code" id="platformCode"/>
+    <apex:attribute name="SDRPersonID" type="String" description="SDR PersonId" id="sdrPersonId"/>
+    <apex:attribute name="PersonGenkey" type="String" description="PersonGenkey" id="personGenKey"/>
+    <apex:attribute name="MessageFulfillmentId" type="String" description="MessageFulfillmentId" id="messageFulfillmentId"/>
+    <apex:attribute name="Printable" type="boolean" description="Printable"/>
+    <apex:attribute name="MessageDefCode" type="string" description="Message Definition Code Print And Vat" id="MessageDefCodeId"/>
+    <apex:attribute name="RecipientName" type="string" description="RecipientName Email" id="RecipientNameId"/>
+    <apex:includescript value="/support/console/36.0/integration.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.RTICardComponent_SR_HUM,'/RTICardComponent_CSS_HUM.css')}" id="RTICardComponentCSSId"/>
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/datatables_HUM.css')}" id="RTIDataCSS"/>
+    <apex:includeScript value="{!URLFOR($Resource.RTICardComponent_SR_HUM,'/RTICardComponent_JS_HUM.js')}" id="RTICardComponentjSId"/> 
+   
+  <apex:outputPanel id="RTICardPanelId" >
+    <div class="callout right" id="RTICardDiv_{!Index}">
+      <table id="RTICardTableId">
+        <tr id="rowTitleId">
+          <td id = "iconColID">
+            <apex:outputPanel rendered="{!if((ChannelCode!='VAT'),true,false)}">
+              <img src='{!IconPath}' title="{!IF((ChannelCode == 'MA' || ChannelCode == 'MB' || ChannelCode == 'WB'|| ChannelCode == 'WEB'),'Web',(IF((ChannelCode == 'Print'),'Print',(IF((ChannelCode == 'SMS'),'Text',(IF((ChannelCode == 'EMAIL' || ChannelCode == 'EM'),'Email','IVR')))))))}" class="img-circle" id="iconImgId"/>
+            </apex:outputPanel>             
+            <apex:outputPanel rendered="{!if((ChannelCode=='VAT'),true,false)}">
+              <img src='{!IconPath}' title="VAT" />
+            </apex:outputPanel>
+          </td>
+          <td id = "colTitleId">
+            <h2 class="cardTitle">{!Title}</h2>
+          </td>
+        </tr>
+        <tr id="rowMessageId">
+          <td></td>
+          <td id = "colMessageId" title="{!MessageDesc}">
+            <h2 class="msgTitle">
+            </h2>
+          </td>
+        </tr>
+        <tr>
+          <td class="heightGap" colspan="2"></td>
+        </tr>
+        <tr id="vat_row" >
+          <td></td>
+          <td id = "colCampaignName" title="{!CampaignName}" render="{!if((ChannelCode=='VAT'),true,false)}" class="truncate-ellipsis ellipsisfield">
+            <h2 class="cardTitle">{!CampaignName}</h2>
+          </td>
+        </tr>
+        <tr id="rowSubTitleId">
+          <td></td>
+          <td id = "colSubTitleId">
+            <h2 class="cardTitle">{!Subtitle}</h2>
+          </td>
+        </tr>
+        <tr>
+          <td class="heightGap" colspan="2"></td>
+        </tr>
+        <tr id="vat_row1">
+          <td>  </td>
+            <td title="{!StatusDescription}">
+            <h2 class="cardTitle">{!StatusDescription}</h2>
+            
+          </td> 
+        </tr>
+        <tr>
+          <td colspan="2" class = "tdAlignClass" title="{!$Label.RTIDateLabel}">
+            <p class="datetimeClass"></p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" id="colLinkId">
+            <span>
+              <a style="cursor:pointer;" class="linkClass">{!ButtonLabel}</a>
+            </span>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <script>
+
+      var rtiCard= new RtiCard("RTICardDiv_{!Index}");
+      rtiCard.datetime = "{!DateAndTime}";
+      rtiCard.Title = "{!Title}";
+      rtiCard.InteractionKey = "{!InteractionKey}";
+      rtiCard.CampaignName = "{!CampaignName}";
+      rtiCard.messagePrint = "{!MessageDesc}";
+      rtiCard.SubTitle="{!Subtitle}";
+      rtiCard.campaignName="{!campaignName}";
+      rtiCard.statusDescription='{!StatusDescription}';
+      rtiCard.statusCode='{!StatusCode}';
+      rtiCard.phoneNumber='{!phoneNumber}';
+      rtiCard.subStatusDesc = '{!subStatusDesc}';
+      rtiCard.schannelCode ='{!ChannelCode}';
+      rtiCard.sSourceCode = '{!SourceCode}';
+      rtiCard.accountId = '{!AccntId}';
+      rtiCard.jstrackingID ='{!trackingID}';
+      rtiCard.jsdirectionCode ='{!directionCode}';
+      rtiCard.Name ='{!DisplayName}';
+      rtiCard.membercardId = '{!MemberCardId}';
+      rtiCard.dependentCode = '{!DependentCode}';
+      rtiCard.platformCode = '{!PlatformCode}';
+      rtiCard.sdrPersonID = '{!SDRPersonID}';
+      rtiCard.personGenKey = '{!PersonGenkey}';
+      rtiCard.messageFullfillId = '{!MessageFulfillmentId}';
+      rtiCard.vPrintable = {!Printable};
+      rtiCard.MsgDefCode = '{!MessageDefCode}';
+      rtiCard.recipientName = '{!RecipientName}';
+      rtiCard.render()
+    </script>
+  </apex:outputPanel>
+
+</apex:component>

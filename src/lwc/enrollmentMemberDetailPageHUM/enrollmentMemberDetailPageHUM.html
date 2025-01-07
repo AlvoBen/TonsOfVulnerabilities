@@ -1,0 +1,32 @@
+﻿<!--
+LWC Name        : enrollmentMemberDetailPageHUM.html
+Function        : To Open enrollment member record in seperate tab
+
+Modification Log:
+* Developer Name                     Date                         Description
+* Muthukumar                         07/29/2022                   US-3255798 Original Version 
+*-->
+<template>
+  <!--Changes for US-3255798 start - muthu-->
+  <!-- header start-->
+    <lightning-layout multiple-rows="true">
+      <lightning-layout-item padding="around-small" size="12">
+        <div class="slds-panel__header slds-theme_backgroundColor-white">
+          <lightning-icon icon-name="standard:account"></lightning-icon>
+          <h2 class="slds-panel__header-title slds-text-heading_small slds-m-left--x-small">
+            {memberDetails}<br>{panelName}</h2>
+        </div>
+      </lightning-layout-item>
+      <!-- left side column start-->
+      <lightning-layout-item padding="around-small" size="4">
+        <div class="custom-box slds-box slds-p-around_medium slds-theme_backgroundColor-white">
+          <c-display-fields-in-two-column-hum section-header={detail} section-data={data}></c-display-fields-in-two-column-hum>
+        </div>
+      </lightning-layout-item>
+      <!--Changes for US-3255798 end - muthu-->
+      <!--- Right side column start-->
+      <lightning-layout-item padding="around-small" size="8">
+          <c-enrollment-member-detail-tab-h-u-m o-data={tabDetails}></c-enrollment-member-detail-tab-h-u-m>
+      </lightning-layout-item>
+    </lightning-layout>
+</template>

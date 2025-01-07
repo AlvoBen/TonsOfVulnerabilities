@@ -1,0 +1,159 @@
+﻿<!--
+Page Name        : Logging_CMP_HUM
+Version          : 1.0 
+Created Date     : 2/24/2016
+Function         : Component use to display logging information.
+Modification Log :
+* Developer                 Code review         Date                  Description
+* -------------------------------------------------------------------------------------------------
+* Manish Kumar              24069               02/24/2016            Original Version
+* Manish Kumar              24880               04/11/2016            Added queue selection logic
+* Santhi Mandava            25231               04/19/2016            Fixed defect 223171.0001.
+* Santhi Mandava            27764               05/18/2016            Implemeted requirement REQ - 263122    
+* Manish Kumar              28163               05/23/2016            Fixed defect#224774.0001  
+* Santhi Mandava            28937               06/03/2016            Fixed defect#228405.0001 
+* Santhi Mandava            29879               06/11/2016            Changed oncomplete function for 
+                                                                        retrieveCaseReocords action function
+* Santhi Mandava            31185               06/27/2016            Fixed defect#230398.0001
+* Manish Kumar              33921               07/18/2016            Fixed defect#D-00463. Enabled encryption for logged records
+* Santhi Mandava            35015               08/09/2016            Modified test class as per defect 230816.0001 fix.
+* Manish Kumar              35877               08/15/2016            Worked on REQ#279125 for Attachment_Key encryption
+* Santhi Mandava            40488               08/24/2016            Worked on REQ#275929 for DPaaS error handling.
+* Santhi Mandava            48114               09/29/2016            Implemented REQ - 270276.
+* Manish Kumar              59048               01/27/2017            Worked on Defect#243750, REQ#296700. Incorporated changes for Datatable
+                                                                      in "Existing case" scenario.
+* Prasanthi Kandula                             03/09/2017            Fixed Defect #258979.0001.
+* Praveen Kumar Parimi      184064              02/14/2018            Fixed the sInfoMessage rendering and not to come up for summary, benefits and PCP/PCD subtypes. 
+* Pradeep Dani              240984              06/11/2018            Regression Defect : 363448.0001 - Updated the logic to render cases.
+* Ashish Behera             314794              11/29/2018            REQ - 379741 - Quality/AHT - Autologging on the Claim Detail tab (RF)
+* Prudhvi Pamarthi                              02/06/2019            REQ - 361155 - Not allowing case creation on Legacy Deleted policies
+* Ashish Behera             34226               03/3/2019             REQ - 383978 - Quality/AHT - Autologging on the Claim Detail tab (RF)
+* Amar Gadewar                                  03/19/2019            REQ - 383978 - Defect fix for Logging message
+* Santhi Mandava            348723              03/04/2019            Removed "cipherCloudCalloutURL" JS variable
+* Santhi Mandava                                02/19/2020            US790922 Added pause logging functionality for rapidforce users
+* Amar Gadewar                                  03/09/2020            User Story 860241 PR00091574 - MF 1 - AHT - Add Pause Logging button on Claim Details/Claim Summary/Auth/Referral Summary Page (CRM)
+* Amar Gadewar                                  04/03/2020            US 995046 PR00091574 - MF 1 - SF - TECH - On/Off Switch Cleanup - 4/10 and 4/24 Release (CRM)
+* Suresh Kokkeragadda                           08/15/2020            User Story 1317726: PR00091574 - MF 1 - SF - TECH - On/Off Switch Cleanup 7/30 , 8/14 and 8/28 releases (CRM)
+* Swapnali Sonawane				                04/11/2021            US 1968552 Start Autologging from Claims Detail Page in CRM Service for GBO users
+* Luke Cecil    								06/04/2021			  US 2315755 - Defect # 3068 Fix
+* Tharun Madishetti                             07/14/2023         US-4647041: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Logging & Tasks (Group 1)
+------------------------------------------------------------------------------------------------------------>
+
+<apex:component id="Logging_CMP_HUM" controller="Logging_C_HUM" allowDML="true">
+    <apex:includeScript value="/support/console/38.0/integration.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}"/>
+	  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY,'jquery-ui.min.js')}"/> 
+    
+    <apex:includescript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Callout_Utility.js')}"/>
+    <apex:includescript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Logging/js/LoggingUtility.v2.js')}"/>
+    <apex:includescript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Logging/js/GeneralUtility.v2.js')}"/> 
+    <apex:includescript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Logging/js/DataTableUtility.v1.js')}"/>
+  
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY,'bootstrap-datepicker-uni.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.DatePickerOverrides_SR_HUM, '/js/datePickerOverrides.js')}"/> 
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_JQUERY,'jquery-ui.min.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}" />
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_JQUERY, 'bootstrap-datepicker-uni.css')}" /> 
+    <apex:stylesheet value="{!URLFOR($Resource.DatePickerOverrides_SR_HUM,'/css/datePickerOverrides.css')}"/> 
+    
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Logging/css/style.css')}"/>
+    
+    <apex:attribute name="DisplayMessage" assignTo="{!displayMsg}" type="Boolean" required="true" description="Boolean variable to indicate if global message has to be displayed or not."/>
+    <apex:attribute name="Logging_Color" assignTo="{!log_color}" type="String" required="true" description="Color to highlight field value while logging."/>
+    <apex:attribute name="Logged_Item_Color" assignTo="{!logged_color}" type="String" required="true" description="Color to highlight field value for logged data."/>
+    <apex:attribute name="Screenshot_Area_Id" assignTo="{!log_area}" type="String" required="true" description="ID of visualforce section which has to be logged."/>
+    <apex:attribute name="RecordId" assignTo="{!record_Id}" type="String" required="true" description="Salesforce record ID"/>
+    <apex:attribute name="AttachmentKey" assignTo="{!sAttachmentKey}" type="String" required="false" description="Attachment log key"/>
+    <apex:attribute name="AttachmentDesc" assignTo="{!sAttachmentDesc}" type="String" required="false" description="Attachment log description"/>
+    <apex:attribute name="disableButton" assignTo="{!bdisableButton}" type="Boolean" required="false" description="Boolean value to disable Start logging button"/>
+    <apex:attribute name="enablePause" assignTo="{!bEnablePause}" type="Boolean" required="false" default="false" description="This value is used to visible/invisible pause button on logging UI"/>
+    <script>
+        var screenshotArea = '{!JSENCODE(log_area)}';
+        var loggedDataColor = '{!JSENCODE(log_color)}';
+        var alreadyLoggedColor = '{!JSENCODE(logged_color)}';
+        var log_AtleastOne_Value = '{!JSENCODE($Label.LOGGING_LOG_ATLEASET_ONE_VALUE)}';
+        var userID = '{!JSENCODE($User.Id)}';
+        var stickyHeaderTop = 0;
+        var disablePaginationWhileLogging = true;
+        var startLoggingText = 'Start Logging';
+        var finishLoggingText = 'Cancel Logging';
+        var dispConsolelog = false;
+        var typeValue = '{!JSENCODE($CurrentPage.parameters.type)}';
+        var typeOfPage = '{!JSENCODE($CurrentPage.parameters.subtype)}';
+        var envApplicationName = '{!JSENCODE(appName)}';
+        var uniqueId = escape('{!JSENCODE($CurrentPage.parameters.authId)}');
+        var sattachkey = '{!JSENCODE(sAttachmentKey)}';
+        var rsoMedicareFrontuser = {!$Permission.RSOMedicareFrontOfficeUser_HUM};    	
+        var gboFrontLineuser={!$Permission.CRMS_240_GBO_Segment_Service_Access};
+        var sCurrentQueue = '{!JSENCODE($User.Current_Queue__c)}'; 
+        var sattachdesc = '{!JSENCODE(sAttachmentDesc)}';
+        enablePause = {!bEnablePause}; 
+		var Loggingheight ;
+
+    </script>
+    <apex:form id="Logging_Form">
+        <div id="stickyheader">
+            <apex:pageBlock id="LoggingPB">
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <div id="dispLoggingInfo"  >
+                                <div id="idAutoLoggin" style="display:none" >
+                                    <apex:pageMessage id="autoLogging" severity="info" strength="3" escape="true" summary="{!$Label.AutoLoggingMessage_ClaimDetail_HUM}" />                                        
+                                </div>
+                                <apex:outputPanel id="idMessages1">
+                                    <apex:pageMessage id="idMessages2" severity="info" strength="3" escape="true" summary="{!$Label[sInfoMessage]}" rendered="{! NOT(CONTAINS($CurrentPage.parameters.subtype,$Label.Logging_Summary_HUM)) && ($CurrentPage.parameters.subtype != $Label.Logging_Benefits_HUM) && ($CurrentPage.parameters.subtype != $Label.Logging_PCPPCD_HUM) && displayMsg && displayCaseMsg}" >
+                                        <div class="wordWrap">
+                                            <apex:repeat value="{!lstCases}" var="item" >
+                                                <a class="caseLink" log_ignore_click="false" href="javascript:openSubTabFromLoggingPage('{!item.Id}','{!item.CaseNumber}');">{!item.CaseNumber}</a>, &nbsp;
+                                            </apex:repeat>
+                                        </div>
+                                    </apex:pageMessage>
+                                </apex:outputPanel>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="divComp" class="divComp dispBlock">
+                                <c:AttachLogDetailsToCase_CMP_HUM ObjectId="{!record_Id}" legacyDeleteCheck="{!bdisableButton}" ></c:AttachLogDetailsToCase_CMP_HUM>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </apex:pageBlock>
+        </div>
+        
+        <apex:actionFunction name="pleaseWaitAF" reRender="errMsg" status="pleaseWait"/>
+        <apex:actionFunction name="retrieveCaseReocords" reRender="idMessages1" action="{!retrieveCaseReocords}" oncomplete="resetPageContentMargin();">
+            <apex:param name="sPageSubType" value="" />
+            <apex:param name="sPageUniqVal" value="" />
+        </apex:actionFunction>
+        <apex:actionFunction name="reRenderQueueSelectionpage" reRender="queueSelectionPage" oncomplete="setOkbuttonvisibility();">
+            <apex:param name="reRenderQueueSelectionPage" value="true" assignTo="{!reRenderQueueSelectionPage}"/>
+        </apex:actionFunction>
+        <apex:actionFunction name="updateQueueLogic" reRender="pleaseWait" action="{!updateQueueLogic}"/>
+        
+        <apex:actionStatus id="pleaseWait">
+            <apex:facet name="start">
+                <div class="waitingSearchDiv waitingSearchDivOpacity" style="width: 100%; height: 130%; display: block; opacity: 0.70" />
+                <div id="searchingStatus" class="waitingSearchDiv" style="width: 100%; height: 100%; display: block;">
+                    <div class="waitingHolder" style="top: 300px; width: 110px;">
+                        <img class="waitingImage" src="/img/loading.gif" /> <span class="waitingDescription">Loading...</span>
+                    </div>
+                </div>
+            </apex:facet>
+            <apex:facet name="stop" />
+        </apex:actionStatus>
+    </apex:form>
+    
+    <div id="QueueSelectionDialog" title="Queue Selection" class="font12Size">
+        <apex:outputPanel id="queueSelectionPage">
+            <apex:outputPanel rendered="{!reRenderQueueSelectionPage}">
+                <apex:include pageName="HUMQueueSelection" />
+            </apex:outputPanel>            
+            <button id="btnOk" class="btn button commandButton btnQueueOk marginleft45" type="button" onclick="handleOKclick();">OK</button>
+        </apex:outputPanel>
+    </div>
+</apex:component>

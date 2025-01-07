@@ -1,0 +1,63 @@
+﻿<!--*******************************************************************************************************************************
+LWC JS Name : pharmacyPersonalAccountTabHum.js
+Function    : This LWC component serves as display for to Pharamcy Personal Account Details Tab in CRM strides
+
+Modification Log:
+Developer Name           Code Review              Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Pallavi Shewale                 		        07/19/2021                    US: 2364907- Search- Add Humana Pharmacy Account Number to the Search screen
+* Abhishek Mangutkar                            10/28/2022					  US#3897898
+*********************************************************************************************************************************-->
+<template>
+    <div class="slds-text-heading_medium slds-var-p-left_small">
+        <div class="slds-text-heading_medium">
+            <div class="slds-text-link" style="cursor: pointer" onclick={navigateToAccount}>{fName} {lName}</div>
+        </div>
+    </div>
+    <template if:true={accountDetails}>
+        <div class="slds-var-p-left_medium">
+            <div class="slds-text-align_left">
+                <div class="slds-text-body_small">
+                    <div class="slds-var-p-top_small">
+                        Security Group(s)
+                        <div class="slds-text-title_bold">
+                            {accountDetails.Security_Groups__c}
+                        </div>
+                    </div>
+                    <div class="slds-var-p-top_small">
+                        Account Record Type
+                        <div class="slds-text-title_bold">
+                            {accountDetails.RecordType.Name}
+                        </div>
+                    </div>
+                    <div class="slds-var-p-top_small">
+                        Phone Number
+                        <div class="slds-text-title_bold">
+                            <lightning-formatted-phone value={accountDetails.PersonHomePhone} disabled>
+                            </lightning-formatted-phone>
+                        </div>
+                    </div>
+                    <div class="slds-var-p-top_small">
+                        Email
+                        <div class="slds-text-title_bold">
+                            <lightning-formatted-email value={accountDetails.PersonEmail}
+                                                       label={accountDetails.PersonEmail} onclick={handleEmailClick} hide-icon disabled>
+                            </lightning-formatted-email>
+                        </div>
+                    </div>
+                    <div class="slds-var-p-top_small">
+                        Mailing Address
+                        <div class="slds-var-p-top_xx-small">
+                            <lightning-formatted-address street={accountDetails.PersonMailingStreet}
+                                                         city={accountDetails.PersonMailingCity}
+                                                         country={accountDetails.PersonMailingAddress.countryCode}
+                                                         province={accountDetails.PersonMailingStateCode}
+                                                         postal-code={accountDetails.PersonMailingPostalCode} disabled>
+                            </lightning-formatted-address>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>

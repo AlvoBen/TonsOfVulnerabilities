@@ -1,0 +1,148 @@
+﻿<!--
+LWC Name        : coachingAssociatedFormHUM.html
+Function        : LWC to display asscoiated account section on member details pages.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Prudhvi Pamarthi               05/22/2021                Original Version 
+****************************************************************************************************************************-->
+<template>
+    <div id="ExpandableAssociatedSection" class="slds-section slds-is-open exapandable-associated">
+        <article class="slds-card">
+            <div class="slds-card__header slds-grid" style="background-color:#F3F2F2">
+                <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                    <div class="slds-media__figure">
+                        <span class="slds-icon_container" title="account">
+                            <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account"
+                                size="small" variant="success"></lightning-icon>
+                            <span class="slds-assistive-text">account</span>
+                        </span>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-card__header-title slds-show_inline">
+                            <span class="slds-text-title_bold">Associated Forms &amp; Information ({iCount})</span>
+                            <lightning-helptext content={labels.associatedFormsHelp}
+                                class="slds-is-relative doc-type-tooltip">
+                            </lightning-helptext>
+                        </div>
+                    </div>
+                </header>
+            </div>
+
+            <div aria-hidden="false" class="slds-card__body slds-section__content slds-p-top_none"
+                id="expandAssociated">
+                <div class="slds-tile__detail slds-text-body_small slds-p-horizontal_small">
+                    <template if:true={isResults}>
+                        <template for:each={oResponse} for:item="acc" for:index="ind">
+                            <div key={acc.DocumentType} aria-hidden="false"
+                                class="slds-section__content slds-p-top_none">
+                                <div
+                                    class="slds-tile__detail slds-text-body_small slds-wrap slds-p-bottom_small">
+
+                                    <div class="slds-grid slds">
+                                        <template if:true={acc.Accordian}>
+                                            <lightning-button-icon data-att={ind} data-doctype={acc.extraFieldMapping}
+                                                data-actionname={acc.iconName} icon-name={acc.iconName} size="small"
+                                                onclick={expandrow} class="accordianPass">
+                                            </lightning-button-icon>
+                                        </template>
+                                        <!--<template if:false={acc.Accordian}>
+                                            <span class="slds-p-left_large"></span>
+                                        </template>-->
+                                        <span class="slds-p-left_small"><b
+                                                class="slds-p-right_xx-small heading-green">Document Type
+                                                &nbsp;: </b>
+                                            <b onclick={handleClick}>{acc.DocumentType}</b>
+                                        </span>
+                                        <template if:false={acc.ETL_Record_Deleted__c}>
+                                            <lightning-helptext content={labels.UserPassword}
+                                                class="slds-is-relative doc-type-tooltip">
+                                            </lightning-helptext>
+                                            <div class="slds-is-relative gear-icon">
+                                                <lightning-icon icon-name="utility:settings" size="x-small"
+                                                    onclick={expandlist} onblur={closeList} class="slds-p-left_medium"
+                                                    style="margin-left:auto"></lightning-icon>
+                                                <template if:true={showPasswordList}>
+                                                    <ul
+                                                        class="slds-listbox slds-listbox_vertical action-list
+                                                slds-dropdown slds-m-left_medium slds-dropdown_left pwd-options-list slds-p-around_none
+                                                ">
+                                                        <li if:true={showCreatePassword} onclick={createPwdHandler}
+                                                            value="create"
+                                                            class="slds-media slds-media_center slds-media_small 
+                                                slds-p-vertical_x-small slds-p-horizontal_small slds-text-link_reset password-action">
+                                                            Create password</li>
+                                                        <li if:false={showCreatePassword} onclick={editPwdHandler}
+                                                            data-name="edit"
+                                                            class="slds-media slds-media_center slds-media_small 
+                                                slds-p-vertical_x-small slds-p-horizontal_small slds-text-link_reset password-action">
+                                                            Edit</li>
+                                                        <li if:false={showCreatePassword} onclick={deletePwdHandler}
+                                                            data-name="delete"
+                                                            class="slds-media slds-media_center slds-media_small 
+                                                slds-p-vertical_x-small slds-p-horizontal_small slds-text-link_reset password-action">
+                                                            Delete</li>
+                                                    </ul>
+                                                </template>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <div class="slds-p-left_xx-large">
+
+                                        <div class="slds-grid slds">
+                                            <div class="slds-p-right_xx-small text-wrap"><b>Effective Date:&nbsp;</b>
+                                                {acc.EffectiveDate}</div>
+                                            <br />
+                                        </div>
+                                        <div class="slds-grid slds">
+                                            <div class="slds-p-right_xx-small text-wrap"><b>Termination Date:&nbsp;</b>
+                                                {acc.TerminationDate}</div>
+                                        </div>
+                                        <template if:true={acc.ETL_Record_Deleted__c}>
+                                            <div class="slds-grid slds">
+                                                <span class="slds-p-right_xx-small text-wrap"><b>Person of Authority:&nbsp;</b>
+                                                    {acc.PersonofAuthority}</span>
+                                            </div>
+                                        </template>
+                                        <!---THis Section is for Show Accordian fields***********************************-->
+                                        <template if:true={acc.extraField}>
+                                            <template for:each={accordianFields} for:item="flds">
+                                                <div key={flds.label} class="slds-grid slds">
+                                                    <div class="slds-p-right_xx-small text-wrap"><b>{flds.label}:&nbsp;</b>
+                                                        {flds.value}</div>
+                                                </div>
+                                            </template>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <template if:false={isResults}>
+                        <div class="slds-var-p-top_medium no-result-message">
+                            <c-search-no-result-hum no-result-message={labels.HUM_UserAssociated_No_Results}>
+                            </c-search-no-result-hum>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            <c-generic-modal-hum if:true={bShowModal} b-show-modal={bShowModal} onclose={closeModal} title={modalTitle}
+                onsave={saveForm} onreset={resetForm}>
+                <c-coaching-password-form-hum slot="content" is-edit={editPassword} onmodify={modifiedHandler}
+                    record-id={sRecordId} onsubmission={handleAccordian}></c-coaching-password-form-hum>
+            </c-generic-modal-hum>
+
+            <c-generic-modal-hum if:true={showActionModal} b-show-modal={showActionModal} oncloseoverlay={closeOverlayModal}
+                title={overlayModalTitle} buttons-config={buttonsConfig} ondelete={deleteForm}
+                oncontinue={handleContinue} is-continue={isContinueModal}>
+                <div if:true={deletePassword} slot="content" class="slds-p-horizontal_x-large slds-p-bottom_medium slds-align_absolute-center">
+                     {labels.passwordDeleteModalHum}
+                </div>
+                <div if:true={isContinueModal} slot="content" class="slds-p-horizontal_x-large slds-p-vertical_medium slds-align_absolute-center">
+                    {labels.unsavedModalMsgHum}
+                </div>
+            </c-generic-modal-hum>
+        </article>
+    </div>
+</template>

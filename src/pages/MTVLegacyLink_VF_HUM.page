@@ -1,0 +1,28 @@
+﻿<!-- 
+Page Name        : MTVLegacyLink_VF_HUM
+Version          : 1.0 
+Created Date     : May 16, 2016
+Function         : sending parameters to MTV Legacy system
+Modification Log :
+*   Developer        	Code Review        		Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Gargey Sharma          27989			  05/19/2016           	 Original Version
+-------------------------------------------------------------------------------------------------------------------------------->
+<apex:page showHeader="false" sidebar="false" Controller="MTVLegacyLink_C_HUM">    
+    <div style="display: hidden;">
+        <form action="{!sGCPUrl}" method="post" name="input" id= "MTVform">
+            <INPUT ID="CallingApplication" NAME="CallingApplication" TYPE="hidden" VALUE="SFDC"/>
+            <INPUT ID="ApplicationType" NAME="ApplicationType" TYPE="hidden" VALUE="NonWeb"/>
+            <INPUT ID="Mode" NAME="Mode" TYPE="hidden" VALUE="View"/>
+            <INPUT ID="ApplicationName" NAME="ApplicationName" TYPE="hidden" VALUE="{!sAppName}"/>
+            <INPUT ID="EntityType" NAME="EntityType" TYPE="hidden" VALUE="Member"/>
+            <INPUT ID="Functionality" NAME="Functionality" TYPE="hidden" VALUE="KM"/>
+            <INPUT ID="ClaimNumber" NAME="ClaimNumber" TYPE="hidden" VALUE="{!sClmNumber}"/>
+            <br/><br/>                        
+        </form>       
+        <center> <apex:outputText value="{!$Label.MTVLegacyNavigating}"/> </center>        
+        <script language="javascript">
+            document.getElementById("MTVform").submit();
+        </script>
+    </div>
+</apex:page>

@@ -1,0 +1,56 @@
+.sticky-header-system-bar {
+    position: sticky;
+    top: 7.3rem;
+    z-index: 3;
+}
+
+.sticky-header {
+    position: sticky;
+    top: 5.4rem;
+    z-index: 3;
+}
+
+.background-template{
+    background-color: #F3F2F2;
+}
+.detail-container{
+    background-color: #f3f2f2;
+}
+.detail-item{
+    background-color: #fff;
+}
+
+.THIS.template-full-width {
+    width: 100%;
+}
+
+.template-full-height{
+    height: 100%;
+    min-height: 600px;
+}
+
+.visible-on-top {
+    z-index: 2;
+}
+
+.info-bg {
+    background-color: rgba(230, 230, 230, 0.945);
+    margin-top: 10px;
+}
+
+.infomsg-bg {
+    background-color: rgba(240, 172, 27, 0.993);
+    margin-top: 10px;
+
+}
+
+.infocontainer {
+    display: flex;
+  }
+  .infocontainer.space-between {  
+    justify-content: space-between;
+  }
+
+.iconmargin {
+    margin-top: 50%;
+  }

@@ -1,0 +1,8 @@
+/* .not-visible {
+    visibility:hidden;
+} */
+
+.lightningHelpTextCls{
+    position: relative; 
+    top: -3px;
+}

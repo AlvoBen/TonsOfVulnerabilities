@@ -1,0 +1,25 @@
+﻿<!--
+LWC Name        : coachingMemberAssociatedForms.html
+Function        : Forms section on account detail page
+
+Modification Log:
+* Developer Name                  Date                         Description
+*
+* Prudhvi Pamarthi               05/22/2021                    Initial version *-->
+
+<template>
+               
+    <div class="slds-box">       
+        <lightning-layout multiple-rows="true">
+            <lightning-layout-item size="12" if:true={bShowPOA}>
+                <c-coaching-p-o-a-hum s-record-id={recordId}></c-coaching-p-o-a-hum>
+            </lightning-layout-item>
+            <lightning-layout-item size="12">
+                <c-coaching-associated-form-h-u-m oneventaccountdetailpoainfo={handleCustomEvent} s-record-id={recordId}>
+                </c-coaching-associated-form-h-u-m>
+            </lightning-layout-item>
+        </lightning-layout>
+    
+    </div>
+    
+</template>

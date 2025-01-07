@@ -1,0 +1,13 @@
+.slds-card__header-title.hc-standard-table-styles {
+    padding: .5rem 1rem;
+}
+
+.hc-align-header {
+    justify-content: space-between; 
+}
+
+.card {
+    background-color:white;
+    transition: 0.3s;
+    padding: .5rem 1rem;
+  }

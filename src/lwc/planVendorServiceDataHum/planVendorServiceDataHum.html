@@ -1,0 +1,16 @@
+﻿<!--*****************************************************************************************************************************
+LWC Name : planVendorServiceDataHum.html
+Function    : This LWC component serves as vendor section under purchaser plan additional info
+
+Modification Log: 
+Developer Name           Code Review              Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Ashish Kumar                                              09/01/2021                   Original
+* Supriya Shastri                                            09/02/2021                   Vendor Plan section implementation
+* Vardhman Jain                                              09/02/2022                  US: 3043287 Member Plan Logging stories Changes.
+*******************************************************************************************************************************-->
+<template>
+    <template if:true={bDataLoaded}>
+        <c-custom-record-form-hum b-data-loaded={bDataLoaded} record-id={recordId} screen-name='Vendor Information' title="Vendor"></c-custom-record-form-hum>
+    </template>
+</template>

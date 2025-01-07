@@ -1,0 +1,67 @@
+﻿<!-- *****************************************************************************************
+Page Name          : WarmCaseTransfer_VF_HUM 
+Version            : 1.0
+Function           : Page for Warm Case Transfer in Console tab
+Created Date       : 22/09/2016
+
+Modification Log:
+*   Developer             Code Review       Date                Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Vamsi Kondragunta      47988          11/14/2016          Defect fix for #244725.0001
+*   Vamsi Kondragunta      48951          11/22/2016          Defect fix for #249730.0001
+*   Vamsi Kondragunta      49555          11/29/2016          Defect fix for 249973 and 250228
+*   Prudhvi Pamarthi                      04/06/2018          REQ - 355968: Fix for CA ticket - 7216541
+*   Prudhvi Pamarthi                      05/03/2018          355482 - Defect Fix
+* 	Mohammed Noor                         04/26/2021          US2163321 - Case Management Checkmarx Security violations - Case History & Case Misc
+---------------------------------------------------------------------------------------------------------------------------------
+-->
+<apex:page Controller="HUMWarmCaseTransfer" sidebar="true" showHeader="true" title="Title" id="pageCaseWarm">
+    <apex:includeScript value="/support/console/26.0/integration.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.WARMCASEDTRANSFER_SR_HUM, 'WarmCaseTransfer.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.WARMCASEDTRANSFER_SR_HUM, 'WarmCaseTransfer.css')}"/>
+    
+    <!--For the accept button to open the case in a new tab, we are passing the value which we get from remote function
+        Which is moved to the static resource, so this function needs to be present be here and cannot be moved to static resource -->   
+    <script>
+        function acceptCase(val, usernameval, casenumber){
+            opentabWarmCaseTransfer(val, usernameval, casenumber, '{!$RemoteAction.HUMWarmCaseTransfer.updateCaseRecord}');
+        }
+    </script>
+    
+    <apex:form id="Main_form">     
+    <apex:pageBlock id="Main_Block">  
+        <center>        
+        <apex:commandButton value="Refresh" id="view_this_object2" action="{!getCases}" reRender="CaseList">
+        </apex:commandButton>                
+        </center>
+        <apex:actionFunction name="refreshCaseListPanel" action="{!getCases}" reRender="MyCaseListPanel" />
+        <a class="errMsgWarmCaseTransfer"></a>
+        <apex:outputPanel id="MyCaseListPanel" >
+            <div class="divWarmCaseTransferTable">  
+                <apex:pageBlockTable value="{!caseList}" var="b"  id="CaseList" >
+                    <apex:column >
+                        <apex:facet name="header">{!$Label.HUM_Case}</apex:facet>               
+                        <apex:outputLink id="targetid" onclick="sforce.console.openPrimaryTab(null, '/{!JSENCODE(b.id)}', true, '{!JSENCODE(b.CaseNumber)}');return false;">{!b.CaseNumber}</apex:outputLink>
+                    </apex:column> 
+                    <apex:column ><apex:facet name="header">{!$Label.HUM_Shared_To}</apex:facet><apex:outputText value="{!b.User__r.Name}"/></apex:column>
+                    <apex:column ><apex:facet name="header">{!$Label.HUM_Shared_From}</apex:facet><apex:outputText value="{!b.Transferred_From__r.Name}"/></apex:column>            
+                    <apex:column >
+                        <apex:facet name="header">{!$Label.HUM_Action}</apex:facet>
+                        <apex:commandButton value="Accept" onclick="acceptCase('{!b.id}','{!JSENCODE(b.User__r.Name)}','{!b.CaseNumber}');return false;" id="view_this_object" rendered="{!if(b.Transferred_From__c=$User.Id,false,true)}"/> 
+                        <apex:commandButton value="Reject" id="view_this_object1" onclick="rejectActFunction('{!b.id}','{!JSENCODE(b.Transferred_From__r.Name)}');return false;" reRender="MyCaseListPanel" rendered="{!if(b.Transferred_From__c=$User.Id,false,true)}"/> 
+                        <apex:commandButton value="Cancel" id="view_this_object2" onclick="cancelActFunction('{!b.id}','{!JSENCODE(b.Transferred_From__r.Name)}');return false;" reRender="MyCaseListPanel" rendered="{!if(b.Transferred_From__c=$User.Id,true,false)}"/>          
+                    </apex:column>            
+                </apex:pageBlockTable>
+            </div>
+        </apex:outputPanel>
+        <apex:actionFunction action="{!Reject}" name="rejectActFunction" rerender="MyCaseListPanel">
+            <apex:param name="caseId" assignTo="{!updCaseId}" value="" />
+            <apex:param name="caseOwnerName" assignTo="{!updCaseOwnerName}" value="" />
+        </apex:actionFunction>
+        <apex:actionFunction action="{!Cancel}" name="cancelActFunction" rerender="MyCaseListPanel">
+            <apex:param name="caseId" assignTo="{!updCaseId}" value="" />
+            <apex:param name="caseOwnerName" assignTo="{!updCaseOwnerName}" value="" />
+        </apex:actionFunction>
+    </apex:pageBlock> 
+ </apex:form>
+</apex:page>

@@ -1,0 +1,17 @@
+﻿<!--
+LWC Name        : loadDashboard_Hum.html
+Function        : loadDashboard_Hum used to load case . task dashboard lwc page
+
+Modification Log:
+* Developer Name                  Date                          Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Shailesh B                      07/03/2022                    Original Version 
+****************************************************************************************************************************-->
+<template>
+    <template if:true={isSupervisor}>
+    <c-custom_dashboard_-sup-hum is-user-supervisor = {isSupervisor}></c-custom_dashboard_-sup-hum>
+    </template>
+    <template if:false={isSupervisor}>
+        <c-custom_dashboard_-csr-hum></c-custom_dashboard_-csr-hum>
+        </template>
+</template>

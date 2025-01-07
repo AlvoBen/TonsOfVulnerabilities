@@ -1,0 +1,38 @@
+.current_filter {
+    color: rgb(8, 7, 7);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-weight: 600;
+    line-height: 1.25;
+    display: block;
+    cursor: pointer;
+}
+ 
+.current_filter:hover {
+    text-decoration: underline;
+}
+.top-panel {
+    border: var(--lwc-borderWidthThin,1px) solid var(--lwc-colorBorderButtonDefault,rgb(221, 219, 218));
+    border-radius: var(--lwc-borderRadiusMedium,0.25rem); 
+    background-color: #fafaf9; 
+    position: relative; 
+    max-height: 600px; 
+    overflow: hidden; 
+    display: flex; 
+    flex-direction: row-reverse;
+}
+.class1 {
+    background-color: #e6e618;
+    display: block;
+}
+
+.slds-is-open-red{
+    -webkit-text-fill-color: red;
+}
+.slds-is-open-yellow{
+    -webkit-text-fill-color: #FFC600;
+}
+.slds-is-open-green{
+    -webkit-text-fill-color: green;
+}

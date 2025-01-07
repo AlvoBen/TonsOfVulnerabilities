@@ -1,0 +1,61 @@
+﻿<template>
+  <div class="slds-grid slds-wrap slds-grid_vertical slds-var-p-vertical_x-large footer-wrapper">
+    <div class="row1 slds-grid slds-wrap slds-var-p-bottom_medium">
+      <div class="slds-col slds-size_1-of-1 footer-icon slds-large-size_5-of-12 slds-var-m-bottom_medium">
+        <a href={Go365Community}>
+          <img src={go365Logo} alt="Go365 Logo">
+        </a>
+      </div>
+      <div class="slds-col slds-size_1-of-1 footer-external-link slds-grid_vertical-align-center slds-grid slds-wrap slds-large-size_4-of-12 slds-var-m-bottom_medium">
+        <div class="slds-col slds-grid slds-size_5-of-12 slds-grid_align-end slds-large-size_2-of-12">
+          <a href={label.Go365Footer_FbURL}>
+            <img src={fbIcon} alt="Facebook Group">
+          </a>
+        </div>
+        <div class="slds-size_1-of-12"></div>
+        <div class="slds-col slds-grid slds-size_5-of-12 slds-large-size_2-of-12">
+          <a href={label.Go365Footer_TwitterURL}>
+            <img src={twitterIcon} alt="Twitter Group">
+          </a>
+        </div>
+      </div>
+      <div class="slds-col slds-grid slds-wrap slds-size_1-of-1 slds-large-size_3-of-12 slds-grid_vertical-stretch">
+        <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 padding-right-none-mobile slds-var-p-right_small slds-grid_align-center slds-var-m-bottom_medium slds-grid_vertical-stretch slds-grid">
+          <a href={label.Go365Footer_AppleStoreURL} class="app-store-link slds-size_1-of-1">
+            <img src={appleStoreIcon} alt="Apple Store">
+          </a>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 slds-var-m-bottom_medium slds-grid slds-grid_align-center">
+          <a href={label.Go365Footer_GoogleplayURL} class="app-store-link slds-size_1-of-1">
+            <img src={playStoreIcon} alt="Play Store">
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="row2 slds-grid slds-wrap slds-var-p-vertical_large">
+      <a href={label.Go365Footer_TNCURL} class="footer-link slds-var-p-vertical_xxx-small">{label.HFooterLabel_TNC}</a>
+      <a href={label.Go365Footer_PrivacyURL} class="footer-link slds-var-p-vertical_xxx-small">{label.HFooterLabel_PrivacyPractices}</a>
+      <a class="footer-link slds-var-p-vertical_xxx-small" onclick={handleOneTrust} target="_blank">{label.HFooterCookieComplaince}
+        <img class="footer-cookies-image" src={privacyoptionsIcon}/> </a>
+      <a href={label.Go365Footer_IntrntPrivacyURL} class="footer-link slds-var-p-vertical_xxx-small">{label.HFooterLabel_IntrntPrivacyStatemnt}</a>
+      <a href={label.Go365Footer_RightsRspnsibilityURL} class="footer-link slds-var-p-vertical_xxx-small">{label.HFooterLabel_RightResponsibility}</a>
+      <a href={label.Go365Footer_accessibilityURL} class="footer-link slds-var-p-vertical_xxx-small">{label.HFooterLabel_Accessibility}</a>
+      <a href={label.Go365Footer_LegalURL} class="footer-link slds-var-p-vertical_xxx-small">{label.HFooterLabel_Legal}</a>
+      <a href={label.Go365Footer_AboutURL} class="footer-link slds-var-p-vertical_xxx-small">{label.HFooterLabel_AboutUs}</a>
+    </div>
+    <div class="row3 slds-grid slds-wrap slds-grid_vertical slds-var-p-top_large">
+      <p class="slds-size_1-of-1" tabindex="0">
+        {label.Go365Footer_Satement}
+      </p>
+      <p class="slds-size_1-of-1 slds-var-m-top_medium" tabindex="0">
+        GCHHGFRHH 12/15
+      </p>
+      <p class="slds-size_1-of-1 slds-var-m-top_xx-small" tabindex="0">
+        Last Updated 01/01/2017
+      </p>
+      <p class="slds-size_1-of-1 footer-copyright slds-text-align_right" tabindex="0">
+        &copy; Go365 2017
+      </p>
+    </div>
+  </div>
+</template>

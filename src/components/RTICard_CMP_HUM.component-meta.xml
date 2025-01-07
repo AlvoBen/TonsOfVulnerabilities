@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ApexComponent xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>38.0</apiVersion>
+    <description>This component is used ti display the details of each RTI interaction in card format in RTI page</description>
+    <label>RTICard_CMP_HUM</label>
+</ApexComponent>

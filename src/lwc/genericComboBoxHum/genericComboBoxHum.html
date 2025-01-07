@@ -1,0 +1,73 @@
+﻿<template>
+    <div class="slds-form-element">
+        <!-- Header Label -->
+        <template if:true={header}>
+            <div class="slds-grid slds-gutters">
+                <template if:true={required}>
+                    <div class="slds-col">
+                        <span class="slds-text-color_error">*</span><span><label
+                                class="slds-form-element__label">{header}</label></span>
+                    </div>
+                </template>
+                <template if:false={required}>
+                    <div class="slds-col">
+                        <span><label class="slds-form-element__label">{header}</label></span>
+                    </div>
+                </template>
+
+            </div>
+        </template>
+        <div class="slds-combobox_container">
+            <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open"
+                aria-expanded="true" aria-haspopup="listbox" role="combobox">
+                <!-- Search Input -->
+                <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                    <lightning-input class="inputBox" placeholder={placeholder} onclick={showOptions} onblur={blurEvent}
+                        value={optionsSelected} auto-complete="off" variant="label-hidden" id="combobox-id-1">
+                    </lightning-input>
+                    <lightning-icon class="slds-input__icon" icon-name="utility:down" size="x-small"
+                        alternative-text="search"></lightning-icon>
+                </div>
+                <!-- Dropdown List -->
+                <template if:true={showDropdown}>
+                    <div id="listbox-id-1" class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid">
+                        <ul class="slds-listbox slds-listbox_vertical recordListBox" role="presentation">
+
+                            <template for:each={options} for:item="option">
+                                <template if:true={option.isVisible}>
+                                    <li key={option.value} data-value={option.value} data-label={option.label} onmousedown={selectItem}
+                                        class="slds-listbox__item eachItem" style="cursor: pointer;"
+                                        role="presentation">
+                                        
+                                        <div aria-selected="true" aria-checked="true"
+                                            class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small slds-is-selected slds-has-focus"
+                                            role="option">
+                                            <span class="slds-media__figure slds-listbox__option-icon">
+                                                <span
+                                                    class="slds-icon_container slds-icon-utility-check slds-current-color">
+                                                    <template if:true={option.selected}>
+                                                        <lightning-icon icon-name="utility:check" size="x-small"
+                                                            alternative-text="icon"></lightning-icon>
+                                                    </template>
+                                                </span>
+                                            </span>
+                                            <span class="slds-media__body">
+                                                <span class="slds-wrap" title={option.label}>{option.label}</span>
+                                            </span>
+                                        </div>
+                                    </li>
+                                </template>
+                            </template>
+
+                            
+                        </ul>
+                    </div>
+                   
+                </template>
+            </div>
+        </div>
+        <div if:true={bShowErrorMsg} role="alert" class="slds-has-error slds-form-element__help">
+            {labels.required_msg_HUM}
+        </div>
+    </div>
+</template>

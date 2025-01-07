@@ -1,0 +1,62 @@
+﻿<!-- **********************************************************************************
+Function    : This component is used as a container to render standardTable in inquiryDetails and taskDetails
+Modification Log: 
+Developer Name                    Date                       Description
+*--------------------------------------------------------------------------------
+* Mohan kumar N                 04/22/2021                  US: 1628165 
+* Supriya                       09/02/2021                  DF-3674
+*************************************************************************************** -->
+<template>
+    <template if:true={bInquiryPage}>
+        <div class="slds-card slds-p-right_small slds-card_boundary slds-grid slds-grid--vertical full-container">            
+            <div>
+                <header class=" slds-card__header slds-grid slds-p-right_none slds-media slds-media_center slds-has-flexi-truncate slds-grid_align-spread">
+                    <div class="slds-grid slds-grid_vertical-align-center">
+                    <div class="slds-media__figure">
+                        <lightning-icon icon-name={iconName}></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <h2 class="slds-card__header-title">{title} ({oData.length})</h2>
+                    </div>               
+                    </div>                    
+                </header>
+            </div>
+            <template if:true={bDataLoaded}>
+                <div class="slds-grid full-container slds-is-relative">
+                <c-standard-table-component-hum class="full-container" name-of-screen={nameOfScreen}
+                    response={oData} templatemodal={aModal} show-view-all={showViewAll}
+                    b-infinite-scroll={bInfiniteScroll} b-hide-title=true title={title} o-view-all-params={oParams}
+                    templateaccordian={bAccordianTable} s-record-id={oParams.sInquiryId} default-header-icon='standard:task'>
+                </c-standard-table-component-hum>
+                </div>
+            </template>
+        </div>
+    </template>
+    <template if:false={bInquiryPage}>
+        <template if:true={bDataLoaded}>
+            <template for:each={taskDetailNuggets} for:item="item">
+                <div key={item.nameOfScreen} data-id={item.nameOfScreen} class="tabular-views slds-card slds-p-right_small slds-card_boundary slds-grid slds-grid--vertical full-container">            
+                    <div>
+                        <header class=" slds-card__header slds-grid slds-p-right_none slds-media slds-media_center slds-has-flexi-truncate slds-grid_align-spread">
+                            <div class="slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-media__figure">
+                                <lightning-icon icon-name={item.iconName}></lightning-icon>
+                            </div>
+                            <div class="slds-media__body">
+                                <h2 class="slds-card__header-title">{item.title} ({item.oData.length})</h2>
+                            </div>               
+                            </div>                    
+                        </header>
+                    </div>
+                    <div class="slds-grid full-container slds-is-relative">
+                        <c-standard-table-component-hum class="full-container" name-of-screen={item.nameOfScreen}
+                            response={item.oData} templatemodal={item.aModal} show-view-all={item.showViewAll}
+                            b-infinite-scroll={item.bInfiniteScroll} title={item.title}
+                            templateaccordian={item.bAccordianTable} o-view-all-params={item.oParams} b-hide-title>
+                        </c-standard-table-component-hum>
+                    </div>
+                </div>
+            </template>
+        </template>
+    </template>
+</template>

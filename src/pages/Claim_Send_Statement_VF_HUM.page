@@ -1,0 +1,358 @@
+﻿<!--
+Page Name        : Claim_Send_Statement_VF_HUM
+Version          : 1.0 
+Created Date     : Nov 10, 2018
+Function         : This Page is used to display Claims Send Statement.
+Modification Log :
+* Developer               Code Review                     Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------   
+* Vijaya K                                                10/29/2018            Original Version
+* Raja Sekhar Reddy MV      303429                        10/29/2018            REQ - 376443 - Adding Logging component.
+* Shivam Anand                                            11/05/2018            REQ - 371426- Logging for Member Claims
+* Vijaya K                                                11/05/2018            REQ - 371427- Logging for Provide claims
+* Raja Sekhar Reddy MV        307761                      11/09/2018            Defect 390651.0001 fix  
+* Jamuna  Sarla                                           1/23/2019             Defect 398795.0001 Defect Fix
+* Prasanthi Kandula                                       04/16/2020            US 1003374 - To display send print page when redirected from RTI     
+* Prasanthi Kandula                                       04/28/2020            Defect Fix - 585 to disable mail address fields on click of Address Verification button          
+* Prasanthi Kandula                                       05/12/2020            Defect Fix - 697 Change in page header image 
+* Prasanthi Kandula                                       02/01/2021            US-1669846 SonarQube critical security fixes 
+* Satyanarayana Chenna                                    04/27/2021            US-2168784 T1PRJ0002736 - 2021 MF6 - CR AEP readiness - High Critical Security Issues  
+----------------------------------------------------------------------------------------------------------------------------->
+<apex:page controller="Claim_Send_Statement_C_HUM" id="Claim_Send_Statement_Id" showheader="true" tabStyle="Policy__c">
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+  <apex:includeScript value="/support/console/37.0/integration.js"/>
+  <!-- jQuery -->
+  <script src="{!URLFOR($Resource.CRM_JQUERY, 'jquery-ui.min.js')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/jquery-ui.css')}"/>
+
+  <apex:includeScript value="{!URLFOR($Resource.TaskDetail_Archive_SR_HUM, '/TaskDetail_Archive_JS_HUM.js')}"/>
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.TaskDetail_Archive_SR_HUM, '/TaskDetail_Archive_CSS_HUM.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/jquery-ui.css')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.ClaimSendStatement_SR_HUM,'/ClaimSendStatement_JS_HUM.js')}" id="ClaimSendStmtJS"/>
+  <apex:stylesheet value="{!URLFOR($Resource.ClaimSendStatement_SR_HUM,'/ClaimSendStatement_CSS_HUM.css')}" id="ClaimSendStmtCSS"/>
+
+  <script type="text/javascript">
+    //dont enable P9 Critical Fix      var link$ = jQuery.noConflict();
+    jQuery(document).ready(function () {
+    SendStatement.setSendClaimStatementTabUnsavedChanges();
+    SendStatement.setTitle(Boolean('{!JSENCODE(IF(bIsPageFromRTI,"true", "false"))}'),'{!JSENCODE(sClaimNumber)}');
+    });
+  </script>
+ 
+  <apex:form id="theFormone" >
+    <apex:inputHidden value="{!sObjName}" id="hiddenField1"/>
+    <apex:inputHidden value="{!sObjFirstName}" id="hiddenField2"/>
+    <apex:inputHidden value="{!sObjLastName}" id="hiddenField3"/>
+    <apex:inputHidden value="{!sRefZipcode}" id="hiddenField4"/>
+    <apex:outputPanel rendered="{!bIsPageFromRTI}">
+        <br/><br/>
+      <div class="content" width="60%" height="10%">
+        <img src="/img/icon/mail32.png" title="RTIPRINT" alt="Account" class="imgRTIClass" />
+        <h1 class="rtiPageType">Send Print Item</h1>
+        <span class="titleSeparatingColon">:</span>
+        <h2 class="rtipageDescription">{!sMemberName}</h2>
+      </div><br/>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!!bIsPageFromRTI}">
+        <apex:sectionHeader title="Send Claim Statement" subtitle="{!sClaimNumber}" />
+    </apex:outputPanel> 
+    
+    <div id="newModal" class="confirmationMessage">
+      <div class="form-group form-inline">
+        <apex:outputLabel value="Active " styleClass="fieldlook" style="font-weight:600;" id="ActiveLabel" rendered="false"/>
+
+      </div>
+    </div>
+    <apex:actionFunction name="initiateServiceCall" action="{!initiateSendStmtRequest}"  reRender="forComponent,ErrorMessage,forServicecall,errMessage2" oncomplete="guidedprocessworkqueuenext(); hideWaitingMessage(); return false;"/>
+    <div class="col-xs-12" style="font-size:16px">
+      <div id="opaque"/>
+      <div id="spinner">
+        <p align="center" style='{font-family:"Arial", Helvetica, sans-serif; color:white; font-size:20px;}'>
+          <apex:image value="/img/loading.gif" id="LoadingImageId"/>
+          <span style="margin-left :5px;">Loading...</span>
+        </p>
+      </div>
+    </div>
+    <apex:actionfunction name="callRedirect" action="{!redirectPopup}"/>
+    <apex:actionfunction name="callOveride" action="{!closePopup}" rerender="mailsId"/>
+
+    <apex:outputPanel id="ErrorMessage">
+      <apex:pageMessages rendered="{!(bShowError)}" id="ErrorMessageId"></apex:pageMessages>
+    </apex:outputPanel>
+
+
+    <apex:pageMessage rendered="{!bError}" summary="An Interaction with an Inquiring With Type of 'Provider' must be completed to send an Explanation of Remittance (EOR)."
+                            severity="Error" strength="3"/>
+    <apex:pageMessage rendered="{!bWarning}" summary="An Explanation of Remittance (EOR) cannot be sent to a member and an Interaction with an Inquiring With Type of 'Provider' must be completed to send an Explanation of Remittance (EOR)."
+                            severity="Warning" strength="3"/>
+
+    <apex:pageBlock mode="maindetail" rendered="{!bProviderInt}" id="forComponent">
+      <apex:outputpanel rendered="{!IF(selectedValue == 'Mail', true, false)}">
+         <c:AttachGuidedPrcessCase_Claims_CMP_HUM ObjectId="{!sPolMemID}" SubmissionID="{!SSubmissionID}" rendered="{!!bIsPageFromRTI}"></c:AttachGuidedPrcessCase_Claims_CMP_HUM> 
+         <c:AttachGuidedPrcessCase_Claims_CMP_HUM ObjectId="{!sRTIPageId}" SubmissionID="{!sTemplateOwnerId}" rendered="{!bIsPageFromRTI}"></c:AttachGuidedPrcessCase_Claims_CMP_HUM>
+        </apex:outputPanel>
+
+        <apex:outputpanel rendered="{!IF(selectedValue == 'Fax', true, false)}">
+          <c:AttachGuidedPrcessCase_Claims_CMP_HUM ObjectId="{!sPolMemID}" SubmissionID="{!SSubmissionID}"></c:AttachGuidedPrcessCase_Claims_CMP_HUM>
+          </apex:outputPanel>
+        </apex:pageBlock>
+    <apex:pageBlock mode="maindetail" id="f">
+
+      <apex:pageBlockSection title="Selected Statement" collapsible="true" columns="1" rendered="{!If(sStatementType=='Member',true,false)}">
+        <table id="customers">
+          <thead>
+            <tr>
+              <th scope="col">Action</th>
+              <th scope="col">Statement Type</th>
+              <th scope="col">Date Sent</th>
+              <th scope="col">Begin Statement Period</th>
+              <th scope="col">End Statement Period</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="odd">
+              <td>
+                <a onclick="SendStatement.openDocument('{!JSENCODE(HTMLENCODE(sDocumentKey))}');" style="color: blue;margin: 0px;cursor: pointer;">View</a>
+              </td>
+              <td>{!sStatementTypeMobValue}</td>
+              <td>{!sDateSent}</td>
+              <td>{!sStatementPeriod}</td>
+              <td>{!sEndStatementPeriod}</td>
+            </tr>
+          </tbody>
+        </table>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection title="Selected Statement" collapsible="true" columns="1" rendered="{!If(sStatementType=='Provider',true,false)}">
+        <table id="customers">
+          <thead>
+            <tr>
+              <th scope="col">Action</th>
+              <th scope="col">Remittance ID</th>
+              <th scope="col">Date Sent</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="odd">
+              <td>
+                <a onclick="SendStatement.openDocument('{!JSENCODE(HTMLENCODE(sDocumentKey))}');" style="color: blue;margin: 0px;cursor: pointer;">View</a>
+              </td>
+              <td>{!sRemitId}</td>
+              <td>{!sDateSent}</td>
+            </tr>
+          </tbody>
+        </table>
+      </apex:pageBlockSection>
+       <apex:pageBlockSection title="Selected Print Item" collapsible="true" columns="1" rendered="{!If(sStatementType=='rtiMember',true,false)}">
+        <table id="customers">
+          <thead>
+            <tr>
+              <th scope="col">Action</th>
+              <th scope="col">Category Type</th>
+              <th scope="col">Message Name</th>
+              <th scope="col">Date Sent</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="odd">
+              <td>
+                <a onclick="SendStatement.openViewDocument('{!JSENCODE(HTMLENCODE($CurrentPage.parameters.viewlink))}')" style="color: blue;margin: 0px;cursor: pointer;">View</a>
+              </td>
+              <td>{!sCategoryDesc}</td>
+              <td>{!sMessageName}</td>
+              <td>{!sDateSent}</td>
+            </tr>
+          </tbody>
+        </table>
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+
+
+    <div Class=".x-window-tl .x-window-header">
+      <apex:outputPanel id="popup">
+        <apex:outputPanel id="popInnerOutputPnl" styleClass="customPopup" layout="block" rendered="{!displayPopUp}" onclick="SendStatement.closepopupBox();" >
+          <apex:outputText value="Do you want to override it?"/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <apex:commandButton value="Yes" action="{!closePopup}" styleClass="closeButton" rerender="popup" > </apex:commandButton>
+          <apex:commandButton value="No" title="Close the popup" action="{!redirectPopup}" styleClass="closeButton" rerender="popup"> </apex:commandButton>
+        </apex:outputPanel>
+      </apex:outputPanel>
+    </div>
+  </apex:form>
+  <apex:outputPanel rendered="{!bProviderInt}">
+    <c:GuidedProcess_Claims_CMP_HUM />
+  </apex:outputPanel>
+  <apex:pageBlock mode="maindetail" id="f" rendered="{!bProviderInt}">
+    <apex:pageBlockSection title="{!IF(bIsPageFromRTI, 'Send Print Item To', 'Send Statement To')}" collapsible="true" columns="1" id="pbAdressId">
+      <apex:form id="theForm">
+        <div id="element1">
+          <b>Delivery Method:</b>
+        </div>
+        <div id="element2">
+          <apex:selectRadio value="{!selectedValue}" style="margin-top: -10px;">
+            <apex:selectOption id="mail" itemLabel="Mail" itemValue="Mail" />
+            <apex:selectOption id="fax" itemLabel="Fax" itemvalue="Fax" rendered="{!!bIsPageFromRTI}" />
+            <apex:actionSupport event="onchange" action="{!disButton}"   reRender="theForm" oncomplete="SendStatement.checkfax({!isFaxNull});"/>
+            <apex:outputText value="{!HTMLENCODE(shidepopup)}" escape="false"></apex:outputText>
+          </apex:selectRadio>
+        </div>
+
+        <apex:outputPanel id="SampleView">
+          <apex:pageBlockSection rendered="{!IF(selectedValue == 'Mail', true, false)}" columns="1" id="mailsId">
+            <apex:outputPanel id="PrimaryError" rendered="{!!bChangeIndicator && bMessageInfo}">
+              <apex:pageMessage summary="The current mailing address on file has prefilled below. If the statement should be sent to an alternate address, make the changes below."
+                  severity="info" strength="3" rendered="{!!bIsPageFromRTI}"/>
+              <apex:pageMessage summary="The current mailing address on file has prefilled below. If the item should be sent to an alternate address, make the changes below."
+                  severity="info" strength="3" rendered="{!bIsPageFromRTI}"/>
+              <apex:pageMessages />
+            </apex:outputPanel>
+            <apex:outputPanel id="SecondError" rendered="{!isFullAddress}">
+              <apex:pageMessage summary="Provider facing statement cannot be mailed or faxed to a Member"
+                  severity="FATAL" strength="3"/>
+            </apex:outputPanel>
+            <apex:outputPanel id="SecondaryError" rendered="{!bChangeIndicator}">
+              <apex:pageMessage summary="The address entered was standardized and accepted."
+                  severity="info" strength="3"/>
+            </apex:outputPanel>
+            <apex:pageblockSectionItem >
+              <apex:outputLabel value="Recipient Name" for="mId" />
+              <apex:outputPanel styleClass="requiredInput" layout="block">
+                <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                <apex:inputText required="false" id="mId" value="{!sMailrepName}" label="Recipient Name" disabled="{!bInputParams}" style="width:235Px;"/>
+                </apex:outputpanel>
+              </apex:pageblockSectionItem>
+
+            <apex:pageblockSectionItem >
+              <apex:outputLabel value="Recipient Type" for="mId" rendered="{!If(sStatementType=='Member',true,false)}"/>
+              <apex:outputPanel styleClass="requiredInput" layout="block" rendered="{!If(sStatementType=='Member',true,false)}">
+                <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                <apex:selectList value="{!sRecipientType}" size="1" id="mId" rendered="{!If(sStatementType=='Member',true,false)}" disabled="{!bInputParams}">
+                  <apex:selectOption itemLabel="Member" itemValue="Member"/>
+                  <apex:selectOption itemLabel="Member Representative or Caregiver" itemValue="Member Representative or Caregiver" />
+                  <apex:selectOption itemLabel="Other" itemValue="Other" />
+                </apex:selectList>
+                </apex:outputpanel>
+              </apex:pageblockSectionItem>
+            <apex:pageblockSectionItem >
+                <apex:outputLabel value="Recipient Type" for="mId" rendered="{!bIsPageFromRTI }"/>
+                <apex:outputPanel styleClass="requiredInput" layout="block" rendered="{!bIsPageFromRTI }">
+                    <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                        <apex:selectList value="{!sRecipientType}" size="1" id="mId" rendered="{!bIsPageFromRTI }" disabled="{!bInputParams}">
+                            <apex:selectOption itemLabel="Member" itemValue="Member"/>
+                            <apex:selectOption itemLabel="Member Representative or Caregiver" itemValue="Member Representative or Caregiver" />
+                        </apex:selectList>
+                </apex:outputpanel>
+            </apex:pageblockSectionItem>
+            <apex:pageblockSectionItem >
+              <apex:outputLabel value="Recipient Type" for="mIdd" rendered="{!If(sStatementType=='Provider',true,false)}"/>
+              <apex:outputPanel styleClass="requiredInput" layout="block" rendered="{!If(sStatementType=='Provider',true,false)}">
+                <apex:outputPanel styleClass="requiredBlock" layout="block"  />
+                <apex:selectList value="{!sRecipientType}" size="1" id="mIdd" style="width:235Px;" rendered="{!If(sStatementType=='Provider',true,false)}" disabled="{!bInputParams}">
+                  <apex:selectOption itemLabel="Provider" itemValue="Provider"/>
+
+                  <apex:selectOption itemLabel="Other" itemValue="Other" />
+                </apex:selectList>
+
+                </apex:outputpanel>
+              </apex:pageblockSectionItem>
+
+            <apex:pageblockSectionItem >
+              <apex:outputLabel value="Address Line 1" for="mId" />
+              <apex:outputPanel styleClass="requiredInput" layout="block">
+                <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                <apex:inputText required="false" id="mId" value="{!sRefAddressLine1}" label="Address Line 1" disabled="{!bInputParams}"  style="width:235Px;"/>
+                </apex:outputpanel>
+              </apex:pageblockSectionItem>
+
+            <apex:inputText label="Address Line 2" value="{!sRefAddressline2}" disabled="{!bInputParams}"  style="width:235Px;"  />
+
+            <apex:pageblockSectionItem >
+              <apex:outputLabel value="City" for="mId" />
+              <apex:outputPanel styleClass="requiredInput" layout="block">
+                <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                <apex:inputText required="false" id="mId" value="{!sRefCity}" label="City" disabled="{!bInputParams}"  style="width:235Px;" />
+                </apex:outputpanel>
+              </apex:pageblockSectionItem>
+
+            <apex:pageblockSectionItem >
+              <apex:outputLabel value="State" for="mId" />
+              <apex:outputPanel styleClass="requiredInput" layout="block">
+                <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                <apex:inputText required="false" id="mId" value="{!sRefStatecode}" label="State" disabled="{!bInputParams}"  style="width:235Px;" />
+                </apex:outputpanel>
+              </apex:pageblockSectionItem>
+
+            <apex:pageblockSectionItem >
+              <apex:outputLabel value="Zip Code" for="mId" />
+              <apex:outputPanel styleClass="requiredInput" layout="block">
+                <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                <apex:inputText required="false" id="mId" value="{!sRefZipCode}" label="Zipcode" disabled="{!bInputParams}"  style="width:235Px;" />
+                </apex:outputpanel>
+              </apex:pageblockSectionItem>
+
+            <apex:commandButton onclick="SendStatement.AddressserviceCall(); return false;" id="addressVefId" value="Address Verification" disabled="{!bDisAddressVef}"/>
+            <apex:actionFunction name="initiateAddressServiceCall" action="{!initiateRequest}"  reRender="initialId,newModal,theFormone,SampleView,addressVefId" oncomplete="SendStatement.mailLogging({!SuccessFlag}); hideWaitingMessage(); return false;">
+              <apex:param name="nameH" value="" id="name1" assignTo="{!sJsName}"/>
+              <apex:param name="firstNameH" value="" id="name2" assignTo="{!sJsFirstName }"/>
+              <apex:param name="lastNameH" value="" id="name3" assignTo="{!sJsLastName }"/>
+            </apex:actionFunction>
+
+            <apex:outputText value="{!callinitiReq}" escape="false"></apex:outputText>
+            <apex:outputText value="{!sCallRedirect}" escape="false"></apex:outputText>
+          </apex:pageBlockSection>
+          <!-- Mail Section Ends -->
+          <!-- Fax Section Begins -->
+          <apex:pageBlockSection rendered="{!IF(selectedValue == 'Fax', true, false)}" columns="1" id="faxid">
+            <apex:outputPanel id="ErrorMessage1">
+              <apex:pageMessages rendered="{!(isFaxNull)}" id="ErrorMessageId"></apex:pageMessages>
+            </apex:outputPanel>
+            <apex:outputPanel id="ThirdError" rendered="{!isMobile}">
+              <apex:pageMessage summary="provider facing statement is attempted to be mailed or faxed to a member"
+                  severity="FATAL" strength="3"/>
+              <apex:pageMessages />
+            </apex:outputPanel>
+            <!-- <apex:pageMessages id="msg" /> -->
+            <apex:pageblockSectionItem >
+              <apex:outputLabel value="Recipient Name" for="rId" />
+              <apex:outputPanel styleClass="requiredInput" layout="block">
+                <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                <apex:inputText required="false" id="rId" value="{!repName}" label="Recipient Name" onblur="SendStatement.faxValidation();" style="width:235Px;"/>
+                </apex:outputpanel>
+              </apex:pageblockSectionItem>
+            <apex:pageblockSectionItem >
+              <apex:outputLabel value="Recipient Type" for="mId" rendered="{!If(sStatementType=='Member',true,false)}"/>
+              <apex:outputPanel styleClass="requiredInput" layout="block" rendered="{!If(sStatementType=='Member',true,false)}">
+                <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                <apex:selectList value="{!sRecipientType}" size="1" id="mId"  style="width:235Px;" rendered="{!If(sStatementType=='Member',true,false)}">
+                  <apex:selectOption itemLabel="Member" itemValue="Member"/>
+                  <apex:selectOption itemLabel="Member Representative or Caregiver" itemValue="Member Representative or Caregiver" />
+                  <apex:selectOption itemLabel="Other" itemValue="Other" />
+                </apex:selectList>
+                </apex:outputpanel>
+              </apex:pageblockSectionItem>
+            <apex:pageblockSectionItem >
+              <apex:outputLabel value="Recipient Type" for="mIdd" rendered="{!If(sStatementType=='Provider',true,false)}"/>
+              <apex:outputPanel styleClass="requiredInput" layout="block" rendered="{!If(sStatementType=='Provider',true,false)}">
+                <apex:outputPanel styleClass="requiredBlock" layout="block" />
+                <apex:selectList value="{!sRecipientType}" size="1" id="mIdd" style="width:235Px;" rendered="{!If(sStatementType=='Provider',true,false)}">
+                  <apex:selectOption itemLabel="Provider" itemValue="Provider"/>
+
+                  <apex:selectOption itemLabel="Other" itemValue="Other" />
+                </apex:selectList>
+
+                </apex:outputpanel>
+              </apex:pageblockSectionItem>
+
+            <apex:pageblockSectionItem >
+              <apex:outputLabel value="Fax Number" for="textbox" />
+              <apex:outputPanel styleClass="requiredInput" layout="block">
+                <apex:outputPanel styleClass="requiredBlock" layout="block" />
+               <apex:inputText required="false" id="textbox" value="{!faxNumber}" label="Fax Number" onkeyup="SendStatement.faxAutoSlash(this,event)" maxlength="12" onblur="SendStatement.faxValidation();"  style="width:235Px;"/>
+                <apex:actionFunction action="{!ValidateFax}"  name="ValidateFax" oncomplete="SendStatement.checkfax({!isFaxNull});"  reRender="faxid,theFormone,Fids,SecFaxds"/>
+                </apex:outputpanel>
+              </apex:pageblockSectionItem>
+          </apex:pageBlockSection>
+        </apex:outputPanel>
+      </apex:form>
+    </apex:pageBlockSection>
+  </apex:pageBlock>
+</apex:page>

@@ -1,0 +1,51 @@
+﻿<!--
+Component Name   : TRRCaseProcessDataTable_CMP_HUM.component
+Version          : 1.0
+Created On       : 12/31/2019
+Function         : VF Component to display TRR Case Process table from the controller TRRCaseProcessExtension_C_HUM
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Moshitha Gunasekaran                                 12/31/2019                    Original version
+ *  Santhi Mandava                                       03/06/2020                    US - 903424 added content type attribute value
+ *  Santhi Mandava                                       03/06/2020                    US - 957458 Fixed multiple case tabs issue
+ *	Mithra Bharadwaj																	US#2089563 Sonar Qube
+****************************************************************************************************************************
+ -->
+
+<apex:component controller="CaseProcessExtension_C_HUM"  id="trrCaseProcessDataTableCMP" allowDML="true">
+  <apex:attribute name="caseRecordId" type="string" description="The Case Record ID"/>
+  <script src="{!URLFOR($Resource.CaseDetailResources_SR_HUM, '/TRRCaseProcess/TRRCaseProcess_JS_HUM.js')}"/>
+
+  <div style="background:white;">
+    <c:BaseDataTable_CMP_HUM jqueryvariable="jQuery"
+        tableid="trrCaseProcessDataTable"
+        tablecontainerid="trrCaseProcessDataTable_div"
+        enablesearch="f"
+        rowdata=""
+        columnname="{!trrColumnName}"
+        columnHeader="{!trrColumnHeader}"
+        htmlColumnName="ProcessNumber,CreatedBy"
+        objname="CaseArticle"
+        col1_accordian="false"
+        col1_editDelete="false"
+        pagingbarBool="false"
+        info="false"
+        sort="false"
+        orderDirection="desc"
+        keyword="false"
+        col1_orderable="true"
+        orderColumn="2"
+        tableContentType="Process_{!caseRecordId}"
+        />
+  </div>
+  <script>
+    Visualforce.remoting.timeout = '{!$Label.HUMMemWebActivityTimeout}'; // Set timeout at page level
+    var vMethodGetTRRJSONData= '{!$RemoteAction.CaseProcessExtension_C_HUM.getTRRJSONData}';
+    var vCaseId = '{!JSENCODE(caseRecordId)}';
+    var vHUMTRRTemplate = '{!$Page.TRRTemplate_VF_HUM}';
+    var UserId = '{!$User.Id}';
+    var processId;
+  </script>
+</apex:component>

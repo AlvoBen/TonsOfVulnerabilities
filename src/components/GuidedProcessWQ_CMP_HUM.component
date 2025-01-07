@@ -1,0 +1,34 @@
+﻿<!--
+Page Name        : GuidedProcessWQ_CMP_HUM
+Version          : 1.0 
+Created Date     : 09/15/2016
+Function         : Component use to invoke work Queue pop up during Guided process logging.
+Modification Log :
+* Developer                 Code review         Date                  Description
+* -------------------------------------------------------------------------------------------------
+* Praveen Kumar Parimi        39715           09/15/2016            Original version.
+* Harika Devi Kalidindi       43968           10/18/2016            Defect 243473.0001 fix :Added Ok button to the modal Pop up when the user does NOT have Queues assigned to him/her
+------------------------------------------------------------------------------------------------------------>
+
+<apex:component id="GuidedProcessWQ_CMP_HUM" controller="AttachGuidedProcessCase_C_HUM" allowDML="true">
+    <apex:includescript value="{!URLFOR($Resource.GuidedProcessWQ_SR_HUM,'/GuidedProcessWQ_SR_HUM.JS')}"/>
+    <link href= "{!URLFOR($Resource.GuidedProcess_SR_HUM,'/GuidedProcess_SR_HUM/GuidedProcessCSS_SR_HUM.CSS')}" rel = "stylesheet"/>
+    
+    <apex:form id="formGuidedProcessWQ"> 
+        <apex:actionFunction name="checkUserQueue" action="{!checkUserQueue}" reRender="queueSelectionPage" oncomplete="guidedProcessPerformClickAction('{!userCurrentQueue}'); return false;" status="pleaseWait"/>            
+        <apex:actionFunction name="updateQueueLogic" reRender="pleaseWait" action="{!updateQueueLogic}" oncomplete="guidedprocessworkqueuenext();"/>            
+        <apex:actionFunction name="reRenderQueueSelectionpage" reRender="queueSelectionPage" oncomplete="setOkbuttonvisibility();">
+            <apex:param name="reRenderQueueSelectionPage" value="true" assignTo="{!reRenderQueueSelectionPage}"/>
+        </apex:actionFunction> 
+    </apex:form>
+        
+    <div id="QueueSelectionDialog" title="Queue Selection" style="font-size:12px;">
+        <apex:outputPanel id="queueSelectionPage">
+            <apex:outputPanel rendered="{!reRenderQueueSelectionPage}">
+                <apex:include pageName="HUMQueueSelection"/>
+            </apex:outputPanel>
+            <button id="btnOk"  class ="btn button commandButton btnQueueOk" style="margin-left:45%;padding:6px 12px;display:none;border:1px solid transparent;" type="button" onclick="handleOKclick();">OK</button>
+       </apex:outputPanel>
+   </div>
+   
+</apex:component>

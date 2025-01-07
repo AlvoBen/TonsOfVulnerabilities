@@ -1,0 +1,40 @@
+﻿<!-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------     
+Component Name   : QuickStart_CMP_AHT_HUM
+Created Date     : January 20, 2017
+Function         : Container for Quick Start form and interactions
+
+**Modification Log
+* Developer Name          Code Review #         Date                       Description
+* Cody A. Sanders         -----                 03/10/2017                 Quick Start MVP - Associate to Policy, Display Essential Fields, Open Case Edit and Case Comment Transfer
+* Cody A. Sanders         -----                 03/27/2017                 Updates to loading behavior
+* Cody A. Sanders         -----                 03/28/2017                 Updates to error messaging
+* Cody A. Sanders         -----                 04/10/2017                 Updated CSS classes to reduce overall size
+* Cody A. Sanders         -----                 04/26/2017                 Added Associate to Account functionality and Mentor Document section
+* Cody A. Sanders         -----                 05/18/2017                 Updated styling for better use of space
+* Amar Gadewar            -----                 05/31/2017                 REQ - 318367 - Medicare Part C and Part D fields from Quick Start (RF)
+* Cody A. Sanders                               05/31/2017                 AHT - Updated to handle Medicare Comments
+* Piyusha Babar                                 07/27/2017                 REQ - 324829 - Ability of quick start to display Validation errors on quick start page as per CRM Standards (RF)
+* Subhamay Mandal								07/28/2017				   REQ - 325458 Ability of a quick start page to be responsive when selecting top 5 and non top 5 classification and Intent (RF)
+* Subhamay Mandal							 	08/03/2017				   REQ - 324827 Ability to select different templates on quick start (RF)
+* Dinesh Subramaniyan		  120740			08/14/2017				   REQ - 326211 Ability of a quick start to display an error message when associating a case with no interaction (RF)
+* Amar Gadewar									08/23/2017				   Defect fix on Quick Start for Medicare Call Part C or Part D
+* Siddharth Mehta								08/24/2017				   REQ - 327581 Ability of a Quick Start to give error message when queue is not selected (RF)
+* Piyusha Babar									08/28/2017		   		   REQ - 327583 Ability of a quick start to create a case on an existing interaction created by someone else(RF)
+* Siddharth Mehta                               09/11/2017                 REQ - 328268 Ability in quick start to update the new case created through quick start for non-pretext combinations(RF)
+* Siddharth Mehta								09/21/2017                 REQ - 328932 SF - TECH - Redesign Quick Start Error Messages (RF)
+* Subhamay Mandal								10/02/2017			       REQ - 329803 - Ability to prefill the quick start case comment fields based on the Classification and Intent selection (Part I-RF)
+* Piyusha Babar									10/04/2017		   		   REQ - 328928 Ability of a quick start to display an acknowledgement message when switching classification and intent with pre-text functionality(RF)
+* Asish Behera                                  10/13/2017                 Declare a new div for Quick start window size error to fix QA defect.
+* Amar Gadewar				140475				10/23/2017				   REQ - 335169 -  Defect 322899 fix for Medicare Id
+* Siddharth Mehta								11/01/2017                 REQ - 335238 Ability in quick start to limit the Caller issue and concern field to 500 characters(RF)
+* Asish Behera                                 	11/2/2017                  Update notes to exsting case
+* Dinesh Subramaniyan							01/12/2018				   REQ - 349663 - Ability to display indicators on Quick Start when Member Demographic Verification and/or Guidance Alerts are due (RF)
+* Subhamay Mandal								01/12/2018				   REQ - 350392 - Business Configuration model for Quick Start pretext (RF)
+* Asish Behera                                  1/17/2018                  Adding Reference secion in QS window Req-REQ - 350517
+* Amar Gadewar									1/17/2017				   REQ - 350519 - Text Verbiage update in Quick Start Account  checkbox (RF)
+* Piyusha Babar                 				12/28/2017                 REQ – 350529- Ability to show new Quick Start message when selecting 'Claims' Classification
+* Amar Gadewar									05/09/2018				   REQ - 361047 - For Mentor Link changes remove reference to the Quick Start Component
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<apex:component >
+    
+</apex:component>

@@ -1,0 +1,150 @@
+﻿<!--
+LWC Name        : PharmacyHistoryTimelineFilterHum.html
+Function        : LWC to display pharmacy history timeline data;
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Nirmal Garg                     11/09/2021                   initial version - US - 2527241
+* Nirmal Garg                 		06/17/2022                   DF-5153 fix.
+* Aishwarya Pawar					08/22/2022					 REQ- 3571269
+* Ashish/Ankima                   11/21/2022                   US-4034561 : Added changes related to Archived Case Link for Pharmacy
+****************************************************************************************************************************-->
+<template>
+	<div>
+		<article class="slds-card slds-p-right_small slds-grid slds-grid--vertical full-container slds-p-left_small">
+			<div class="">
+				<div style="display: inline-flex">
+					<template if:true={showArchivedCase}>
+						<div class="slds-grid slds-grid_vertical-align-center slds-p-around_x-small ">
+							<lightning-icon class="info-alt-icon" icon-name="utility:info_alt" size="x-small">
+							</lightning-icon>
+							<span class="slds-m-left_x-small history-warn-msg">{showArchivalInfoMsg}</span>
+						</div>
+						<div class="custom-tooltip-link link-placement" onclick={openArchivedCases}>Archived Case History</div>
+					</template>
+				</div>
+				<lightning-layout>
+					<lightning-layout-item size="3" padding="around-small">
+						<c-generic-keyword-search-hum minchar="3" placeholder="Keyword" name="searchByWord" label="Filter by" keyword={keyword} ontextclear={clearSearchData}
+							onkeywordvalue={handleKeywordSearch}>
+						</c-generic-keyword-search-hum>
+					</lightning-layout-item>
+					<lightning-layout-item size="2" padding="around-small">
+						<lightning-combobox class="inputfield state-field custom-dropdown" name="sDate" label={labels.caseHistoryDateLabel}
+							value={defaultDateFilterValue} options={dateFilters}  onchange={handleChange} onfocus={onFormItemFocus}>
+						</lightning-combobox>
+					</lightning-layout-item>
+					<lightning-layout-item size="2" padding="around-small">
+						<c-generic-multiselect-picklist-hum keyname="sClassification" options={filterFldValues.sClassification} placeholdermessage="-None-"
+							title="Classification" onmultiselectfilter={handlePicklistFilter}>
+						</c-generic-multiselect-picklist-hum>
+					</lightning-layout-item>
+					<lightning-layout-item size="2" padding="around-small">
+						<c-generic-multiselect-picklist-hum keyname="sIntent" options={filterFldValues.sIntent} placeholdermessage="-None-"
+							title="Intent" onmultiselectfilter={handlePicklistFilter}>
+						</c-generic-multiselect-picklist-hum>
+					</lightning-layout-item>
+					<lightning-layout-item size="2" padding="around-small">
+						<c-generic-multiselect-picklist-hum keyname="sStatus" options={filterFldValues.sStatus} placeholdermessage="-None-"
+							title="Status" onmultiselectfilter={handlePicklistFilter}>
+						</c-generic-multiselect-picklist-hum>
+					</lightning-layout-item>
+					<lightning-layout-item size="1" class="slds-m-top_x-large">
+						<lightning-button class="slds-m-top_x-large" name="clear" variant="brand-outline"
+							label="Clear" onclick={handleClearFilter}>
+						</lightning-button>
+					</lightning-layout-item>
+				</lightning-layout>
+				<div class="slds-grid">
+					<div if:false={caseCommentDisplay}>
+						<div class="slds-col_bump-right">
+							<h4 class="slds-m-left_x-small">
+								<div class="slds-text-title_bold">History TimeLine</div>
+							</h4>
+						</div>
+					</div>
+					<div class="slds-col ">
+						<div class="slds-var-m-top_large slds-m-left_x-small">
+							<div class="slds-border_top">
+
+							</div>
+						</div>
+					</div>
+					<div>
+						<lightning-button class="slds-button" name='showmore' variant="neutral"
+							label="Show More" disabled={showbutton} onclick={handleShowMore}>
+						</lightning-button>
+					</div>
+					<div class="slds-col">
+						<div class="slds-var-m-top_large">
+							<div class="slds-border_top">
+
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="slds-p-bottom_large slds-p-top_small slds-grid slds-grid_align-spread">
+					<div class="slds-col slds-size_9-of-12">
+						<template if:true={pillFilterValues}>
+							<template for:each={pillFilterValues} for:item="pill" for:index="ind">
+								<lightning-pill class="slds-m-around_x-small" data-index={ind} data-key={pill.key}
+									data-value={pill.value} label={pill.value} key={pill.key} onremove={handlePillRemove}>
+								</lightning-pill>
+							</template>
+						</template>
+					</div>
+					<div class="slds-col slds-size_3-of-12">
+						<template if:true={loaded}>
+							<template if:true={dataFound}>
+								<div class="slds-grid slds-grid_align-end">
+									<div class="slds-col">
+										<div class="slds-text">{filteredcount} of {totalcount} results -{sLabel}</div>
+									</div>
+								</div>
+							</template>
+						</template>
+					</div>
+				</div>
+			</div>
+			<div>
+				<template if:true={loaded}>
+					<template if:true={dataFound}>
+						<lightning-layout class="infinite-scroll-cont">
+							<lightning-layout-item flexibility="grow" size="12">
+								<div style="height: 400px;" class="slds-grid full-container slds-is-relative slds-p-horizontal_none table-container full-container slds-scrollable_y"
+									onscroll={handleScroll}>
+									<template if:true={historyTimelineData}>
+										<div class="slds-size_1-of-1">
+											<ul class="slds-timeline">
+												<template if:true={historyTimelineData}>
+													<c-generic-history-timeline-hum
+														historytimelinedata={historyTimelineData}
+														onhandlescrollevent={handleScroll} onlinkclick={handleLinkClick}
+														filteredrecords={filteredcount}
+														totalcount={totalcount} s-label={sLabel} date-opened={sLabel} header="History Timeline"
+														pillvalues={pillFilterValues} showbutton={showbutton} pharmacy-timeline>
+													</c-generic-history-timeline-hum>
+												</template>
+											</ul>
+										</div>
+									</template>
+								</div>
+							</lightning-layout-item>
+						</lightning-layout>
+					</template>
+					<template if:false={dataFound}>
+						<div class="full-container">
+							<c-generic-scoped-notification-hum iconname="utility:info"
+								message="No Case Notes Found">
+							</c-generic-scoped-notification-hum>
+						</div>
+					</template>
+				</template>
+				<template if:false={loaded}>
+					<lightning-spinner alternative-text="Loading"></lightning-spinner>
+				</template>
+			</div>
+		</article>
+	</div>
+</template>

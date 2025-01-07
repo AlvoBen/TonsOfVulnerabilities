@@ -1,0 +1,200 @@
+﻿<!--
+Page Name        : OmniQueueEdit_VF_HUM
+Version          : 1.0
+Created Date     : Nov 01 2017
+Function         : This Page is used to create and edit OmniQueues
+***********************************************************************************************************************************
+Modification Log:    
+   
+* Developer Name               Review Number                 Date                       Description
+*----------------------------------------------------------------------------------------------------------------------------------
+* Mohammed Noor                  144378                    11/01/2017                   Original Version
+* Mohammed Noor                  144993                    11/06/2017                   Correct the Controller Extension Name as per standards.
+* Mohammed Noor                  148170                    11/14/2017                   Fix for Defect# 326438.
+* Mohammed Noor                  151361                    11/27/2017                   Fix for Defect# 330043 and 327609.
+* Syed Mubarak T                 152106                    11/29/2017                   Fix for Defect # 332134.
+* Manoj Chaurasia                209583                    04/04/2018                   REQ-356054 Ability for Medicare Enrollment Supervisors to add and remove users from Omni Queue.
+* Syed Mubarak                                              11/01/2019                  REQ - 380755 Adding Configuration Item Changes to Omni Queues Edit
+* Mohammed Noor                                             01/09/2020                  Fix for Defect# 453963.0001
+* Mithra Bharadwaj                                                                       US#2241369 SonarQube Changes
+* Vivek														                          07/09/2022		              Updated the JS query to new Datatables to version to 1.12.1
+* Pinky Vijur                                               08/05/2023                  User Story 4647289: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Business Configuration & Omni Channel (Group 2)
+***********************************************************************************************************************************
+-->
+<apex:page showHeader="true" sidebar="false" standardController="OmniQueue__c" extensions="OmniQueueEdit_X_HUM">
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+   <apex:includescript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}" /> <!--DT Upgrade-->
+   <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}" />
+  <apex:includeScript value="{!URLFOR($Resource.OmniQueueEdit_SR_HUM, 'OmniQueueEdit_SR_JS_HUM.js')}" />
+  <apex:styleSheet value="{!URLFOR($Resource.OmniQueueEdit_SR_HUM, 'OmniQueueEdit_SR_CSS_HUM.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CSS/HoverOver.css')}"/>
+
+  <apex:sectionHeader Title="Omni Queues Edit" subTitle="{!omniQueueObj.Name}" id="secHeader"/>
+  <apex:form id="pgForm">
+    <apex:pageMessages id="errMsg" />
+
+    <apex:actionfunction status="pleaseWaitIntModalSave" name="fetchQueueMembers" rerender="pan_id" action="{!getQueueMembers}" oncomplete="drawTable();" />
+
+    <apex:actionFunction status="pleaseWaitIntModalSave" name="saveQueuesAndUsers" action="{!saveQueuesAndUsers}" reRender="errMsg,errVarPanel" oncomplete="if({!!bError})customSave();" />
+
+    <apex:actionFunction status="pleaseWaitIntModalSave" name="customSave" action="{!saveCustom}" reRender="errMsg" oncomplete="if({!!bError})saveRedirect();" />
+
+    <apex:actionFunction status="pleaseWaitIntModalSave" name="saveRedirect" action="{!Save}"/>
+
+    <apex:pageBlock title="Omni Queue Edit" mode="edit" id="pblkId">
+
+      <apex:inputHidden id="addStr" value="{!addUsersJson}"/>
+      <apex:outputPanel id="errVarPanel">
+        <apex:inputHidden id="nameErr" value="{!bNameError}" />
+        <apex:inputHidden id="maxCaseErr" value="{!bMaxCaseError}" />
+      </apex:outputPanel>
+      <apex:pageblockButtons id="pblkButtons">
+        <apex:commandButton value="Save" styleClass="btnStyle" reRender="errMsg,errVarPanel" onclick="saveClick(); return false;" status="pleaseWaitIntModalSave" />
+        <apex:commandButton value="Cancel" styleClass="btnStyle" action="{!cancel}"/>
+      </apex:pageblockButtons>
+      <apex:actionStatus id="pleaseWaitIntModalSave">
+        <apex:facet name="start">
+          <div class="waitingSearchDiv waitingSearchDivOpacity outerPanel" ></div>
+          <div id="searchingStatus" class="waitingSearchDiv innerPanel" style="width: 100%; height: 100%;text-align: center;opacity: 0.90">
+            <div class="waitingHolder" style="imageClass">
+              <img class="waitingImage" src="/img/loading.gif"/>
+              <span class="waitingDescription">Loading....</span>
+            </div>
+          </div>
+        </apex:facet>
+        <apex:facet name="stop"/>
+      </apex:actionStatus>
+      <apex:pageBlockSection id="pblkSec">
+        <apex:pageBlockSectionItem id="pbSecItemQName">
+          <apex:outputPanel >
+            <apex:outputLabel value="Omni Queue Name" for="oQName" id="QNameLabel"/>
+            <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea" >
+              <a onclick="javascript:return false;" html-log_this="false">
+                <apex:image id="lnkImg" height="12" width="12" styleClass="hoverimgStyle" value="{!$Resource.HUMHoverOverQuestionMark}"/>
+                <apex:outputPanel styleClass="hoverfontstyle">
+                  {!$Label.NAMETEXT_OMNIQUEUE_HUM}
+                </apex:outputPanel>
+              </a>
+            </apex:outputPanel>
+          </apex:outputPanel>
+          <apex:outputPanel styleClass="requiredInput"  layout="block" id="opQName">
+            <apex:outputPanel styleClass="requiredBlock" layout="block" id="oprQName" />
+            <apex:inputText value="{!omniQueueObj.Name}" maxlength="35"  id="oQName" onkeyup="valName(this,event)" />
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem id="pbSecItemQMaxCases">
+          <apex:outputPanel >
+            <apex:outputLabel value="Maximum Number of Work Items" for="oQMaxCases" id="QMaxCasesLabel" />
+          </apex:outputPanel>
+          <apex:outputPanel styleClass="requiredInput"  layout="block" id="opQMaxCases">
+            <apex:outputPanel styleClass="requiredBlock" layout="block" id="oprQMaxCases" />
+            <apex:inputField value="{!omniQueueObj.Maximum_Cases__c}" id="oQMaxCases" onkeyup="valNumeric(this,event)" />
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem id="pbSecItemoQRtgConfig">
+          <apex:outputLabel value="Routing Configuration" for="oQRtgConfig" id="oQRtgConfigLabel" />
+          <apex:outputPanel styleClass="requiredInput"  layout="block" id="opoQRtgConfig">
+            <apex:outputPanel styleClass="requiredBlock" layout="block" id="oproQRtgConfig" />
+            <apex:inputField value="{!omniQueueObj.Routing_Configuration_Name__c}" id="oQRtgConfig"/>
+            <apex:actionSupport action="{!getRemainingThreshold}" event="onchange" reRender="opRemainingLimitId" />
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem id="pbSecRemainingLimit">
+          <apex:outputLabel value="Remaining Limit" for="otRemainingLimitId" id="otRemainingLimitLabelId" />
+          <apex:outputPanel id="opRemainingLimitId">
+            <apex:outputText id="otRemainingLimitId" value="{!remainingThreshold}" rendered="{!remainingThreshold != null}"/>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+
+      <apex:pageBlocksection id="queueUsers" title="Users" collapsible="false" columns="1">
+        <apex:outputPanel id="button_pan">
+          <apex:commandButton value="Add New Users" styleClass="btnStyle" action="{!getAvailUserList}" reRender="updatePopUp" oncomplete="drawSearchTable('{!JSENCODE(userJsonString)}');"/>
+        </apex:outputPanel>
+
+        <apex:outputpanel id="pan_id">
+          <table  id="usersTable"  class="table table-striped table-bordered width=100" >
+            <thead>
+              <tr>
+                <th>Action</th>
+                <th>User</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody>
+              <apex:repeat value="{!lstUsers}" var="userObj">
+                <tr>
+                  <td>
+                    <apex:commandButton value="Remove" reRender="pan_id" action="{!removeUser}" oncomplete="drawTable();">
+                      <apex:param value="{!userObj.Id}" assignTo="{!userToRemove}" name="userToRemove"/>
+                    </apex:commandButton>
+                  </td>
+                  <td>
+                    <apex:outputText value="{!userObj.FirstName} {!userObj.LastName}" />
+                  </td>
+                  <td>
+                    <apex:outputText value="{!userObj.Email}"/>
+                  </td>
+                </tr>
+              </apex:repeat>
+            </tbody>
+          </table>
+        </apex:outputpanel>
+      </apex:pageBlocksection>
+
+      <apex:outputPanel id="updatePopUp">
+        <apex:outputPanel layout="block" rendered="{!viewUserLookup}" styleClass="popupBackground"/>
+        <apex:outputPanel layout="block" rendered="{!viewUserLookup}" styleClass="custPopup">
+          <apex:actionStatus id="pleaseWaitIntModal">
+            <apex:facet name="start">
+              <div class="waitingSearchDiv waitingSearchDivOpacity outerPanel" ></div>
+              <div id="searchingStatus" class="waitingSearchDiv innerPanel">
+                <div class="waitingHolder" style="imageClass">
+                  <img class="waitingImage" src="/img/loading.gif"/>
+                  <span class="waitingDescription">Loading....</span>
+                </div>
+              </div>
+            </apex:facet>
+            <apex:facet name="stop"/>
+          </apex:actionStatus>
+          <apex:outputPanel >
+            <a href="#" style="text-decoration:none; text-align:right;">
+              <img src="/EXT/theme/sfdc/images/tabs/tab-close.gif" class="lookupCloseButton"/>
+            </a>
+            <apex:actionSupport event="onclick" action="{!getopenUserLookup}" reRender="updatePopUp"/>
+          </apex:outputPanel>
+
+          <div class="UserLookup">
+            <apex:pageBlockSection rendered="{!viewUserLookup}" title="User List" id="pbSection" columns="1" >
+              <apex:outputPanel >
+                <apex:commandButton value="Select Users" onclick="addSelectedUsers();" action="{!saveSelectedUsers}" reRender="updatePopUp,pan_id" oncomplete="drawTable();"/>
+              </apex:outputPanel>
+              <apex:outputPanel id="tabpanel">
+                <table id="selectUserTable" class="table table-striped table-bordered  dataTable no-footer width100">
+                </table>
+              </apex:outputPanel>
+            </apex:pageBlockSection>
+          </div>
+        </apex:outputPanel>
+      </apex:outputPanel>
+
+    </apex:pageBlock>
+
+  </apex:form>
+  <script>
+    //dont enable P9 Critical Fix    var jQuery$ = jQuery.noConflict();
+    jQuery(document).ready(function () {
+    var bDisable = {!JSENCODE(IF(disableEdit, "true", "false"))};
+    if (bDisable) {
+    jQuery('input[name$="oQName"]').attr('disabled','disabled');
+    jQuery('input[name$="oQMaxCases"]').attr('disabled','disabled');
+    jQuery('input[name$="oQRtgConfig"]').attr('disabled','disabled');
+    jQuery('[id$=oQRtgConfig_lkwgt]').children().removeClass('lookupIcon');
+    }
+    fetchQueueMembers();
+    });
+  </script>
+</apex:page>

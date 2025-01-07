@@ -1,0 +1,14 @@
+﻿<!--
+
+Page Name        : HUMTaskNewButtonOverride
+Version          : 1.0 
+Created Date     : June 13 2014
+Function         : Page is used to override the Task New button functionality
+
+Modification Log :
+*  Developer Name                    Code Review          Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* M Surya Kumari                     17093                   06/13/2014            Original Version
+-->
+<apex:page standardController="Task" action="{!reDirectPage}" extensions="HUMTaskNewButtonOverrideExtension">
+</apex:page>

@@ -1,0 +1,14 @@
+﻿<!--
+Page Name        : HUMSaveChatTranscript
+Version          : 1.0 
+Created Date     : AUGUST 25 2014
+Function         : Page to download chat transcript in text document.
+Modification Log :
+*   Modification ID     Developer          Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*           1.0         Sagar Tapadia       	18317 		    08/25/2014               Original Version
+*			1.1         Rajesh C        		171913         01/11/2018               REQ - 350669 CR735: Securing the Save Chat Option - Live Chat & Post Chat Windows
+-->
+<apex:page showHeader="false" controller="HUMPreChatController" contentType="text/plain/#transcript.txt">
+<apex:outputText value="{!webChatTranscriptDetail}"/>
+</apex:page>

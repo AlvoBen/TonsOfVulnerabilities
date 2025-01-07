@@ -1,0 +1,32 @@
+﻿<!--
+Page Name        : History_Cases_HUM
+Version          : 1.0 
+Created Date     : 01/19/2022
+Function         : Component to display all case records standard related list view.
+Modification Log :
+*   Developer                  Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Pooja Kumbhar                                 01/19/2022           REQ - 2701225 : T1PRJ0272555 - INC1495332 - Developer script exception from Humana : JSON : JSON string exceeds heap size limit
+* ---------------------------------------------------------------------------------------------------------------------------------------->
+
+
+<apex:page StandardController="Account">
+ 
+ <style>
+ 
+ .pbHeader
+ {
+  display:none;
+ }
+ 
+</style>
+<br/>
+<apex:sectionHeader title="Case"/>
+<apex:pageMessages />
+
+<apex:relatedList id="CaseListHist" list="Cases" title="Case History" >
+ <apex:facet name="header" >.</apex:facet>
+ 
+ </apex:relatedList> 
+
+</apex:page>

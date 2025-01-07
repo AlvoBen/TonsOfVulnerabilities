@@ -1,0 +1,151 @@
+﻿<!-- sldsValidatorIgnore -->
+<!--
+LWC Name        : providerClaimStatements.html
+Function        : LWC to display Provider Claim Statements
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Dimple Sharma	                 08/21/2023                US 4900144- INC2439606 Go Live Incident Display Claim PDF when selecting view     
+* Dimple Sharma                  08/31/2023                Defect DF-8041 Fix
+* Anuradha Gajbhe		 03/01/2024		   US-5480525: DF- 8386: Address is not updating on Resend for Provider/Member Claim Statements on Case Pop-up.
+*****************************************************************************************************************************-->
+<template>
+
+    <lightning-card title="Provider Claim Statements">
+
+
+    <lightning-layout if:false={bNoData}>
+        <lightning-layout-item size="8" style="padding-top: 10px; margin-left:15px" >
+            {recordsCount} item(s) Displayed
+        </br>
+        </lightning-layout-item>
+    </lightning-layout>
+    <template if:false={bNoData}>
+            <div class="slds-p-left_x-small slds-p-right_small">
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-label="Provider Information">
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th class="" scope="col" style="width:16rem">
+
+                            <span >
+                                <div if:true={focus1}
+                                    class="my-class slds-truncate" title="sRemitId">Remittance ID
+                                <lightning-icon
+                                    onclick={updateColumnSorting}
+                                    icon-name={remitSortIconHandler}
+                                    alternative-text="Remittance ID"
+                                    size="xx-small"
+                                    class="my-icon  slds-m-left_small pointer"
+
+                                ></lightning-icon>
+                            </div>
+                            <div if:false={focus1}
+                                class="my-class2 slds-truncate" title="sRemitId">Remittance ID
+                                <lightning-icon
+                                    onclick={updateColumnSorting}
+                                    icon-name={remitSortIconHandler}
+                                    alternative-text="Remittance ID"
+                                    size="xx-small"
+                                    class="my-icon  slds-m-left_small pointer"
+
+                                ></lightning-icon>
+                            </div>
+                            </span>
+                        </th>
+                        <th class="" scope="col" style="width:26rem">
+
+                            <span class="slds-icon_container">
+                                <div if:true={focus2}
+                                    class="my-class slds-truncate" title="sPrintedDate">Date Sent
+                                <lightning-icon
+                                    onclick={updateColumnSorting}
+                                    icon-name={datesorticonHandler}
+                                    alternative-text="Date Sent"
+                                    size="xx-small"
+                                    class="my-icon  slds-m-left_small pointer"
+
+                                ></lightning-icon>
+                            </div>
+                            <div if:false={focus2}
+                                class="my-class2 slds-truncate" title="sPrintedDate">Date Sent
+                                <lightning-icon
+                                    onclick={updateColumnSorting}
+                                    icon-name={datesorticonHandler}
+                                    alternative-text="Date Sent"
+                                    size="xx-small"
+                                    class="my-icon  slds-m-left_small pointer"
+
+                                ></lightning-icon>
+                            </div>
+                            </span>
+                        </th>
+                        <th class="" scope="col" style="width:0.10rem">
+                            <div class="slds-truncate" title="view"></div>
+                        </th>
+                        <th class="" scope="col" style="width:0.10rem">
+                            <div class="slds-truncate" title="send"></div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={prvdrClaimsStmt.data} for:item="row" for:index="indexVar">
+                        <tr class="slds-hint-parent" key={row.sRemitId} onclick={handleLogging}>
+                            <td data-label="Remittance ID">
+                                <div class="slds-truncate logthis" data-id="Remittance ID" data-label="Remittance ID" data-logid={generateLogId}>
+                                    <div data-value={row.sRemitId}>{row.sRemitId}</div>
+                                </div>
+                            </td>
+                            <td data-label="Date Sent">
+                                <div class="slds-truncate logthis" data-id="Date Sent" data-label="Date Sent" data-logid={generateLogId}>
+                                    <div data-value={row.sPrintedDate}>{row.sPrintedDate}</div>
+                                </div>
+                            </td>
+                            <td data-label="preview">
+                                <div class="slds-truncate">
+                                    <lightning-button-icon size="small" icon-name="utility:preview" data-att={indexVar} alternative-text="View" title="View" data-cont={row.sRemitId} onclick={handleRowAction}></lightning-button-icon>
+                                </div>
+                            </td>
+                            <td data-label="send">
+                                <div class="slds-truncate">
+                                    <lightning-button-icon size="small" icon-name="utility:send" data-att={indexVar} alternative-text="Send" title="Send" data-cont={row.sRemitId} onclick={handleRowAction}></lightning-button-icon>
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </template>
+
+    <template if:true={isModalOpen}>
+            <div if:false={bViewAction}>
+               <section aria-label="Dialog title" aria-describedby="popover-body-id" class="slds-popover slds-popover_large" style = "left: 380%; top: -380px;" role="dialog">
+                    <div class="slds-popover__body" id="dialog-body-id-109">
+                           <div class="slds-var-p-vertical_small slds-align_absolute-center ">
+                           <c-generic-print-resend-hum item={providerStatementItem} prvdaddr={providerAddr} isproviderstatement={isproviderstatement}
+                      memberplanid ={recordId} rec-id={accountid} oncancelclickselect={handleCancelClickSelect} claim-nbr={ClmNbr}>
+                           </c-generic-print-resend-hum>
+                           </div>
+                    </div>
+                </section>
+            </div>
+
+            <div if:true={bViewAction}>
+                
+                    <section aria-label="Dialog title" aria-describedby="popover-body-id" class="slds-popover slds-popover_large" style = "left: 480px; top: -380px;" role="dialog">
+	                <div class="slds-popover__body" id="dialog-body-id-110">
+	                    <div class="slds-var-p-vertical_small slds-align_absolute-center">
+	                        <c-mobius-doc-view-hum record-details={recordItem} onsubmission={handleSubmit}></c-mobius-doc-view-hum>
+	                    </div>
+	                </div>
+                </section>
+            
+        </div>
+    </template>
+
+    <template if:true={bNoData}>
+        <c-search-no-result-hum no-result-message={noDataMsg} message-with-icon="true"></c-search-no-result-hum>
+    </template>
+    </lightning-card>
+</template>

@@ -1,0 +1,43 @@
+.member-icons img {
+    height: 2rem;
+}
+
+.member-icons c-custom-tooltip-hum {
+    position: absolute;
+    left: .5rem;
+    bottom: .5rem;
+}
+
+.icons-container {
+    align-items: flex-end
+}
+
+.member-icons c-custom-tooltip-hum lightning-icon {
+    visibility: hidden;
+}
+
+.mtmCheckbox-align {
+    margin-left: 18px;
+}
+
+.alertContainer 
+{
+    margin-right: 1rem;
+}
+
+.slds-popover_prompt_top-right {
+    right: -12px;
+    top: -12px;
+}
+
+.slds-popover_prompt_top-left {
+    top: -12px;
+    left: -12px;
+}
+
+.exampleHolder{
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+}

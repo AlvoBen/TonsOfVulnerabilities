@@ -1,0 +1,125 @@
+﻿<!--
+LWC Name        : BenefitsWaitingPeriodHum.js
+Function        : JS file for Benefits Waiting Period.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Abhishek Mangutkar             06/01/2023                   US - 4556179 - Dental Plan - Dental Waiting Periods
+* Nirmal Garg                    06/01/2023                   US - 4648707 - Dental UI Logging Riders - Waiting periods
+****************************************************************************************************************************
+-->
+<template>
+	<article class="slds-brand-band slds-card slds-card_boundary headerBottomBorder forceRelatedListCardDesktop">
+		<div
+			class="slds-page-header--object-home slds-page-header_joined slds-page-header slds-shrink-none test-headerRegion forceListViewManagerHeader">
+			<header
+				class=" slds-card__header slds-grid slds-p-right_none slds-media slds-media_center slds-has-flexi-truncate hc-align-header slds-p-around_none slds-m-bottom_none">
+				<div class="slds-media__figure">
+					<lightning-icon icon-name="standard:record"></lightning-icon>
+				</div>
+				<div class="slds-media__body">
+					<h2 class="slds-card__header-title">Dental Waiting Periods ({totalCount})</h2>
+				</div>
+			</header>
+		</div>
+		<div style="overflow-x: auto">
+			<template if:true={loaded}>
+				<template if:false={serviceerror}>
+					<div data-id="result" class="slds-table--header-fixed_container ">
+						<div class="slds-scrollable_y container" data-id="tablediv" style="height:100%;"
+							onscroll={handleScroll}>
+							<table
+								class="slds-no-row-hover slds-table slds-table_cell-buffer slds-table_bordered slds-table--header-fixed">
+								<thead>
+									<tr class="slds-line-height_reset">
+										<template for:each={columns} for:item="col">
+											<th key={col.label} aria-label={col.label} aria-sort="none"
+												title={col.label}
+												class="slds-is-resizable slds-is-sortable slds-cell-fixed" scope="col"
+												data-label={col.label} style={col.style}>
+												<div class="slds-p-top_x-small slds-wrap slds-cell-fixed slds-m-left_x-small"
+													style="width: 100%;">
+													{col.label}
+												</div>
+											</th>
+										</template>
+									</tr>
+								</thead>
+								<tbody>
+									<template if:true={dataFound}>
+										<template for:each={filteredWaitingPeriodList} for:item="rec" for:index="index">
+											<tr key={rec.Id} class="slds-hint-parent" onclick={handleLogging}>
+												<td class="logthis">
+													<div class="slds-wrap" title={rec.description}
+														data-label="Description" data-value="Description">
+														{rec.description}
+													</div>
+												</td>
+												<td class="logthis">
+													<div class="slds-wrap" title={rec.startDate} data-label="Start Date"
+														data-value="Start Date">
+														{rec.startDate}
+													</div>
+												</td>
+												<td class="logthis">
+													<div class="slds-wrap" data-label="End Date" data-value="End Date"
+														title={rec.endDate}>{rec.endDate}
+													</div>
+												</td>
+												<td class="logthis">
+													<div class="slds-wrap" data-label="Waive Accident/Injuries"
+														data-value="Waive Accident/Injuries" title={rec.waiveAccident}>
+														{rec.waiveAccident}
+													</div>
+												</td>
+												<td class="logthis">
+													<div class="slds-wrap" data-label="Person Prior Coverage Reduction"
+														data-value="Person Prior Coverage Reduction"
+														title={rec.personPriorCoverageReduction}>
+														{rec.personPriorCoverageReduction}
+													</div>
+												</td>
+												<td class="logthis">
+													<div class="slds-wrap" data-label="Member Eligibility Reduction"
+														data-value="Member Eligibility Reduction"
+														title={rec.memberEligibiltyReduction}>
+														{rec.memberEligibiltyReduction}
+													</div>
+												</td>
+											</tr>
+										</template>
+									</template>
+									<template if:false={dataFound}>
+										<tr>
+											<td colspan="8">
+												<div class="slds-grid slds-grid_align-spread slds-m-top_x-small">
+													<div class="slds-col slds-size_1-of-1">
+														<div class="slds-p-around_small">
+															<p style="text-align:center">{labels.HUMNoRecords}</p>
+														</div>
+													</div>
+												</div>
+											</td>
+										</tr>										
+									</template>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</template>
+			</template>
+			<template if:true={serviceerror}>
+				<div class="slds-grid slds-grid_align-spread slds-m-top_x-small">
+					<div class="slds-col slds-size_1-of-1 slds-m-vertical_small">
+						<c-generic-scoped-notification-hum iconname="utility:error" message={message} type="error">
+						</c-generic-scoped-notification-hum>
+					</div>
+				</div>
+			</template>
+			<template if:false={loaded}>
+				<lightning-spinner alternative-text="Loading...."></lightning-spinner>
+			</template>
+		</div>
+	</article>
+</template>

@@ -1,0 +1,217 @@
+﻿<!--/*******************************************************************************************************************************
+LWC Name    : Authsummary_medical_authorization_lwc_hum
+Function    : This HTML serves as UI
+
+Modification Log: 
+Developer Name           Code Review                      Date                         Description
+*--------------------------------------------------------------------------------------------------------------------------------
+Prashant Moghe                                           14/07/2022                    User story 3362694 Authorization Summary table to disply the compound table
+Kalyani Pachpol											 15/07/2022					   US - 3442787
+Sagar Gulleve										 	 19/07/2022					   US - 3388026 T1PRJ0193102- MF 3223149 CRM Service Benefits 2022-  Auth/Referral: Lightning Build of Details - GO TO
+Raj Paliwal 											 13/10/2022					   US - 3753617 T1PRJ0193102- MF 3223149 CRM Service Benefits 2022-  Auth/Referral: Lightning Build of Details - GO TO  - Character Limit
+Apurva Urkude                                            11/08/2022                     User Story: 3747520                                                                               
+Jonathan Dickinson                                       06/14/2023                    User Story 4705843: T1PRJ0891339 2023 Arch Remediation-SF-Tech-Filter cases having template attached from existing case history logging for process logging
+*********************************************************************************************************************************/ -->
+<template>
+	<template if:true={bNoResponse}>
+        <lightning-button
+			variant="brand-outline"
+			name="verify"
+			label="Auth/Referral Requirement"
+			onclick={handleRefReq} class="slds-float_right"></lightning-button>
+    </template>
+    <div class="slds-form_horizontal slds-form" if:false={bNoResponse}>
+        <p
+            style="font-weight: bold; font-size: 15px; margin-bottom: 1rem;"
+            class="slds-m-left_medium"
+        >
+            Medical Authorization/Referral
+        </p>
+        <div
+            class="slds-box-ph slds-m-left_small slds-border_left slds-border_right slds-border_top slds-border_bottom slds-m-bottom_medium"
+            style="background-color: lightgrey;"
+        >
+            <lightning-layout
+                horizontal-align="left"
+                class="slds-form slds-form_horizontal"
+                style="padding: 0.5rem;"
+            >
+                <lightning-layout-Item
+                    class="slds-size_2-of-1 slds-m-right_medium"
+                >
+                    <lightning-icon
+                        icon-name="utility:info"
+                        size="small"
+                        alternative-text="New note"
+                        title="New note"
+                    >
+                    </lightning-icon>
+                </lightning-layout-Item>
+                <lightning-layout-Item
+                    size="10"
+                    class="slds-m-top_xx-small"
+                    style="width: 800px;"
+                >
+                    <lightning-formatted-text
+                        value={cLabels.Auth_Referral_guidance_HUM}
+                    >
+                    </lightning-formatted-text>
+                </lightning-layout-Item>
+            </lightning-layout>
+        </div>
+
+             <lightning-layout>
+            <lightning-layout-item size="6">
+                <lightning-layout>
+                    <lightning-layout-item size="12">
+                        <div class="slds-input-has-fixed-addon">
+                            <span
+                                class="slds-form-element__addon slds-m-left_small"
+                                id="fixed-text-addon-pre"
+                                style="width: 2.1rem; margin-bottom: 0.8rem;"
+                                >Go To</span
+                            >
+                            <input
+                                type="text"
+                                name="keyword"
+                                value={sAuthNumberGoTo}
+                                onchange={findByWord}
+								maxlength=9
+                                onkeypress={handleEnter}
+                                placeholder="Auth/Referral Summary Number"
+                                aria-labelledby="fixed-text-label fixed-text-addon-pre fixed-text-addon-post"
+                                class="slds-input"
+                                style="width: 17rem; margin-bottom: 0.8rem;"
+                            />
+                            <span
+                                class="slds-form-element__addon"
+                                id="fixed-text-addon-post"
+                                style="margin-bottom: 0.8rem;"
+                            >
+                                <div if:true={bEnabled}>
+                                    <lightning-button-icon
+                                        icon-name="utility:send"
+                                        alternative-text="Search in Table"
+                                        title="Send"
+                                        onclick={SerachAuthNumber}
+                                        size="large"
+                                    >
+                                    </lightning-button-icon>
+                                </div>
+                                <div if:false={bEnabled}>
+                                    <lightning-button-icon
+                                        icon-name="utility:send"
+                                        disabled
+                                        alternative-text="Search in Table"
+                                        title="Send"
+                                        size="large"
+                                    >
+                                    </lightning-button-icon>
+                                </div>
+                            </span>
+                        </div>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-layout-item>
+            <lightning-layout-item alignment-bump="left">
+                <lightning-button
+                    variant="brand-outline"
+                    name="verify"
+                    label="Auth/Referral Requirement"
+                    onclick={handleRefReq}
+                >
+                </lightning-button>
+            </lightning-layout-item>
+            <lightning-layout-item>
+                <div onclick={clearData} class="slds-p-left_medium slds-p-right_medium">
+                    <lightning-icon
+                        class="health-filter-icon slds-p-around_x-small"
+                        icon-name={iconName}
+                        size="x-small"
+                        alternative-text="Filters"
+                        onclick={handleTableFilter}
+                    ></lightning-icon>
+                </div>
+            </lightning-layout-item>
+        </lightning-layout>
+    </div>
+	<p class="slds-m-around_medium" if:false={bNoResponse}>
+        {recordCount} of {recordCount} items
+    </p>
+	
+    <c-standard-table-component-hum
+        class="full-container"
+        style="width: fit-content;"
+        templateaccordian="false"
+        name-of-screen="MedicalAuthorization"
+        response={responseCoded}
+        templatemodal={medicalAuthorizationItemModel}
+        onlinkclick={handleclicked}
+        data-id="billing-summary"
+        show-view-all={showViewAll}
+        no-data-message="No Data available"
+        b-hide-title="true"
+        b-infinite-scroll={bInfiniteScroll}
+        title={title}
+        o-view-all-params={oViewAllParams}
+		related-input-field="Plan Member Name"
+		screen-name={loggingScreenName}
+    >
+    </c-standard-table-component-hum>
+    <template if:true={bNoResponse}>
+        <div class="slds-align_absolute-center">
+            <c-search-no-result-hum
+                no-result-message="No matching records found"
+                message-with-icon="true"
+            >
+            </c-search-no-result-hum>
+        </div>
+    </template>
+    <template if:true={isFilterOn}>
+        <c-authsummary_medical_authorization_filter_lwc_hum
+            overall-status={overallStatus}
+            auth-types={authTypes}
+            admission-service-type={admissionServiceType}
+            filtered-data={filterdData}
+            onhandlefilter={handleFilters}
+            onhandleclose={handleClose}
+        >
+        </c-authsummary_medical_authorization_filter_lwc_hum>
+    </template>
+	<!--Auth Refreal Flow Start-->
+        <template if:true={authreferalRequest}>
+            <div class={authRefFlowClass}>
+                <section role="dialog" tabindex="-1"
+                    class="slds-modal slds-fade-in-open slds-modal_medium flow-modal-component"
+                    aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header">
+                            <lightning-button-icon icon-name="utility:close" alternative-text="Close this window"
+                                size="large" variant="bare-inverse" onclick={handleflowabort} class="slds-modal__close">
+                            </lightning-button-icon>
+                            <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Auth/Referral Requirement</h2>
+                        </header>
+                        <template if:true={flowname}>
+                            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                <c-screen-flow onflowstatuschange={handleflowfinished} onflowfailed={handleflowfailed} width="100%"
+                                    height="500px;" flow-name={flowname} flow-params={flowParamsJSON}>
+                                </c-screen-flow>
+                                
+                            </div>
+                        </template> 
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open flow-modal-component"></div>
+            </div>
+        </template>
+		<template if:true={showFlowCloseMessage}>            
+            <c-generic-unsaved-changes-prompt-hum header={labels.UnsavedChangesHeader} message={labels.UnsavedModalMsgHum}
+            button-config={flowWarningMsgbuttonsConfig} promptclass={promptclass} oncancel={closeFlowClosePopupModal}
+            oncontinue={handleCloseFlowClosePopupModal}>
+        </c-generic-unsaved-changes-prompt-hum>
+        </template>
+        <template if:true={authReferalFinalScreen}>
+            <c-generic-case-comment-logging record-id={recordId} onfinish={handleFinishLogging} responseobj={authreferalrequestobj} filter-cases-having-template={filterCasesHavingTemplate}></c-generic-case-comment-logging>
+        </template>
+        <!--Auth Refreal Flow End-->
+</template>

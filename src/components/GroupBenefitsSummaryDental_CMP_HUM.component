@@ -1,0 +1,148 @@
+﻿<!------
+Component Name   : GroupBenefitsSummaryDental_CMP_HUM.component
+Version          : 1.0
+Created On       : 04/30/2018 
+Function         : VF Component to display Medical Benefits Summary for Group 
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* Vishal Verma                                       04/30/2018               Created for REQ#: 361852 for showing dental benefits summary for Group
+* Lakshmi Madduri                                    06/19/2018               Modified the GroupId field
+* Deepankar Binjola									 1/05/2020				  REQ - 738210 : Add Selling Ledger Number field – Benefits Summary – Dental
+* Shailesh Mali										 04/19/2020				  REQ - 738193 Add Selling Ledger Description field
+**************************************************************************************************************************************************************************
+-->
+<apex:component id="compBenefitsSummaryD">
+  <apex:attribute id="GroupId" name="GroupId" description="This is Group Number" type="String" required="true"></apex:attribute>
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.GroupBenefits_BenefitsSummaryDental_SR_HUM, 'GroupBenefits_BenefitsSummaryDental_CSS_HUM.css')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.GroupBenefits_BenefitsSummaryDental_SR_HUM, 'GroupBenefits_BenefitsSummaryDental_JS_HUM.js')}"/>
+  <div id="BSDstatusImageLoading" class="loadingImageDivCon">
+    <img src="/img/loading.gif" />
+    <span class="waitingDescription"> {!$Label.LOADING_HUM}</span>
+  </div>
+
+  <div id="BSDresponseErrors" class="centerAlign">
+    </div>
+
+        <div id="formBenefitsSummaryD">
+  
+
+    <div id="BSDageBlockDiv">
+      <apex:pageBlock id="BSDPageBlock">
+        <apex:pageBlockSection columns="2" id="BSDPageBlockSection">
+          <apex:pageBlockSectionItem id="BSDPBSI3">
+            <apex:outputpanel >
+              <apex:outputLabel value="{!$Label.BenefitsPeriod_BenefitSummaryVOB_HUM}" />
+              <div class="imgRightAlign DeleteFlagRecordStyle">
+                <h3>
+                  <img src="{!$Resource.HUMHoverOverQuestionMark}" onmouseover="openPopupBSDInfo();" onmouseout="clearPopupBSDInfo();" />
+                </h3>
+              </div>
+              <div id="DentalPolInfoStylePanelBSD" class="DentalBenefitSummaryStyle">
+                <SPAN style="color:#4a4a56" id='DentalPolInfoStylePanelTextBSD'>
+                </SPAN>
+              </div>
+            </apex:outputpanel>
+            <span id="benefitPeriod">
+            </span>
+          </apex:pageBlockSectionItem>
+
+          <apex:pageBlockSectionItem id="BSDPBSI1" html-log_this="false">
+            <apex:outputpanel >
+              <apex:outputLabel value="{!$Label.GroupId_GroupBenefitSummaryVOB_HUM}" />
+            </apex:outputpanel>
+            <apex:outputText value="">{!GroupId}</apex:outputText>
+          </apex:pageBlockSectionItem>
+
+          <apex:pageBlockSectionItem id="BSDPBSI5">
+            <apex:outputpanel >
+              <apex:outputLabel value="{!$Label.DeductibleType_BenefitSummaryVOB_HUM}" />
+              <div class="imgRightAlign DeleteFlagRecordStyle">
+                <h3>
+                  <img src="{!$Resource.HUMHoverOverQuestionMark}" onmouseover="openPopupBSD1Info();" onmouseout="clearPopupBSD1Info();"/>
+                </h3>
+              </div>
+              <div id="DentalPolInfoStylePanelBSD1" class="DentalBenefitSummaryDeductibleStyle">
+                <SPAN style="color:#4a4a56" id="DentalPolInfoStylePanelTextBSD1">
+                </SPAN>
+              </div>
+            </apex:outputpanel>
+            <span id="DeductibleType">
+            </span>
+          </apex:pageBlockSectionItem>
+		  <apex:pageBlockSectionItem id="BSDPBSI23" html-log_this="true">
+                    <apex:outputpanel >
+                      <apex:outputLabel value="{!$Label.SellingLedgerNumber_BenefitSummaryVOB_HUM}" />
+                    </apex:outputpanel>
+                    <span id="Selling Ledger Number">
+                    </span>
+                  </apex:pageBlockSectionItem> 
+
+          <apex:pageBlockSectionItem id="BSDPBSI21">
+            <apex:outputpanel >
+              <apex:outputLabel value="{!$Label.NetworkDescription_BenefitSummaryVOB_HUM}" />
+            </apex:outputpanel>
+            <span id="Network Description">
+            </span>
+          </apex:pageBlockSectionItem>
+		  
+		  <apex:pageBlockSectionItem id="BSDPBSI99" html-log_this="true">
+				<apex:outputpanel >
+					<apex:outputLabel value="{!$Label.SellingLedgerDescription_BenefitSummaryVOB_HUM}" />						 
+				</apex:outputpanel>
+				<span id="Selling Ledger Description">
+                </span>
+		  </apex:pageBlockSectionItem>
+					
+          <apex:pageBlockSectionItem id="BSDPBSI9">
+            <apex:outputpanel >
+              <apex:outputLabel value="{!$Label.PlanOption_BenefitSummaryVOB_HUM}" />
+            </apex:outputpanel>
+            <span id="PlanOption">
+            </span>
+          </apex:pageBlockSectionItem>
+
+          <apex:pageBlockSectionItem id="BSDPBSI4">
+            <apex:outputpanel >
+              <apex:outputLabel value="{!$Label.MaxDependentAge_BenefitSummaryVOB_HUM}" />
+            </apex:outputpanel>
+            <span id="MaxDependentAge">
+            </span>
+          </apex:pageBlockSectionItem>
+
+          <apex:PageBlockSectionItem Id="BSDPBSI11">
+            <apex:outputpanel >
+              <apex:outputLabel value="{!$Label.BenefitPackageID_BenefitSummaryVOB_HUM}"/>
+            </apex:outputpanel>
+            <span id="BenefitPackageId">
+            </span>
+          </apex:PageBlockSectionItem>
+
+          <apex:pageBlockSectionItem id="BSDPBSI6">
+            <apex:outputpanel >
+              <apex:outputLabel value="{!$Label.MaxStudentAge_BenefitSummaryVOB_HUM}" />
+            </apex:outputpanel>
+            <span id="MaxStudentAge">
+            </span>
+          </apex:pageBlockSectionItem>
+
+          <apex:pageBlockSectionItem id="BSDPBSI22">
+            <apex:outputpanel >
+              <apex:outputLabel value="{!$Label.Market_BenefitSummaryVOB_HUM}" />
+            </apex:outputpanel>
+            <span id="Market">
+            </span>
+          </apex:pageBlockSectionItem>
+
+          <!-- Dental Second Pass Ends  -->
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var sStatusImageBSD,sFormPolInfoBSD;
+
+  </script>
+</apex:component>

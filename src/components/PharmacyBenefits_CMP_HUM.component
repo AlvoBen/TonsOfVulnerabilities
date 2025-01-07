@@ -1,0 +1,158 @@
+﻿<!--
+Component Name   : PharmacyBenefits_CMP_HUM.component
+Version          : 1.0
+Created On       : 02/14/2017
+Function         : VF Component to display pharmacy benefits and authorization details
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Joel George                                        06/20/2017                 Original version
+* Joel George               125710                   09/05/2017                 Req 322640
+* Sharan Shanmugam                                   09/22/2017                 REQ - 329665
+* Sharan Shanmugam                                   10/31/2017                 REQ - 335303    
+* Prudhvi Pamarthi          309689                   01/02/2019                 REQ - 378771 Fix for CA ticket - 7864313 
+* Prudhvi Pamarthi                                    03/22/2019                REQ - 388905 Fix for CA ticket - 8097659 
+* Prudhvi Pamarthi                                    04/15/2019                Defect Fix for REQ - 388905
+* Melkisan Selvaraj         356294                    05/16/2019                REQ - 397115 Fix for CA ticket - 8222473
+* Melkisan Selvaraj         359862                    06/27/2019                Defect# 425573.0001 Fix - Filter buttons
+* Subhamay Mandal                                     07/29/2019                REQ - 404472 AHT/Quality - All Users - Ability to display All Outcome Verbiage in the Pharmacy Authorization section - Authorization Summary (RF)
+* Prudhvi Pamarthi                                    02/20/2020                US#750617 DF-164 Fix
+* Subhamay Mandal                                     04/06/2020                REQ - 988582 AHT/Quality - Ability to display Outcome Verbiage in the Pharmacy Authorization section - Authorization Summary (CRM)
+* Sunil Kumar Reddy                                   04/24/2020                User Story 1042378 - PR00091574 - MF 1 - SF - TECH - On/Off Switch Cleanup - 5/8 and 5/22 Release (CRM)
+* Sayali Nemade										  07/14/2020				REQ - 929269 CA Ticket: 8737959 Prior Authorization 'outcome verbiage' was duplicating when using the CRM Logging component.
+* Kavya Bondada                                       06/01/2021
+* Anand Kumar                                         07/13/2021                User Story 2366257: T1PRJ0001827 - MF 1 - AHT - Ability to copy information in CRM - Phase 3 (RF)
+* Pinky Vijur                    					  12/01/2021                REQ - 2846597: T1PRJ0002736 - 2021 MF6 - Security- TECH - SF - OSA Library Verify JQuery Bootsrap or Angular methods are working fine in Pharmacy Components       
+* Anuradha Gajbhe                                     12/06/2021          		US-2847494 JQuery/Bootstrap/Angular update - Authorization pages and clinical program pages
+* Ravikanth Samudrala                                 04/26/2022                3324565-T1PRJ0272548 - SF Legacy API Retirement Upgrade API Version for Integrationjs Pharmacy Benefits & Authorizations
+* Tharun Madishetti                               05/06/2022                US-2938813: T1PRJ0272555 - 2022 MF6 - SWAT- SF - TECH Incident - INC1504578 - "Outcomes" and "Event Type" drop downs (staying open when clicked twice)
+* Aaron Speakman                                      12/08/2022                DF-6785 Fix - Sizing issue with the Pharmacy Auth table width
+* Tharun Madishetti                                   03/31/2023                US-4250871:T1PRJ0891742- CRM IOP-2022-6037203-- Pharmacy Authorization Details: add Department,Coverage Start Date & Coverage End Date(Classic)
+* Tharun Madishetti                                  07/14/2023                  US-4647281: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Pharmacy (Group 1)
+* Tharun Madishetti                                   07/31/2023                DF-7943 Fix- Pharmacy Auth table width sizing issue
+****************************************************************************************************************************-->
+<apex:component controller="PharmacyBenefits_C_HUM" allowDML="true">
+
+    <apex:includeScript value="/support/console/54.0/integration.js" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery-ui.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}" />
+	  <apex:includeScript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/Bootstrap/dist/js/bootstrap.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/DataTables-1.13.4/js/jquery.dataTables.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/DataTables-1.13.4/js/dataTables.bootstrap.min.js')}" />
+
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}"/> 
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Logging/css/LoggingCompCSS.css')}"/>
+
+   
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.PharmacyCallsBenefitAuthorization_SR_HUM, 'PharmacyCallsBenefitAuthorization_SR_HUM/PharmacyCallsBenefitAuthorization_CSS_HUM.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.PharmacyCallsBenefitAuthorization_SR_HUM, 'PharmacyCallsBenefitAuthorization_SR_HUM/PharmacyCallsBenefitAuthorization_JS_HUM.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CopyToClipBoard/CopyToClipBoard.js')}"/>
+    <link rel="stylesheet" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/DataTables-1.13.4/css/dataTables.bootstrap.min.css')}" />
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'jquery-ui.min.1.11.4.css')}" />
+
+        <script type="text/javascript">
+            <!-- Please do not change this line as it breaks the JS tables. -->
+
+          var pharmacyBenefitsRemoteAction = '{!$RemoteAction.PharmacyBenefits_C_HUM.invokeGetpAuthService}';
+          var hoverImageIcon = '{!$Resource.HUMHoverOverQuestionMark}';
+          var bPaHubswitch_4250871 = '{!bPaHubswitch_4250871}';
+          //dont enable P9 Critical Fix          $j = jQuery.noConflict(true);
+          jQuery(document).ready(function () {
+
+          document.getElementById('warningDiv').style.display = 'none';
+          document.getElementById('errorDiv').style.display = 'none';
+          jQuery('.dropdown-toggle').dropdown();
+          });
+
+        </script>
+	<style>
+	    td.details-control {
+	    background: url({!URLFOR($Resource.PharmacyCallsBenefitAuthorization_SR_HUM,'PharmacyCallsBenefitAuthorization_SR_HUM/PlusImage.png')}) no-repeat center center;
+	    background-size: 30px 30px;
+	    padding-left: 30px;
+	    cursor: pointer;
+	    }
+	    tr.details td.details-control {
+	    background: url({!URLFOR($Resource.PharmacyCallsBenefitAuthorization_SR_HUM,'PharmacyCallsBenefitAuthorization_SR_HUM/MinusImage.png')}) no-repeat center center;
+	    background-size: 30px 30px;
+	    padding-left: 30px;
+	    cursor: pointer;
+	    }
+		.customEllipsis span {
+           display: none; /* REQ - 929269 Adding this CSS to prevent duplication of Outcome Verbiage value */
+       }
+	</style>
+    <!-- Warning message to be displayed --> 
+    <div id="warningDiv">   
+        <apex:outputPanel id="noRecordError" Styleclass="displayNoneErr">
+            <apex:PageMessage Summary="{!$Label.Authsummary_No_Records}" severity="info" Strength="2"/>
+            <apex:pagemessages />
+        </apex:outputPanel> 
+    </div>
+    <div id="errorDiv">   		    
+        <apex:outputPanel id="calloutError" Styleclass="displayNoneErr">		
+            <apex:PageMessage Summary="{!$Label.PharmacyAuth_Error_ServiceCallout}" severity="error" Strength="2" title="Error:" />		
+            <apex:pagemessages />		
+        </apex:outputPanel> 		
+    </div>
+     <!-- End Warning message to be displayed -->
+     <!-- Filter by to be displayed inside a box -->    
+
+     <div class="col-xs-12" id="filterBySection">
+        <nav class="navbar navbar-default">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <span class="navbar-brand filterByStyling">Filter By:</span>                                   
+             </div>
+            
+             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <form class="navbar-form navbar-left" role="search" id="ddFilters" style="font-size:12px;">
+                    <div class="form-group">
+                         <input type="text" class="form-control benAndAuthorizationResultTable_disable_while_logging" placeholder="Keyword" id="filterKeyword"  onkeydown="if (event.keyCode==13){ return false;}" onkeyup ="filterbytable(this.value)"/>
+                        
+                    </div>
+                    <div style="margin-top:10px; margin-left:350px;">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle benAndAuthorizationResultTable_disable_while_logging" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false" id="outcomeId">Outcome<span class="caret"></span></button>
+                            <ul class="dropdown-menu scrollable-menu" role="menu" id="outId"></ul>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle benAndAuthorizationResultTable_disable_while_logging" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false" id="eventTypeId">Event Type<span class="caret"></span></button>
+                            <ul class="dropdown-menu scrollable-menu" role="menu" id="etypeId"></ul>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default example_disable_while_logging benAndAuthorizationResultTable_disable_while_logging" id="ResetID">Clear Filters </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </nav>
+    </div>
+
+    <!-- End Filter by to be displayed inside a box -->
+    <div id="PAuthLoadingImageId" class="loadingImageDivCon centerAlign">
+        <img src="/img/loading.gif" />
+        <span class="waitingDescription">{!$Label.LOADING_HUM}</span>
+    </div>
+    
+    <div id="benAndAuthorizationDivId" class="displayNone table-responsive">
+        <table id="benAndAuthorizationResultTable" class="table table-striped table-bordered creditCardTableStyle tableAlignment enable_logging width100">
+        <caption style="display:none">Pharmacy Authorizations</caption> 
+        </table> 
+    </div>
+        
+    <div id="PAErrorMsgId" class="displayNone centerAlign"></div>
+    
+    <script> 
+        if(enterpriseID != null && enterpriseID != undefined && accountID != null && accountID != undefined) invokeRemoteActionPharmacyGetpAuthDetails(enterpriseID,accountID);
+
+    </script> 	
+</apex:component>

@@ -1,0 +1,83 @@
+﻿<!-- *******************************************************************************************************************************
+Page Name       : HUMAccountDetailPage
+Version         : 1.0
+Created On      : 07/24/2014
+Function        : Page to display limited account record fields to Users who don't have access to that particular Account record
+                  
+Modification Log: 
+* Developer Name                Code Review          Date                       Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Manish Kumar                    17122                    07/24/2014            Original Version
+* Pallavi R                       165514                   12/22/2017            REQ - 350418 -  MA Post Search Functionality Resolution    
+* Pallavi R                                                06/06/2018            REQ - 363592 - Rollback Resolution Search tab Changes                   
+* Darshan sharma										   08/03/2018			 REQ - 371419 - Ability to disable QS fields and Display Error Message if the User does not have Permission to Create a Case for the Member (RF)
+* Ankit Avula                                              06/18/2021            US 2360351:INC1132612 - User has limited access, the group page says "Person Account" instead of "Business Account"
+* Kiran Bhuvanagiri										   11/05/2021			 US 2791814: Account pages of all types (Change to PROD)
+* Tharun Madishetti							               03/01/2024			 US-5318077 : Consumer Mgt-Classic-VIT Remediation Member Plan and Verify Demographics; VIT37935988,VIT37935989
+******************************************************************************************************************************* -->
+<apex:page id="thePage" controller="HUMAccountDetailPageController" tabStyle="Account" sidebar="false">
+    <apex:StyleSheet value="{!URLFOR($Resource.HUMCustomSearch, 'HUMCustomSearch/main.css')}" />
+    <apex:includeScript value="/support/console/41.0/integration.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.HUMAccountDetailPage_SR_HUM, 'HUMAccountDetailPage_JS_HUM.js')}" />
+    <!-- Unified Search Changes -->
+	    <apex:form rendered="{!bShowUnifiedSearch}">
+			<div align="left" >
+                <br/>
+				<apex:commandButton id="UnifiedSearchCoveo" styleClass="newCasesBtn btn"  onclick="unifiedSearchOnclick();return false;" value="{!$Label.Unified_Button}" />                           
+			</div> 
+            
+        </apex:form> 
+	<!-- Unified Search Changes -->
+    <apex:form >
+    <!--As per the US 2360351 Added the render logics and sectionHeader for Business Account -->
+        <apex:sectionHeader title="Person Account" subtitle="{!acc.Salutation} {!acc.Name}" rendered="{!acc.RecordType.Name != 'Group' || !(switchOnOffBusinessAccountTitle)}"/>
+        <apex:sectionHeader title="Business Account" subtitle="{!acc.Salutation} {!acc.Name}" rendered="{!acc.RecordType.Name = 'Group' && switchOnOffBusinessAccountTitle}"/>
+        <apex:pageBlock mode="maindetail">
+            <apex:pageBlockButtons location="top">
+                
+            </apex:pageBlockButtons>
+            <apex:pageMessages />
+            <apex:pageBlockSection columns="1">
+                <apex:outputText value="{!acc.Salutation} {!acc.Name}" label="{!$ObjectType.Account.fields.Name.label}" />
+                <apex:outputText value="{!acc.RecordType.Name}" label="Account Record Type" />
+                <apex:outputText value="{!acc.Security_Groups__c}" label="{!$ObjectType.Account.fields.Security_Groups__c.label}" />
+            </apex:pageBlockSection>
+      
+        </apex:pageBlock>
+        <c:HUMPolicyRelatedListComponent AccountId="{!acc.id}" />
+   </apex:form>
+   <div id="footer">
+       <apex:outputPanel id="ft">
+           <apex:include pageName="HUMCustomInteractionLog"/>
+       </apex:outputPanel>
+   </div>
+    <script type='text/javascript'>
+    
+    /*UNIFIED SEARCH RELATED CHANGES*/
+	  var bUnifiedSearchAccess = '{!bShowUnifiedSearch}';
+      var onLoadSubTabID;
+      var contextValue;
+      var searchParams;
+	  var interactionDetails;
+	  var tabName;
+      if(bUnifiedSearchAccess == "true"){ 
+         contextValue =    {"IntrNumber": "{!interactionNumber}" , "callerType" : "{!interactionWithType}","callingAbout" : "{!interactionAbout}", "CRMPageName":"L_CRMS_MemberAccount_Detail" };   
+         searchParams ={"lq":""};
+         tabName ='{!JSENCODE(acc.Name)}';
+         interactionDetails = {"intWithType": "{!interactionWithType}" , "intWith" :"{!interactWith}" ,"CaseNumber" : "",};
+         sforce.console.onFocusedSubtab(accountSubtabEventHandler);
+        }
+		   
+      jQuery(document).ready(function () {
+		 sforce.console.fireEvent('noAccessDisableQS','false');
+		 if(bUnifiedSearchAccess == "true"){
+			var getSubTabId = function getSubTabId(result){
+			onLoadSubTabID = result.id;
+			};
+			sforce.console.getEnclosingTabId(getSubTabId);
+			var event = sforce.console.fireEvent('setCoveoContext', JSON.stringify(contextValue));
+			}
+		 });
+    </script>
+</apex:page>

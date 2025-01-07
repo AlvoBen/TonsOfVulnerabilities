@@ -1,0 +1,44 @@
+﻿<!--
+Component Name   : HUMPopUPForCaseComments
+Version          : 1.0
+Created On       : Feb 12 2014
+Function         : This Component is used as popup to show CaseComments
+
+Modification Log :
+*  Developer            Code Review             Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*  Manish Kumar          21062                  02/13/2015           Original Version
+*  Pooja Wadhwa                                                      Added client side validation to limit hover to 200
+*  Prudhvi Pamarthi      165023                 01/19/2018           REQ - 328929 Fix for HUMExceptionHelper: DML 
+*  Santhi Mandava                               03/18/2020           Created javascript variable to get RF access which will be used of case comments story
+*  Sunil Kumar Reddy                            05/11/2020           User story - 1083118 Removed rapid force permission set for case comments story
+********************************************************************************************************************************
+-->
+<apex:component controller="HUMPopUPForCaseCommentsController" allowDML="true">
+
+    <apex:attribute name="caseId" type="String" assignTo="{!sCaseId}" required="true" description="" />   
+    
+    <apex:includeScript value="/support/console/30.0/integration.js" />  
+    <apex:includeScript value="{!$Resource.CaseCommentLength_JS_HUM}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.HUMCaseHistoryComponent,'/HUMCaseHistoryComponent/main.css')}"/>
+    <!-- For Constructor Related exception -->
+    <c:HUMConstructorExceptionComponent errorLogs="{!listErrorLogs}" />
+    
+    <apex:outputPanel id="ComponentRef" styleClass="componentRef"> 
+   
+        <apex:outputText rendered="{!bDateDisplay}" value="">                       
+        <font class="commentStyle">{!sCaseCommentString} {!sLastModifiedDate}<br/></font>
+              
+        </apex:outputText>
+        <apex:outputText id="CaseComment" value="" styleClass="wordWrap"> 
+        <script>
+            var scomment ='';
+            var sCommentID = '{!$Component.CaseComment}' ;
+            scomment='{!JSENCODE(sCaseComment)}';
+            CaseComment(scomment,sCommentID);
+        </script>
+        </apex:outputText>
+        <apex:outputText rendered="{!NOT(ISBLANK(sCurrent_Work_Queue))}" value=""><br/><b>Current Work Queue : </b>{!sCurrent_Work_Queue}</apex:outputText>
+    </apex:outputPanel> 
+     
+</apex:component>

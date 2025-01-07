@@ -1,0 +1,31 @@
+﻿<!-- 
+    Aura component to render pinned header with three column layout
+Modification Log: 
+* Version          Developer Name               Date                      Description
+*  1.0           Mohan Kumar N              	11/21/2021                US: 2402452 
+
+ -->
+ <aura:component implements="lightning:recordHomeTemplate" description="Pinned Header and Three Regions" >
+    <aura:attribute name="header" type="Aura.Component[]" description="Header"/>
+    <aura:attribute name="leftRegion" type="Aura.Component[]" description="Left Column region"/>
+    <aura:attribute name="centerRegion" type="Aura.Component[]" description="Center region"/>
+    <aura:attribute name="rightRegion" type="Aura.Component[]" description="Right Column Region"/>
+    <div class="hc-custom-template">
+          <div class="hc-section">
+              	<div class="hc-custom-header">{!v.header}</div>
+                <div class="hc-height hc-content">
+                    <div class="slds-grid slds-scrollable_y hc-height">
+                        <div class="hc-scrollable-content hc-left-region">
+                            {!v.leftRegion}
+                        </div>
+                        <div class="slds-m-horizontal_x-small hc-scrollable-content hc-center-region">         
+                            {!v.centerRegion}
+                        </div>
+                        <div class="hc-scrollable-content hc-right-region">         
+                            {!v.rightRegion}
+                        </div>
+                    </div>
+                </div>
+          </div>
+	</div>
+</aura:component>

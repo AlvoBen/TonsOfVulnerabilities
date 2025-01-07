@@ -1,0 +1,57 @@
+﻿<!--
+Component Name   : importObjects_LWC_HUM
+Version          : 1.0
+Created On       : 10/06/2021
+Function         : Lightning Web Component to import Task records 
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*****************************************************************************************************************************
+* Abhishek Maurya                                      10/06/2021                    User Story 2578377 -CRM Storefront Task Management: Import File Confirmation* Vinoth L                      10/06/2021            	User Story - 2578364 T1PRJ0001894 - MF 12 - CRM Storefront Task Management: Import Function
+* Abhishek Maurya                                      10/06/2021                    User Story - 2578377 -CRM Storefront Task Management: Import File Confirmation
+* Vinoth L                                             10/20/2021                    User Story - 2578436 T1PRJ0001894 - MF 12 - CRM Storefront Task Management: Add Tasks
+* Abhishek Maurya                                      10/20/2021                    User Story - 2578417 T1PRJ0001894 - MF 12 - CRM Storefront Task Management: Add Task Validation
+* Ekta Bist                                            10/20/2021                    User Story - 2578506 T1PRJ0001894 - MF 12 - CRM Storefront Task Management: Export Errors
+* Vivek Sharma                                         06/13/2022                    User Story 3399029: T1PRJ0154546 / SF / MF9 Storefront - DF4848 - Error Message is Displayed When User Tries to Import a CSV File
+****************************************************************************************************************************
+-->
+<template>
+    <lightning-card title="Import" icon-name="action:upload">
+    </lightning-card> 
+    <br> 
+    <template if:true={isImportVisible}>
+        <lightning-card class=".slds-is-relative" >
+            <template if:true={showLoadingSpinner}>
+                <lightning-spinner variant="brand" size="large"> </lightning-spinner>
+            </template>
+            <div class="uploadHeader">{suppFileTypeTxt}</div> 
+            <div class="slds-p-around_medium">
+                <lightning-input type="file"                             
+                                 multiple="false"
+                                 accept=".csv,.xls,.xlsx"
+                                 onchange={importCsv}></lightning-input>                 
+            </div>
+            <template if:true={firstTenRecords}>                
+                <lightning-spinner if:true={loading}></lightning-spinner>
+                <div class="slds-p-around_medium">
+                    <div>Uploaded File <span class="fileNameColor">{filename}</span> {showTenRecTxt} </div>
+                    <lightning-datatable key-field="key"
+                                         hide-checkbox-column
+                                         data={firstTenRecords}
+                                         columns={columns}></lightning-datatable> 
+                    {noTaskImpTxt} {allRecordCount}                                                       
+                </div>
+                <div class="slds-p-around_medium CreateRecMargin">
+                    <button class="slds-button slds-button_neutral" disabled={isAddDisabled} onclick={createRecords} title="Add">Add</button>
+                    <button class="slds-button slds-button_brand ExportMargin" disabled={isExportDisabled} onclick={exportRecords} title="Export Errors">Export Errors</button>        
+                </div>
+                <template if:true={isShowCount}>
+                    <div class ="ImportCompMargin">
+                        <span class="slds-p-around_medium">Import Completed Valid :  {validCount}</span>     
+                        <span class="slds-p-around_medium">Invalid  :  {invalidCount}</span> 
+                    </div>
+                 </template>
+            </template>
+        </lightning-card> 
+    </template>     
+</template>

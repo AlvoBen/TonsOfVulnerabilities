@@ -1,0 +1,104 @@
+﻿<!--
+LWC Name        : PcpSelectedPhysicianHum.html
+Function        : LWC to display Selected physician Section on PCP Update Flow .
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Aishwarya Pawar                 01/20/2023                   REQ- 4136289
+*------------------------------------------------------------------------------------------------------------------
+
+-->
+<template>
+    <div class="slds-text-body_regular slds-m-bottom_small">
+        Selected Physician
+        <template if:false={editSelectedPhysician}>
+            <lightning-button-icon icon-name="utility:edit" variant="bare" onclick={handleEdit} alternative-text="Edit"
+                                   class="slds-m-left_small">
+            </lightning-button-icon>
+        </template>
+    </div>
+    <div style="max-height: 170px; width: 100%;">
+        <template if:true={editSelectedPhysician}>
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_3-of-7 slds-m-top_medium">
+                    <b> PCP# </b>
+                </div>
+                <div class="slds-col slds-p-left_none slds-size_4-of-7 slds-m-top_medium ">
+                    <lightning-input max type="text" label='PCP Number' class="pcpnumber" name="PCPNumber"
+                                     value={selectedPhysicianData.pcpNumber} data-id="PCPNumber" onchange={handleInputChange}
+                                     max-length="10" variant="label-hidden">
+                    </lightning-input>
+                </div>
+                <div class="slds-col slds-size_3-of-7 slds-m-top_medium">
+                    <b> Physician Name: </b>
+                </div>
+                <div class="slds-col slds-p-left_none slds-size_4-of-7 slds-m-top_medium">
+                    <lightning-input name="PhysicianName" label='Physician Name'
+                                     value={selectedPhysicianData.physicianName} data-id="PhysicianName" max-length="255"
+                                     data-field="physician-name" onchange={handleInputChange} variant="label-hidden">
+                    </lightning-input>
+                </div>
+                <div class="slds-col slds-size_3-of-7 slds-m-top_medium">
+                    <b>Contact Info</b>
+                </div>
+                <div class="slds-col slds-p-left_none slds-size_4-of-7 slds-m-top_medium">
+                    <lightning-textarea data-id="ContactInfo" label='Physician Name' data-field="pcp-id"
+                                        variant="label-hidden" name="ContactInfo" max-length="255" onchange={handleInputChange}
+                                        value={getSelectedPhysicianData}>
+                    </lightning-textarea>
+                </div>
+            </div>
+            <div class=" slds-m-top_medium slds-float_right">
+                <lightning-button variant="Neutral" label="Cancel" title="Cancel" onclick={handleCancel}>
+                </lightning-button>
+                <lightning-button variant="brand" label="Save" title="Save" class="slds-m-left_x-small "
+                                  onclick={updatePhysicianInfo}>
+                </lightning-button>
+            </div>
+        </template>
+        <template if:false={editSelectedPhysician}>
+            <div class="slds-m-top_medium">
+                <b> PCP# </b>
+                <template if:true={selectedPhysicianData}>
+                    <template if:true={selectedPhysicianData.pcpNumber}>
+                        <span class="slds-m-left_xx-small">
+                            {selectedPhysicianData.pcpNumber}
+                            <c-generic-copy-icon-hum copycontent={selectedPhysicianData.pcpNumber}>
+                            </c-generic-copy-icon-hum>
+                        </span>
+                    </template>
+                </template>
+            </div>
+            <div class="slds-m-top_medium">
+                <b> Physician Name: </b>
+                <template if:true={selectedPhysicianData}>
+                    <template if:true={selectedPhysicianData.physicianName}>
+                        <span class="slds-m-left_xx-small slds-m-top_medium ">
+                            {selectedPhysicianData.physicianName}
+                            <c-generic-copy-icon-hum copycontent={selectedPhysicianData.physicianName}>
+                            </c-generic-copy-icon-hum>
+                        </span>
+                    </template>
+                </template>
+            </div>
+            <div class="slds-m-top_medium">
+                <b>Contact Info</b>
+                <template if:true={getSelectedPhysicianData}>
+                    <c-generic-copy-icon-hum copycontent={getSelectedPhysicianData}>
+                    </c-generic-copy-icon-hum>
+                </template>
+            </div>
+            <template if:true={selectedPhysicianData}>
+                <div class="slds-grid slds-grid_vertical">
+                    <div class="slds-col">
+                        <span>{selectedPhysicianData.phone}</span>
+                    </div>
+                    <div class="slds-col">
+                        <span style="white-space: pre-line;">{selectedPhysicianData.physicianAddress}</span>
+                    </div>
+                </div>
+            </template>
+        </template>
+    </div>
+</template>

@@ -1,0 +1,41 @@
+/*******************************************************************************************************************************
+LWC JS Name : commonStyles.css
+Function    : Component level styles
+
+Modification Log: 
+Developer Name           Code Review              Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+*  Mohan Kumar N			                      03/02/2021	            US:1864079 : Account sections overlap issue
+*  Mohan Kumar N			       			      03/08/2021		           US-1749564
+* Supriya Shastri                                 09/06/2021                Added grey headers to member detail table
+*********************************************************************************************************************************/
+
+.sticky-header-system-bar {
+    position: sticky;
+    top: 7.3rem;
+    z-index: 3;
+}
+
+.sticky-header {
+    position: sticky;
+    top: 5.4rem;
+    z-index: 3;
+}
+
+.background-template{
+    background-color: #F3F2F2;
+}
+.detail-container{
+    background-color: #fff;
+}
+.detail-item{
+    background-color: #fff;
+}
+
+.template-full-width {
+    width: 100%;
+}
+
+.visible-on-top {
+    z-index: 2;
+}

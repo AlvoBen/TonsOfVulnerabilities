@@ -1,0 +1,22 @@
+.custom-help-text {
+    position: absolute;
+    top: -40%;
+    left: 40px;
+    max-width: 450px;
+    width: max-content;
+    font-weight: 400 !important;
+}
+
+.custom-tooltip-icon:hover {
+    color: var(--sds-c-button-text-color-hover, var(--lwc-brandAccessibleActive,rgb(0, 95, 178)))
+}
+
+.custom-tooltip-link {
+    text-decoration: underline;
+    color: rgb(0, 95, 178);
+}
+
+.custom-help-text-type-link .custom-help-text {
+    top: 25px;
+    left: 0;
+}

@@ -1,0 +1,11 @@
+.iconcolor {
+    --lwc-colorTextIconDefault: white;
+  }
+  .messageStyle {
+   
+    font-style: italic;
+  }
+  .fancy-greeting {
+    --scoped-notification-color-background: ##ffc;
+    --scoped-notification-text-color: #111111;
+  }

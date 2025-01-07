@@ -1,0 +1,12 @@
+.hc-info-text {
+    padding: .5rem 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid #e5e5e5;
+    background-color: #f4f6f9;
+    color: #444;
+}
+.hc-modal-content {
+    width: 40% !important; 
+    max-height: 100rem !important;
+    
+}

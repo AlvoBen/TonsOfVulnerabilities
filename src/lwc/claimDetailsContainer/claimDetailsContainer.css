@@ -1,0 +1,12 @@
+.infomsg {
+    --sds-c-icon-color-foreground: red;
+    --sds-c-icon-color-background: #faf4a4;
+    --sds-c-icon-color-foreground-default: red;
+}
+.errorFlag {
+    background: #faf4a4;
+    border-color: red;
+    border-style: solid;
+    border-width: thin;
+    border-radius: 5px;
+}

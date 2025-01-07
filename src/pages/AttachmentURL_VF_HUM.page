@@ -1,0 +1,13 @@
+﻿<!--
+Page Name        : AttachmentURL_VF_HUM
+Version          : 1.0 
+Created Date     : 12 April 2016
+Function         : Page is used to display Attachment URL as link on Attachment__c object.
+Modification Log :
+* Developer                     Code Review              Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* ChiranjeeviRao Ravuri          30921                   04/12/2016           Original Version
+-------------------------------------------------------------------------------------------------------------------------------> 
+<apex:page StandardController="Attachment__c">
+<c:AttachmentURL_CMP_HUM urlString="{!Attachment__c.Attachment_URL_Text__c}"></c:AttachmentURL_CMP_HUM>
+</apex:page>

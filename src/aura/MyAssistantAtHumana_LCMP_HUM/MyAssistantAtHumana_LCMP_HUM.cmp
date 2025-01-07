@@ -1,0 +1,71 @@
+﻿<aura:component implements="lightning:utilityItem" access="global" controller="MyAssistantAtHumana_LC_HUM">
+    <lightning:utilityBarAPI aura:id="utilitybar" />
+    <aura:attribute name="popOutState" type="boolean" default="false" />
+    <aura:attribute name="hasChatAssistantUser" type="Boolean" default="false" />
+    <aura:attribute name="showPersonAccountContext" type="Boolean" default="false" />
+    <aura:attribute name="showMemberPlanContext" type="Boolean" default="false" />
+    <aura:attribute name="multipleMemberPlansOpen" type="Boolean" default="false" />
+    <aura:attribute name="accountId" type="String" />
+    <aura:attribute name="memberPlanId" type="String" />
+    <aura:attribute name="switch5029083" type="Boolean" default="false" /> 
+    <aura:handler name="render" value="{!this}" action="{!c.onRender}" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="lightning:tabFocused" action="{!c.onTabFocused}" />
+    <aura:handler event="lightning:tabClosed" action="{!c.onTabClosed}" />
+    <aura:handler event="lightning:tabCreated" action="{!c.onTabCreated }"/>
+    <lightning:workspaceAPI aura:id="workspace" />
+    <aura:if isTrue="{!v.switch5029083}">
+        <aura:if isTrue="{!!v.popOutState}">
+            <aura:if isTrue="{!!v.hasChatAssistantUser}">
+                <div class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_xx-small" role="alert">
+                    <lightning:icon size="xx-small" class="slds-m-right_xx-small" icon-name="utility:error"
+                        variant="inverse" alternative-text="Error">
+                    </lightning:icon>You do not have the level of access necessary to perform the operation you requested.
+                    Please contact the owner of the record or your administrator if access is necessary.
+                </div>
+            </aura:if>
+            <div id="div-popin-content" style="margin-top: 50px;">
+                <div style="margin-left: 70px; margin-right: 70px;">
+                    <ul style="list-style-type:circle;">
+                        <li>Use the <b>My Assistant at Humana (MyAH)</b> for assistance with handling your Interaction.</li>
+                        <li>Click on the Thought Process and Sources for additional details and links to the relevant Mentor documents.</li>
+                    </ul>
+                </div>
+                <br />
+                <div style="margin-left: 70px; margin-right: 70px;">
+                    <b>Tips/Guidance for Writing Better Questions:</b>
+                    <br />
+                    <ul class="slds-list_dotted">
+                        <li>Form your query as a question; don't use keywords as <b>My Assistant at Humana (MyAH)</b> isn't a search tool.</li>
+                        <li>Provide enough context for <b>My Assistant at Humana (MyAH)</b> to understand your question and find the right answer.
+                        </li>
+                        <li>Avoid ambiguity, or abbreviations.</li>
+                        <li>Capitalization and punctuation aren't important.</li>
+                        <li>It doesn't matter if you say “I” or “the member”</li>
+                        <li>Good Examples:</li>
+                        <ul class="slds-list_dotted">
+                            <li>does healthy options cover fish</li>
+                            <li>what's the name of the healthy options app</li>
+                            <li>can I buy fish with healthy options</li>
+                            <li>can the member buy fish with healthy options</li>
+                        </ul>
+                    </ul>
+                </div>
+            </div>
+        </aura:if>
+        <aura:if isTrue="{!v.popOutState}">
+            <c:myAssistantAtHumana_LWC_HUM aura:id="myAssistantAtHumana" showPersonAccountContext="{!v.showPersonAccountContext}"
+                showMemberPlanContext="{!v.showMemberPlanContext}" navContextPersonAccountId="{!v.accountId}"
+                navContextMemberPlanId="{!v.memberPlanId}" multiplePlansOpen="{!v.multipleMemberPlansOpen}">
+            </c:myAssistantAtHumana_LWC_HUM> 
+        </aura:if>
+    </aura:if>
+    <aura:if isTrue="{!!v.switch5029083}">   
+        <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+            <span class="slds-assistive-text">error</span>
+            <h2>
+                This tool is currently not available for use.
+            </h2>
+        </div>
+    </aura:if>
+</aura:component>

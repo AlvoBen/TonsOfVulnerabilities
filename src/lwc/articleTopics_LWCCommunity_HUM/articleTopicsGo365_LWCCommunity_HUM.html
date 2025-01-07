@@ -1,0 +1,12 @@
+﻿<template>
+    <div class="rt_container go365">
+        <h2 class="topic-header" tabindex="0">{label.relatedTopicsLabel}</h2>
+        <div class="rt_card">
+            <template for:each={lstTopic} for:item="topic">
+                <div key={topic.TopicId} class="rt_item slds-m-right_x-small slds-m-bottom_x-small">
+                    <a class="rt_item-text" href={topic.url}>{topic.TopicName}</a>
+                </div>
+            </template>
+        </div>
+    </div>    
+</template>

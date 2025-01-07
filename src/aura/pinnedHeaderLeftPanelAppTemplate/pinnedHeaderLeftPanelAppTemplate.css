@@ -1,0 +1,38 @@
+.THIS .hc-section {
+  flex-grow: 1;  
+  display: flex;
+  flex-direction: column; 
+  height: 100%; 
+}
+
+.THIS.hc-custom-template {
+  /* give the outermost container a predefined size */
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;  
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  pointer-events: auto;
+}
+
+.THIS .hc-scrollable-content {
+  flex-grow: 1;
+  overflow-y: scroll;
+  overflow-x:hidden;
+}
+
+/* work around for the app builder page height issue. this .flexipageEditorSurface is salesforce css class */
+.flexipageEditorSurface {
+  height: 100%;
+}
+
+.hc-col-left {
+  max-width: 25%
+}
+
+.hc-col-right {
+  min-width: 75%;
+  flex: 1;
+}

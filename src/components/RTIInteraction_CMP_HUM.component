@@ -1,0 +1,198 @@
+﻿<!--
+    Page Name        : RTIInteraction_CMP_HUM
+    Version          : 1.0
+    Created Date     : January 09th, 2017
+    Function         : This Component is used in the page that is used to display RTI Interactions in the side panel
+    Modification Log :
+   * Developer               Code Review           Date                 Description
+    * ------------------------------------------------------------------------------------------------------------------------------
+    * Pallavi Ravishankar       61268               01/09/2017           Original Version
+    * Kritika Popat             86349               04/10/2017           Pagination
+    * Kritika Popat             90451               04/24/2017           IVR and Print 2nd level
+    * Kritika Popat             98188               05/29/2017           REQ - 305669 Reduce service calls
+    * Kritika Popat             111075              07/18/2017           Message in Print Card
+    * Kritika Popat             125236              08/31/2017           Hover for Print Start Date and End Date
+    * Prudhvi Pamarthi          170391              01/02/2018           REQ - 328929 Fix for HUMExceptionHelper: DML
+    * Kritika Popat                                 01/22/2018           REQ - 350834 remove Hover
+    * Vijaya Koriprolu           234129             05/24/2018           REQ-359055
+    * Vijaya Koriprolu                              06/01/2018           Defect fix 360550
+    * Subhamay Mandal                               10/25/2018           REQ - 377309 PTO - New Member Indicator (CRM)
+    * Satyam Malviya                                12/03/2018           NBA MF4 Guidance Alert
+    * Shailesh Mali                                 09/05/2019           REQ - 397914 RTI Count on collapsible Panel
+    * Santhi Mandava                                08/06/2019           Implemented REQ - 403609 to display group medicare icon
+    * Amar Gadewar                                  08/20/2019           REQ - 406098 Iconology - Happy Birthday Icon Update (RF)
+    * Amar Gadewar                                  09/05/2019           REQ - 411303,REQ - 403614 and REQ - 408293 Member Icon relate Changes
+    * Amar Gadewar                                  01/28/2020           USER STORY 729651 and USER STORY 729659 and REQ - 416082 Move Icons from Communication Panel to Under Page Titles on Member Account page / Policy Member Page
+    *  Anjani  Vaddadi                              21/02/2020           REQ- RTI VAT changes
+    * Anjani Vaddadi                                03/26/2020           REQ-437065 RTI VAT-MF4
+    * Anjani Vaddadi                                03/31/2020           Defect Fix-462- Wrong Hover Message
+    * Imran                                         04/02/2020           Story#956598 - RTI Issue
+    * Prasanthi Kandula                             04/16/2020           US 1003374 - To display send link on RTI Detail page
+    * Prasanthi Kandula                             04/17/2020           US:  MF42 Ability to view up to 24 months of SmartSummaries in CRM Service
+    * Prasanthi Kandula                             04/27/2020           US:829867 MF42 Modified as part of latest changes to user story.
+    *  Anjani Vaddadi                               7/03/2020            US - 1125628- Pass Message Definition Code (MDC) on Outbound Communications attached to CRM Cases via RTI
+    *  Rahul Chaurasia                              03/22/2021           1931279 - PR00094226-MF 4-Tech-Decommissioned RTI Service
+    *  Prasanthi Kandula                            05/18/2021           US - 2082407 Added new card for channel Email
+    *  Anuradha Gajbhe                              05/18/2021           US - 2082385 Added logic to display new card for channel Text
+    *  Rahul Chaurasia                              05/19/2021           US - 2082359 Added logic to display new card for channel Web
+*----------------------------------------------------------------------------------------------------------------------------->
+
+<apex:component id="interactionCmpt" controller="RTIInteraction_C_HUM">
+
+  <script type="text/javascript">
+    //dont enable P9 Critical Fix    var $ = jQuery.noConflict();
+    var objRTIInteraction=null;
+    jQuery(document).ready(function () {
+    objRTIInteraction=new RtiInteraction();
+    objRTIInteraction.sAccId='{!sAccountId }';
+    objRTIInteraction.rtiCountDisplayCollapse='{!iRTICards}';
+    objRTIInteraction.initialize();
+    });
+  </script>
+
+
+  <div id="RTIInteractionWrapper">
+    <div id="filtersId" style="margin-top: 15px;">
+        <div class="form-group form-inline">
+        <apex:outputPanel id="DirectionPanelId" rendered="{!bDirectionSwitch}">
+          <apex:outputLabel value="Direction" styleClass="fieldlook" style="font-weight:600;" id="DirectionLabel"/>
+          <apex:selectList value="{!sSelectedDirection}" tabIndex="3" title="Channel" size="1" styleClass="form-control" id="directionID" style="margin-left: 62px !important;">
+              <apex:selectOptions value="{!directionList}" id="directionoptsId" />
+              <apex:actionsupport event="onchange" oncomplete="objRTIInteraction.changeDirection(this);" rerender="ChannelPanelId,Category" action="{!populateChannel}"/> 
+          </apex:selectList>
+        </apex:outputPanel>
+      </div>
+      <div class="form-group form-inline">
+        <apex:outputPanel id="ChannelPanelId" >
+          <apex:outputLabel value="Channel" styleClass="fieldlook" style="font-weight:600;" id="channelLabel"/>
+          <apex:selectList value="{!sSelectedChannel}" tabIndex="3" title="Channel" size="1" styleClass="form-control" id="ChannelID" style="margin-left: 62px !important;">
+            <apex:selectOptions value="{!channelList}" id="ChanneloptsId" />
+            <apex:actionsupport event="onchange" oncomplete="objRTIInteraction.changeChannel(this);" rerender="Category" action="{!populateCategory}"/>
+          </apex:selectList>
+        </apex:outputPanel>
+      </div>
+      <div class="form-group form-inline">
+        <apex:outputPanel id="Category">
+          <apex:outputPanel rendered="{!displayCategories}">
+            <apex:outputLabel value="{!sSubCategory}" styleClass="fieldlook" style="font-weight:600;" id="categoryLabel"/>
+            <apex:selectList onchange="objRTIInteraction.changeCategory(this);" value="{!sCategoryValue}" title="Interacting With" size="1" id="selectId1" styleClass="form-control" style="margin-left: 13px !important;" rendered="{!(sSelectedChannel == 'IV' || sSelectedChannel == 'IVR')}">
+              <apex:selectOptions value="{!lstsubCategory}"/>
+            </apex:selectList>
+            <apex:selectList onchange="objRTIInteraction.changeCategory(this);" value="{!sCategoryValue}" title="Category" size="1" id="selectId2" styleClass="form-control" style="margin-left: 50px !important;" rendered="{!(sSelectedChannel == 'WEB,WB' || sSelectedChannel == 'PRINT')}">
+              <apex:selectOptions value="{!lstsubCategory}"/>
+            </apex:selectList>
+          </apex:outputPanel>
+        </apex:outputPanel>
+      </div>
+
+      <apex:outputPanel id="dateFilters">
+        <div class="form-group form-inline">
+          <apex:outputLabel value="Start Date" styleClass="fieldlook" style="font-weight:600;" id="startLabelId"/>
+          <input id="dos_start" type="text" class="date-picker form-control" placeholder="Begin" style="margin-left: 50px;"/>
+        </div>
+        <div class="form-group form-inline">
+          <apex:outputLabel value="End Date" styleClass="fieldlook"  style="font-weight:600;" id="endLabelId" />
+          <input id="dos_end" type="text" class="date-picker form-control" placeholder="End" style="margin-left: 53px;" />
+        </div>
+      </apex:outputPanel>
+
+      <div class="form-group" style="margin-left: 30px;" id="buttonsId">
+        <button type="button" class="btn btn-default" id = "SearchID" >Search</button>
+        <button type="button" class="btn btn-default" id = "ClearId" style="margin-left: 40px;">Clear Filters</button>
+      </div>
+    </div>
+
+    <div class="col-xs-12" style="font-size:16px">
+      <div id="opaque"/>
+      <div id="spinner">
+        <p align="center" style='{font-family:"Arial", Helvetica, sans-serif; color:white; font-size:20px;}'>
+          <apex:image value="/img/loading.gif" id="LoadingImageId"/>
+          <span style="margin-left :5px;">Loading...</span>
+        </p>
+      </div>
+    </div>
+
+    <apex:outputPanel id="iterateCords">
+      <apex:outputLabel style="font-size:12px;" value="Showing"/>&nbsp;&nbsp;
+      <apex:outputLabel style="font-size:12px;" value="{!FirstRecordOf_Page}"/>-
+      <apex:outputLabel style="font-size:12px;" value="{!LastRecordOf_Page}"/>&nbsp;of&nbsp;
+      <apex:outputLabel style="font-size:12px;" value="{!Total_SizeRecord}"/>&nbsp;
+      <br/>
+      <apex:commandButton action="{!getFirst}" value="{!$Label.HUMFirstValue}" disabled="{!disableFirstPre}" reRender="iterateCords"/>
+      <apex:commandButton action="{!getPrevious}" value="{!$Label.HUMPrevious}" disabled="{!disableFirstPre}" reRender="iterateCords" />
+      <apex:commandButton action="{!getNext}" value="{!$Label.HUMNext}" disabled="{!disableNextLast}" reRender="iterateCords" />
+      <apex:commandButton action="{!getLast}" value="{!$Label.HUMLastValue}" disabled="{!disableNextLast}" reRender="iterateCords" />
+
+      <table id="interactionsTableId">
+        <apex:repeat value="{!lstRTIInteractions}" var="c" id="theRepeat">
+          <script>
+            objRTIInteraction.setDisplayCollapse('{!iRTICards}');
+          </script>
+          <tr>
+            <td>
+              <c:RTICard_CMP_HUM IconPath="{!c.IconPath}"
+                                 Title="{!c.Title}"
+                                 Subtitle="{!c.Subtitle}"
+                                 Channel="{!c.sChannelDescription}"
+                                 DateAndTime="{!c.dDateAndTime}"
+                                 ButtonLabel="{!c.viewLabel}"
+                                 ButtonTarget="{!c.ButtonTarget}"
+                                 InteractionKey="{!c.sInteractionkey}"
+                                 DisplayName="{!sName}"
+                                 ChannelCode="{!c.sChannelCode}"
+                                 MessageDesc="{!c.sMessageName}"
+                                 CampaignName="{!c.campaignName}"
+                                 StatusDescription="{!c.statusDescription}"
+                                 statusCode="{!c.statusCode}"
+                                 PhoneNumber="{!c.phoneNumber}"
+                                 sourceCode="{!c.sSourceCode}"
+                                 AccntId="{!sAccountId}"
+                                 subStatusDesc="{!c.subStatusDesc}"
+                                 trackingId="{!c.trackingID}"
+                                 directionCode="{!c.sDirectionCode}"
+                                 index="{!c.Index}"
+                                 MemberCardId="{!c.sMemberCardId}"
+                                 DependentCode="{!c.sDependentCode}"
+                                 PlatformCode="{!c.sPlatformCode}"
+                                 SDRPersonID="{!c.sSDRPersonID}"
+                                 PersonGenkey="{!c.sPersonGenkey}"
+                                 MessageFulfillmentId="{!c.sMessageFulfillmentId}"
+                                 Printable="{!c.bPrintable}"
+                                 RecipientName="{!c.sRecipientName}"
+                                 MessageDefCode="{!c.sMsgDefCode}">
+              </c:RTICard_CMP_HUM>
+            </td>
+          </tr>
+        </apex:repeat>
+      </table>
+    </apex:outputPanel>
+
+    <apex:outputpanel id="pnlErrMsgs"  >
+      <apex:pageMessages escape="true"  rendered="{!bIsError}" id="msgsId"/>
+    </apex:outputpanel>
+    <apex:actionFunction name="pageLoad" action="{!search}" reRender="iterateCords,pnlErrMsgs" oncomplete="objRTIInteraction.disableFilters({!disableSearch},'{!$Component.ChannelID}');objRTIInteraction.setDisplayCollapse('{!iRTICards}');" id="pgLoadId">
+      <apex:param name="startDate" value="" id="startPgLoadId" assignTo="{!sStartDate}"/>
+      <apex:param name="endDate" value="" id="endPgLoadId" assignTo="{!sEndDate}"/>
+      <apex:param name="onLoad" value="" id="isPageOnLoad" assignTo="{!bIsPageOnLoad}"/>
+    </apex:actionFunction>
+    <apex:actionFunction oncomplete="objRTIInteraction.hideWaitingMessage();" name="search" action="{!search}" reRender="iterateCords,pnlErrMsgs" id="searchAFId">
+      <apex:param name="startDate" value="" id="startSearchId" assignTo="{!sStartDate}"/>
+      <apex:param name="endDate" value="" id="endSearchId" assignTo="{!sEndDate}"/>
+      <apex:param name="onLoad" value="" id="isPageOnSearch" assignTo="{!bIsPageOnLoad}"/>
+    </apex:actionFunction>
+    <apex:actionFunction name="resetAF" action="{!resetChannel}" reRender="directionID,ChannelID,iterateCords,Category" oncomplete="objRTIInteraction.doSearch()" id="resetId">
+    </apex:actionFunction>
+    <!-- For Constructor Related exception -->
+    <c:HUMConstructorExceptionComponent errorLogs="{!lstLogErrors}" />
+
+    <apex:includeScript value="/support/console/36.0/integration.js" id="integrationJS"/>
+    <apex:includescript value="{!URLFOR($Resource.RTIInteractionComponent_SR_HUM,'/RTIInteractionComponent_JS_HUM.js')}" id="RTIJs" />     
+    
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY,'bootstrap-datepicker-uni.js')}" id="datePickerJS" />
+    <apex:includeScript value="{!URLFOR($Resource.DatePickerOverrides_SR_HUM, '/js/datePickerOverrides.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.RTIInteractionComponent_SR_HUM,'/RTIInteractionComponent_CSS_HUM.css')}" id="RTICss"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_JQUERY, 'bootstrap-datepicker-uni.css')}" id="datePickerCSS" />
+    <apex:stylesheet value="{!URLFOR($Resource.DatePickerOverrides_SR_HUM,'/css/datePickerOverrides.css')}" />
+
+  </div>
+</apex:component>

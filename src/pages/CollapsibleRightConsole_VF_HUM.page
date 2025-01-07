@@ -1,0 +1,129 @@
+﻿<!--
+Page Name        : CollapsibleRightConsole_VF_HUM 
+Version          : 1.0 
+Created Date     : August 16 2018
+Function         : Page use to display right collapsible section
+Modification Log :
+* Developer                 Code review         Date                  Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Satyam Malviya                               11/26/2018            Original Version
+* Amar Gadewar                                 01/28/2020            USER STORY 729651 and USER STORY 729659 and REQ - 416082 Move Icons from Communication Panel to Under Page Titles on Member Account page / Policy Member Page
+* Satyam Malviya                               02/01/2021            user story 1826725 -  PR00090631 - MF 2 - SF - TECH - NBA Clean up - part 1
+ -------------------------------------------------------------------------------------------------------------------------------
+-->
+<apex:page sidebar="false" id="rtiPageId" controller="RTISummary_C_HUM" showHeader="false" >
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.Collapsible_RightConsole_SR_HUM, '/styles/CollapsibleRightConsoleInnerContent.css')}" />
+
+  <script type="text/javascript">
+    var bServiceFlag = '{!bServiceFlag}';   // This flag decides whether to call the alert service or read from object.
+    var bCollapsedSidePanel = '{!bCollapsedSidePanel}';
+    var sAccId = '{!sAccountId}';
+    var bRTIcheck ='{!bRTIcheck}';
+    var eventNameRTI = 'EventRTIDetails' + '{!sAccountId}';
+    //this needs to be in page
+//dont enable P9 Critical Fix    var sidebar$ = jQuery.noConflict();
+    jQuery(document).ready(function(){
+    var xSecurity = '{!!bSecurity}';
+    var xSecuritytt = '{!bSecurity}';
+    var xInteracting = '{!iInteracting}';
+    document.getElementById("alerts-collapsed").style.display= 'none';
+    });
+    window.parent.sforce.console.addEventListener('CollapseRightAlertPanel', function(result){
+    closeRightSidePanel();
+    });
+    
+  </script>
+
+  <!-- Expanded Right Side panel starts here  -->
+  <div id="mySidenavParent" style="opacity:1; backgraound:white">
+    <div id="sidenav" class="expandedAlertsSection">
+      <!-- Splitbar to collapse sidebar  -->
+      <div id="splitBar" onclick="closeRightSidePanel()" class = "NavClass">
+        <div class="splitbar-icon"></div>
+      </div>
+      <!-- Alert component will be displayed at top  -->
+      <div style="padding-left:2px;width:270px">
+        
+		     <apex:outputPanel >
+          <c:NBADisplayRecommendationSection_CMP_HUM />
+        </apex:outputPanel>
+      </div>
+      <!-- RTI component code starts here  -->
+      <apex:outputPanel id="panelRTISection">
+        <apex:outputPanel rendered="{!bRTIcheck}" >
+          <div style="padding-left:10px; padding-right:5px;height:100%">
+            <apex:outputPanel id="rtIPanel1" rendered="{!!bSecurity}">
+              <apex:form id="rtiFormId1">
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <div class="message infoM3" role="alert">
+                  <table border="0" cellpadding="0" cellspacing="0" class="messageTable" style="padding:0px;margin:0px;">
+                    <tbody>
+                      <tr valign="top">
+                        <td>
+                          <img alt="INFO" class="msgIcon" src="/s.gif" title="INFO" />
+                        </td>
+                        <td class="messageCell">
+                          <div id="id1" class="messageText">
+                            <span id="id2">
+                              <h4></h4>
+                            </span> {!$Label.RTI_Security}
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </apex:form>
+            </apex:outputPanel>
+
+            <div style="height:140%">
+              <apex:form id="rtiFormId2" rendered="{!bSecurity}">
+                <c:RTIInteraction_CMP_HUM id="rtiComponentID" ></c:RTIInteraction_CMP_HUM>
+              </apex:form>
+            </div>
+          </div>
+        </apex:outputPanel>
+      </apex:outputPanel>
+    </div>
+  </div>
+  <!-- Expanded Right Side panel ends here  -->
+
+  <!-- Collapsed Right Side panel starts here  -->
+  <div id="alerts-collapsed" onclick="openRightSidePanel()" style="float:right;">
+    <!-- Alerts section -->
+    <div id="alert-collapsed-container" class="alertCollapsedContainer">
+      <span id="collapsedSidebar">Alerts - </span>
+      <div id="speakerIcon" class="speakerIcon">
+        <apex:image width="16px" height="16px" style="margin:4px"
+            url="{!URLFOR($Resource.DisplayAlertSection_SR_HUM, 'DisplayAlertSection_SR_HUM/Images/broadcast.svg')}">
+        </apex:image>
+      </div>
+    </div>
+    <apex:outputPanel rendered="{!bRTIcheck}" >
+      <!-- RTI section -->
+      <div class="divRTIStyle" style="display:block;" id="divRTICount">
+        <span class="collapsibleTextstyle" id="collapseSideBarRTICount">RTI - 0</span>
+        <div>
+          <apex:image height="25px" width="25px" url="{!URLFOR($Resource.DisplayAlertSection_SR_HUM, 'DisplayAlertSection_SR_HUM/Images/rtiIcon.png')}" >
+          </apex:image>
+        </div>
+      </div>
+    </apex:outputPanel>
+  </div>
+  <!-- Collapsed Right Side panel ends here  -->
+  <apex:includeScript value="/support/console/36.0/integration.js"/>
+  <apex:includeScript value="{!URLFOR($Resource.Collapsible_RightConsole_SR_HUM, '/js/CollapsibleRightConsoleInnerContent.js')}" />
+</apex:page>

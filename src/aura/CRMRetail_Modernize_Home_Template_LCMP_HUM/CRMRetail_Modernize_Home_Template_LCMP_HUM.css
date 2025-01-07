@@ -1,0 +1,6 @@
+.THIS.navexStandardManager.navexStandardManager .fullheight {
+    overflow-x:hidden !important;
+}
+.THIS .runtime_sales_activitiesTodayTaskContainer .slds-dropdown.slds-dropdown_left{
+    left:-15em !important;
+}

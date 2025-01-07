@@ -1,0 +1,78 @@
+﻿<!--
+LWC Name        : humlookupSearch.html
+Function        : LWC to display lookup search.
+
+Modification Log:
+* Developer Name                          Date                         Description
+*
+* Surendra Vemulapalli                  11/20/2020                   Original Version 
+*****************************************************************************************************************************-->
+<template>
+   <template if:true={lookupModal}>
+<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+    <div class="container1">
+            <div class="slds-modal__content slds-p-around_medium"> 
+             <lightning-layout>
+               <lightning-layout-item>
+                <lightning-input class="inputfield" name="IntNum" type="account" value={searchValue} label="Search"  onchange={searchKeyword}></lightning-input>
+                <div if:true={interactingwith}>
+              <lightning-radio-group name="radioGroup"
+                          label=""
+                          options={options}
+                          value={value}
+                          type="radio"
+                          onchange={handleRadiobuttonchange}
+                          class="customRadioCls">
+                        </lightning-radio-group> 
+                          
+                        </div>
+              </lightning-layout-item>
+            </lightning-layout>
+            <lightning-layout>
+              <lightning-layout-item >
+                  <div class="slds-p-top_x-small" style="height: 185px;">
+               <lightning-datatable
+                       key-field="id"
+                       data={interactionRec}
+                       columns={columns}
+                       min-column-width="100"
+                       max-row-selection= "1"
+                       onrowselection={handleRowAction}>
+               </lightning-datatable>
+          </div>
+
+  <div class="slds-p-top_x-small">
+    <lightning-button class="slds-m-left_xxx-small" label="First"
+    iconname="utility:left"
+    iconposition="left" disabled={isFirst} onclick={handleFirst}></lightning-button>
+    <lightning-button class="slds-m-left_xxx-small" label="Next"
+    iconname="utility:left"
+    iconposition="left" disabled={isLast} onclick={handleNext}></lightning-button>
+    <lightning-button class="slds-m-left_xxx-small" label="Previous"
+    iconname="utility:left"
+    iconposition="right" disabled={isFirst} onclick={handlePrev}></lightning-button>
+    <lightning-button class="slds-m-left_xxx-small" label="Last"
+    iconname="utility:left"
+    iconposition="left" disabled={isLast} onclick={handleLast}></lightning-button>
+    </div>
+  </lightning-layout-item>
+          
+</lightning-layout>
+      </div>
+           <!-- Modal/Popup Box LWC footer starts here -->
+           <footer class="slds-modal__footer slds-grid slds-grid_align-center" style=" height: 50px;">
+            
+              <lightning-button type="submit" name="searchbtn" variant="brand" label="Search"  onclick={handleSearchKeyword}> </lightning-button>
+              <lightning-button label="Cancel" name="Cancelbtn" onclick={closeModal} class="slds-m-left_x-small"></lightning-button>
+              
+           </footer>
+             
+            </div>
+        
+
+</section> 
+
+ <div class="slds-backdrop slds-backdrop_open"></div>
+ </template>
+ 
+ </template>

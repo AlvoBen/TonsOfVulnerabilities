@@ -1,0 +1,40 @@
+﻿<!--
+LWC Name        : accountDetailInteractionsHum.html
+Function        : LWC to display Interactions section on account details pages.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Pradeep Dani                  12/18/2020                Original Version 
+* Mohan Kumar N                 03/22/2021                US:1892975
+* Supriya                       08/23/2021                US-2363825 Standardized icons
+* Supriya                       09/02/2021                DF-3674
+* Supriya Shastri               09/06/2021                Added grey headers to member detail table
+* Abhishek Mangutkar			05/09/2022				  US-2871585
+****************************************************************************************************************************-->
+<template>
+    <article class="slds-card slds-card_boundary slds-grid slds-grid--vertical full-container">
+        <div class="hc-standard-table-styles">
+            <c-generic-bread-crumbs-hum if:true={bInfiniteScroll} items={breadCrumbItems}></c-generic-bread-crumbs-hum>
+            <header class="slds-card__header slds-grid slds-p-right_none slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <lightning-icon icon-name="standard:feedback"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">{sIntTitle}</h2>
+                </div>
+                <div class="slds-no-flex" if:true={bShowButton}>
+                    <lightning-button variant="brand-outline" label={labels.HUMNewInteraction} disabled={enableNewInteraction}>
+                    </lightning-button>
+                </div>
+            </header>
+        </div>
+        <div class="slds-grid full-container slds-is-relative">           
+            <c-standard-table-component-hum class="full-container hc-account-detail-standard-table" b-hide-title=true name-of-screen="Interactions" response={oIntLst}
+                show-view-all={showViewAll} no-data-message={labels.Hum_NoResultsFound}
+                is-overflow={isOverflow} b-infinite-scroll={bInfiniteScroll}
+                title={labels.interactionsHeadingHum} o-view-all-params={oViewAllParams} default-header-icon='standard:feedback'  related-input-field={loggingRelatedField} screen-name={loggingScreenName}>
+            </c-standard-table-component-hum>
+        </div>
+    </article>
+</template>

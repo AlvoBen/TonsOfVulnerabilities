@@ -1,0 +1,21 @@
+﻿<!--
+Page Name        : HUMCustomSearchPage
+Version          : 1.0 
+Created Date     : MAY 26 2014
+Function         : Main Search page which contains components pertaining to Member,Provider,Agent,Group,SearchEnrollment,Interaction Log
+                   Also contains logic to route softphone routing (Javascript in static resource)
+Modification Log :
+*   Modification ID     Developer            Code Review    Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*           1.0        Chaitanya Kumar                      05/26/2014      Original Version
+*           1.1        Sagar Tapadia                        06/24/2014      Modification done for POC on Softphone Integration 
+*           1.2        Chaitanya Kumar                      07/12/2014      Enhanced Soft Phone integration code. Moved code to Static resource
+*           1.3        Chaitanya Kumar                      07/22/2014      Included Action function methods for Unknown Account functionality
+*           1.4        Tanushree Hazari                     08/04/2014      changed component names of Member ,Provider and Search Enrollment
+*           1.5        Chaitanya Kumar                      09/04/2014      Included additional parameter in action function with assign to as sConsumerIDList
+*           1.6        Sagar Tapadia          20358         01/15/2014      Add a Pop up section to open when interacting with is not provided and user want to open account.
+*           1.7        Prudhvi Pamarthi       105627        06/27/2017      Commented Member, Group, Provider and Agent/Broker search functionality
+-->
+
+<apex:page >
+</apex:page>

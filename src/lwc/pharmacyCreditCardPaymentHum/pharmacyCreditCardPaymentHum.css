@@ -1,0 +1,70 @@
+.cardDetailsView {
+    width: 324px;
+    height: 213px;
+    border-radius: 10px;
+    position: absolute;
+    background: linear-gradient(112.91deg, #D1EEFF 3.51%, #979797 111.71%);
+    box-shadow: 14.6469px 17.5762px 29.2937px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20.5056px)
+
+}
+
+.heading{
+    left:10px;
+}
+
+.mainsection{
+    background-color: #F8F9F9;
+    height: 300px;
+    max-width: 100%;
+}
+
+
+.cardView {
+    position: absolute;
+    left:0%;
+    right:0%;
+    top:0%;
+    bottom:0%;
+    height:200px; 
+    width:350px;
+    background: linear-gradient(112.91deg, rgba(255, 255, 255, 0.51) 3.51%, rgba(255, 255, 255, 0) 111.71%) !important;
+    filter: drop-shadow(14.6469px 17.5762px 29.2937px rgba(0, 0, 0, 0.1));
+    backdrop-filter: blur(20.5056px);   
+    border-radius: 10px;    
+}
+
+.carddetails{
+    width: 324px;
+    height: 213px;
+    border-radius: 10px;
+    position: absolute;
+    background: linear-gradient(112.91deg, #D1EEFF 3.51%, #979797 111.71%);
+    box-shadow: 14.6469px 17.5762px 29.2937px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20.5056px)
+}
+
+.icon-column{
+    width: 60px;
+}
+
+.icon-settings{
+  height: 32px;
+  width: 32px; 
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.remove-display-sort-icon {
+    visibility: hidden;
+}
+
+.existingLoggingBox{
+    /* width: 1250px; */
+    max-width: 80rem !important;
+    width: 80% !important;
+  
+    max-height: 90rem !important;
+    height: 90% !important;
+}

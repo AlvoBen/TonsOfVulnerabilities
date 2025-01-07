@@ -1,0 +1,28 @@
+.sfront-component_title {
+    font-size: 15px;
+    font-weight: 500;
+    padding-right: 10px;
+}
+
+.sfront-search_grid {
+    display: flex;
+    align-items: center;
+    margin: 0px 10px 15px;
+    position: absolute;
+    margin-top: 3.1rem;
+    width: 150% ! important;
+}
+
+.searchBarWithName {
+    width:240px;
+}
+
+.searchBarWithoutName {
+    width:20%;
+}
+
+.searchBarAndName {
+    display:flex; 
+    margin-top:2px; 
+    gap:5px
+}

@@ -1,0 +1,66 @@
+/*
+File Name        : pharmacyAddressHum.css 
+Modification Log :
+* Developer                          Date                  Description
+*************************************************************************************************
+*Kalyani Pachpol   			         05/31/2022			   3464396
+**************************************************************************************************/
+.spinnerWrapper {
+  min-height: 50px;
+} 
+
+.container{
+  min-height: 50px;
+}
+
+.slds-scope .slds-card__header {
+  margin-top: 0px !important;
+}
+
+.setlabel:after {
+  content: " *";
+  color: red;
+  font-size: 10px;
+}
+
+.setlabel,
+.setlabel1 {
+  font-weight: bold;
+}
+
+.setPadding {
+  padding: 3px;
+}
+
+.setPaddingRight {
+  padding-right: 170px !important;
+}
+
+.setRightAlign {
+  text-align: right !important;
+  float: right;
+  padding-right: 170px !important;
+}
+
+.addressTypePill {
+  color: #006dcc !important;
+}
+
+.cancelBtn {
+  border-color: #dddbda;
+  color: red;
+}
+
+.cancelBtn:hover {
+  border-color: red;
+  color: red;
+}
+
+.centerVertical {
+  display: flex;
+  align-items: center;
+}
+.slds-truncate{
+  overflow: unset;
+  white-space: normal;  
+}

@@ -1,0 +1,115 @@
+﻿<!-- ***************************************************************************************************************************
+LWC Name : coachingUnknownMemberEditCmp.html
+Function    : This LWC component for the Unknown Member Creation in Humana Wellness Coaching App.
+
+Modification Log: 
+Developer Name           Code Review              Date                       Description
+*******************************************************************************************************************************
+* Mohammed Noor                                   06/04/2021                 Initial version created for USER STORY 2081412.
+*******************************************************************************************************************************
+-->
+<template>    
+    <lightning-card icon-name="standard:person_account">
+        <p slot="title" style="font-size:x-small; font-weight:bold">Person Account</p>
+        <p slot="title" style="font-size:medium; font-weight:bold">Unknown-Member</p>
+    
+        <div class="slds-card__body_inner">                                
+            <lightning-layout>
+                <lightning-layout-item size="3">
+                    <div class="slds-var-p-top_small slds-var-p-bottom_x-small">
+                        <p style="font-size: smaller;">All fields are required unless noted.</p>
+                    </div>
+                </lightning-layout-item>
+            </lightning-layout>
+            <lightning-layout>                
+                <lightning-layout-item size="3">
+                    <lightning-input class="inputfield" name="FirstName" label="First Name" maxlength="40" data-id="FirstName" value={fName} onchange={onFieldChange} ></lightning-input>
+                </lightning-layout-item>                                
+            </lightning-layout>
+
+            <lightning-layout>
+                <lightning-layout-item size="3">                    
+                        <lightning-input class="inputfield" name="LastName" label="Last Name" data-id="LastName" maxlength="80" value={lName} onchange={onFieldChange} ></lightning-input>
+                </lightning-layout-item>                                
+            </lightning-layout>
+            <lightning-layout>
+                <lightning-layout-item size="3">                        
+                    <lightning-input class="inputfield" name="BirthDate" label="Birth Date (MM/DD/YYYY)" type="text" data-id="Birthdate__c" value={birthDate} onkeyup={formatDateOnKeyUp}
+                            maxlength="10" date-style="short">
+                    </lightning-input>                    
+                </lightning-layout-item>                                                        
+            </lightning-layout>            
+            <lightning-layout>
+                <lightning-layout-item size="3">
+                    <lightning-input label="Mailing Street (Optional)" name="MailingStreet" data-id="PersonMailingStreet" value={mailingStreet} onchange={onFieldChange}></lightning-input>
+                </lightning-layout-item>                
+            </lightning-layout>
+            <lightning-layout>
+                <lightning-layout-item size="3">
+                    <lightning-input label="Mailing City (Optional)" name="MailingCity" data-id="PersonMailingCity" value={mailingCity} onchange={onFieldChange}></lightning-input>
+                </lightning-layout-item>                
+            </lightning-layout>
+            <lightning-layout>
+                <lightning-layout-item size="3">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <lightning-combobox
+                            name="State" 
+                            class="inputfield"
+                            label="State" 
+                            data-id="PersonMailingStateCode" 
+                            value={mailingStateCode} 
+                            options={options} 
+                            placeholder="--None--"
+                            onchange={onFieldChange}
+                            >
+                            </lightning-combobox>
+                        </div>
+                        <div class="slds-col">
+                            <lightning-input class="inputfield" name="ZipCode" label="Zip Code" data-id="PersonMailingPostalCode" value={mailingPostalCode} onchange={onFieldChange}  maxlength="5"></lightning-input>                                        
+                        </div>
+                    </div>
+                </lightning-layout-item>                                                                        
+            </lightning-layout>
+            <lightning-layout>
+                <lightning-layout-item size="3">
+                        <lightning-input class="inputfield phone-field" name="PhoneNumber" label="Phone Number" type="text" data-id="PersonHomePhone" value={phone} placeholder="(___) ___-____"
+                        maxlength="14" onchange={onPhoneFieldChange} onkeyup={formatPhoneNumber} onblur={updatePhoneNumber}   ></lightning-input>                                                           
+                </lightning-layout-item>
+            </lightning-layout>
+            <lightning-layout>
+                <lightning-layout-item size="3">
+                    <lightning-input class="inputfield" name="EmployerName" label="Employer Name" type="text" data-id="Company_Name__c" value={employerName} onchange={onFieldChange} maxlength="255">                        
+                    </lightning-input>
+                </lightning-layout-item>
+
+            </lightning-layout>
+            <lightning-layout>
+                <lightning-layout-item size="3">
+                    <lightning-input class="inputfield" name="email" label="Email address" type="text" data-id="PersonEmail" value={email} onchange={onFieldChange}></lightning-input>                                        
+                </lightning-layout-item>
+            </lightning-layout>                        
+            <br/>            
+            <lightning-layout> 
+                <lightning-layout-item size="3">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <button class="slds-button slds-button_stretch slds-button_neutral" onclick={handleCancelClick}>Cancel</button>
+                        </div>
+                        <div class="slds-col">
+                            <button class="slds-button slds-button_stretch slds-button_brand" onclick={handleSaveClick}>Save Unknown-Member</button>
+                        </div>
+                    </div>
+                </lightning-layout-item>                                                                        
+            </lightning-layout>
+            <template if:true= {bIsLoading}>
+                <lightning-layout>
+                    <lightning-layout-item size="3"></lightning-layout-item>
+                    <lightning-layout-item size="9">
+                        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </template>            
+        </div>
+    </lightning-card>    
+</template>

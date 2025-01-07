@@ -1,0 +1,26 @@
+﻿<!--
+/*****************************************************************************************************************************************************************
+Apex Class Name : MemberActivePolicies_CMP_AHT_HUM
+Version         : 1.0
+Created On      : 04/13/2017
+Function        : This is a custom component showing active/future policies.                 
+                 
+Modification Log: 
+* Version          Developer Name             Code Review              Date                       Description
+*-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+*    1.0           Subhamay Mandal                                     04/13/2017                 REQ - 305673REQ - 305674 Display active/future policy on search page
+*    1.1           Subhamay Mandal                                     06/02/2017                 Fixed Defect 290791.0001
+*	 1.2		   Siddharth Mehta									   05/30/2017				  REQ - 318472 Add Effective Date and End Date columns under Policy section on Member Search Page (RF)
+*    1.3 	       Siddharth Mehta									   06/22/2017				  Hide the Policies header if we are not selected any Account.
+*    1.4		   Subhamay Mandal 									   06/27/2017				  REQ - 322578 Highlight of the Selected Policy Record on selected on the Member Search Tab. (CRM)
+*	 1.5		   Subhamay Mandal									   07/05/2017				  REQ - 321222. Ability to display all active and Future policies on the Member search page when search result is displayed keping the Medical Policies on the top followed by other policies (Dental, vision etc.)			
+*	 1.6		   Amar Gadewar										   07/11/2017				  REQ - 321223 - Addition of Help Text.
+*    1.7		   Aamr Gadewar										   07/21/2017				  REQ - 321221 - Ability to see a product name along Policy number on Policy member sub tab(CRM)
+* 	 1.8		   Subhamay Mandal									   07/24/2018				  REQ - 323537 Ability of a system to bring Medicare ID on the Policy mini Page
+*    1.9		   Asish Behera									       11/13/2017				  REQ - 334424 Ability of a system to bring Medicare ID on the Member Search Page under the Active and Future Policies section(CRM)
+*  	 2.0		   Amar Gadewar				    					   01/14/2017		   		  REQ - 350393 - SF - TECH - Removal of Member Active Policies AHT. refer to non AHT Component
+-->  
+<apex:component >
+	
+	
+</apex:component>

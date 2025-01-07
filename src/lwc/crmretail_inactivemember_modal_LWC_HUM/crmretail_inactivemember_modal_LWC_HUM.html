@@ -1,0 +1,73 @@
+﻿<template>
+    <div if:true={isModalOpen}>
+    <!-- Modal/Popup Box LWC starts here -->
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container"> 
+            <button if:false={isScanCard} class="modalcls slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" style="top:0.5rem !important;" onclick={closeModal}>
+                    <lightning-icon icon-name="utility:close"
+                        alternative-text="close"
+                        variant="inverse"
+                        size="small" onclick={closeModal}></lightning-icon>
+                    <span class="slds-assistive-text">Close</span>
+                </button>          
+            <header if:true={isScanCard} class="slds-modal__header"> 
+                <button class="modalcls slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                    <lightning-icon icon-name="utility:close"
+                        alternative-text="close"
+                        variant="inverse"
+                        size="small" onclick={closeModal}></lightning-icon>
+                    <span class="slds-assistive-text">Close</span>
+                </button>               
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{headertitle}</h2>
+            </header>           
+            <!-- Modal/Popup Box LWC body starts here -->
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+            <div if:false={hasVisitorRecords}>
+                <div if:true={isScanCard}>
+                    <p class="slds-align_absolute-left displayMsg">{displayMsg}</p>
+                    <p class="slds-align_absolute-left displayMsg">{continuationMsg}</p>
+                </div>
+                <div if:false={isScanCard}>
+                    <p class="slds-align_absolute-left displayMsg">{displaymsgforInactiveAcc}</p>
+                </div>
+                <br/>
+                <div class="slds-align_absolute-center">
+                    <div if:false={isScanCard}>
+                        <lightning-button variant="brand" name="Yes" label="Yes" class="yesButton" onclick={handleNewButtonClick}></lightning-button>        
+                        <lightning-button variant="brand" name="No" label="No" onclick={closeModal}></lightning-button>
+                    </div>
+                    <div if:true={isScanCard}>
+                        <lightning-button variant="brand" name="New" label="New" onclick={handleNewButtonClick}></lightning-button>                   
+                     </div>
+                </div>
+            </div>
+            <div if:true={hasVisitorRecords}>
+                <div if:true={isScanCard}>
+                    <p class="slds-align_absolute-left displayMsg">{displayMsg}</p>
+                    <p class="slds-align_absolute-left displayMsg">{continuationMsg}</p>
+                </div>
+                <div if:false={isScanCard}>
+                    <p  class="slds-align_absolute-left displayMsg">{displaymsgforExistingAccPrefix}&nbsp;<b>{visitorData.Name}</b>{displaymsgforExistingAccSuffix}</p>
+                </div>
+                <lightning-datatable
+                    key-field="Id"
+                    data={data}
+                    hide-checkbox-column="true"
+                    columns={columns}
+                    >
+                </lightning-datatable>
+                <div class="slds-align_absolute-center buttonsDiv">
+                    <lightning-button variant="brand" name="Onsite Check-in" style="padding-right:15px;" label="Onsite Check-in" onclick={handleonsitecheckin}></lightning-button>
+                    <div if:false={isScanCard}>
+                        <lightning-button variant="brand" name="Virtual Check-in" style="padding-right:12px;" label="Virtual Check-in" onclick={handlevirtualcheckin}></lightning-button>
+                    </div>                   
+                    <lightning-button variant="brand" name="New" label="New" onclick={handleNewButtonClick}></lightning-button>
+                </div>               
+            </div> 
+        </div>          
+        </div>
+    </section>
+    <div if:true={isScanCard} class="slds-backdrop"></div>
+    <div if:false={isScanCard} class="slds-backdrop slds-backdrop_open"></div>
+</div>
+</template>

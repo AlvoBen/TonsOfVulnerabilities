@@ -1,0 +1,59 @@
+﻿<template>
+    <div class="slds-modal__content slds-scrollable_y">
+        <div class="slds-m-vertical_medium slds-p-left_small">
+            <h1 class="slds-text-heading_medium slds-m-bottom_x-small bold-text">Clinical Request</h1>
+            <h3 class="slds-text-heading_small slds-m-bottom_x-small">Call has been Warm transferred to Clinical Services for the following Rx's:</h3>
+            <template for:each={prescriptions.clinical} for:item="prescription">
+                <div key={prescription.key} class="slds-grid slds-wrap slds-m-bottom_xx-small">
+                    <div class="slds-col slds-size_1-of-12">
+                        <p>{prescription.key}</p>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12">
+                        <p>{prescription.dispensedDrug}</p>
+                    </div>
+                    <div class="slds-col slds-size_9-of-12 bold-text">
+                        <p>{prescription.requestReason}</p>
+                    </div>
+                </div>
+            </template>
+            <p class="red-text slds-n-top_medium">Next Steps:</p>
+            <p class="red-text">Warm Transfer call to Clinical Services. For additional details refer to HP and HSP Directory</p>
+            <p class="red-text">Finish Guided Process: Click Finish button, and a case will be created on the Edit Case page</p>
+        </div>
+        <hr class="slds-m-vertical_medium"/>
+        <div class="slds-m-vertical_medium slds-p-left_small">
+            <h1 class="slds-text-heading_medium slds-m-bottom_x-small bold-text">Non Clinical Request</h1>
+            <h3 class="slds-text-heading_small slds-m-bottom_x-small">A Case has been created and transferred to Clinical Services for the following Rx's:</h3>
+            <template for:each={prescriptions.nonclinical} for:item="prescription">
+                <div key={prescription.key} class="slds-grid slds-wrap slds-m-bottom_xx-small">
+                    <div class="slds-col slds-size_1-of-12">
+                        <p>{prescription.key}</p>
+                    </div>
+                    <div class="slds-col slds-size_2-of-12">
+                        <p>{prescription.dispensedDrug}</p>
+                    </div>
+                    <div class="slds-col slds-size_9-of-12 bold-text">
+                        <p>{prescription.requestReason}</p>
+                    </div>
+                </div>
+            </template>
+            <p class="red-text slds-n-top_medium">Next Steps:</p>
+            <p class="red-text">﻿Once inactivated, the Rx will no longer be able to be filled. A new Rx from the doctor is required if this medication needs to be filled in the future.</p>
+            <p class="red-text">Complete Guided Process by clicking the Finish button. The case will be routed to a Clinical Services work queue for inactivation.</p>
+        </div>
+        <hr class="slds-m-vertical_medium"/>
+
+        <footer class="slds-modal__footer">
+            <div class="slds-grid slds-grid_align-end">
+                <lightning-input type="toggle" 
+                                 label="I will warm transfer to Clinical Services"
+                                 checked={isToggleChecked}
+                                 onchange={handleToggleChange}
+                                 class="slds-m-right_small">
+                </lightning-input>
+                <lightning-button label="Cancel" onclick={handleCancel} class="slds-m-right_small"></lightning-button>
+                <lightning-button label="Finish" variant="brand" onclick={handleFinish} disabled={isFinishDisabled}></lightning-button>
+            </div>
+        </footer>
+    </div>
+</template>

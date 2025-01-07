@@ -1,0 +1,69 @@
+﻿<!--
+Component Name   : AttachFiles_CMP_HUM.component
+Version          : 1.0
+Created On       : 09/21/2017
+Function         : VF Re-usable Component to add Attachments
+
+Modification Log:
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Pradeepkumar Dani          146713                  11/03/2017                    Original version
+ * Pradeepkumar Dani		  160881				  12/22/2017                    Enhancements
+ * Mohammed Noor              268720                  08/08/2018                    REQ - 362124 - Ability to write upon attaching a document to Medicare Enrollment cases
+ * Pooja Kumbhar									  04/29/2020					Checkmarx Ajax Toolkit from VF error Fix
+ * Pooja Kumbhar									  05/14/2020					DF-705 defect Fix
+ * Mithra Bharadwaj                                     US#1522825 SonarQube Changes
+ ****************************************************************************************************************************
+ -->
+<apex:component controller="AttachFiles_C_HUM">
+  <apex:attribute name="parentId" description="Attachment parent ID" type="String" required="true" />
+  <apex:attribute name="zoneHeight" description="drop zone height" type="String" required="false" default="200" />
+  <apex:attribute name="maxNumberOfFiles" description="max Number Of Files" type="Integer" required="false" default="10" />
+  <apex:attribute name="maxSizeOfFiles" description="max size Of File" type="Integer" required="false" default="10" />
+  <apex:attribute name="dropzoneMessage" description="drop zone Message" type="String" required="false" default="Attach maximum of {!maxNumberOfFiles}' files by dropping here (Or click here to select files)" />
+
+  <head>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/Dropzone/dropzone.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/Dropzone/dropzone.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/Dropzone/basic.min.css')}" />
+  </head>
+
+  <div>
+
+    <div class="dropzone" id="divDropZone" style="height: {!zoneHeight}px;"></div>
+
+    <div id="actions" class="row">
+      <div class="col-lg-12 left">
+        <button type="button" class="btn btn-primary start" onclick="insAttJS()" id="startActions">
+          <span>Start Upload</span>
+        </button>
+        <button type="reset" class="btn btn-warning cancel" id="cancelActions">
+          <span>Cancel Upload</span>
+        </button>
+        <span id="actionMessage" style="color:red;display:none;">*Choose between 1 to 5 files to start upload.</span>
+        <span id="errorMessage" style="color:red;display:none;">
+          Errors: <br />
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="text/javascript">
+    var __sfdcSessionId = '{!GETSESSIONID()}';
+    var vfRemotingTimeout = '{!$Label.HUMMemWebActivityTimeout}';
+    var vfRemotingMethod = '{!$RemoteAction.AttachFiles_C_HUM.createAttRecord}';
+    var vfDeleteRemotingMethod = '{!$RemoteAction.AttachFiles_C_HUM.deleteAttRecords}';
+    var vfMstoneRemotingMethod = '{!$RemoteAction.AttachFiles_C_HUM.createAttachmentMstone}';
+    var maxNumberOfFiles = {!maxNumberOfFiles};
+    var maxSizeOfFiles = {!maxSizeOfFiles};
+    var thumbnailURL = "{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/Dropzone/icon/')}";
+    var dropzoneMessage = "{!JSENCODE(dropzoneMessage)}";
+    var recordID = '{!JSENCODE(parentId)}';
+  </script>
+
+  <script type="text/javascript" src="/soap/ajax/34.0/connection.js" />
+  <apex:includeScript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/Dropzone/AttachFiles_JS_HUM.js')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/Dropzone/AttachFiles_CSS_HUM.css')}" />
+  <style>.dz-message{ margin-top: {!VALUE(zoneHeight)/2.5}px !important;}</style>
+</apex:component>

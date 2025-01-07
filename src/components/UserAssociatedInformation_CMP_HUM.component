@@ -1,0 +1,134 @@
+﻿<!----------------------------------------------------------------------------------------------------
+ Page Name  : UserAssociatedInformation_CMP_HUM
+ Version   : 1.0 
+ Created Date  : 06/11/2018
+ Controller Name :UserAssociatedInformation_C_HUM
+ 
+ Modification Log :
+* Developer                 Code Review         Date                        Description
+* -----------------------------------------------------------------------------------------------------                 
+* Vandana Chaudhari                          06/11/2018                   Original Version
+* Sumit   Pharande                           06/20/2018                   REQ - 350635
+* Prathyu Tushar                             10/15/2018                   Defect 387218.0001 fix for Account detail page
+* Suraj patil               299668           10/16/2018                   REQ - 350627
+* Satyam Malviya            300505           10/22/2018                   REQ - 350626 & REQ - 350630 Display Active Executor of Estate (EOE) on File
+* Suraj Patil		               		     10/30/2018          		  REQ - 350626 - Power of attorney display from designee service.
+* Praveen K Parimi		               		 02/18/2019          		  REQ - 350626 - Power of attorney display from designee service.
+* Shailesh Mali             353777           04/25/2019                   REQ - 396397 - HOver Issue -- break the helptext for Document type into 2 line, to avoid Hover Issue
+* Raja Sekhar Reddy M V                     10/28/2020                 User Story 1609149: PR00094816 - MF 5 - DEV - Add Go365 Medicaid Guardian designation form to Associated Forms and Information Section of Person Acct Page in CRM Service
+* Atia Uzma                                 10/22/2021                    User Story 2786823: T1PRJ0001827 - MF 1 - AHT - Ability to expand/collapse all rows within 'Associated Forms & Information' section on Member Account page (RF)
+* Atia Uzma                                 01/20/2022                    User Story 3016951: T1PRJ0314829 - MF 1 - AHT - 'Associated Forms & Information' section - Member Account page - enhancements (RF)
+------------------------------------------------------------------------------------------------------ -->
+<apex:component id="UserAssociatedInformationCMP" controller="UserAssociatedInformation_C_HUM" allowDML="true">
+  <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/DataTables/css/BaseDataTable_CSS_HUM.css')}" />
+  <apex:includeScript value="{!URLFOR($Resource.UserAssociation_SR_HUM, '/UserAssociation_SR_HUM/UserAssociation_JS_HUM.js')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.UserAssociation_SR_HUM, '/UserAssociation_SR_HUM/UserAssociation_CSS_HUM.css')}"/>
+  <apex:attribute name="accountRecordId" type="string" description="The Account Record ID" assignTo="{!sAccountId}" />
+  <script type="text/javascript">
+    <!-- Please do not change this line as it breaks the JS tables. -->
+//dont enable P9 Critical Fix    var $j = jQuery.noConflict();
+    var LoadPOASectionevent;
+    var getPrimaryTabId = function getPrimaryTabId() {
+    sforce.console.getEnclosingPrimaryTabId(getTabPrimaryId);
+    }
+    var getTabPrimaryId = function getTabPrimaryId(result) {
+    LoadPOASectionevent = 'LoadPOASectionevent' +result.id;
+    }
+    getPrimaryTabId();
+    jQuery(window).on("load", function()
+    {
+      Visualforce.remoting.Manager.invokeAction(vGetUserData,accountId,fMethodGetUserInfoJsonDataCallback,{buffer: false,escape: true});
+      if(vDesigneePermision == 'true')
+      {
+        Visualforce.remoting.Manager.invokeAction(vGetUserDataService,accountId,fMethodGetUserInfoServiceJsonDataCallback,{buffer: false,escape: true});
+      }
+    });
+  </script>
+  <apex:form >
+    <apex:pageBlock id="pgBlock" mode="maindetail">
+      <apex:pageMessages id="errMsg" />
+      <apex:pageBlockSection id="pgSect1" collapsible="false" columns="1" >
+        <apex:pageBlockSectionItem >
+          <apex:outputpanel id="refreshUserInfoDiv">
+            <c:BaseDataTable_CMP_HUM col1_accordian="true"
+                          jqueryvariable="jQuery"
+                          tableid="userInfoDataTable"
+                          tablecontainerid="userInfoDataTable_div"
+                          enablesearch="f"
+                          columnname="{!columnName}"
+                          objname="Account"
+                          columnHeader="{!columnHeader}"
+                          accordionColumns="UserValue,SecurityQuestion,Answer,DocumentType,Relationship,LevelOfConsent,ServiceStartDate,ServiceEndDate,LimitedDisclosureDetails,LineOfCoverage,SubmissionMehtod,GuardianAddress,PersonofAuthority" 
+                          keyword="false"
+                          col1_orderable="false"
+                          col2_orderable="true"
+                          orderDirection="asc"
+                          orderColumn="1" />
+          </apex:outputpanel>
+        </apex:pageBlockSectionItem>
+
+      </apex:pageBlockSection>
+      <apex:outputPanel id="deletePopup">
+        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
+        <div id="maindiv" >
+          <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!displayPopUp}">
+            <div class="upperDiv">
+              <apex:outputLabel style="padding-left:1%" value="">Delete Password</apex:outputLabel>
+            </div>
+            <div class="midDiv">
+              <br/>
+              <br/>
+              <img  width="29" height="29" style="text-align:center; margin-left:50px;position:absolute;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAdCAYAAABWk2cPAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAhdEVYdENyZWF0aW9uIFRpbWUAMjAxODowNjoyOSAxNjoyODoyMRQ1v6cAAAQPSURBVEhLrZdtbFNVGMf/9961Zeu2tGzd2NyYK9sQNjdkxSIbvmTBCBGJCEaTkZgoGokj+MFojIkvEbcQzKIuUZIZiUvEsC+E+GHRDEEqC4EpzcIQQ7OVzmRvUrFbt74+nt6ezq733rYiv+SfnHPyvJxzzz3PuVcgBrLANz0O56VhuKZvwTs7hRnvAowmCyyWlSgpr8FGWxMqi4zcOgOxpNos0uBX79N2+wNUuVIfm5ymVljuJVvLdur85gJFuLcWmklv/HScnlxfpghuyCsks9lEJhOT2UwFuTkKm0r7s3RiyM0jKVFJGqBTH+2j4pRAssx1dGxwlDzuMXK5XDR+00NXB46StVDFFuX0SvcPFOJRk0lJepu+PvQ4iYoAXGva6Mo8N03w18+0eZXWoxdo59vfUpCbJliWdODD3SqOSbK20SUvN04wc5bspen2W6Tnux3cOM5S0pvfd9E9gppTkqq30q9z3CGB10F2zZVyCVXU45jmDkTxI+O7hpe2bsCXziCzSYO+CM91vI6HVhsRDkchSjnw3fgRR744hbkwt9HAaO/A6IVPsZrtnbzS4d529RneZb3Ydz2WLrbSSTrQWIvPR3xsXB2dsQhVFRZIFJW9lxBEUMCLsfEpZFioTOnmQ7g21A1ERnvJolPOKlmtB07IM1Tl73NkK1GeVVXl19F342ESR844cDvEhtKQIwmI8LaCAEFiK86KuT9w8ZcxiM7fppDh9WFPUYRmWPkE8HZG5vH7dRdEz59ePqCN79YUM787TMxOQwyEAryrzeW+DhQIAgTroxia5YN3iHdhgR01MYd3syAqQMpy+7TI1+kglhebeDcLRLZagbfvkIpiC8RGaxn+w1r/J3rU1Fgh3s/KX0G2WYMhRFPfVFYwQsFM7z/HUIbmpmqIeQ8+hbZVuXxUA30B1q5vQFPTfchN3VMxF+uaN6G+vg5GiY9pUFi9Ba3rWK5YURk8vGN55UjRpvZPaIZdin6/n8JRuQ79SyRI8/5FougMHXmiRtU/oac/HpJd5KThyfO0o0TdMKbHDp6UjTPRt7dB1V9WxW4a9sXt5Icllbai8+hr0MU6KrCpIcrb2qSrTHl4q6cLG/PjvaUdatx3GN0v2HhvOYE5HzKXkEV2p6rfNfb9n+GdXbW8F/uIYfA2EHLjgz2P4N3Tbj4Qx2CqwsMtG5AnRZVvbwxW8KWID5cd5zGRcns07OnCmf43YeF9GfkhJ+N3U2d7s/bHWdZaQS0v95BngcdNQplUJkoDPQepVvXTMrMkSx290XuWx1KikTTO/ISTjr23n9aYdarBU6UrradXO4/T1Ul2hNKQ5b9MGGNOB0739+PciIcVpiAWgxHoDAboJD2qbduw95md2FJfoX3vLgH8A2JnG0vshyZKAAAAAElFTkSuQmCC"/>
+              <apex:outputLabel styleClass="LabelCss" value="">Are you sure you want to delete Password ?</apex:outputLabel><br/>
+              <div class="buttonDiv">
+                <table border="0" cellspacing="0" cellspadding="0"  class="buttonDiv">
+                  <tr>
+                    <td width="50px"><apex:commandButton value="Ok" action="{!deleteInfo}" oncomplete="closePoupWindow();return false;" reRender="deletePopup"/> </td>
+                    <td><apex:commandButton value="Cancel" action="{!closePopup}" reRender="deletePopup"/> </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class="lowerDiv">
+            </div>
+          </apex:outputPanel>
+        </div>
+      </apex:outputPanel>
+      <apex:actionFunction action="{!showPopup}" name="deleteUsr" reRender="deletePopup"/>
+      <apex:actionFunction action="{!closePopup}" name="closePoup" reRender="deletePopup"/>
+    </apex:pageBlock>
+  </apex:form>
+  <script>
+    var bisRapidForceUser = {!$Permission.RapidForceUser_AHT_HUM};
+    var bExpandCollapseSwitch = {!bExpandCollapseSwitch};
+    var bSwitch = {!bSwitch};
+    var vGetUserData = '{!$RemoteAction.UserAssociatedInformation_C_HUM.getUserInformation}';
+	var vGetUserDataService = '{!$RemoteAction.UserAssociatedInformation_C_HUM.getPHIConsentInfo}';
+    var SHOW_ALL_CHILDREN_FLAG = false;
+    var CHILD_DISPLAY_STATE_OVERRIDE = true;
+    var accountId = '{!JSENCODE(accountRecordId)}';	
+	var vDesigneePermision = "{!$Permission.DesigneeServiceSwitch}";
+	
+    jQuery('#userInfoDataTable').on( 'draw.dt',   function () { eventFired( 'draw' ); } )
+    var eventFired = function ( type ) {
+    var table = jQuery('#userInfoDataTable');
+    var sHeaderContent = '<apex:outputPanel id="documentTypePopUpDiv" styleClass="stylePanelDocumentType" layout="block"><apex:outputPanel id="documentTypePopUpText">{!$Label.UserDocumentType}<apex:outputPanel layout="block" style="white-space:pre;">{!$Label.UserDocumentType1}</apex:outputPanel></apex:outputPanel></apex:outputPanel>Document Type <apex:image styleClass="imageStyle" value="{!$Resource.HUMHoverOverQuestionMark}" onmouseover="openHoverPopDocumentType();" onmouseout="clearHoverPopDocumentType();"/>';
+    jQuery(table.find('th:contains(\'Document Type\')')).html(sHeaderContent);
+    jQuery(table.find('td:contains(\'Executor of Estate\')')).parent().find("td:first").css("visibility", "collapse");
+	jQuery(table.find('td:contains(\'Go365 Medicaid Guardian\')')).parent().find("td:first").css("visibility", "collapse");
+    jQuery(table.find('td:contains(\'Legal Guardian\')')).parent().find("td:first").css("visibility", "collapse");
+    var sPasswordContent = '<apex:outputPanel id="passwordRow"><apex:outputPanel id="passwordText">Password</apex:outputPanel><apex:outputPanel id="passwordPopUpDiv" styleClass="stylePanelPassword" layout="block"><apex:outputPanel id="passwordPopUpText">{!$Label.UserPassword}</apex:outputPanel></apex:outputPanel></apex:outputPanel>';
+    jQuery(table.find('td:contains(\'Password\')')).html(sPasswordContent );
+
+    jQuery("[id$='passwordText']").hover(function() {
+    jQuery("[id$='passwordPopUpDiv']").show();
+    }, function() {
+    jQuery("[id$='passwordPopUpDiv']").hide();
+    });
+    
+    hideShowColumn('index','hide');
+    }
+
+    sforce.console.addEventListener('ReloadAssociateUserEvent', reloadUserAssociatedTablelistener);
+  </script>
+</apex:component>

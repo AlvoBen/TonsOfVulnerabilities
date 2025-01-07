@@ -1,0 +1,149 @@
+﻿<!--
+Component        : Inactivate Rx Request
+Version          : 1.0
+Created On       : 12/12/2023
+Function         : Component to display to inactivate rx flow
+
+Modification Log:
+* Developer Name                       Date                         Description
+* Isaac Chung                         12/12/2023                  Original Version
+*------------------------------------------------------------------------------------------------------------------------------
+-->
+<template>
+    <template if:true={loaded}>
+        <template if:true={rxModal}>
+            <div>
+                <section role="dialog" tabindex="-1"
+                    class="slds-modal slds-fade-in-open slds-modal_medium flow-modal-component"
+                    aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header">
+                            <lightning-button-icon icon-name="utility:close" alternative-text="Close this window"
+                                size="large" variant="bare-inverse" onclick={handleflowabort} class="slds-modal__close">
+                            </lightning-button-icon>
+                            <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Inactivate Rx</h2>
+                        </header>
+                        <template if:true={isFirstScreen}>
+                            <div class="slds-modal__content slds-p-around-medium" >
+                                <div style="background-color: #f4f6f9; margin: 1rem; box-shadow: 0 0 3px #ddd; border: 1px solid #d8dde6;">
+                                    <div class="slds-grid slds-grid_vertical-align-center slds-grid_align-spread slds-m-bottom_xx-small" style="padding: 0.5rem;">
+                                        <div class="slds-grid slds-grid_vertical-align-center">
+                                            <lightning-icon icon-name="standard:forecasts" alternative-text="Prescriptions" size="small" class="slds-m-right_x-small" style="--sds-c-icon-color-background: blue;"></lightning-icon>
+                                           <h3 class="slds-text-heading_small" style="font-weight: bold;">Available Prescriptions ({finalPrescriptions.length})</h3>
+                                        </div>
+                                        <div class="slds-form-element">
+                                            <!-- <label class="slds-form-element__label" for="keyword-search" style="display: block;">Filter by Keyword</label> -->
+                                            <lightning-input type="search" style="border-color: #d8dde6" label="Filter by Keyword" onchange={handleSearch}></lightning-input>
+                                        </div>
+                                    </div>
+                                    <div class="slds-scrollable_y"  style="max-height: 300px; background-color: #f4f6f9;">
+                                        <table class="slds-table slds-table_cell-buffer slds-table_bordered" style="margin-top: 0;">
+                                            <thead style="background-color: #e0e5ee;">
+                                                <tr class="slds-line-height_reset">
+                                                    <th class="" scope="col">
+                                                        <div class="slds-truncate" title="Inactivate Rx">Inactivate</div>
+                                                    </th>
+                                                    <th class="" scope="col">
+                                                        <div class="slds-truncate" title="Request Reason">Request Reason</div>
+                                                    </th>
+                                                    <th class="" scope="col">
+                                                        <div class="slds-truncate" title="Rx Number">Rx Number</div>
+                                                    </th>
+                                                    <th class="" scope="col">
+                                                        <div class="slds-truncate" title="Controlled Rx">Controlled Rx</div>
+                                                    </th>
+                                                    <th class="" scope="col">
+                                                        <div class="slds-truncate" title="Dispensed Drug">Dispensed Drug</div>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <template for:each={filteredPrescriptions} for:item="rx">
+                                                    <tr key={rx.key} class="slds-hint-parent">
+                                                        <td data-label="Inactivate">
+                                                            <div class="slds-truncate" >
+                                                                <lightning-input type="checkbox" 
+                                                                                 checked={rx.inactivate} 
+                                                                                 data-id={rx.key} 
+                                                                                 onchange={handleCheckboxChange}>
+                                                                </lightning-input>
+                                                            </div>
+                                                        </td>
+                                                        <td data-label="Request Reason" class="slds-size_1-of-2">
+                                                            <div class="slds-truncate" >
+                                                                <lightning-combobox name="requestReason" 
+                                                                                    value={rx.requestReason} 
+                                                                                    placeholder="- None -" 
+                                                                                    options={reasonOptions} 
+                                                                                    onchange={handleReasonChange}
+                                                                                    disabled={rx.isDropdownDisabled}
+                                                                                    data-id={rx.key}>
+                                                                </lightning-combobox>
+                                                            </div>
+                                                        </td>
+                                                        <td data-label="Rx Number">
+                                                            <div class="slds-truncate" title={rx.key}>{rx.key}</div>
+                                                        </td>
+                                                        <td data-label="Controlled Rx">
+                                                            <div class="slds-truncate" title={rx.controlled}>{rx.controlled}</div>
+                                                        </td>
+                                                        <td data-label="Dispensed Drug">
+                                                            <template if:true={rx.dispensedDrug}>
+                                                                <div class="slds-truncate" title={rx.dispensedDrug}>{rx.dispensedDrug}</div>
+                                                            </template>
+                                                            <template if:false={rx.dispensedDrug}>
+                                                                <div class="slds-truncate" title={rx.dispensedDrug}>{rx.writtenDrug}</div>
+                                                            </template>
+                                                        </td>
+                                                    </tr>
+                                                </template>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <footer class="slds-modal__footer slds-grid">
+                                    <div class="slds-col slds-align-middle slds-m-right_small" if:true={showReasonWarning}>
+                                        <div class="slds-notify slds-notify_alert sds-theme_alert-texture slds-alert_warning" role="alert">
+                                            <p>Please select a reason for each inactivated prescription</p>
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-align-middle" title={tooltipMessage}>
+                                        <lightning-button label="Next" 
+                                                          variant="brand" 
+                                                          onclick={handleNextClick} 
+                                                          disabled={isNextDisabled}
+                                                          >
+                                        </lightning-button>
+
+
+                                    </div>
+                                </footer>
+                            </div>
+                        </template>
+                        <template if:true={isSecondScreen}>
+                            <c-pharmacy-inactivate-rx-request-summary-hum flow-params={flowParamsJSON} onback={handleNavigateBack} onfinish={handleSummaryFinish}></c-pharmacy-inactivate-rx-request-summary-hum>
+                        </template>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open flow-modal-component"></div>
+            </div>
+        </template>
+        <template if:true={startLoadFlow}>
+            <lightning-flow  if:true={startLoadFlow} flow-api-name="Inactivate_Rx_Lightning"
+            flow-input-variables={loadFlowData}
+             onstatuschange={handleEncryptFinish}></lightning-flow>
+        </template>
+        <template if:true={inactivateRxFinalScreen}>
+            <c-generic-case-comment-logging record-id={recordId} onfinish={handleFinishLogging}
+                responseobj={inactivateRequestObj} filter-cases-having-template={filterCasesHavingTemplate}>
+            </c-generic-case-comment-logging>
+        </template>
+        <template if:true={isConfirmingFlowExit}>
+            <c-generic-unsaved-changes-prompt-hum header={labels.UnsavedChangesHeader}
+                message={labels.unsavedModalMsgHum} button-config={buttonConfig} promptclass={promptclass}
+                oncancel={handleCancelFlowExit} oncontinue={handleContinueFlowExit}>
+            </c-generic-unsaved-changes-prompt-hum>
+        </template>
+    </template>
+</template>

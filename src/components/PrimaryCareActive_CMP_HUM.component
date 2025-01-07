@@ -1,0 +1,38 @@
+﻿<!--
+Component Name   : PrimaryCareActive_CMP_HUM.component
+Version          : 1.0
+Created On       : April 11, 2016
+Function         : Component to show PCP Active table
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Rajesh keswani            27366                     05/12/2016                    Original version for REQ - 244444
+ * Apoorv Jain               27834                     05/20/2016                    Defect#224774
+ * Rajesh Keswani		     42226 	                   10/05/2016                    REQ - 269915 Logging (Details): Logging Event from VOB Page ELIPSES
+ * Lakshmi Madduri										10/15/2018					 REQ-355805 Added title attribute from table
+ * Prudhvi Pamarthi									   01/27/2020					  REQ_415937 CA - 8709934 -On the PCP/PCD page left side drop down not closing correctly.
+ ****************************************************************************************************************************
+ -->
+<apex:component controller="PrimaryCare_CE_HUM">
+
+    <apex:attribute id="personID" name="personID" description="This is Person's ID" type="String" required="true"></apex:attribute>
+    <apex:attribute id="refDate" name="refDate" description="this is the reference date" type="String" required="true"></apex:attribute>
+    
+        
+    <!-- This block will render a table using jQuery during the page load -->
+    <div id="theMainFormActivePCP" >   
+        <table id="ActivePCP" class="table table-striped table-bordered display enable_logging" title="{!$Label.Active_PCP_PCD}"><caption class="captionClass">{!$Label.Active_PCP_PCD}</caption></table>
+    </div>
+
+	<!-- This block will render a spinner image to indicate table loading in the UI -->
+    <div class="loadingSectionStyleActicePCP" id="statusImageActivePCP">
+        <img src="/img/loading.gif" /> 
+        <span class="waitingDescription">{!$Label.LOADING_HUM}</span>
+    </div>
+    
+    <script type="text/javascript">
+      var lstResult ;   
+    </script>
+    
+</apex:component>

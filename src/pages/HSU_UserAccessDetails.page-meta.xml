@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>25.0</apiVersion>
+    <availableInTouch>false</availableInTouch>
+    <confirmationTokenRequired>false</confirmationTokenRequired>
+    <description>Owner: HSC - Displays the User&apos;s permissions, object permissions, field permission, vf pages and apex classes the user has permission to.  This is stacked with profile and permissions.</description>
+    <label>HSU_User Access Details</label>
+</ApexPage>

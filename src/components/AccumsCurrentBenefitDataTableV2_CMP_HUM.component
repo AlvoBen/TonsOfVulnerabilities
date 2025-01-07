@@ -1,0 +1,74 @@
+﻿<!--
+Component Name   : AccumsCurrentBenefitDataTableV2_CMP_HUM.component
+Version          : 1.0
+Created On       : 04/11/2018 
+Function         : VF Component to display Accumalator Current Benefit table from the controller BenefitsV2_C_HUM services
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Pradeepkumar Dani                                  01/11/2016                    Original version
+ * Avinash Choubey                                    02/28/2016                    modified for Accums Data Service Continuation Call
+ * Avinash Choubey            31077                   04/18/2016                    Design Change in All Accums Req ( 237142, 246888 etc)
+ * Shikhar Mehta                                      04/27/2016                    Added code for Logging REQ (REQ-184833)
+ * Avinash Choubey            32583                   07/12/2016                    Removed MBE Dependency for Gen Key REQ - 269975
+ * Apoorv Jain                                        07/15/2016                    Defect#223875
+ * Rajesh Keswani             42226                   10/05/2016                    REQ - 269915 Logging (Details): Logging Event from VOB Page ELIPSES.
+ * Praveen Kumar Parimi       56654                   01/11/2017                    Created a new version for referencing the new controller.
+ * Muralidhar Kollu                                   15/06/2017                    REQ - 304936 VOB � Accumulator section of the Benefits and Accumulator page (MF5) 
+ * Melkisan Selvaraj          220187                  04/11/2018                    Cloned from BenefitsV1_VF_HUM for REQ - 360140
+ * Shailesh Mali									  01/20/2020                    Version - 2, REQ - 791947 Accumulator SOAP to REST Conversion
+ * Sayali Gavane									  02/10/2021					REQ -1625471 PR00094226 - CR AEP readiness -Research - Critical Security Issues (slide 11)		
+  ****************************************************************************************************************************
+ -->
+<apex:component controller="BenefitsV2_C_HUM" >
+    <apex:attribute id="personID" name="personID" description="This is Person's ID" type="String" required="true"/>
+    <apex:attribute id="sBenefitsType" name="sBenefitsType" type="string" description="Current or History; dictates what type of service calls are made" required="true"/>
+    <apex:includeScript value="{!URLFOR($Resource.AccumsCurrentBenefit_SR_HUM,'AccumsCurrentBenefit_SR_HUM/AccumsCurrentBenefit_JS_SR_HUM.JS')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.AccumsCurrentBenefit_SR_HUM, 'AccumsCurrentBenefit_SR_HUM/AccumsCurrentBenefit_CSS_SR_HUM.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.AddCaptionTag_JS_HUM)}" />     
+    
+    <script type="text/javascript">
+
+        var sGetVobMockBenefitsCurrent = '{!$RemoteAction.BenefitsV2_C_HUM.getAccumsData}';
+		var sGetVobMockBenefitsCurrent_V2 = '{!$RemoteAction.BenefitsV2_C_HUM.getAccumsDataREST}';
+        var personID = '{!JSENCODE(personID)}';
+        var sBenefitsType = '{!JSENCODE(sBenefitsType)}';
+        var sRefDate='{!JSENCODE($currentPage.parameters.refdate)}';       
+        var arryCurrentBenefits = [];        
+        Visualforce.remoting.timeout = '{!$Label.HUMMemWebActivityTimeout}'; // Set timeout at page level
+    </script>  
+    
+    <!-- This block will render a spinner image to indicate table loading in the UI -->
+    <div class="loadingSectionStyle" id="statusImageBenefitsCurrent">
+        <img src="/img/loading.gif" /> 
+        <span class="waitingDescription"> {!$Label.LOADING_HUM}</span>
+    </div>
+    <!-- This block will render a table using jQuery during the page load -->
+    <div id="responseErrorsAccumCur" class="errorMsg">
+    </div>
+    <div id="theMainFormBenefitsCurrent" styleClass="formStyle" style="width:97%;">   
+        <table id="currentbenefits" class="table table-striped table-bordered display enable_logging"  title="{!$Label.Benefits_Current_Title}" ></table>
+    </div>
+    
+    <script>
+        var RESTSwitchCall = '{!sRestSwitchCall}'; 		
+        getRemoteAccountCurrentbenefits(); 
+    </script>
+	<style>
+	.dataTables_scroll {
+        width : 910px !important;
+    }
+	.data2Col.first {
+        color : black !important;
+        font-weight : normal !important;
+    }
+	.table.table-striped.table-bordered.display.enable_logging.dataTable.no-footer {
+        width : 910px !important;
+        overflow-x : hidden;
+	}
+	.dataTables_scrollBody {
+        width : 927px !important;
+    }
+	</style>
+</apex:component>

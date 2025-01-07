@@ -1,0 +1,206 @@
+﻿<!--
+LWC Name        : PharmacyHistoryTimelineFilterHum.html
+Function        : LWC to display pharmacy history timeline data;
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Nirmal Garg                     11/09/2021                   initial version - US - 2527241
+* Aishwarya Pawar                 09/02/2022                 initial version - US - 3668178
+
+****************************************************************************************************************************-->
+<template>
+	<template if:true={lineitemdetails}>
+		<template if:false={cardComment}>
+			<template if:true={lineitemdetails.header}>
+				<div class="slds-grid slds-wrap slds-m-bottom_x-small">
+					<div class="slds-col slds-size_1-of-1">
+						<template if:true={lineitemdetails.header.fieldname}>
+							<div style="display: inline;" class="slds-wrap">
+								<strong>{lineitemdetails.header.fieldname}</strong>
+							</div>
+						</template>
+						<template if:true={lineitemdetails.header.fieldvalue}>
+							<div style="display: inline;" class="slds-wrap">
+								<strong>{lineitemdetails.header.fieldvalue}</strong>
+							</div>
+						</template>
+					</div>
+				</div>
+			</template>
+			<template if:true={lineitemdetails.body}>
+				<div class={bodyOuterDivClass}>
+					<template for:each={lineitemdetails.body} for:item="item">
+						<template if:true={item.hidden}>
+							<div key={item.label} class={item.gridSize} style="display: none;">
+								<template if:true={item.fieldname}>
+									<div data-id={item.fieldname} data-value={item.fieldvalue} title={item.fieldname}>
+										<strong>{item.fieldname}:</strong>
+									</div>
+								</template>
+								<template if:true={item.fieldvalue}>
+									<div title={item.fieldvalue}>{item.fieldvalue}</div>
+								</template>
+							</div>
+						</template>
+						<template if:true={item.islink}>
+							<div key={item.label} class={item.gridSize}>
+								<template if:true={item.fieldname}>
+									<div class="slds-text-body_small slds-item_label slds-text-color_weak"
+										 style={item.labelstyle}>{item.fieldname}:</div>
+								</template>
+								<template if:true={item.fieldvalue}>
+									<div style={item.valuestyle} title={item.fieldvalue}
+										 class="slds-text-body_small slds-item_detail slds-wrap slds-text-link"
+										 data-name={item.object} onclick={navigateToRecodPage}>
+										{item.fieldvalue}
+									</div>
+								</template>
+							</div>
+						</template>
+						<template if:true={item.isIcon}>
+							<div key={item.label} class={item.gridSize}>
+								<template if:true={item.fieldname}>
+									<div class="slds-text-title slds-p-bottom_x-small">{item.fieldname}</div>
+								</template>
+								<template if:true={lineitemdetails.body.buttonicons}>
+									<div class="slds-grid slds-wrap">
+										<template for:each={lineitemdetails.body.buttonicons} for:item="link">
+											<template if:false={link.hidden}>
+												<div key={link.buttoniconname} class="slds-m-right_small slds-is-relative">
+													<lightning-button-icon data-id={link.buttoniconname}
+																		   key={link.buttoniconname} onclick={handleCommunication}
+																		   class={link.buttoniconclass} icon-name={link.buttoniconvalue}
+																		   variant={link.buttonvariant}
+																		   onmouseleave={handleButtonIconMouseLeave}
+																		   onmouseenter={handleButtonIconMouseEnter}>
+													</lightning-button-icon>
+													<div class="slds-hide" data-key={link.buttoniconname}>
+														<c-generic-tool-tip-popover-hum key={link.buttoniconname}
+																						tooltipbody={link.buttoniconname}
+																						tooltipclass='slds-nubbin_bottom-right slds-slide-from-top-to-bottom'
+																						tooptipstyle='position:absolute;top:-40px;left:-20px'>
+														</c-generic-tool-tip-popover-hum>
+													</div>
+												</div>
+											</template>
+										</template>
+									</div>
+								</template>
+							</div>
+						</template>
+						<template if:true={item.isText}>
+                        <div key={item.label} class={item.gridSize}>
+                            <template if:true={item.fieldname}>
+                                <template if:false={item.copyableField}>
+                                    <div class="slds-text-body_small slds-item_label slds-text-color_weak"
+                                    style={item.labelstyle}>{item.fieldname}:</div>
+                                </template>
+                                
+                                <template if:true={item.copyableField}>
+                                    <div class="slds-text-body_small slds-item_label slds-text-color_weak"
+                                    style={item.labelstyle}>{item.fieldname}: <c-generic-copy-icon-hum copycontent= {item.fieldvalue}></c-generic-copy-icon-hum></div>
+                                </template>
+                            </template>
+                            <template if:true={item.fieldvalue}>
+                                <div style={item.valuestyle} title={item.fieldvalue}
+                                    class="slds-text-body_small slds-item_detail slds-cell-wrap">
+                                    {item.fieldvalue}</div>
+                            </template>
+                        </div>
+                    </template>
+						<template if:true={item.isnodatasection}>
+							<div key={item.label} class="slds-align_absolute-center">
+								<c-generic-illustration-component-hum type="nodata" message={item.fieldvalue}>
+								</c-generic-illustration-component-hum>
+							</div>
+						</template>
+					</template>
+				</div>
+			</template>
+			<template if:true={lineitemdetails.footer}>
+				<div class="slds-grid slds-wrap slds-gutters slds-m-top_x-small">
+					<template if:false={lineitemdetails.footer.displaylogging}>
+						<div class="slds-col slds-size_1-of-1">
+							<template if:true={lineitemdetails.footer.fieldname}>
+								<div style={lineitemdetails.footer.labelstyle}>
+									<strong>{lineitemdetails.footer.fieldname}:</strong>
+								</div>
+							</template>
+							<template if:true={lineitemdetails.footer.fieldvalue}>
+								<div style={lineitemdetails.footer.valuestyle} class="slds-wrap">{lineitemdetails.footer.fieldvalue}</div>
+							</template>
+						</div>
+					</template>
+					<template if:true={lineitemdetails.footer.displaylogging}>
+						<div class="slds-col slds-size_1-of-1">
+							<div class="slds-grid slds-gutters slds-p-around_small">
+								<div class="slds-col slds-size_1-of-2">
+									<i>{attachCaseNote}</i>
+								</div>
+								<div class="slds-col slds-size_1-of-2">
+									<div class="slds-grid slds-gutters slds-grid_align-end">
+										<div class="slds-col">
+											<lightning-input label="Attach To" type="toggle" message-toggle-active="New Case" checked="true"
+															 message-toggle-inactive="Existing Case" onchange={handleToggle} data-id="caseToggle">
+											</lightning-input>
+										</div>
+										<div class="slds-col">
+											<lightning-button variant="brand" label="Finish" title="Finish" onclick={handleFinish}>
+											</lightning-button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</template>
+				</div>
+			</template>
+		</template>
+		<template if:true={cardComment}>
+			<lightning-layout multiple-rows="true" class="slds-grid_align-spread slds-grid slds-wrap">
+				<template for:each={lineitemdetails.body} for:item="item">
+					<lightning-layout-item size="4" key={item.fieldname}>
+						<template if:false={item.hidden}>
+							<template if:true={item.islink}>
+								<ul style="display: inline;" class="slds-m-top_x-small">
+									<li class="slds-text-body_small slds-item_label slds-text-color_weak" style="display: inline;">
+										<strong>{item.fieldname}:</strong>
+									</li>
+									<li style="display: inline;cursor:pointer;" title={item.fieldvalue} class="slds-text-body_small slds-item_detail slds-wrap slds-text-link slds-m-left_small" data-name={item.object} onclick={navigateToRecodPage}>
+										{item.fieldvalue}
+
+									</li>
+								</ul>
+							</template>
+							<template if:false={item.islink}>
+								<ul style="display: inline;">
+									<template if:true={item.fieldname}>
+										<li class="slds-text-body_small slds-item_label slds-text-color_weak" style="display: inline;">
+											<strong>{item.fieldname}:</strong>
+										</li>
+									</template>
+									<li style="display: inline;" title={item.fieldvalue} class="slds-text-body_small slds-item_detail slds-wrap slds-m-left_small">
+										{item.fieldvalue}
+									</li>
+								</ul>
+							</template>
+						</template>
+					</lightning-layout-item>
+				</template>
+
+				<lightning-layout-item size="12">
+					<div class="slds-border_top slds-m-top_x-small slds-m-bottom_x-small"></div>
+					<dl class="slds-list_inline">
+						<dt class="slds-item_label slds-text-color_weak slds-wrap slds-hyphenate" title={lineitemdetails.footer.fieldname}>
+							{lineitemdetails.footer.fieldname}:
+						</dt>
+						<dd class="slds-item_detail slds-wrap" title={lineitemdetails.footer.fieldvalue}>
+							{lineitemdetails.footer.fieldvalue}
+						</dd>
+					</dl>
+				</lightning-layout-item>
+			</lightning-layout>
+		</template>
+	</template>
+</template>

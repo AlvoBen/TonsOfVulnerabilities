@@ -1,0 +1,21 @@
+﻿<template>
+    <div class="an_container">
+        <div class="slds-grid slds-wrap" tabindex="0">
+            <div class="announcementgrp slds-grid slds-wrap slds-p-bottom_medium slds-grid_align-center">
+                <img src={announceIcon} class="an_image slds-col-3 ">
+                <h2 class="slds-col-8 slds-hyphenate slds-p-left_x-small an_heading">{label.announcementLabel}</h2>
+            </div>
+            <ul class="an_list-item">
+                <template for:each={lstAnnouncements} for:item="obj">
+                    <li key={obj.Title} class="slds-m-right_x-small slds-m-bottom_x-small an_topic-container">
+                        <h3 class="slds-p-bottom_small">{obj.Title}</h3>
+                        <p class="desc-text slds-p-bottom_small">{obj.Description}</p>
+                        <template if:true={obj.showUrl}>
+                            <a href={obj.Url} class="an_topic">{label.announcementURLLabel}</a>
+                        </template>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </div>
+</template>

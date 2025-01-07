@@ -1,0 +1,156 @@
+﻿<!--
+  @File Name          : demographicDrivenComponent.html
+  @Description        : 
+  @Author             : ChangeMeIn@UserSettingsUnder.SFDoc
+  @Group              : 
+  @Last Modified By   : ChangeMeIn@UserSettingsUnder.SFDoc
+  @Last Modified On   : 07-20-2020
+  @Modification Log   : 
+  Ver       Date            Author      		             Modification
+  1.0    4/29/2020   ChangeMeIn@UserSettingsUnder.SFDoc     Initial Version
+  2.0    2/23/2021   Ankit Avula                            Email Field Dropdown
+-->
+<template>
+    <div if:false={hideDriven}>
+    <template if:true={renderDataModel.reactive}>
+        <template for:each={messageHolder} for:item="holder">
+            <template if:true={holder.display}>
+                <template if:true={holder.header}>
+                    <template for:each={holder.message} for:item='message'>
+                        <div key={holder.order} class="message-div">
+                            <div class="noteAlt">
+                                {message}
+                            </div>
+                        </div>
+                    </template>
+                </template>
+            </template>
+        </template>
+        <template for:each={editFieldList} for:item="field">
+            <template if:true={field.display}>
+                <div class="field-editable-container slds-p-top_small slds-p-bottom_small" key={field.order}>
+                    <div class="account-editable-label">
+                        <lightning-formatted-text class="account-editable-label-text" value={field.label}>
+                        </lightning-formatted-text>
+                    </div>
+                    <div class="empty-container"></div>
+                    <div class="account-editable-value">
+                        <template if:true={field.renderLogic.isTextArea}>
+                            <lightning-textarea class="is-required" value={field.value} data-index={field.order}
+                                data-mode="editInput" name="address text area" variant="label-hidden"
+                                message-when-value-missing={field.required.message} required={field.required.value}
+                                onchange={handleFieldChange} disabled={field.disabled}>
+                            </lightning-textarea>
+                        </template>
+                        <template if:true={field.renderLogic.isCombo}>
+                            <lightning-combobox data-index={field.order} data-mode="editInput" name="Address State"
+                                value={field.value} options={stateOptions} class="is-required" variant="label-hidden"
+                                required={field.required.value} message-when-value-missing={field.required.message}
+                                onchange={handleFieldChange} disabled={field.disabled}>
+                            </lightning-combobox>
+                        </template>
+                        <template if:true={field.renderLogic.isDate}>
+                            <lightning-input type={field.type} data-index={field.order} date-style="short"
+                                data-mode="editInput" required={field.required.value}
+                                message-when-value-missing={field.required.message} onchange={handleFieldChange}
+                                class="is-required" variant="label-hidden" value={field.value} disabled={field.disabled}>
+                            </lightning-input>
+                        </template>
+                        <template if:true={field.renderLogic.isTel}>
+                            <lightning-input type={field.type} data-index={field.order} data-mode="editInput"
+                                max-length={field.maxLength} placeholder="(XXX) XXX-XXXX" pattern={field.pattern.value}
+                                class="is-required" variant="label-hidden" required={field.required.value}
+                                onchange={handleFieldChange} message-when-pattern-mismatch={field.pattern.message}
+                                message-when-value-missing={field.required.message} value={field.value} disabled={field.disabled}>
+                            </lightning-input>
+                        </template>
+                        <template if:true={field.renderLogic.isText}>
+                            <lightning-input type={field.type} data-index={field.order} data-mode="editInput"
+                                max-length={field.maxLength} pattern={field.pattern.value} required={field.required.value}
+                                onchange={handleFieldChange} message-when-pattern-mismatch={field.pattern.message}
+                                message-when-value-missing={field.required.message} class="is-required"
+                                variant="label-hidden" value={field.value} disabled={field.disabled}>
+                            </lightning-input>
+                            <template if:true={field.buttonRender}>
+                                <template for:each={field.buttonModel} for:item="button">
+                                    <lightning-button key={button.order} data-id={button.order} data-fieldid={field.order}
+                                        variant="brand" onclick={handleButtonClick}
+                                        disabled={button.setDisable} label={button.label} 
+                                        class="verifyaddr-btn">
+                                    </lightning-button>
+                                    <template if:true={isBadRequest}>
+                                        <lightning-formatted-text class="bad-request-msg bad-request-pulse"
+                                            key={button.order} value="Please click the button to Re-Verify">
+                                        </lightning-formatted-text>
+                                    </template>
+                                </template>
+                            </template>
+                        </template>
+                        <template if:true={field.renderLogic.isEmail}>
+                            <div if:false={US1529400Switch}>
+                                <!--Old Email Field -->
+                                <lightning-input type={field.type} value={field.value} data-mode="editInput" class="is-required" variant="label-hidden"
+                                    onchange={handleFieldChange} required={field.required.value} message-when-value-missing={field.required.message}
+                                    data-index={field.order} disabled={field.disabled} max-length={field.maxLength}>
+                                </lightning-input>
+                            </div>
+                            <!--New Email Field-->
+                            <div if:true={US1529400Switch} class={field.emailErrorClass}>
+                                <input type="text" class="slds-scope slds-input is-required" list={emailOptionsList} oninput={handleFieldChange} 
+                                    data-mode="editInput" value={field.value} data-index={field.order} disabled={field.disabled} 
+                                    maxlength={field.maxLength} pattern={field.pattern.value} data-typename="email" />
+                                <template if:true={field.emailHasError}>
+                                    <div data-help-message="true" role="alert" class="slds-form-element__help invalid-item">Email entered is invalid</div>
+                                </template>
+                                <datalist id={emailOptionsId} data-id={emailOptionsList}>
+                                    <option>NONE</option>
+                                    <option>DECLINED</option>
+                                </datalist>
+                            </div>
+                        </template>
+                        <template if:true={field.renderLogic.isRadioGroup}>
+                            <div class="update-cb-value">
+                                <fieldset class={field.validityResult.class}>
+                                    <div class="slds-form-element__control">
+                                        <template for:each={field.options} for:item="option">
+                                            <span class="slds-radio" key={option.id}>
+                                                <input type="radio" id={option.id} value={option.value} name="error"
+                                                    checked={option.checked} onchange={handleFieldChange}
+                                                    data-label={option.label} data-index={field.order} data-mode="editInput"
+                                                    data-valid={field.validityResult.valid} />
+                                                <label class="slds-radio__label" for={option.id}>
+                                                    <span class="slds-radio_faux"></span>
+                                                    <span class={field.validityResult.labelClass}>{option.label}</span>
+                                                </label>
+                                            </span>
+                                        </template>
+                                    </div>
+                                </fieldset>
+                                <span class="invalid-item">{field.validityResult.message}</span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <template if:true={field.note}>
+                    <div class="slds-p-bottom_small" key={field.order}>
+                        <strong>Note:</strong> {field.note}
+                    </div>
+                </template>
+            </template>
+        </template>
+        <template for:each={messageHolder} for:item="holder">
+            <template if:true={holder.display}>
+                <template if:true={holder.footer}>
+                    <template for:each={holder.message} for:item='message'>
+                        <div key={holder.order} class="message-div">
+                            <div class="noteAlt">
+                                {message}
+                            </div>
+                        </div>
+                    </template>
+                </template>
+            </template>
+        </template>
+    </template>
+    </div>
+</template>

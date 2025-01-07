@@ -1,0 +1,8 @@
+﻿<!--
+Modification Log: 
+ * Developer Name           Code Review                  Date                       Description
+ *------------------------------------------------------------------------------------------------------------------
+ * Siddharth Mehta                                       07/27/2017                  REQ - 323549 : SF - TECH - Remove AHT Components Dependencies (RF) 
+-->
+<apex:component >
+</apex:component>

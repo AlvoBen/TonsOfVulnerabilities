@@ -1,0 +1,30 @@
+﻿<!--
+Page Name        : LiveChatPostSurvey_VF_HUM
+Version          : 1.0 
+Created Date     : January 14 2022
+Function         : Custom blank VF page which will be used in Post Survey redirect 
+                    will trigger close Post Message
+Modification Log :
+*   Modification ID     Developer                     Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*           1.0         Vishnu Pilli                                     01/14/2022          Original Version
+  ------------------------------------------------------------------------------------------------------------------------------>
+<apex:page showheader="false" standardStyleSheets="false" >
+<!-- Loading jQuery toolkit as per VF standards -->
+<apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+
+<script type='text/javascript'>
+    /*
+        GBO Watson: Adding post message to help GBO Watson team to close the window
+    */
+    function postMessageAndClose() {
+        window.parent.postMessage('Close Window', '*');
+        setTimeout(function(){ window.close(); }, 1000);
+    }   //  end of postMessageAndClose
+
+    $( document ).ready(function() {
+        postMessageAndClose();
+    });
+</script>
+
+</apex:page>

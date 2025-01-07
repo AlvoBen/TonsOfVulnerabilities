@@ -1,0 +1,11 @@
+﻿<!--************************************************************************************************************************************************************************************       
+Vf Page Name  : CRM_Retail_Task_ListView_Redirect_VF_HUM 
+Created Date     : 23 February 2022
+Function         : Used in CRM Retail Task Mass Delete flow's retURL to redirect user to initial list view page
+**Modification Log
+* Developer Name          Code Review #         Date                       Description
+************************************************************************************************************************************************************************************
+* Vivek Sharma                               02/23/2022                User Story 3118168: T1PRJ0154546 MF9 Storefront - Mass Delete Task Records & New List View
+************************************************************************************************************************************************************************************-->
+<apex:page standardController="Task" recordSetVar="recordsList" action="{!list}">
+</apex:page>

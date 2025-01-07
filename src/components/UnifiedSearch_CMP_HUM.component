@@ -1,0 +1,41 @@
+﻿<!--
+Component Name   : HUM_SearchUnified
+Version          : 1.0 
+Created Date     : 01/12/2021
+Function         : Component use to pass request JSON in Search Unified Screen.
+Modification Log :
+* Developer                 Code review         Date                  Description
+* -------------------------------------------------------------------------------------------------
+* Yogesh Gupta                                  01/12/2021            New Component Cretaed - V1
+* Nirmal Garg									07/27/2021			  Added more logic
+* Nirmal Garg									09/16/2021			  Added browser logic for coveo
+* Pinky Vijur									09/28/2021			  Added Claim Details page to correct alignment 
+------------------------------------------------------------------------------------------------------------>
+
+<apex:component controller="UnifiedSearch_C_HUM">
+	<apex:includeScript value="/support/console/41.0/integration.js" />
+	<apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.UnifiedSearch_SR_HUM, 'UnifiedSearch_JS_HUM.js')}" />
+	<apex:attribute name="policyMemberId" assignTo="{!sPolicyMemberId}" type="String" description="This to get Id of policy Member"/>
+	<apex:attribute name="PageNameToPass" assignTo="{!sPageName}" type="String" description="This to get page name" />
+	<apex:attribute name="customMargin" assignTo="{!bCustomMargin}" type="Boolean" description="This is to get if custom margin is present" required="false" />
+	<apex:attribute name="customMarginValue" assignTo="{!sCustomMarginVal}" type="String" description="This is to get custom Margin value if customMargin is true" required="false"/>
+	<apex:form >
+		<apex:actionFunction action="{!createCoveoMessage}" name="createCoveoMessage" oncomplete="sendCoveoMessage('{!JSENCODE(sCoveoMessage)}')">
+			<apex:param assignTo="{!sCaseId}" name="sCaseId" value="" />
+			<apex:param assignTo="{!sInteractionId}" name="sInteractionId" value="" />
+		</apex:actionFunction>
+		<apex:actionFunction action="{!decodeTabLink}" name="decodeTabLink" oncomplete="processTabData('{!JSENCODE(sDecodedTabUrl)}')">
+			<apex:param assignTo="{!sTabURL}" name="sTabURL" value="" />
+		</apex:actionFunction>
+		<apex:commandButton id="btnCoveo" style="{!margin}" value="Unified Search" onclick="launchCoveo();return false;" rendered="{!bCoveoSearchUser}"></apex:commandButton>
+	</apex:form>
+	<script>
+		var onLoadSubTabID;
+		var bCoveoSearchUser = '{!bCoveoSearchUser}';
+		var coveoMessage;
+		var labelMessage = '{!$Label.UnifiedSearch_Console_Msg}';
+		getCoveoPrimaryTabId();
+		executeCoveoFocused();
+	</script>
+</apex:component>

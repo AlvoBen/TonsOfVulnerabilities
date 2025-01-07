@@ -1,0 +1,30 @@
+﻿<!--
+Modification Log: 
+* Developer Name                       Date                         Description
+* Kalyani Pachpol	                  05/12/2022                    US-3185548                         
+*------------------------------------------------------------------------------------------------------------------------------
+-->
+<template>
+    <div>
+         <article>
+                <h3><strong>Health Conditions and Allergies</strong></h3><br />
+                <dl class="slds-list_stacked">
+                    <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Health Conditions">Health
+                        Conditions</dt>
+                    <dd class="slds-item_detail slds-truncate" title="Health Conditions">
+                        <textarea class="healthconditions" readonly cols="33" rows="6" style="resize: none; width: 100%;"
+                        wrap="hard">
+                        {healthconditions}
+                    </textarea>
+                    </dd>
+                    <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Allergies">Allergies</dt>
+                    <dd class="slds-item_detail slds-truncate" title="Allergies">
+                        <textarea class="allergies" readonly cols="33" rows="6" style="resize: none; width: 100%;"
+                        wrap="hard">
+                        {allergies}
+                    </textarea>
+                    </dd>
+                </dl>
+            </article>
+    </div>
+</template>

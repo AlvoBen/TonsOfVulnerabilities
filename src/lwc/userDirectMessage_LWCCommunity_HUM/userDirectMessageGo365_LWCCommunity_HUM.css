@@ -1,0 +1,98 @@
+.messageBox {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    border: solid 2px #164aad;
+    background-color: #ffffff;
+    padding: 24px;
+    position: fixed;
+    bottom: 0;
+    z-index: 999;
+    width:34.16%;
+    right: 4.1%;
+}
+
+.header {
+    font-family: FSHumana;
+    font-size: 30px;
+    line-height: 1.2;
+    letter-spacing: -0.16px;
+    color: #58595c;
+}
+
+.header-wrapper {
+    margin-bottom: 24px;
+}
+
+.closeText {
+    width: 36px;
+    height: 23px;
+    font-family: FSHumana;
+    font-size: 15px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.53;
+    letter-spacing: normal;
+    color: #6b6c6f;
+    cursor: pointer;
+}
+
+.sendButton {
+    margin-top: 16px;
+}
+
+.modalHeader {
+    font-family: FSHumana;
+    font-size: 22px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.36;
+    letter-spacing: normal;
+    color: #414042;
+}
+
+.closeButton {
+
+    font-family: FSHumana;
+    font-size: 15px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.53;
+    letter-spacing: normal;
+    color: #6b6c6f;
+}
+
+.ssp-desktopView {
+    display: block;
+}
+
+.ssp-mobileView {
+    display: none;
+}
+
+.bodyPadding {
+    padding: 20px;
+}
+
+.sendMessageButton {
+    margin-top: 24px;
+}
+
+@media only screen and (max-width: 767px) {
+    .ssp-desktopView {
+        display: none;
+    }
+
+    .ssp-mobileView {
+        display: block;
+    }
+
+    .sendMessageButton.slds-m-left_medium {
+        margin-left: 0;
+    }
+    .sendMessageButton {
+        width: 100%;
+        text-align: center;
+    }
+}

@@ -1,0 +1,16 @@
+﻿<!------------------------------------------------------------------------------------------------------------------------------------
+Page Name        : WorkQueueDownload_VF_HUM
+Version          : 1.0 
+Created Date     : 06/14/2016
+Function         : This VF page is used to download Work Queue data
+Modification Log :
+*   Developer         Code Review       Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Sharan Shanmugam                  06/14/2016            Original Version
+--------------------------------------------------------------------------------------------------------------------------------------->
+
+<apex:page Controller="WorkQueueDownload_C_HUM" contentType="application/vnd.ms-excel#Work_Queue.csv" id="thePage"> {!$ObjectType.Work_Queue_Setup__c.Fields.Name.Label},"{!$Label.WORKQUEUEAPP_PGQID_HUM}","{!$Label.WORKQUEUEAPP_PGQNAME_HUM}","{!$ObjectType.Work_Queue_Setup__c.Fields.Security_Group__c.Label}","{!$ObjectType.Work_Queue_Setup__c.Fields.CokY__c.Label}","{!$ObjectType.Work_Queue_Setup__c.Fields.DST__c.Label}","{!$ObjectType.Work_Queue_Setup__c.Fields.General__c.Label}","{!$ObjectType.Work_Queue_Setup__c.Fields.HO_Dental__c.Label}","{!$ObjectType.Work_Queue_Setup__c.Fields.HO_Medical__c.Label}","{!$ObjectType.Work_Queue_Setup__c.Fields.Service_Center__c.Label}","{!$ObjectType.Work_Queue_Setup__c.Fields.Department__c.Label}","{!$ObjectType.Work_Queue_Setup__c.Fields.Queue_Description__c.Label}","{!$ObjectType.Work_Queue_Setup__c.Fields.Classification_Type__c.Label}","{!$Label.WORKQUEUEAPP_ACTIVE_HUM}","{!$ObjectType.Queue_View__c.Fields.Name.Label}","{!$Label.WORKQUEUEAPP_PGVID_HUM}","{!$Label.WORKQUEUEAPP_PGVNAME_HUM}","{!$Label.QUEUEVIEW_ACTIVE_HUM}"
+    <apex:repeat value="{!lstQueueView }" var="queueView" id="repeatQV">
+        {!queueView.Work_Queue_Name__r.Name},"{!queueView.Work_Queue_Name__r.Public_Group_Queue_Id__c}","{!mapGroups[queueView.Work_Queue_Name__r.Public_Group_Queue_Id__c].Name}","{!queueView.Work_Queue_Name__r.Security_Group__c}","{!queueView.Work_Queue_Name__r.CokY__c}","{!queueView.Work_Queue_Name__r.DST__c}","{!queueView.Work_Queue_Name__r.General__c}","{!queueView.Work_Queue_Name__r.HO_Dental__c}","{!queueView.Work_Queue_Name__r.HO_Medical__c}","{!queueView.Work_Queue_Name__r.Service_Center__c}","{!queueView.Work_Queue_Name__r.Department__c}","{!queueView.Work_Queue_Name__r.Queue_Description__c}","{!queueView.Work_Queue_Name__r.Classification_Type__c}","{!queueView.Work_Queue_Name__r.IsActive__c}","{!queueView.Name}","{!queueView.Public_Group_View_Id__c}","{!mapGroups[queueView.Public_Group_View_Id__c].Name}","{!queueView.Work_Queue_Name__r.IsActive__c}"
+    </apex:repeat>
+</apex:page>

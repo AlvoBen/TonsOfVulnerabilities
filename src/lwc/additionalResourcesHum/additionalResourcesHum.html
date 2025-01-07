@@ -1,0 +1,28 @@
+﻿<!--*******************************************************************************************************************************
+LWC Name    : AdditionalResourcesHum.html. 
+Function    : LWC to display Additional resource Popover section on Utility Bar.
+
+Developer Name             Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Aishwarya Pawar          09/26/2022                 REQ- 3742726-T1PRJ0170850- MF19876 - Lightning- Additional Resources -Utility Bar
+* Jonathan Dickinson       07/26/2023                 User Story 4779925: T1PRJ1117588- MF 27094 - CarePlus - Lightning CRM - Create a CarePlus section on Additional Resource Widget
+*********************************************************************************************************************************-->
+
+<template>
+    <template if:true={showSections}>
+        <lightning-accordion allow-multiple-sections-open active-section-name={activeSections}>
+            <template if:true={resources}>
+                <template for:each={resources} for:item="item">
+                    <lightning-accordion-section key={item.Id} name={item.label} label={item.label}>
+                        <template if:true={item.value}>
+                            <template for:each={item.value} for:item="link">
+                                <p style="cursor: pointer;" key={link.Id} data-id={link.value} data-name={link.name}
+                                    onclick={openURL} class="slds-text-link slds-p-around_xx-small">{link.name}</p>
+                            </template>
+                        </template>
+                    </lightning-accordion-section>
+                </template>
+            </template>
+        </lightning-accordion>
+    </template>
+</template>

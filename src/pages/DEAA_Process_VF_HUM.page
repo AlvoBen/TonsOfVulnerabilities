@@ -1,0 +1,37 @@
+﻿<!--
+Page Name        : DEAA_Process_VF_HUM
+Version          : 1.0 
+Created Date     : November 14 2019               
+Controller Class : DEAA_Process_C_HUM
+
+*Modification Log :
+* Developer              Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Mohammed Noor                              11/14/2019           Original version.
+*********************************************************************************************************************************-->
+<apex:page controller="DEAA_Process_C_HUM">
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY,'jquery.min.js')}"/>  
+    <apex:includeScript value="/support/console/31.0/integration.js" /> 
+    <apex:includeScript value="{!$Resource.HUMUnSavedChangesJS}"/>           
+    <apex:includeScript value="{!URLFOR($Resource.DEAA_Process_SR_HUM, 'DEAA_Process_SR_JS_HUM.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.DEAA_Process_SR_HUM, 'DEAA_Process_SR_CSS_HUM.css')}"/>    
+    
+    <apex:outputpanel >
+        <style type="text/css">
+            .FlowPageBlockBtns {
+                text-align: left !important;
+            }
+        </style>
+    </apex:outputpanel>
+     
+    <flow:interview id="DEAANew" name="DEAA_Member_Opt_Out_Process" finishLocation="{!FinishPage}" rendered="{!!bSubmissionExist}">
+       <apex:param name="WhoId" value="{!sSelectedCaseId}"/>
+       <apex:param name="SID" value="{!SubmissionId }"/>         
+    </flow:interview>
+    
+    <flow:interview id="DEAACompleted" name="DEAA_Member_Opt_Out_Process" finishLocation="{!$Page.HUMCloseFlow}" rendered="{!bSubmissionExist}">
+       <apex:param name="WhoId" value="{!sSelectedCaseId}"/>                 
+       <apex:param name="SID" value="{!SubmissionId }"/>        
+    </flow:interview>        
+    
+</apex:page>

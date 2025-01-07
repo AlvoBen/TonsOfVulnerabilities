@@ -1,0 +1,34 @@
+﻿<!--
+Component Name   : HUMTaskCommentsComponent
+Version          : 1.0
+Created On       : Feb 27 2015
+Function         : This Component is used to show Task Comments in Task detail Page
+
+Modification Log :
+*  Developer            Code Review             Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Asha Deepika Koyyana   21256                02/27/2015           Original Version
+* Asha Deepika Koyyana   21857                03/26/2015           Fixed defect #177621.0001     
+* Prudhvi Pamarthi       154304               01/19/2018           REQ - 328929 Fix for HUMExceptionHelper: DML 
+********************************************************************************************************************************
+-->
+<apex:component controller="HUMTaskCommentsController" >
+  <apex:attribute name="taskid" type="String" assignTo="{!sTaskId}" required="true" description="" />
+  <!-- For Constructor Related exception -->
+  <c:HUMConstructorExceptionComponent errorLogs="{!listErrorLogs}" />
+  <apex:Pageblock >
+    <apex:outputLabel style="font-weight: bold">{!$Label.HUMTaskComments} </apex:outputLabel>
+    <apex:pageBlockTable value="{!lstComments}" var="task" id="theTable">
+      <apex:column headerValue="" value="{!task.SObjFieldValue__c}"/>
+    </apex:pageBlockTable>
+    <apex:outputPanel id="PagenationId" style="margin-left:49%;"  rendered="{!IF(NOT(ISBLANK(lstComments)) && lstComments.size > 0, true , false)}">
+      <apex:outputLabel value="{!PageFirstRecord }"/>-
+      <apex:outputLabel value="{!PageLastRecord }"/>&nbsp;of&nbsp;
+      <apex:outputLabel value="{!Total_size}"/>&nbsp;
+      <apex:commandButton action="{!getFirstList}" title="{!$Label.HUMFirstLabel}" value="{!$Label.HUMFirstLabel}" disabled="{!disablePrevious}" reRender="theTable,PagenationId" />
+      <apex:commandButton action="{!getPrevious}" title="{!$Label.HUMPrevious}" value="{!$Label.HUMPrevious}" disabled="{!disablePrevious}" reRender="theTable,PagenationId"  />
+      <apex:commandButton action="{!getNext}" title="{!$Label.HUMNext}" value="{!$Label.HUMNext}" disabled="{!disableNext}" reRender="theTable,PagenationId"  />
+      <apex:commandButton action="{!getLastList}" title="{!$Label.HUMLastLabel}" value="{!$Label.HUMLastLabel}" disabled="{!disableNext}" reRender="theTable,PagenationId" />
+    </apex:outputPanel>
+  </apex:Pageblock>
+</apex:component>

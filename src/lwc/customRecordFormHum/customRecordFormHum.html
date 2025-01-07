@@ -1,0 +1,57 @@
+﻿<!--
+LWC Name        : customRecordFormHum.html
+Function        : LWC to display Record form
+
+Modification Log:
+* Developer Name                Date                       Description
+* Mohan                         05/05/2021                  US: 2145904
+* Supriya                       05/21/2021                  US: 2094537
+* Supriya                       06/09/2021                  Added checkbox field
+* Mohan                           08/03/2021                  US: 2149972
+* Supriya Shastri                 09/07/2021                US: 2483754 Table Formatting Updates
+* Supriya Shastri				  03/16/2021				US-1985154
+* Muthu kuamr					06/17/2022					DF-5051
+* Vardhman Jain                 09/02/2022                  US: 3043287 Member Plan Logging stories Changes.
+* Vardhman Jain                 09/22/2022                  DF-6281 Fix
+****************************************************************************************************************************-->
+<template>
+	<lightning-card if:true={bDataLoaded} class={headerCss}>
+		<h3 slot="title" if:true={hideAccordian}>
+            <span class="slds-p-left_x-small">{title}</span>
+        </h3>
+		<lightning-accordion allow-multiple-sections-open active-section-name='form' onsectiontoggle={handleAccordionToggle}>
+				<lightning-accordion-section name="form" label={title} class={customAccordionCss}>
+					<lightning-record-view-form record-id={recordId} object-api-name="Account">
+						<div class="slds-p-horizontal_xx-small form-details">
+							<div class="slds-form" role="list">
+								<div class="slds-form__row">
+									<template for:each={aData} for:item="oField">
+										<template if:false={oField.hide}>
+										<div class="slds-col slds-p-horizontal_small slds-size_1-of-2" role="listitem" key={oField}>
+											<div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-hint-parent"
+												style="height: 100%">
+												<span data-id={oField.label} class="slds-grid logthis"><span onclick={handleLogging}  data-donotlog={oField.donotlog} class="slds-form-element__label">{oField.label}</span>
+													<c-custom-tooltip-hum if:true={oField.hasHelp} help-text={oField.tooltipMsg} class="start-help-text custom-help ">
+												</c-custom-tooltip-hum>
+											</span> 
+												<div if:false={oField.checkbox}>
+													<span data-value={oField.label} class="slds-hyphenate slds-form-element__static" if:false={oField.isHyperlink}>{oField.value} &nbsp;</span>
+													<a if:true={oField.isHyperlink} data-val={oField.label} class="slds-form-element__static" data-action={oField.action} onclick={onHyperLinkClick}>{oField.value}</a>
+													<c-custom-tooltip-hum if:true={oField.copyToClipBoard} class="slds-show_inline-block slds-is-relative" onclick={copyToBoard} data-field={oField.mapping} 
+													icon-type=true help-text={copyClipBoardMsg} icon-position=true></c-custom-tooltip-hum>
+												</div>
+												<template if:true={oField.checkbox}>
+													<lightning-input type="checkbox" checked={oField.value} disabled></lightning-input>
+												</template>
+											</div>
+										</div>
+									</template>
+									</template>
+								</div>
+							</div>
+						</div>
+					</lightning-record-view-form>
+				</lightning-accordion-section>
+		</lightning-accordion>
+	</lightning-card>
+</template>

@@ -1,0 +1,147 @@
+﻿<!--
+Page Name        : LinkedCases_VF_HUM
+Version          : 1.0 
+Created Date     : 06/10/2016
+Function         : This Page will display the linked cases to the case opened.
+Modification Log :
+* Developer               Code Review            Date                 Description
+* -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* Harika Devi Kalidindi     33954             06/10/2016         REQ-269761 Original  Version.
+* Shreya Choodamani	        90487             04/28/2017         REQ#: 311397 Updated the code to show the Unlink hyperlink for Pharmacy Supervisors
+* Vinay Lingegowda				08/26/2020			User Story 1364284: PR00091574 - IR 5050-OGO- Add clone identifier on Case detail page (Clone case)- (CRM)	
+* Vinay Lingegowda                            10/10/2020         USER STORY 1544779 PR00091574 - IR 5050 - OGO - Tech Debt- Remove switch for OGO on/off(CRM)
+* Mithra Bharadwaj                                             US#1522825 SonarQube Changes
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+
+<apex:page standardController="Case"  extensions="LinkedCases_C_HUM" showHeader="true" standardStylesheets="true" sidebar="false" applyBodyTag="false" docType="html-5.0"  >
+  <apex:includeScript value="/support/console/36.0/integration.js"/>
+  <apex:includescript value="{!URLFOR($Resource.LinkedCases_JS_HUM,'/LinkedCasesJS.js')}"/>
+  <apex:form >
+    <apex:pageBlock id="pBlock">
+      <apex:pageBlockSection id="relatedCaseDetails" columns="1" >
+        <apex:outputPanel layout="Block" id="oPanel">
+          <apex:pageBlockTable value="{!Listwrapper}" var="casejunction" id="related_cases"  border="1"  >
+            <apex:column headerValue="Action" rendered="{!if($Profile.Name ==$Label.HUMAgencyCCSupervisor || sPharmacyUser ==$Label.PharmacyUserSupervisorYes_HUM,TRUE,FALSE)}" width="7%"  >
+              <apex:commandLink value="Unlink" action="{!unlinking}" reRender="pBlock" style="color: #337ab7;">
+                <apex:param name="caseNo" value="{!casejunction.sCaseId}"  />
+              </apex:commandLink>
+            </apex:column>
+            <apex:column width="8%">
+              <apex:facet name="header">
+                <apex:commandLink reRender="pBlock" action="{!doSort}" value="{!$Label.HUMCaseID}{!IF(sortableField=='sCaseCaseNumber',IF(sortOrder='DESC','▼','▲'),'')}" >
+                  <apex:param value="sCaseCaseNumber" name="column" assignTo="{!SortableField}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+              <apex:commandLink onclick="openTab('{!JSENCODE(casejunction.sCaseId)}','{!JSENCODE(casejunction.sCaseCaseNumber)}'); return false;" value="{!casejunction.sCaseCaseNumber}" style="color: #337ab7;"/>
+            </apex:column>
+            <apex:column width="8%" >
+              <apex:facet name="header">
+                <apex:commandLink reRender="pBlock" action="{!doSort}" value="{!$Label.HUMCaseClassification}{!IF(sortableField=='sCaseClassification',IF(sortOrder='DESC','▼','▲'),'')}">
+                  <apex:param value="sCaseClassification" name="column" assignTo="{!SortableField}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+              <apex:outputText value="{!casejunction.sCaseClassification}" />
+            </apex:column>
+            <apex:column width="8%" >
+              <apex:facet name="header">
+                <apex:commandLink reRender="pBlock" action="{!doSort}" value="{!$Label.HUMCaseIntent}{!IF(sortableField=='sCaseIntent',IF(sortOrder='DESC','▼','▲'),'')}" >
+                  <apex:param value="sCaseIntent" name="column" assignTo="{!sortableField}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+              <apex:outputText value="{!casejunction.sCaseIntent} "/>
+            </apex:column>
+            <apex:column width="15%" >
+              <apex:facet name="header">
+                <apex:commandLink reRender="pBlock" action="{!doSort}" value="{!$Label.HUMIntAboutFieldLabel}{!IF(sortableField=='sCaseInteractingAbout',IF(sortOrder='DESC','▼','▲'),'')}" >
+                  <apex:param value="sCaseInteractingAbout" name="column" assignTo="{!sortableField}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+              <apex:outputText value="{!casejunction.sCaseInteractingAbout}" />
+            </apex:column>
+            <apex:column width="10%" >
+              <apex:facet name="header">
+                <apex:commandLink reRender="pBlock" action="{!doSort}" value="{!$Label.HUMCaseStatus}{!IF(sortableField=='sCaseStatus',IF(sortOrder='DESC','▼','▲'),'')}">
+                  <apex:param value="sCaseStatus" name="column" assignTo="{!sortableField}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+              <apex:outputText value="{!casejunction.sCaseStatus}"/>
+            </apex:column>
+            <apex:column width="8%" >
+              <apex:facet name="header">
+                <apex:commandLink reRender="pBlock" action="{!doSort}" value="{!$Label.HUMCaseCreatedDate} {!IF(sortableField=='dCaseCreatedDate',IF(sortOrder='DESC','▼','▲'),'')}">
+                  <apex:param value="dCaseCreatedDate" name="column" assignTo="{!sortableField}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+              <apex:outputText value="{0,date,MM/dd/yy}" >
+                <apex:param value="{!casejunction.dCaseCreatedDate}" />
+              </apex:outputText>
+            </apex:column>
+            <apex:column width="8%">
+              <apex:facet name="header">
+                <apex:commandLink reRender="pBlock" action="{!doSort}" value="{!$Label.HUMCaseClosedDate} {!IF(sortableField=='dCaseClosedDate',IF(sortOrder='DESC','▼','▲'),'')}" >
+                  <apex:param value="dCaseClosedDate" name="column" assignTo="{!sortableField}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+              <apex:outputText value="{0,date,MM/dd/yy}" >
+                <apex:param value="{!casejunction.dCaseClosedDate}" />
+              </apex:outputText>
+            </apex:column>
+            <apex:column width="8%" rendered="{!bOGOUser}">
+              <apex:facet name="header">
+                <apex:param value="sIsCloneCase" name="column" ></apex:param>
+              </apex:facet>
+              <apex:outputText value="{!casejunction.sIsCloneCase}"/>
+            </apex:column>
+            <apex:column width="12%">
+              <apex:facet name="header">
+                <apex:commandLink reRender="pBlock" action="{!doSort}" value="{!$Label.HUMCaseCreatedBy} {!IF(sortableField=='sCaseCreatedByName',IF(sortOrder='DESC','▼','▲'),'')}" >
+                  <apex:param value="sCaseCreatedByName" name="column" assignTo="{!sortableField}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+              <apex:outputText value="{!casejunction.sCaseCreatedByName}" />
+            </apex:column>
+            <apex:column width="8%" >
+              <apex:facet name="header">
+                <apex:commandLink reRender="pBlock" action="{!doSort}" value="{!$Label.HUMCaseQueue} {!IF(sortableField=='sCaseCreatedByQueue',IF(sortOrder='DESC','▼','▲'),'')}">
+                  <apex:param value="sCaseCreatedByQueue" name="column" assignTo="{!sortableField}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+              <apex:outputText value="{!casejunction.sCaseCreatedByQueue}"/>
+            </apex:column>
+            <apex:column width="15%" >
+              <apex:facet name="header">
+                <apex:commandLink reRender="pBlock" action="{!doSort}" value="{!$Label.HUMCaseLinkedBy} {!IF(sortableField=='dCreatedDate',IF(sortOrder='DESC','▼','▲'),'')}">
+                  <apex:param value="dCreatedDate" name="column" assignTo="{!sortableField}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+              <apex:outputText value="{!casejunction.sCreatedByName}" />&nbsp;&nbsp;
+              <apex:outputText value="{0,date,MM/dd/yy}" >
+                <apex:param value="{!casejunction.dCreatedDate}" />
+              </apex:outputText>
+            </apex:column>
+            <apex:column width="8%" >
+              <apex:facet name="header">
+                <apex:commandLink reRender="pBlock" action="{!doSort}" value="{!$Label.HUMCaseLinkedByQueue} {!IF(sortableField=='sWorkQueueName',IF(sortOrder='DESC','▼','▲'),'')}">
+                  <apex:param value="sWorkQueueName" name="column" assignTo="{!sortableField}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+              <apex:outputText value="{!casejunction.sWorkQueueName}"/>
+            </apex:column>
+          </apex:pageBlockTable>
+        </apex:outputPanel>
+      </apex:pageBlockSection>
+
+      <apex:pageblockSection id="pgSect3" columns="1" >
+        <apex:outputPanel layout="block" id="otpNav" styleClass="pSearchShowMore">
+          {!$Label.HUMTotalRecordsFound}
+          {!Total_size} &nbsp;
+          ({!PageFirstRecord }-{!PageLastRecord})&nbsp;
+          <apex:commandButton action="{!getFirst}" title="First Page" value="{!$Label.HUMFirstLabel}" rendered="{!DisablePrevious}" reRender="pBlock"  />&nbsp;&nbsp;&nbsp;
+          <apex:commandButton action="{!getPrevious}" title="Previous Page" value="{!$Label.HUMPreviousLabel}" rendered="{!DisablePrevious}" reRender="pBlock" />&nbsp;&nbsp;&nbsp;
+          <apex:commandButton action="{!getNext}" title="Next Page" value="{!$Label.HUMNextLabel}" rendered="{!DisableNext}" reRender="pBlock" />&nbsp;&nbsp;&nbsp;
+          <apex:commandButton action="{!getLast}" title="Last Page" value="{!$Label.HUMLastLabel}" rendered="{!DisableNext}"  reRender="pBlock"/>&nbsp;&nbsp;&nbsp;
+        </apex:outputPanel>
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+  </apex:form>
+</apex:page>

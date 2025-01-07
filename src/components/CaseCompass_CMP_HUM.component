@@ -1,0 +1,55 @@
+﻿<!--
+Component Name   : CaseCompass_CMP_HUM.component
+Version          : 1.0
+Created On       : 08/31/2017
+Function         : VF Component to display case compass table from the controller CompassExtension_C_HUM
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *---------------------------------------------------------------------------------------------------------------------------
+ * Sumit Pharande           149213                                                   Original version
+ * Pradeepkumar Dani        149213	                   11/17/2017                      re-factoring
+ * Prudhvi Pamarthi                                   02/06/2019                 REQ - 361155 - Not allowing case creation on Legacy Deleted policies
+ * Santhosh Ganji                                     04/19/2019                 REQ - 386935 - Case Detail Restrictions (MED vs non-MED cases)—READ ONLY features
+ * Mithra Bharadwaj                                                             US#1522825 SonarQube Changes
+ --------------------------------------------------------------------------------------------------------------------------->
+<apex:component controller="CompassExtension_C_HUM" id="cmpId" allowDML="true">
+	<apex:attribute name="caseRecordId" type="string" description="The Case Record ID"/>
+	<script src="{!URLFOR($Resource.CaseDetailResources_SR_HUM,'/CaseCompass/CaseCompass_JS_HUM.js')}"/>
+	
+	<div> 
+	     <div class="form-group" style="display: inline-block;"> 
+	         <apex:outputpanel styleclass="paddingLeft">
+	             <apex:commandButton oncomplete="openCompass(); return false;" value="{!compassButtonLabel}" disabled="{!bdisableButton}" rendered="{!(!sPharmacyUser || (sPharmacyUser && hideTheButton))}"/>
+	         </apex:outputpanel> 
+	     </div>
+	     
+		 <apex:variable value="{!(!sPharmacyUser || (sPharmacyUser && hideTheButton))}" var="bIsAction"/>
+		 
+	     <c:BaseDataTable_CMP_HUM jqueryvariable="jQuery" 
+			tableid="caseCompassDatatable" 
+			tablecontainerid="caseCompassDatatableContainer"
+			enablesearch="f"
+			columnname="{!columnName}" 
+			columnHeader="{!columnHeader}" 
+			htmlColumnName="CreatedBy,DocumentURL"
+			objname="Compass__c"
+			orderColumn="3"
+			col1_orderable="false"
+			orderDirection="desc"
+			orderingBool="true"
+			col1_accordian="false"
+			keyword="false" 
+			col1_editDelete="{!bIsAction}" 
+		  />
+	</div>
+	
+	<script>
+		Visualforce.remoting.timeout = '{!$Label.HUMMemWebActivityTimeout}'; // Set timeout at page level
+	    var sGetCaseCompassData = '{!$RemoteAction.CompassExtension_C_HUM.getCaseCompassData}';
+	    var sCaseRecordId = '{!JSENCODE(caseRecordId)}';
+	    var CaseId = '{!JSENCODE(caseRecordId)}';
+	    var vHUMMentorToSFDC = '{!$Page.HUMMentorToSFDC}';
+	    var bInsideRapidForce = '{!JSENCODE(IF(bInsideRapidForce, "true", "false"))}';
+	</script>
+</apex:component>

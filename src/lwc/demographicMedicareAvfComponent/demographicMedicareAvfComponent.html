@@ -1,0 +1,327 @@
+﻿<!--
+  @File Name          : demographicAVFPage.html
+  @Description        : 
+  @Author             : ChangeMeIn@UserSettingsUnder.SFDoc
+  @Group              : 
+  @Last Modified By   : ChangeMeIn@UserSettingsUnder.SFDoc
+  @Last Modified On   : 6/12/2020, 10:47:18 PM
+  @Modification Log   : 
+  Ver       Date            Author      		    Modification
+  1.0    2/25/2020   ChangeMeIn@UserSettingsUnder.SFDoc     Initial Version
+-->
+<template>
+  <template if:true={isLoadOverlay}>
+    <div class="du-overlay"></div>
+  </template>
+  <template if:true={isShowModal}>
+    <c-modal-component model-input={popupData} 
+                       onuspsactiontrigger={handleModalEvent}
+                       title={modalTitle}>
+    </c-modal-component>
+  </template>
+  
+  <template if:true={display}>
+  <!-- <div class="slds-theme_shade"> -->
+    <!-- <lightning-card title={avfTitle} icon-name="custom:custom63"> -->
+      <div class="slds-grid slds-m-top_small slds-m-bottom_small slds-m-left_large 
+                  slds-m-right_large">
+          <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Retrieving Standardization Results" 
+                               size="large">
+            </lightning-spinner>
+          </template>
+        <!-- <template for:each={flowDataOutput} for:item="data"> -->
+          <template for:each={flowDataModel.reactive} for:item="input" key={data.pageNumber}>
+            <div key={input.pageNumber} class="slds-m-top_x-small slds-m-bottom_x-small slds-col slds-size_4-of-4">
+              <div class="slds-m-top_x-small slds-m-bottom_x-small slds-align_absolute-center top-next-btn-holder-height btn-cont">
+                <!-- <template for:each={input.pageFeatures.buttonMsgs} for:item="msg">
+                  <template if:true={msg.display}>
+                    <div class="next-btn-msg btn-msg-div" key={msg.order}>{msg.message}</div>
+                  </template>
+                </template> -->
+                <div class="btn-div">
+                <template for:each={input.pageFeatures.buttons} for:item="button">
+                  <div key={button.order}>
+                    <template if:true={button.setDisable}>
+                      <lightning-button 
+                          data-id={button.order}
+                          data-type={button.identifier.type}
+                          data-mode={button.identifier.value}
+                          variant="brand" 
+                          onclick={handleButtonClick}
+                          disabled={isFormInvalid}
+                          label={button.label} 
+                          title={button.title} 
+                          class={button.class}>
+                      </lightning-button>
+                    </template>
+                    <template if:false={button.setDisable}>
+                      <lightning-button 
+                          data-id={button.order}
+                          data-type={button.identifier.type}
+                          data-mode={button.identifier.value}
+                          variant="brand"
+                          onclick={handleButtonClick}
+                          label={button.label} 
+                          title={button.title} 
+                          class={button.class}>
+                      </lightning-button>
+                    </template>
+                    </div>
+                  </template>
+                </div>
+                <template if:true={input.pageFeatures.summaryMsg}>
+                  <div class="next-btn-msg btn-msg-div">Click Submit to process the changes or Click Previous to go back and make changes.</div>
+                  <div class="btn-msg-read-div">
+                    <div class="msg-cont">
+                        <div class="msg-container">
+                            <div class="icon-container">
+                                <lightning-icon icon-name="utility:warning"
+                                    size="large"
+                                    alternative-text="Warning!" 
+                                    variant="warning"></lightning-icon>
+                            </div>
+                            <div class="text-container">
+                                <div class="btn-msg slds-align_absolute-center">Changes cannot be made to this request after Submit is clicked.</div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+              <div class="slds-m-top_x-small slds-m-bottom_x-small page-title">
+                <div class="slds-text-heading_small">{input.pageFeatures.title}</div>
+              </div>
+              <div class="slds-m-top_x-small slds-m-bottom_x-small">
+                <template if:true={summaryDataModel.showSummary}>
+                  <template for:each={summaryDataModel.avfModel} for:item="model">
+                    <div class="field-readonly-container slds-p-top_small" key={model.order}>
+                      <div class="title-container">
+                        <h2>{model.title}</h2> 
+                      </div>
+                      <template for:each={model.fields} for:item="sField">
+                        <template if:true={sField.display}>
+                          <div class="field-container" key={sField.order}>
+                            <div class="account-readonly-label">
+                              <lightning-formatted-text value={sField.label}></lightning-formatted-text>
+                            </div>
+                            <div class="empty-container"></div>
+                            <div class="account-readonly-value">
+                              <lightning-formatted-text value={sField.value}></lightning-formatted-text>
+                            </div>
+                          </div>
+                        </template>
+                      </template>
+                    </div>
+                  </template>
+                </template>
+                <template if:false={summaryDataModel.showSummary}>
+                  <template for:each={input.pageFeatures.fields} for:item="field">
+                    <template if:true={field.display}>
+                      <div key={field.order} class="field-div">
+                      <div class="field-editable-container slds-p-top_small slds-p-bottom_small">
+                        <div class="account-editable-label">
+                          <lightning-formatted-text class="account-editable-label-text"
+                            value={field.label}></lightning-formatted-text>
+                        </div>
+                        <div class="empty-container"></div>
+                        <div class="account-editable-value">
+                          <template if:true={field.renderLogic.isTextArea}>
+                            <lightning-textarea
+                              class="is-required"
+                              value={field.value}
+                              data-index={field.order}
+                              data-mode="editInput"
+                              name="address text area"
+                              variant="label-hidden"
+                              message-when-value-missing={field.required.message}
+                              required={field.required.value}
+                              onchange={handleFieldChange}
+							  max-length={field.maxLength}>
+                            </lightning-textarea>
+                          </template>
+                          <template if:true={field.renderLogic.isCombo}>
+                            <lightning-combobox
+                              data-index={field.order}
+                              data-mode="editInput"
+                              name="Address State"
+                              value={field.value}
+                              options={stateOptions}
+                              class="is-required"
+                              variant="label-hidden"
+                              required={field.required.value}
+                              message-when-value-missing={field.required.message}
+                              onchange={handleFieldChange}>
+                            </lightning-combobox>
+                          </template>
+                          <template if:true={field.renderLogic.isDate}>
+                            <lightning-input type={field.type} 
+                              data-index={field.order}
+                              date-style="short"
+                              data-mode="editInput"
+                              min={field.minValue}
+                              required={field.required.value}
+                              message-when-value-missing={field.required.message}
+                              onchange={handleFieldChange}
+                              class="is-required"
+                              variant="label-hidden"
+                              value={field.value}>
+                            </lightning-input>
+                          </template>
+                          <template if:true={field.renderLogic.isTel}>
+                            <lightning-input type={field.type}
+                              data-index={field.order}
+                              data-mode="editInput"
+                              max-length={field.maxLength}
+                              placeholder="(XXX) XXX-XXXX" 
+                              pattern={field.pattern.value}
+                              class="is-required"
+                              variant="label-hidden"
+                              required={field.required.value}
+                              onchange={handleFieldChange}
+                              message-when-pattern-mismatch={field.pattern.message}
+                              message-when-value-missing={field.required.message}
+                              value={field.value}>
+                            </lightning-input>
+                          </template>
+                          <template if:true={field.renderLogic.isText}>
+                            <lightning-input type={field.type} 
+                              data-index={field.order}
+                              data-mode="editInput"
+                              max-length={field.maxLength}
+                              pattern={field.pattern.value}
+                              required={field.required.value}
+                              onchange={handleFieldChange}
+                              message-when-pattern-mismatch={field.pattern.message}
+                              message-when-value-missing={field.required.message}
+                              class="is-required"
+                              variant="label-hidden"
+                              value={field.value}>
+                            </lightning-input>
+                          </template>
+                          <template if:true={field.renderLogic.isRadioGroup}>
+                            <div class="update-cb-value">
+                              <fieldset class={field.validityResult.class}>
+                                <div class="slds-form-element__control">
+                                  <template for:each={field.options} for:item="option">
+                                  <span class="slds-radio" key={option.id}>
+                                    <input type="radio" id={option.id} value={option.value} 
+                                            name="error" checked={option.checked} 
+                                            onchange={handleFieldChange} 
+                                            data-label={option.label}
+                                            data-index={field.order} 
+                                            data-mode="editInput" 
+                                            data-valid={field.validityResult.valid} />
+                                    <label class="slds-radio__label" for={option.id}>
+                                      <span class="slds-radio_faux"></span>
+                                      <span class={field.validityResult.labelClass}>{option.label}</span>
+                                    </label>
+                                  </span>
+                                  </template>
+                                </div>
+                              </fieldset>
+                              <span class="invalid-item">{field.validityResult.message}</span>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                      <template if:true={field.note}>
+                        <div class="slds-p-bottom_small" key={field.order}>
+                          <strong>Note:</strong> {field.note}
+                        </div>
+                      </template>
+                      <template if:true={field.renderButton}>
+                        <template for:each={flowButtonDataModel.reactive} for:item="button">
+                          <div key={button.order} class="render-btn-cont">
+                            <div class="render-btn-msg-div">
+                              <!-- <template if:true={isBadRequest}> -->
+                                <lightning-formatted-text 
+                                  class="render-btn-msg"
+                                  key={button.order}
+                                  value="After entering and verifying the address with the caller, click the Verify Address button">
+                                </lightning-formatted-text>
+                              <!-- </template> -->
+                            </div>
+                            <div class="render-btn-div">
+                              <lightning-button 
+                                  data-id={button.order}
+                                  data-display={button.displayMode}
+                                  data-type={button.identifier.type}
+                                  data-mode={button.identifier.value}
+                                  variant="brand" 
+                                  onclick={handleButtonClick}
+                                  disabled={button.setDisable}
+                                  label={button.label} 
+                                  title={button.title} 
+                                  class={button.class}>
+                              </lightning-button>
+                            </div>
+                          </div>
+                        </template>
+                      </template>
+                      <template if:true={field.osaRender}>
+                        <template if:true={field.osa.isOSA}>
+                          <div class="render-osa-cont">
+                            <div class="osa-empty"></div>
+                            <div class={field.osa.class} key={field.order}>
+                              <lightning-formatted-rich-text value={field.osa.message} ></lightning-formatted-rich-text>
+                            </div>
+                          </div>
+                        </template>
+                        <template if:false={field.osa.isOSA}>
+                          <div class="render-osa-cont">
+                            <div class="osa-empty"></div>
+                            <div class={field.osa.class} key={field.order}>
+                              <lightning-formatted-rich-text value={field.osa.message} ></lightning-formatted-rich-text>
+                            </div>
+                          </div>  
+                        </template>
+                      </template>
+                     </div>
+                    </template>
+                  </template>
+                </template>
+              </div>
+              <div class="slds-m-top_x-small slds-m-bottom_x-small slds-align_absolute-center top-next-btn-holder-height btn-cont">
+                <template for:each={input.pageFeatures.buttonMsgs} for:item="msg">
+                  <template if:true={msg.display}>
+                    <div class="next-btn-msg btn-msg-div" key={msg.order}>{msg.message}</div>
+                  </template>
+                </template>
+                <div class="btn-div">
+                  <template for:each={input.pageFeatures.buttons} for:item="button">
+                    <div key={button.order}>
+                      <template if:true={button.setDisable}>
+                        <lightning-button 
+                            data-id={button.order}
+                            data-type={button.identifier.type}
+                            data-mode={button.identifier.value}
+                            variant="brand" 
+                            onclick={handleButtonClick}
+                            disabled={isFormInvalid}
+                            label={button.label} 
+                            title={button.title} 
+                            class={button.class}>
+                        </lightning-button>
+                      </template>
+                      <template if:false={button.setDisable}>
+                        <lightning-button 
+                            data-id={button.order}
+                            data-type={button.identifier.type}
+                            data-mode={button.identifier.value}
+                            variant="brand"
+                            onclick={handleButtonClick}
+                            label={button.label} 
+                            title={button.title} 
+                            class={button.class}>
+                        </lightning-button>
+                      </template>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </template>
+      </div>
+  </template>
+</template>

@@ -1,0 +1,46 @@
+﻿<!--*****************************************************************************************************************************
+LWC Name : autoCompleteDropDownHum.html
+Function    : This LWC component serves as input for to search member data in CRM strides
+
+Modification Log: 
+Developer Name           Code Review              Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Swetha                                       16/06/2021                   Initial version
+*******************************************************************************************************************************-->
+<template>
+	<div class="hc-dropdown hc-generic-dropdown test">
+        <template if:true={isRequired}>
+             <p style="margin: 0; display: inline; color: red;" class="slds-p-horizontal_xxx-small">*</p> 
+        </template>
+			<label style="margin: 0; display: inline;" class="slds-form-element__label hc-generic-dropdown slds-p-right_none">{label}
+			<template if:true={isHelpText}>
+<lightning-helptext content="If Speciality is not shown, please select None" class="start-help-text slds-is-absolute left-shift">
+                    </lightning-helptext>
+						</template>
+            <input name="input" onkeyup={onKeyUpHandler}
+            class={inputCustomClass} type="text" onfocus={onFocusHandler}
+            placeholder={placeholder} onblur={onBlurHandler} onreset={onResetValue}/>
+        </label>
+
+
+			<lightning-button-icon class="hc-dropdown-arrow hc-generic-dropdown" onclick={onTriggerClick}
+				icon-name="utility:down" variant="bare" size="medium"></lightning-button-icon>
+			<div if:true={isSelected} class="slds-input hc-dropdown-selection re-align">
+				<span class="slds-truncate" title={selectedValue}>{selectedValue}</span>
+				<lightning-button-icon class="close-icon" onclick={onSelectionClear} onresetselection={resetHandler}
+					variant="bare" icon-name="utility:clear" size="medium">
+		   </lightning-button-icon>
+			</div>
+			<template if:true={showList}>
+				<ul class={ulClass} role="listbox">
+					<template for:each={listItems} for:item="liItem" for:index="index">
+						<li key={liItem.value} onclick={onSelection} class="slds-media slds-listbox__option slds-media_center 
+                slds-media_small slds-listbox__option_plain" data-options-id={index} role="option">{liItem.label}</li>
+					</template>
+				</ul>
+			</template>
+		</div>
+		<template if:true={boolIsCustomError}>
+			<p class="customError">{stateError}</p>
+		</template>
+</template>

@@ -1,0 +1,43 @@
+:host .info {
+    /* --sds-c-icon-color-foreground: blue;
+    --sds-c-icon-color-background: #faf4a4;
+    --sds-c-icon-color-foreground-default: blue; */
+    background-color: #efefef;
+}
+
+.infoFlag {
+    /* background: #faf4a4;
+    border-color: blue;
+    border-style: solid;
+    border-width: thin;
+    border-radius: 5px; */
+    background-color: #efefef;
+}
+
+.blackIcon {
+    --sds-c-icon-color-foreground: #0070D2;
+    --sds-c-icon-color-background: #FFFFFF;
+    --sds-c-icon-color-foreground-default: #0070D2;
+    border: 1px solid #DDDBDA;
+    border-radius: 4px;
+}
+
+.filledIcon {
+    --sds-c-icon-color-foreground: #f7f9f8;
+    ;
+    --sds-c-icon-color-background: #0070D2;
+    --sds-c-icon-color-foreground-default: #f7f9f8;
+    ;
+    border-color: lightgrey;
+    border-style: solid;
+    border-width: thin;
+}
+
+.blackIconButtonNew {
+    --sds-c-icon-color-foreground: lightgrey;
+    --sds-c-icon-color-background: white;
+    --sds-c-icon-color-foreground-default: lightgrey;
+    border-color: lightgrey;
+    border-style: solid;
+    border-width: thin;
+}

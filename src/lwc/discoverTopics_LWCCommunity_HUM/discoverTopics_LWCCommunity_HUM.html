@@ -1,0 +1,18 @@
+﻿<template>
+    <div>
+    <div class="dt_container">
+        <h2 class="slds-text-heading_small slds-m-right_xx-small slds-col slds-hyphenate" tabindex="0">{label.discoverTopicLabel}</h2>
+        <div class="dt_subheading" tabindex="0"><img src={humanaDiamondLogo} alt="diamond" width= "24px" height="24px">&nbsp;{label.followTopicLabel}</div>
+        <div class="dt_card slds-m-bottom_x-large">
+            <template for:each={listOfTopics} for:item="topic">
+                <div key={topic.TopicId} class="dt_item slds-m-right_x-small slds-m-bottom_x-small">
+                    <a class="dt_item-text" href={topic.url}>{topic.TopicName}</a>
+                </div>
+            </template>
+        </div>
+        <div>
+            <lightning-button class="dt_button" label="More Topics >" variant="brand" onclick={navigateToAllTopicsPage}></lightning-button>         
+        </div>
+    </div>
+    </div>
+</template>

@@ -1,0 +1,38 @@
+﻿<!--
+Page Name        : PolicyProductType_VF_HUM 
+Version          : 1.0 
+Created Date     : Feb 03 2016
+Function         : Page to display Product type field on policy page.
+Modification Log :
+
+  Developer       Code Review        Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Payal Yadav                        3/1/2016             Original Version
+*Apoorv Jain                         4/1/2016             Defect#220516
+* Vardhman Jain                     02/29/2024            US5303780 - Classic VIT Remediation COB, Policy Member, Verify and update Demographics ; VIT37070839, VIT37935980,   VIT37935986
+
+-->
+<apex:page standardController="Policy__c" extensions="ProductType_C_HUM" showHeader="false">
+    <apex:stylesheet value="{!URLFOR($Resource.MouseHoverPopUp_SR_HUM,'/MouseHoverPopUp_SR_HUM/main_css.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.MouseHoverPopUp_SR_HUM,'/MouseHoverPopUp_SR_HUM/PopUp_File.js')}"/>
+    <apex:pageblock mode="maindetail">
+    <apex:pageblocksection columns="2">
+    <apex:pageblocksectionitem >
+    <apex:outputLabel value="{!sLabelValue}" styleClass="marginClass" ></apex:outputLabel>
+    <apex:outputPanel >
+        <span class="vfHelpText">
+            <apex:outputlink styleclass="noLink" onmouseover="showVisionHover('{!JSENCODE(sRecordID)}','{!JSENCODE(sProductType)}', '{!JSENCODE(sProductValue)}','{!JSENCODE(sMessageValue)}');" value="javascript:void(0);">
+                {!sProductType}
+                <span id="{!sRecordID}"></span>    
+            </apex:outputlink>
+        </span>
+        </apex:outputPanel>
+    </apex:pageblocksectionitem>
+        <apex:pageBlockSectionItem labelStyleClass="LabelClass" dataStyleClass="LabelClass" >
+           <apex:outputText >&nbsp;</apex:outputText>
+           <apex:outputText >&nbsp;</apex:outputText>
+        </apex:pageBlockSectionItem>   
+    </apex:pageblocksection>
+    </apex:pageblock>
+     
+</apex:page>

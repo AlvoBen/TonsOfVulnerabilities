@@ -1,0 +1,82 @@
+﻿<!--
+Page Name        : GoToTask_VF_HUM 
+Version          : 1.0 
+Created Date     : Jan 29 2020
+Function         : Page used to navigate back to Task
+Modification Log :
+*   Modification ID     Developer           Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*           1.0        Mithra Bharadwaj                   01/29/2020            Original Version
+*           1.1        Mithra Bharadwaj                   02/09/2021          US#1522825 SonarQube Changes
+------------------------------------------------------------------------------------------------------------------------------------->
+<apex:page extensions="HUMAttachmentEditExtension" standardController="Attachment__c">
+    <apex:includeScript value="/support/console/35.0/integration.js"/>
+    <!--  Current page specific business logic is incorporated into the Javascript file -->
+    <apex:includeScript value="{!$Resource.HUMAttachmentEdit}"/>
+    <apex:form >
+        <!-- Output panel will be re rendered to get latest data from server -->
+        <apex:outputpanel id="attachId">
+        </apex:outputpanel>
+        <script>
+            //Following data will be referred by Javascript file in static resource
+            //Store primary Tab ID & current Tab id     
+            var primaryAttID,currentAttTabID;
+        </script> 
+        <style>
+        .classTask{
+    font-size: x-small;
+    font-style: inherit;
+    font-weight: bold;
+     padding-top: 0px;
+     padding-right: 18px;
+     padding-left: 0px;
+    padding-bottom:0px;
+    color: #4a4a56
+            }
+          .classtdTask{
+          padding-top: 0px;
+          text-align: left;
+         font-size: 11px;
+         font-weight: bold;
+           color: #000
+          }  
+            
+        </style>
+        <!-- For Constructor Related exception -->
+        <c:HUMConstructorExceptionComponent errorLogs="{!listErrorLogs}" />  
+         <div style="padding-left : 115px" >         
+              <table >
+    <tr >
+     
+        <td class=" classTask "  >Link To (Task)</td> 
+        <td class="classtdTask"><apex:outputPanel >             
+              <apex:outputLabel >
+                      <apex:outputLink id="GotoTaskId" target="_blank" onclick="openTab('{!JSENCODE(attachment.Related_To_Task__c)}','{!JSENCODE(sTaskNumber)}'); return false"  value="">Go To Task</apex:outputLink>     
+              </apex:outputLabel>             
+              </apex:outputPanel></td>
+    </tr></table>
+               </div> 
+             
+    </apex:form>
+    <script>
+      function openTab(Id, Name) { 
+    pmemId = Id;
+    pmemName = Name;
+    //Check if in console
+    if (sforce.console.isInConsole()) {
+        sforce.console.getEnclosingPrimaryTabId(openRelatedtab);
+    }
+    else {
+        //if not console then open new tab
+        window.open("/" + pmemId);
+    }
+}
+var openRelatedtab = function openRelatedtab(result) {
+    //Now that we have the primary tab ID, we can open a new subtab in it
+    var primaryTabId = result.id;
+    sforce.console.openSubtab(primaryTabId, "/"+ pmemId, true,
+                pmemName, null, null, 'salesforceSubtab'+pmemId);
+              
+};
+    </script>
+</apex:page>

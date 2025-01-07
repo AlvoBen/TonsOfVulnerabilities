@@ -1,0 +1,17 @@
+﻿<!--
+Component Name   : PowerOfAttorney_CMP_AHT_HUM
+Version          : 1.0
+Created On       : Jun 12 2017
+Function         : This Component is used as POP UP Power Of Attorney Information on hover of Account record on Custom Search Page
+
+Modification Log :
+*  Developer           Review		Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*  Amar Gadewar        113102		04/05/2017           Original Version
+*  Amar Gadewar						07/27/2017			 REQ - 318368 - Adding POA Explanation 
+*  Amar Gadewar				    01/14/2017		   REQ - 350393 - SF - TECH - Removal of Power Of Attorney (RF)
+********************************************************************************************************************************
+-->
+<apex:component >
+
+</apex:component>

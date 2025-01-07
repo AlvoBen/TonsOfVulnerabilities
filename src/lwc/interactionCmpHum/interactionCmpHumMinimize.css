@@ -1,0 +1,19 @@
+.panel{
+  width: 100%;
+  max-height: 50px;
+  left: 17.8%;
+  max-width: 20%;
+  box-shadow: none;
+}
+.slds-checkbox_toggle [type=checkbox]+.slds-checkbox_faux_container .slds-checkbox_faux{
+    --slds-c-checkbox-toggle-color-background: red;
+  }
+  .slds-checkbox_toggle [type=checkbox]:checked+.slds-checkbox_faux_container .slds-checkbox_faux{
+    --sds-c-checkbox-toggle-color-background-checked: green;
+    --slds-c-checkbox-toggle-color-background: green;
+  }
+  .slds-checkbox_toggle [type=checkbox][disabled]+.slds-checkbox_faux_container .slds-checkbox_faux{
+    pointer-events: none;
+    background-color: green;
+    border-color: green;
+  }

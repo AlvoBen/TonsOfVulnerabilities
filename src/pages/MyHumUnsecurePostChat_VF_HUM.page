@@ -1,0 +1,165 @@
+﻿<!--
+Page Name        : MyHumUnsecurePostChat_VF_HUM
+Version          : 1.0 
+Created Date     : December 12 2019
+Function         : Custom window for Post Chat form on Live agent
+Modification Log :
+*   Modification ID     Developer                     Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   1.0             Joel George                                         12/12/2019              Original Version
+*   1.1             T Prasanna Sai Kumar                                03/11/2021              REQ - 1915578 - Live Agent Security Vulnerabilities for SonarQube Scan - MyHumana UnSecure Live Agent
+------------------------------------------------------------------------------------------------------------------------------------>
+<apex:page showheader="false" controller="UnsecuredPreChat_C_HUM" standardStyleSheets="false" action="{!postchatinit}">
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMUnsecureLiveAgentCSS,'/library/base.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMUnsecureLiveAgentCSS,'/library/framework.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMUnsecureLiveAgentCSS,'/library/global.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMUnsecureLiveAgentCSS,'/library/global1.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMUnsecureLiveAgentCSS,'/library/humanacom.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMUnsecureLiveAgentCSS,'/library/humanacom1.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMUnsecureLiveAgentCSS,'/library/lib.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMUnsecureLiveAgentCSS,'/library/styles.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMUnsecureLiveAgentCSS,'/library/tools.css')}"/> 
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMUnsecureLiveAgentCSS,'/library/HUMPreChat.css')}"/>
+
+	<apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+    
+    <script type="text/javascript">
+   
+    var sInteractionName ='{!JSENCODE(sIntName)}';
+    var sNameMethod = '{!$RemoteAction.UnsecuredPreChat_C_HUM.findInteractionName}';
+    var sChatDetails2 = '{!JSENCODE($CurrentPage.parameters.chatDetails)}';
+    var pageParams = '{!JSENCODE(pageParams)}';
+     
+    jQuery( document ).ready(function() 
+    {   
+        var sIntID;        
+        var jsonDetails2 = eval ("(" + sChatDetails2 + ")");
+
+       
+    }
+    );
+    
+    function saveChatConfirmation()
+    {
+        var webChatDownloadConfirmResponse = confirm('{!$Label.Web_Chat_Download_Confirmation_Message_Unsecure}');
+        if (webChatDownloadConfirmResponse)
+        {      
+            callGoToHUMSaveChatTranscriptPageMethod();
+        }
+        return false;
+    }
+
+        </script>
+    <head>
+        <title>Post Chat</title>
+        <apex:includeScript value="{!URLFOR($Resource.HUMUnsecuredPostChat_SR_HUM,'/HUMUnsecuredPostChat_SR_HUM/JS/HUMUnsecuredPostChat.js')}"/>
+    </head>
+    <body>
+    
+        <!-- Start Tealium analytics v1_3 - do not remove or change -->
+    <script type="text/javascript">
+        var utag_data = {};
+            if (typeof HumAnalytics == "undefined"){
+                var HumAnalytics = window.HumAnalytics = {};}
+        HumAnalytics.appid = [];
+        HumAnalytics.autorenewflag = [];
+        HumAnalytics.copayexcflag = [];
+        HumAnalytics.prodcat = [];
+        HumAnalytics.prodid = [];      
+        HumAnalytics.prodname = [];
+        HumAnalytics.prodpkgqty = [];      
+        HumAnalytics.prodqty = [];
+        HumAnalytics.prodsav = [];   
+        HumAnalytics.prodtranstype = [];          
+        HumAnalytics.prodtype = []; 
+        HumAnalytics.produp = [];
+    </script>
+
+    <!-- Loading script asynchronously -->
+    <script type="text/javascript">
+        (function(a,b,c,d){
+        a='{!JSENCODE(sWebChatVarMap['HumanaUnsecure_Tealium'].value__c)}';
+        b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c;d.async=true;
+        a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
+        })();
+    </script>
+    <!-- End Tealium analytics - do not remove or change -->
+
+        <apex:form id="theForm">
+            <div id="test" class="row">
+                <div class="small-glass-container">
+                    <div class=" columns x2 eighteen">
+                        <div class="row" style="margin-left: 5px;">
+                            <div class="eighteen columns x2">
+                                <div class="lifeblock-heading">
+                                    <h1 class="link-list-heading lifeblock core-green bl-tail tl-br-curve">
+                                    <span class="content">Humana chat</span>
+                                </h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-left: 15px;">
+                            <div class="small-glass-container">
+                                <div class="row">
+                                    <div class="seventeen columns x2-left">
+                                        <apex:outputPanel rendered="{!IF($CurrentPage.parameters.transcript!='',true,false)}">
+                                            <h1>Thank you&#33;</h1>
+                                            <p class="x0"> 
+                                            Thank you for using Humana chat. We hope your experience was helpful.  
+                                             </p>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!IF($CurrentPage.parameters.transcript=='',true,false)}">
+                                            <h1>Chat is not available</h1>
+                                            <p class="x0">{!$Label.HUMUnsecureNoAgentAvailable} {!$Label.HUMAssistance1} <a target="_blank" href="{!HTMLENCODE(sWebChatVarMap['ContactUsLink'].value__c)}" rel="noopener noreferrer">{!$Label.HUMContactCenter}</a> {!$Label.HUMUnsecureAssistance2}
+                                            </p>
+                                        </apex:outputPanel>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="seventeen columns x1 x2-left">
+                                        <p class="x2 ">
+                                        <apex:outputPanel rendered="{!IF($CurrentPage.parameters.transcript!='',true,false)}">
+                                          <apex:outputLink styleClass=" module-sharing-utility link-tertiary save x1-top" onclick="return saveChatConfirmation();">
+                                            <span>Save chat</span>
+                                          </apex:outputLink>
+                                          </apex:outputPanel>                                                                                                                          
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="eighteen columns x1-top x2-left">
+                                        <p class="x1">
+                                            <apex:outputPanel rendered="{!IF($CurrentPage.parameters.transcript!='',true,false)}">
+                                                Please take a moment to complete a brief survey about your chat experience.
+                                            </apex:outputPanel>
+                                        </p>
+                                        <div id="opPan" class="row x2">
+                                            <div class="eighteen columns">
+                                                <apex:outputPanel rendered="{!IF($CurrentPage.parameters.transcript!='',true,false)}">                                                 
+                                                    <apex:outputPanel >
+                                                    <button class="link-primary x1-right" onclick="openSurvey('{!JSENCODE(sWebChatVarMap['MyHumanaUnsecureLink'].value__c)}');return false;" type="submit">
+                                                        <span>Take survey</span>
+                                                    </button>
+                                                    
+                                                </apex:outputPanel>
+                                                    <a href="javascript:window.close();" class="link-tertiary x1-left"><span>No, thanks</span></a>
+                                                </apex:outputPanel>
+                                                
+                                                <apex:outputPanel rendered="{!IF($CurrentPage.parameters.transcript=='',true,false)}">
+                                                    <button class="link-primary x1-right" onclick="javascript:window.close();" type="submit">
+                                                        <span>Close Window</span>
+                                                    </button>
+                                                </apex:outputPanel>                                              
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          <apex:actionFunction name="callGoToHUMSaveChatTranscriptPageMethod" action="{!goToHUMSaveChatTranscriptPage}"/>
+        </apex:form>
+    </body>
+</apex:page>

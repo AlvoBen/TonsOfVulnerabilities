@@ -1,0 +1,4 @@
+﻿<aura:event type="APPLICATION" description="My Event">
+    <aura:attribute name="ClaimID" type="String" />
+    <aura:attribute name="AuthorizationNumber" type="String" />
+</aura:event>

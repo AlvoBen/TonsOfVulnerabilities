@@ -1,0 +1,22 @@
+.exampleHolder {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+}
+
+.style-green {
+    background-color: #04844B;
+}
+
+.style-red {
+    background-color: #ed2939;
+}
+
+.style-grey {
+    background-color: #808080;
+}
+
+.data-style {
+    color: #ffffff;
+}

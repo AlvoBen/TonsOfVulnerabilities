@@ -1,0 +1,127 @@
+﻿<!-- 
+Page Name        : CRMRetail_locationsHome_LWC_HUM
+Version          : 1.0 
+Created Date     : 06/29/2022
+Function         : Lightning web component used to set the criteria for Interaction display.
+Modification Log :
+* Developer                 Code review         Date                  Description
+*************************************************************************************************
+* Sahil Verma        	                	    06/29/2022            Original Version
+* Sahil Verma        	                	    07/19/2022            US-3484064 Added Interaction display criteria on Interaction/Event Tab in Read only mode
+* Sahil Verma        	                	    02/28/2023            US-4438175 T1PRJ0154546 / SF / MF9 Storefront: Interaction Display Criteria section Enhancement on Interaction/Events tab
+*************************************************************************************************
+-->
+<template>
+    <lightning-card class="locationCRM" >
+        <div class="page-section page-header slds-m-bottom_medium slds-col slds-size--1-of-1 
+                    slds-small-size--2-of-2 slds-medium-size--4-of-4" >
+            <lightning-layout horizontal-align="Left">
+                <lightning-layout-item size="8">
+                    <h2 class="pageHeaderCR">{label.CRMRetail_Interaction_Display_Criteria}</h2>
+                </lightning-layout-item>
+                <lightning-layout-item size="1">
+                    <template if:true={source}>
+                        <div if:true={showRestoreDefaults} class="refreshIcon refreshIconOnIDC">
+                            <lightning-button-icon icon-name="utility:refresh"  variant="bare" alternative-text={label.CRMRetail_Restore_Default}  onclick={restoreLocation} class="slds-m-left_xx-small" title={label.CRMRetail_Restore_Default}></lightning-button-icon>
+                        </div>
+                    </template>
+                </lightning-layout-item>
+                <template if:true={Switch_Attendance}>
+                    <lightning-layout-item size="1" class="attendanceLabel" >
+                        <label class="slds-form-element__label slds-m-right_none" for="default1">{label.CRMRetail_Attendance}</label>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="1">
+                        <div class="slds-m-bottom_medium slds-col slds-grid slds-wrap noLeftPadding noBottomMargin">
+                        <input type="text" class="slds-input" value={count} disabled=true/>
+                        </div>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="5" class="icons" >
+                        <button disabled={disablePlus} class="slds-button slds-button_icon"  id="addId"><lightning-button-icon class="icon" icon-name="utility:add" variant="bare" onclick={calcCount} alternative-text="Increase" title="Increase"></lightning-button-icon></button>
+                        <button disabled={disableMinus} class="slds-button slds-button_icon"  id="ReduceId"><lightning-button-icon class="icon" icon-name="utility:dash" variant="bare" onclick={calcCount} alternative-text="Reduce" title="Reduce"></lightning-button-icon></button>                
+                    </lightning-layout-item>
+                </template>
+            </lightning-layout> 
+        </div>
+        <lightning-layout multiple-rows="true" >
+            <div class="slds-size_2-of-2" >
+                <div class="slds-grid slds-wrap" >
+                    <lightning-layout-item size="12" padding="around-medium" 
+                                          class="slds-grid slds-wrap noRightPadding 
+                                                 noBottomPadding">
+                        <div class="slds-m-bottom_medium slds-col slds-size--1-of-1 
+                                    slds-small-size--1-of-2 slds-medium-size--2-of-4 
+                                    slds-grid slds-wrap noLeftPadding noBottomMargin">
+                            <div if:false={source} class="slds-m-bottom_medium slds-col slds-size--1-of-1 
+                                        slds-small-size--1-of-2 slds-small-size--2-of-4 noPadding" >
+                                <lightning-combobox class="slds-col slds-size--1-of-1 
+                                                    slds-small-size--2-of-2 slds-medium-size--4-of-4 comboBox" 
+                                                    name="select" 
+                                                    label={label.CRMRetail_Location} 
+                                                    data-id="selectType" 
+                                                    required="true" 
+                                                    onchange={onChange} 
+                                                    value={Name}
+                                                    options={Location} 
+                                                     >
+                                </lightning-combobox>
+                            </div>
+                            <div if:true={source} class="slds-m-bottom_medium slds-col slds-size--1-of-1 
+                                        slds-small-size--1-of-2 slds-small-size--2-of-4 noPadding" >
+                                <lightning-combobox class="slds-col slds-size--1-of-1 
+                                                    slds-small-size--2-of-2 slds-medium-size--4-of-4 comboBox" 
+                                                    name="select"
+                                                    disabled={disableLocAndDate} 
+                                                    label={label.CRMRetail_Location} 
+                                                    data-id="selectType" 
+                                                    required="true" 
+                                                    onchange={onChange} 
+                                                    value={Name}
+                                                    options={Location} 
+                                                     >
+                                </lightning-combobox>
+                            </div>
+                            <div if:false={source} class="homeSaveDivClass slds-col slds-size--1-of-1 
+                                        slds-small-size--1-of-2 slds-medium-size--2-of-4 noLeftPadding">
+                                <lightning-button variant="brand" label={label.CRMRetail_Save_Home_Location} 
+                                                  onclick={saveHomeLocation} 
+                                                  class="homeSavedClass"></lightning-button>
+                            </div>
+                        </div>
+                        <div class="slds-m-bottom_medium slds-col slds-size--1-of-1 
+                                    slds-small-size--1-of-2 slds-medium-size--2-of-4 
+                                    slds-grid slds-wrap">
+                            <div if:false={source} class="slds-col slds-size--1-of-1 slds-small-size--1-of-2 
+                                        slds-medium-size--2-of-4 endDateDiv" id="endDateDiv"> 
+                                <lightning-input type ="date" label={label.CRMRetail_Interaction_Date} 
+                                                 value={today}
+                                                 date-style="short"
+                                                 data-id="EndDateField"
+                                                 required="true"
+                                                 onchange={onDateChange} 
+                                                 message-when-value-missing={label.Valid_Format_For_Calendar_Date}
+                                                 message-when-bad-input={label.Valid_Format_For_Calendar_Date}></lightning-input>
+                            </div>
+                            <div if:true={source} class="slds-col slds-size--1-of-1 slds-small-size--1-of-2 
+                                        slds-medium-size--2-of-4 endDateDiv" > 
+                                    <lightning-input type ="date" label={label.CRMRetail_Interaction_Date} 
+                                                 value={today}
+                                                 disabled={disableLocAndDate}
+                                                 date-style="short"
+                                                 data-id="EndDateField"
+                                                 required="true"
+                                                 onchange={onDateChange} 
+                                                 message-when-value-missing={label.Valid_Format_For_Calendar_Date}
+                                                 message-when-bad-input={label.Valid_Format_For_Calendar_Date}></lightning-input>
+                            </div>
+                            <div if:false={source} class="homeDefaultDivClass slds-col slds-size_1-of-1 
+                                        slds-small-size_1-of-2 slds-medium-size_2-of-4">
+                                <lightning-button variant="brand" disabled={source} label={label.CRMRetail_Restore_Default} 
+                                                  class="homeDefaultClass" onclick={restoreLocation}></lightning-button>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+                </div>
+            </div>
+        </lightning-layout>
+    </lightning-card>
+</template>

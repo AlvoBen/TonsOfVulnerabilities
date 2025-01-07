@@ -1,0 +1,19 @@
+﻿<template>
+    <div class="section-wrapper go365">
+        <h2 class="section-header" tabindex="0">{label.discoverTopicLabel}</h2>
+        <div class="subheader-wrapper">
+            <img class="jewel-img" src={jewelIcon} alt="jewel" width= "24px" height="24px">
+            <span class="section-subheader" tabindex="0">{label.followTopicLabel}</span>
+        </div>
+        <div class="dt_card slds-m-bottom_medium">
+            <template for:each={listOfTopics} for:item="topic">
+                <div key={topic.TopicId} class="dt_item slds-m-bottom_medium">
+                    <a class="dt_item-text" href={topic.url}>{topic.TopicName}</a>
+                </div>
+            </template>
+        </div>
+        <div>
+            <lightning-button class="dt_button" label="More Topics" variant="brand" onclick={navigateToAllTopicsPage}></lightning-button>
+        </div>
+    </div>
+</template>

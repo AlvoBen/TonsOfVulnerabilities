@@ -1,0 +1,310 @@
+﻿<!--
+Page Name        : HUMCustomInteractionComponentV2
+Version          : 2.0
+Created Date     : 08/01/2015 
+Function         : Interaction log component present in the Search Page. 
+                   Communicates to search pages to fetch data from search result for 
+                   creation of Interactions.
+Modification Log :
+*   Modification ID     Developer                   Code Review            Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*           2.0         Chaitanya Vegendla             25261           08/01/2015            Original Version
+*           2.1         Sagar Tapadia                                  08/26/2015            Added a Panel Id to re render attribute at line 187
+*           2.2         Praveen Kumar Parimi                           09/02/2015            Added a PageBlockSectionItem Id to Name attribute.
+*           2.3         Praveen Kumar Parimi           72345           02/17/2017            Fixed the CA Ticket - 6366647 AKA REQ - 301433.
+* 			2.4			Amol Patil                           			09/06/2018           REQ - 373386 - Display Password Prior to Interaction Being Created
+*			2.5			Pooja Kumbhar									02/24/2021			 REQ-1990246 - InputText ignoring FLS Remediation
+*           2.6            Mithra Bharadwaj                                                   US#2089546 SonarQube Changes
+*           2.7     Navajit Sarkar/Sahil Verma                          07/12/2021            US#2287945 : Adding Authentication checkbox besid save,update button
+ *          2.8            Ankit Avula                                  08/10/2021             User story -2153743 : Adding Get Interaction Button in the Interaction Log Section and Fetching the Latest Interactions
+ *          2.8            Anil Kumar                                  08/10/2021             User story -2153743 : Restricting  Get Interaction Button to the Genysys User and Implementing Switch Logic to hide all the Buttons when turned off
+ *          2.9            Sahil Verma                                 09/02/2021             US-2230000 - Save and Continue button Functionality added
+ *          2.9            Arpit Jan                                   11/12/2021             US - 2870235 INC1458785 Fix - To solve the overriding of searchenrollment window.onload(), event listener is added to "load" event.
+ *          2.10   Navajit Sarkar/Sahil Verma                          02/17/2022             US#2191493 - SFDC_Caller Type population
+ *          2.11   Harshada Kamble                                     01/05/2023             US-3959734 : Salesforce Genesys CRM Authentication Status should not change. 
+ *          2.12   Harshada Kamble                                     02/15/2023             US 3979946: T1PRJ0036776: PCC VOC Survey Transfer Identification 
+ *          2.13   Harshada Kamble/Anil Pavithran                      03/09/2023             US 2760646: T1PRJ0036776: SFDC Ability to Manually Modify Authentication Status (Multi Members)
+-->
+
+<apex:component allowDML="true" controller="HUMInteractionLogComponentControllerV2" id="theComp">
+  <apex:includeScript value="/support/console/36.0/integration.js"/>
+  <apex:includeScript value="/soap/ajax/39.0/connection.js"/>
+  <apex:includeScript value="{!URLFOR($Resource.HUMInteractionLog,'/HUMInteractionLog/HUMCustomInteractionComp.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.HUMCustomInteractionConfirmPopup,'/HUMCustomInteractionPopup.js')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.HUMInteractionLog,'/HUMInteractionLog/HUMCustomIntLogStyle.css')}"/>
+  <apex:attribute assignTo="{!oHUMSearchController}" description="The controller for the page." name="HUMSearchController" required="false" type="HUMSearchControllerV2"/>
+
+  <!--Start of Form -->
+  <apex:pageBlock id="pbIntLog" mode="edit" title="{!$Label.HUMIntLogTitle}">
+    <apex:pageBlockButtons location="top">
+       <apex:commandButton onclick="saveint = Date.now();showPasswordPopup('save');return false;" reRender="pbsIntLog,pbsMsg" value="{!$Label.HUMSaveBtn}" rendered="{!OR(OR(AND(oFetchInteraction.Interaction_Origin__c != 'Inbound Call',isGenesysUser==true),AND(!Switch_2230000,isGenesysUser==true)),isGenesysUser==false)}"/>
+       <!--US-2230000 : Adding Save and Continue button-->
+      <apex:commandButton onclick="saveint = Date.now();showPasswordPopup('saveAndContinue');return false;"
+                reRender="pbsIntLog,pbsMs" value="{!$Label.HUMSaveAndContinueBtn}" rendered="{!AND(oFetchInteraction.Interaction_Origin__c=='Inbound Call',isGenesysUser==true,Switch_2230000)}" />
+      <apex:commandButton onclick="showPasswordPopup('saveUpdate');return false;" reRender="pbsIntLog" value="{!$Label.HUMSaveNewBtn}"/>
+      <apex:commandButton action="{!updateDisp}" onclick="clear_div();return false;" reRender="updatePopUp" value="{!$Label.HUMUpdateBtn}" rendered="{!bShowUpdate}"/>
+      <!--US-2287945 : Adding Authentication checkbox besid save,update button-->
+      <apex:outputPanel id="idAuthCheckPanel" rendered="{!mf3Switch}">
+        <!-- US2760646: T1PRJ0036776: SFDC Ability to Manually Modify Authentication Status (Multi Members) -->
+        <apex:outputPanel id="idAuthCheckPanel1" rendered="{!!multiMemberAuthSwitch}">
+                <apex:inputCheckbox id="idAuthSuccess" style="margin:0px" value="{!oFetchInteraction.Authenticated__c}" disabled="true" rendered="{!AND(oFetchInteraction.Interaction_Origin__c=='Inbound Call',isGenesysUser==true,authCheck==true)}"></apex:inputCheckbox>
+                <apex:inputCheckbox id="idAuthSuccess2" style="margin:0px" value="{!oFetchInteraction.Authenticated__c}" onchange="AuthenticationCheck()"
+                    disabled="false" rendered="{!AND(oFetchInteraction.Interaction_Origin__c=='Inbound Call',isGenesysUser==true,authCheck==false)}"></apex:inputCheckbox>
+                <apex:outputText id="idAuthSuccessLabel" style="{!if(oFetchInteraction.Authenticated__c == true,'color:Green;font-size:12px;line-height: normal !important; font-weight: bold; padding-left: 2px;padding-top: 2px;', 'color:red;font-size:12px;line-height: normal !important; font-weight: bold; padding-left: 2px;padding-top: 2px;')}"
+                    value="{!authCheckLabel}" rendered="{!AND(oFetchInteraction.Interaction_Origin__c=='Inbound Call',isGenesysUser==True)}"></apex:outputText>
+        </apex:outputPanel>
+        <!-- US2760646: T1PRJ0036776: SFDC Ability to Manually Modify Authentication Status (Multi Members) -->
+        <apex:outputPanel id="idAuthCheckPanel2" rendered="{!multiMemberAuthSwitch}">
+          <apex:inputCheckbox id="idAuthSuccess3" style="margin:0px" value="{!oHUMIntMembers.Authenticated__c}" disabled="true" rendered="{!AND(oFetchInteraction.Interaction_Origin__c=='Inbound Call',isGenesysUser==true,authCheck==true)}"></apex:inputCheckbox>
+          <apex:inputCheckbox id="idAuthSuccess4" style="margin:0px" value="{!oHUMIntMembers.Authenticated__c}" onchange="AuthenticationCheck()"
+              disabled="false" rendered="{!AND(oFetchInteraction.Interaction_Origin__c=='Inbound Call',isGenesysUser==true,authCheck==false)}"></apex:inputCheckbox>
+          <apex:outputText id="idAuthSuccessLabel2" style="{!if(oHUMIntMembers.Authenticated__c == true,'color:Green;font-size:12px;line-height: normal !important; font-weight: bold; padding-left: 2px;padding-top: 2px;', 'color:red;font-size:12px;line-height: normal !important; font-weight: bold; padding-left: 2px;padding-top: 2px;')}"
+              value="{!authCheckLabel}" rendered="{!AND(oFetchInteraction.Interaction_Origin__c=='Inbound Call',isGenesysUser==True)}"></apex:outputText>
+        </apex:outputPanel>
+      </apex:outputPanel>
+            <!--US-2153743 : Adding Clear button to Clear the interaction Details-->
+       <apex:outputPanel rendered="{!validateCRMSwitch}">
+            <apex:commandButton value="Clear" action="{!clear}" />
+            </apex:outputPanel>
+    </apex:pageBlockButtons>
+    <apex:outputpanel id="opPgMsg">
+      <apex:pageMessages id="pbsMsg" rendered="{!bRenderErrorMsg}"/>
+    </apex:outputpanel>
+    <apex:pageBlockSection columns="3" id="pbsIntLog">
+      <apex:panelgrid columns="1" styleClass="panelGridStyle">
+        <apex:pageblockSectionItem id="pbsiName">
+          <apex:outputPanel id="pbsoutputpanelcn">
+            <table class="tabStyle">
+              <tr class="tabRowStyle">
+                <td class="tabTextColStyle">
+                  <apex:outputText styleClass="fieldStyle" value="{!$Label.HUMIntNameFieldLabel}"/>
+                </td>
+                <td class="tabFieldColStyle">
+                  <apex:inputField value="{!oFetchInteraction.Caller_Name__c}" html-MaxLength="150" id="callernameinp" />
+                </td>
+              </tr>
+            </table>
+          </apex:outputPanel>
+        </apex:pageblockSectionItem>
+
+        <apex:pageblockSectionItem id="pbsiIntwith">
+          <apex:outputPanel id="pbsoutputpaneliw">
+            <table class="tabStyle">
+              <tr class="tabRowStyle">
+                <td class="tabTextColStyle">
+                  <apex:outputText value="{!$Label.HUMIntWithFieldLabel}"/>
+                </td>
+                <td class="tabFieldColStyle">
+                  <apex:inputField value="{!oFetchInteraction.Interacting_With__c}" id="interwithinp"/>
+                </td>
+              </tr>
+            </table>
+          </apex:outputPanel>
+        </apex:pageblockSectionItem>
+        <apex:pageblockSectionItem id="pbsiIntwithtype">
+          <apex:outputPanel id="pbsoutputpaneliwtyp">
+            <table class="tabStyle">
+              <tr class="tabRowStyle">
+                <td class="tabTextColStyle">
+                  <apex:outputText value="{!$Label.HUMIntWithTypeFieldLabel} "/>
+                </td>
+                <td class="tabFieldColStyle">
+                  <apex:inputField value="{!oFetchInteraction.Interacting_With_type__c}" id="interwithtypinp"/>
+                </td>
+              </tr>
+            </table>
+          </apex:outputPanel>
+        </apex:pageblockSectionItem>
+      </apex:panelgrid>
+      <apex:panelgrid columns="1" styleClass="panelGridStyle">
+        <apex:pageblockSectionItem id="thePbsSection">
+          <apex:outputPanel id="PbsSectionop">
+            <table class="tabStyle">
+              <tr class="tabRowStyle">
+                <td class="tabTextColStyle">
+                  <span id="IntNuHelp" class="helpButton">
+                    <apex:outputLabel value="{!$Label.HUMIntNumberFieldLabel} " />
+                    <a href="#" style="cursor: default !important; text-decoration: none;" helpText="{!$Label.HUMInteractionLimitMsg}">
+                      <apex:image height="12" width="12" value="{!$Resource.HUMHoverOverQuestionMark}" />
+                    </a>
+                  </span>
+                </td>
+               <td class="tabFieldColStyle" >
+                  <apex:outputPanel rendered="{!!AND(isGenesysUser,(oFetchInteraction.name != ''),oFetchInteraction.Interaction_Origin__c=='Inbound Call')}">
+                     <apex:inputText id="IntNameId" rendered="true" value="{!oFetchInteraction.name}" />
+                       <a href="#" onclick="openUserSearchPopup();" style="text-decoration:none;" >
+                           <apex:image styleClass="lookupIcon" value="/s.gif" />
+                       </a>
+                 </apex:outputPanel>
+                 <apex:outputPanel rendered="{!AND(isGenesysUser,(oFetchInteraction.name != ''),oFetchInteraction.Interaction_Origin__c=='Inbound Call')}">
+                 <apex:outputField label="Name" value="{!oFetchInteraction.name}" />
+                 </apex:outputPanel>
+               </td>
+              </tr>
+            </table>
+          </apex:outputPanel>
+        </apex:pageblockSectionItem>
+        <apex:pageblockSectionItem id="pbsiIntAbt">
+          <apex:outputPanel id="pbsiIntAbtop">
+            <table class="tabStyle">
+              <tr class="tabRowStyle">
+                <td class="tabTextColStyle">
+                  <apex:outputText value="{!$Label.HUMIntAboutFieldLabel} "/>
+                </td>
+                <td class="tabFieldColStyle">
+                  <apex:selectList rendered="{!multiMemberAuthSwitch}" id="selectINqAboutValue" multiselect="false" onChange="onChangeInqAbtw(); JSonchangeInqAbt(this.options[this.selectedIndex].value); return false;" onclick="if(this.options.length==1)JSonchangeInqAbt(this.options[this.selectedIndex].value);return false;" size="1" styleClass="styleInteractingAboutField" value="{!oHUMIntMembers.Interacting_About__c}">
+                    <apex:selectOptions value="{!lstSelectOptionIntAbt}"/>
+                  </apex:selectList>
+                  <apex:selectList rendered="{!!multiMemberAuthSwitch}" id="selectINqAbout" multiselect="false" onChange="JSonchangeInqAbt(this.options[this.selectedIndex].value); return false;" onclick="if(this.options.length==1)JSonchangeInqAbt(this.options[this.selectedIndex].value);return false;" size="1" styleClass="styleInteractingAboutField" value="{!oHUMIntMembers.Interacting_About__c}">
+                    <apex:selectOptions value="{!lstSelectOptionIntAbt}"/>
+                  </apex:selectList>
+                </td>
+              </tr>
+            </table>
+          </apex:outputPanel>
+        </apex:pageblockSectionItem>
+        <apex:pageblockSectionItem id="pbsiIntAbtType">
+          <apex:outputPanel id="pbsiIntAbtTypeop">
+            <table class="tabStyle">
+              <tr class="tabRowStyle">
+                <td class="tabTextColStyle">
+                  <apex:outputText value="{!$Label.HUMIntAboutTypeFieldLabel}"/>
+                </td>
+                <td class="tabFieldColStyle">
+                  <apex:inputField value="{!oHUMIntMembers.Interacting_About_Type__c}" id="interabttypinp"/>
+                </td>
+              </tr>
+            </table>
+          </apex:outputPanel>
+        </apex:pageblockSectionItem>
+      </apex:panelgrid>
+      <apex:panelgrid columns="1" styleClass="panelGridStyle">
+        <apex:pageblockSectionItem id="pbsiIntorg">
+          <apex:outputPanel id="pbsiIntorgop">
+            <table class="tabStyle">
+              <tr class="tabRowStyle">
+                <td class="tabTextColStyle">
+                  <apex:outputText styleClass="fieldStyle" value="{!$Label.HUMIntOriginFieldLabel}"/>
+                </td>
+                <td class="tabFieldColStyle">
+                  <apex:inputField value="{!oFetchInteraction.Interaction_Origin__c}" id="interorginp"/>
+                </td>
+              </tr>
+            </table>
+          </apex:outputPanel>
+           <!--US-2153743 : Adding Get Interaction Button to Fetch Interaction & Disabling Access to Gensys User-->
+        </apex:pageblockSectionItem>
+         <apex:outputPanel rendered="{!validateCRMSwitch}">
+                <apex:commandButton value="Get Interaction"  action="{!getLatestInteraction}" reRender="pbIntLog" oncomplete="softPhoneCallActionchild();" rendered="{!NOT(isGenesysUser)}" disabled="{!oHUMSearchController.hideGetInteraction}" /> 
+                </apex:outputPanel>
+      </apex:panelgrid>
+    </apex:pageBlockSection>
+    <apex:outputPanel id="updatePopUp">
+      <apex:outputPanel layout="block" rendered="{!bDisplayPopUp}" styleClass="popupBackground"/>
+      <apex:outputPanel layout="block" rendered="{!bDisplayPopUp}" styleClass="custPopup">
+        <apex:actionStatus id="pleaseWaitIntModal">
+          <apex:facet name="start">
+            <div class="waitingSearchDiv waitingSearchDivOpacity outerPanel" ></div>
+            <div id="searchingStatus" class="waitingSearchDiv innerPanel">
+              <div class="waitingHolder" style="imageClass">
+                <img class="waitingImage" src="/img/loading.gif"/>
+                <span class="waitingDescription">{!$Label.HUMLoadingStatus}</span>
+              </div>
+            </div>
+          </apex:facet>
+          <apex:facet name="stop"/>
+        </apex:actionStatus>
+        <apex:commandButton action="{!closePopup}" rerender="updatePopUp,forChangeInqAbt" value="Cancel" status="pleaseWaitIntModal"/>
+        <apex:commandButton value="Delete"  action="{!getbCaseInteraction}" onComplete="showConfirmDialogBox('{!JSENCODE(IF(bCaseInteraction, "true", "false"))}');" rerender="updatePopUp" status="pleaseWaitIntModal"/>
+        <apex:pageMessages id="pbsUpMsg"/>
+        <br/><br/>
+        <apex:outputText rendered="{!if(lstSelectOptionIntAbt.size>0,true,false)}" value="{!$Label.HUMSelIntAbt}">
+          <br/>
+        </apex:outputText>
+        <br/>
+        <apex:selectRadio value="{!sSelectedValue}" layout="pageDirection">
+          <apex:selectOptions value="{!lstSelectOptionIntAbt}"/>
+        </apex:selectRadio>
+      </apex:outputPanel>
+    </apex:outputPanel>
+  </apex:pageBlock>
+
+  <apex:actionFunction action="{!deleteSelectedVal}" name="deleteRec" reRender="updatePopUp,forChangeInqAbt,ft" onComplete="hide();"></apex:actionFunction>
+  <apex:actionFunction action="{!save}" name="setRecordIdAccCase" onComplete="synchAllLogs();" reRender="pbsIntLog,pbsMsg,ft,forChangeInqAbt" status="pleaseWaitInt">
+    <!--US-3959734 : Salesforce Genesys CRM Authentication Status should not change-->  
+    <apex:param name="setRecordIdAccCase" value="setRecordIdAccCase"/>
+  </apex:actionFunction>
+  <!--US-2230000 : Save and Continue button functionality--><!--US#2191493 - SFDC_Caller Type population-->
+  <apex:actionFunction action="{!save}" name="actfnSaveAndContinue" onComplete="synchAllLogs();openIntSavedPopup();phoneBookCallerTypeUpdate(interactingWith);" reRender="pbsIntLog,pbsMsg,ft,forChangeInqAbt" status="pleaseWaitInt"></apex:actionFunction>
+  <apex:actionFunction action="{!SaveAndNew}" name="actFnSaveAndNew" onComplete="EventFiring();" reRender="idAuthCheckPanel,pbsIntLog,pbsMsg" status="pleaseWaitInt"></apex:actionFunction>
+  <apex:actionFunction action="{!getInteractionDetails}" name="getInteractionDetails" reRender="forChangeInqAbt,pbsIntLog,ft" status="pleaseWaitInt">
+    <apex:param assignTo="{!sInteractionId}" name="sInteractionId" value=""/></apex:actionFunction>
+  <apex:actionFunction action="{!flushInteraction}" name="flushInteraction" onComplete="EventFiring();" reRender="pbsIntLog,forChangeInqAbt"/>
+  <apex:actionFunction action="{!onChangeInput}" name="onChangeInput" reRender="pbsIntLog,pbsMsg" status="pleaseWaitInt"/>
+  <apex:actionFunction action="{!changeInteractionMemberDetail}" name="changeInteractionMemberDetail" onComplete="openChangedInqAbt();" reRender="pbsIntLog,forChangeInqAbt" status="pleaseWaitInt">
+    <apex:param assignTo="{!sSelMember}" name="sInteractionId" value=""/>
+  </apex:actionFunction>
+  <apex:actionFunction action="{!showError}" name="showError" reRender="pbsMsg"></apex:actionFunction>
+  <apex:actionFunction action="{!updateDisp}" name="updateDisp" reRender="updatePopUp" status="pleaseWaitInt"/>
+  <apex:actionFunction action="{!reQueryInteraction}" name="requeryInteraction" reRender="pbsIntLog,pbsMsg" />
+  <apex:actionFunction action="{!authCheckHandler}" name="AuthenticationCheck" reRender="idAuthCheckPanel" /> <!-- US2287945 authentication checkbox handler -->
+  <apex:actionFunction action="{!updateInteractionAttribute}" name="updateInteractionAttribute" onComplete="EventFiring();" reRender="pbsIntLog,forChangeInqAbt">
+    <apex:param assignTo="{!uuidata}" name="uuidata" value=""></apex:param>
+    </apex:actionFunction>
+    <!-- US2760646: T1PRJ0036776: SFDC Ability to Manually Modify Authentication Status (Multi Members) -->
+  <apex:outputPanel rendered="{!multiMemberAuthSwitch}">
+    <apex:actionFunction action="{!onChangeInqAbtw}" name="onChangeInqAbtw" reRender="idAuthCheckPanel" /> 
+  </apex:outputPanel>
+  <apex:actionStatus id="pleaseWaitInt">
+    <apex:facet name="start">
+      <div class="waitingSearchDiv waitingSearchDivOpacity outerPanel" ></div>
+      <div id="searchingStatus" class="waitingSearchDiv innerPanel">
+        <div class="waitingHolder" style="imageClass">
+          <img class="waitingImage" src="/img/loading.gif"/>
+          <span class="waitingDescription">{!$Label.HUMLoadingStatus}</span>
+        </div>
+      </div>
+    </apex:facet>
+    <apex:facet name="stop"/>
+  </apex:actionStatus>
+  <!--END of Form -->
+  <!-- As functions needs updated values from controller hence,this javascript is 
+         wrapped in output panel which can be reRendered when needed -->
+  <apex:outputpanel id="forChangeInqAbt">
+    <script type="text/javascript">
+      //This values will provide updated value to the script
+      var saveint = '';
+      var sAccId = '{!JSENCODE(sAccId)}';
+      var sAccName = '{!JSENCODE(sAccName)}';
+      var sInteractionId = '{!JSENCODE(oFetchInteraction.id)}';
+      var sNewCaseId = '{!JSENCODE(sNewCaseId)}';
+      var sTabId = '{!$Label.HUMTabName}';
+      var bSavedOrUnsavedMember = '{!JSENCODE(IF(bSavedOrUnsavesMember, "true", "false"))}';
+      var bIntCreationStatus = '{!JSENCODE(IF(bIntCreationStatus, "true", "false"))}';
+      var sSelMember = '{!JSENCODE(sSelMember)}';
+      var sNewCaseTabName = '{!$Label.HUMNewCase}';
+      var selUserIds = document.getElementById("{!$Component.thePage.formID.intComp.theComp.pbIntLog.pbsIntLog.thePbsSection.IntNameId}");
+      var sUpdateWarningMsg = '{!$Label.HUMInteractionUpdateWarningMsg}';
+      var sSearchPageName = '{!$Page.HUMInteractionSearch}';
+      var bGetAccess = '{!JSENCODE(IF(bGetAccess, "true", "false"))}';
+      var bCaseInteraction = '{!JSENCODE(IF(bCaseInteraction, "true", "false"))}';
+      var bShowPopup = '{!JSENCODE(IF(HUMSearchController.bPopUp, "true", "false"))}';
+      var hasError = {!hasError};
+       //US#2191493 - SFDC_Caller Type population
+      var interactingWith = '{!oFetchInteraction.Interacting_With_type__c}';
+      var isGenesysUser = {!isGenesysUser};
+    </script>
+  </apex:outputpanel>
+<script language="javascript">
+     var switch2230000 = {!Switch_2230000};
+     var bcallerTypePopSwitch = {!callerTypePopSwitch};
+     var multiMemberAuthSwitchValue ={!multiMemberAuthSwitch};
+     // INC1458785 Fix - To solve the overriding of searchenrollment window.onload(), event listener is added to "load" event.
+     if (window.addEventListener) {
+          window.addEventListener("load", doinit, false); //no-IE browsers
+      }
+      else if (window.attachEvent) {
+          window.attachEvent("onload", doinit); //IE browsers
+      } 
+</script>
+</apex:component>

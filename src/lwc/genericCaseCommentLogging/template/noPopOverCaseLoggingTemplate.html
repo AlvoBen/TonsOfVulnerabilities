@@ -1,0 +1,98 @@
+﻿<!--
+/*******************************************************************************************************************************
+LWC Name        : genericCaseCommentLogging.html
+Function        : LWC to display generic case comment logging.
+
+Modification Log:
+Developer Name           Code Review                      Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Jonathan Dickinson		                            09/27/2022		            REQ - 3751914
+*********************************************************************************************************************************/
+-->
+<template>
+    <div class="slds-grid slds-wrap">
+        <template if:true={showCaseId}>
+            <div class="slds-col slds-size_2-of-2">
+                <div class="slds-grid slds-gutters slds-p-around_small">
+                    <div class="slds-col slds-size_1-of-2">
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <div class="slds-grid slds-gutters slds-grid_align-end">
+                            <div class="slds-col">
+                                <div class="slds-float_right">
+                                    <label class="slds-checkbox_toggle slds-grid">
+                                        <span class="slds-form-element__label slds-m-bottom_none">Attach to Case</span>
+                                        <span class="slds-form-element__label slds-m-bottom_none"> {cnumber}</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="slds-col">
+                                <lightning-button label="Cancel" title="Cancel"
+                                                  onclick={handlePharmacyCancel}>
+                                </lightning-button>
+                            </div>
+                            <template if:true={submit}>
+                                <div class="slds-col">
+                                    <lightning-button disable={disabled} variant="brand" label="Submit" title="Submit" onclick={handleSaveLogCase}>
+                                    </lightning-button>
+                                </div>
+                            </template>
+                            <template if:false={submit}>
+                                <div class="slds-col">
+                                    <lightning-button variant="brand" label="Save" title="Save"
+                                                      onclick={handleSaveLogCase}>
+                                    </lightning-button>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template if:false={showCaseId}>
+            <div class="slds-col slds-size_1-of-1">
+                <div class="slds-grid slds-gutters slds-p-around_small">
+                    <div class="slds-col slds-size_1-of-2 slds-float_right">
+                        <i>Note:"To attach to a case, please use the toggle switch to "Existing Case" or "New Case"</i>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <div class="slds-grid slds-gutters slds-grid_align-end">
+                            <div class="slds-col">
+                                <div class="slds-float_right">
+                                    <label class="slds-checkbox_toggle slds-grid">
+                                        <span class="slds-form-element__label slds-m-bottom_none">Log To</span>
+                                        <input type="checkbox" name="checkbox-toggleLogTo" value="Log To"
+                                               aria-describedby="Log To" onchange={toggleLogTo} checked={logToNewCase} />
+                                        <span id="checkbox-toggle-captype1" class="slds-checkbox_faux_container"
+                                              aria-live="assertive">
+                                            <span class="slds-checkbox_faux"></span>
+                                            <span class="slds-checkbox_on">New Case</span>
+                                            <span class="slds-checkbox_off">Existing Case</span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="slds-col">
+                                <lightning-button label="Cancel" title="Cancel"
+                                                  onclick={handlePharmacyCancel}>
+                                </lightning-button>
+                            </div>
+                            <template if:true={submit}>
+                                <div class="slds-col">
+                                    <lightning-button disable={submitdisabled} variant="brand" label="Submit" title="Submit" onclick={handleSaveLog}>
+                                    </lightning-button>
+                                </div>
+                            </template>
+                            <template if:false={submit}>
+                                <div class="slds-col">
+                                    <lightning-button variant="brand" label="Save" title="Save" onclick={handleSaveLog}>
+                                    </lightning-button>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+  </template>

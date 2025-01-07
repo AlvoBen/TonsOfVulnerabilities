@@ -1,0 +1,42 @@
+﻿<!--
+LWC Name        : PharmacyHpieOrderLinesHum.html
+Function        : LWC to display pharmacy order item details.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*
+* Atul Patil                    08/25/2023                 
+* Swapnali Sonawane             10/23/2023                    US - 5058187 Pharmacy Edit Order
+* Jonathan Dickinson            02/29/2024                    User Story 4835317: T1PRJ0865978 - MF 27481 - C12; Mail Order Management; Pharmacy - Mail Order Pharmacy page gap- Member Consent (Lightning)
+* Jonathan Dickinson            03/07/2024                    User Story 5394128: T1PRJ1295995 - (T1PRJ0870026) - MF 29256 - Mail Order Pharmacy- Order summary : HPIE updates for split order
+****************************************************************************************************************************--><template>
+    <template if:true={orderLineItems}>
+        <template for:each={orderLineItems} for:item="item">
+            <div key={item.key}>
+                <template if:true={item.showSplitToOrder}>
+                    <div class="slds-p-around_small">
+                        <div class="slds-text-heading_small slds-float_left">Split To Order:&nbsp;</div>
+                        <div class="slds-text-link slds-text-heading_small slds-float_left" style="cursor: pointer;font-weight:bold;"
+                            data-id={item.splitOrderId} onclick={splitOrderFunctionality}>
+                            {item.splitOrderId}
+                        </div>
+                    </div>
+                </template>
+                <template if:true={item.showSplitFromOrder}>
+                    <div class="slds-p-around_small">
+                        <div class="slds-text-heading_small slds-float_left">Split From Order:&nbsp;</div>
+                        <div class="slds-text-link slds-text-heading_small slds-float_left" style="cursor: pointer;font-weight:bold;"
+                            data-id={item.splitOrderId} onclick={splitOrderFunctionality}>
+                            {item.splitOrderId}
+                        </div>
+                    </div>
+                </template>
+                <div>
+                    <c-pharmacy-hpie-order-lines-detail-hum item={item} payer={payer} member-consent={memberConsent} is-member-consent-queue={isMemberConsentQueue}
+                        called-from-edit-order={calledFromEditOrder} ondeletescriptkey={handleDeleteScriptKey} onconsentgiven={handleConsentGiven} is-member-consent-required={isMemberConsentRequired}>
+                    </c-pharmacy-hpie-order-lines-detail-hum>
+                </div>
+            </div>
+        </template>
+    </template>
+</template>

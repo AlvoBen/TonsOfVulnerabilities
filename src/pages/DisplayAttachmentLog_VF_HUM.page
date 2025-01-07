@@ -1,0 +1,99 @@
+﻿<!--
+Page Name        : DisplayAttachmentLog_VF_HUM
+Version          : 1.0 
+Created Date     : 03/16/2016
+Function         : Component use to display attachment log information.
+Modification Log :
+* Developer                 Code review         Date                  Description
+* -------------------------------------------------------------------------------------------------
+* Santhi Mandava            24069               03/16/2016            Original Version
+* Santhi Mandava            24308               04/05/2016            Fixed defect 221734.0001
+* Santhi Mandava            25216               04/20/2016            Fixed defect 223536.0001
+* Santhi Mandava            27512               05/12/2016            Added sorting feature as part of REQ - 263794
+* Santhi Mandava            30410               06/20/2016            Fixed defect 229045.0001 fix
+* Santhi Mandava            32175               07/26/2016            Implemented attachment body decryption logic.
+* Santhi Mandava                                08/24/2016            Worked on REQ#275929 for DPaaS error handling.
+* Santhi Mandava                                10/17/2018            Implemented platform migration changes
+* Santhi Mandava            348723              04/04/2019            Removed dpaas call
+* Mithra Bharadwaj											          US#1522825 SonarQube Changes
+*Prasuna Pattabhi								07/28/2022					User Story 3518085 : View Case Logged Information from Lightning
+* Vivek											07/09/2022		      Updated the JS query to new Datatables to version to 1.12.1
+* Aaron Speakman                                04/10/2022            DF-7501 Fix - Bad Data Table File
+* Pinky Vijur                                   07/14/2023            User Story 4641503: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Case Edit & Detail (Group 1)
+------------------------------------------------------------------------------------------------------------>
+
+<apex:page controller="DisplayAttachmentLog_C_HUM">   
+	<apex:includeLightning />
+    <meta content='maximum-scale=1.0, initial-scale=1.0, width=device-width' name='viewport'/>
+    <apex:stylesheet value="{!URLFOR($Resource.Logging_JS_HUM, 'DisplayAttachmentLog.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+    <apex:includescript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}"/>
+    <apex:includescript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Callout_Utility.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.Logging_JS_HUM,'/DisplayAttachmentLog.js')}"/>
+    
+    <style>
+        body{
+            font-size:12px;
+        }
+    </style>
+    
+    <script>
+        var dispConsolelog = false;
+        var imgview;
+        var table;
+        var envApplicationName = '{!JSENCODE(sAppName)}';        
+    </script>
+    <apex:form >
+    
+    <apex:pageBlock >
+    
+    <div class="container" style="width:100%;">
+        <div class="row">
+                <div class="col-md-1"/>
+                <div class="col-md-10">
+                <apex:sectionHeader title="Logged Information" subtitle="{!sType}"/>
+                 <div id="calloutErrMessage" style="display:none;">
+                    <apex:pageMessage id="idMessages3" severity="ERROR" strength="3" escape="true" summary="{!$Label.Callout_Err_Message_ImageViewer + dpaasErrorLogName}" />
+                 </div>
+                <apex:pageBlock mode="maindetail">
+                    <apex:outputLabel id="idProfLabel" title="Logged Information Details" value="Logged Information Details" style="font-family:arial;font-size:15px;"/>
+                    <br/><br/>
+                    <table id="AttachLog" class="table table-striped table-bordered  table-hover nowrap" cellspacing="0" style = "width: 100%; font-size : 12px">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Created By</th>
+                                <th>Created By Queue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!lstAttachments}" var="var">
+                                <tr>
+                                    <td style="inherit:inherit !Important;">{!var.sAttachId}</td>
+                                    <td>
+                                        <apex:outputText value="{!var.sCreatedBy} {!var.sAttachCreatedDate}" />
+                                     </td> 
+                                    <td>{!sCreatedByQueue}</td>
+                                </tr>
+                            </apex:repeat>
+                        </tbody>
+                    </table>                    
+                    </apex:pageBlock>
+                </div>
+                <div class="col-md-1"/>
+        </div>
+        <br/>
+        <div class="row">
+           <apex:outputPanel id="pnlImages">
+               <c:ImageViewer_CMP_HUM ></c:ImageViewer_CMP_HUM>
+           </apex:outputPanel> 
+        </div>
+    </div>
+    </apex:pageBlock>
+    <apex:actionFunction name="getCurrentPageImages" action="{!getCurrentPageImages}" oncomplete="loadImageViewer('{!JSENCODE(sJSONString)}');">
+        <apex:param name="pageIds" value=""/>
+    </apex:actionFunction>
+    </apex:form> 
+</apex:page>

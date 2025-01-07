@@ -1,0 +1,4 @@
+﻿<aura:component implements="flexipage:availableForAllPageTypes,lightning:backgroundUtilityItem" access="global" >
+	<lightning:conversationToolkitAPI aura:id="conversationKit" />
+  	<aura:handler event="lightning:conversationCustomEvent" action="{!c.onCustomEvent}" />
+</aura:component>

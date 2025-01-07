@@ -1,0 +1,44 @@
+.cI_container {
+    padding: 0;
+}
+
+.cI_item {
+    font-family: FSHumana;
+    display: inline-block;
+}
+
+.cI_desc {
+    font-size: 18px;
+
+}
+
+.cI_count {
+    font-size: 36px;
+    margin-left: 1.9rem;
+}
+
+.cI_container .cI_item .cI_count{
+    font-weight: 300;
+    color: #414042;
+  }
+  .cI_container .cI_item .cI_desc{
+    color: #414042;
+  }
+
+
+@media screen and (max-width:767.9px){
+    .cI_count{
+                  font-size:20px;
+                  display:block;
+                  margin-left:0;
+    }
+    .cI_desc{
+                  font-size:14px;
+    }
+     .cI_item{
+                    margin-left:14px;
+    }
+    .cI_container{
+                  display:flex;
+    }
+}

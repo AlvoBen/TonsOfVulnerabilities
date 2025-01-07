@@ -1,0 +1,221 @@
+﻿<!--
+Page Name        : HUMCaseHistoryComponent
+Version          : 1.0 
+Created Date     : MAY 26 2014
+Function         : Component to display related cases of Account, Policy and Policy Member
+Modification Log :
+*   Developer          Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Sagar Tapadia            15767    05/26/2014                Original Version
+*   Shreya Choodamani        15767    06/17/2014                Modified the code to include Interacting About as per REQ-01615
+*   Sagar Tapadia            15767    06/21/2014                Moved JS and CSS to Static Resource.
+*   Ninad Patil              15767    06/27/2014                Code changed for associating Interaction to case on click of case link.
+*   Ninad Patil              15767    06/30/2014                Removed Code for associating Interaction to case on click of case link.
+*   Sagar Tapadia            15767    07/02/2014                Added code to handle date string with or without "/" 
+*   Sagar Tapadia            15767    07/09/2014                Added Reference ID text and custom label 
+*   Sagar Tapadia            15767    07/10/2014                Added Column Classification and Intent instead of Category and Reason.
+*   Sagar Tapadia            15767    07/10/2014                Added VF Component for Action Status
+*   Sagar Tapadia            15767    07/15/2014                Updated the default sorting from Ascending to Descending 
+*   Sagar Tapadia            15767    07/17/2014                Removed Date/Time Opened and Reference ID Label from Page.
+                                                                Renamed Queue to Created By Queue.
+*   Sagar Tapadia            17626    08/19/2014                Added Date Picker on input text field of Date.      
+*   Sagar Tapadia            18216    09/26/2014                Updated Code to show Created By Queue Field and not value from Owner Queue field on Case.
+*   Manish Kumar             21062    02/19/2015                As part of REQ#72747 added HUMPopUPForCaseComments component.
+*   Asha Deepika Koyyana     21062    03/04/2015                Fixed CC(#21062) review comments
+*   Manish Kumar             27139    10/14/2015                Fixed creation of duplicate Case from Recent tab issue. Code modified line#42
+*   Prasanthi Kandula        28219    11/20/2015                Added logic to enable/disable Case button based on the policies for the Group    
+*   Manish Kumar                      01/06/2016                Fixed defefct# 211500.0001, 212554.0001, 212524.0001
+*   Sharan Shanmugam		 30013	  02/17/2016		        Updated the code to enable/disable new case button as part of REQ - 157784
+*   NaveenKanth B                     02/18/2016                Added a help hover over to the case history section
+*   Manish Kumar             26376    05/02/2016				Resolved defect#223366.0001. Delay rendering of HoverOver
+*   Prachi Bhasin            33332    07/18/2016				Changes made as part of REQ- 270349
+-------------------------------------------------------------------------------->
+<apex:component id="myComp" controller="HUMCaseHistoryComponentController" allowDML="true">
+  <apex:includeScript value="/support/console/33.0/integration.js" />
+  <apex:includeScript value="{!URLFOR($Resource.HUMCaseHistoryComponent,'/HUMCaseHistoryComponent/main.js')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.HUMCaseHistoryComponent,'/HUMCaseHistoryComponent/main.css')}"/>
+
+  <script>
+    labCaseStURL = '{!$Label.HUMCaseStandardURL}';
+  </script>
+
+  <apex:form id="myForm">
+    <apex:actionFunction name="openNewCaseAF" action="{!createCaseAndRedirect}" onComplete="openNewCase('{!sCaseID}','{!sCaseNumber}','{!sRedirectURL}'); return false;" reRender="errMsg" status="pleaseWait">
+      <apex:param name="standardURL" value="" />
+    </apex:actionFunction>
+    <apex:actionFunction name="caseCheckboxAF" action="{!enableCaseButton}" reRender="opchckbox,outPanBtn" />
+    <apex:pageBlock id="pgBlock">
+      <apex:pageMessages id="errMsg" />
+      <apex:pageBlockSection id="pgSect1" collapsible="false" columns="1" >
+        <apex:panelGrid id="pgGrid" columns="3">
+          <apex:outputPanel id="outPanBtn" layout="block" style="padding-right:10px;" >
+            <apex:commandButton value="{!$Label.HUMNewCase}" onClick="openNewCaseJS(); return false;" status="pleaseWait" disabled="{!benableCase&&brecordCheck}" />
+            <br/>
+          </apex:outputPanel>
+          <apex:outputPanel id="opchckbox" layout="block" rendered="{!brecordCheck}">
+            <apex:inputCheckbox value="{!bpolcheck}" onclick="selectCheckboxOnCase();"  />
+            <apex:outputText value="{!$Label.CaseCheckboxMessage_HUM}"></apex:outputText>
+            <apex:image id="theImage" height="12" width="12" value="{!$Resource.HUMHoverOverQuestionMark}" onmouseover="openCaseHistoryPop();" onmouseout="clearCaseHistoryPop();" />
+            <div id="CaseHistoryPopUp" class="styleCaseHistory">
+              <SPAN id='CaseHistoryPopUpText'></SPAN>
+            </div>
+          </apex:outputPanel>
+        </apex:panelGrid>
+        <apex:panelGrid id="pgPGrid" columns="4">
+          <apex:outputPanel >
+            <apex:commandButton value="{!$Label.HUMFilterResultButton}" status="buttonStatus" id="pgButton" action="{!Search}" rerender="errMsg,pgSect2,pgSect3" />
+          </apex:outputPanel>
+          <apex:outputPanel layout="block">
+            <apex:outputPanel style="padding-right:10px;">
+              <apex:outputText value="{!$Label.HUMFromDate}"></apex:outputText>
+              <apex:inputText id="fromDate" value="{!sStartDate}" onkeypress="detectKeyPressEnter(event,'{!$Component.myForm.pgBlock.pgSect1.fromDate}');" onblur="dateFormating('{!$Component.myForm.pgBlock.pgSect1.fromDate}');" />
+              <apex:outputtext style="font-weight:bold;" value="{!$Label.HUMCaseHistoryDateFormat}"/>
+            </apex:outputPanel>
+            <apex:outputPanel style="padding-right:10px;" >
+              <apex:outputText value="{!$Label.HUMToDate}"></apex:outputText>
+              <apex:inputText id="toDate" value="{!sEndDate}" onkeypress="detectKeyPressEnter(event,'{!$Component.myForm.pgBlock.pgSect1.toDate}');" onblur="dateFormating('{!$Component.myForm.pgBlock.pgSect1.toDate}');" />
+              <apex:outputtext style="font-weight:bold;" value="{!$Label.HUMCaseHistoryDateFormat}"/>
+            </apex:outputPanel>
+          </apex:outputPanel>
+          <apex:outputPanel >
+            <apex:outputText value="{!$Label.HUMCaseID}:"></apex:outputText>
+            <apex:inputText id="caseNum" value="{!sCaseNum}" onkeypress="detectKeyPressEnter(event,'{!$Component.myForm.pgBlock.pgSect1.caseNum}');" />
+          </apex:outputPanel>
+        </apex:panelGrid>
+      </apex:pageBlockSection>
+      <apex:actionFunction name="doFilterByDate" action="{!Search}" status="buttonStatus" rerender="errMsg,pgSect2,pgSect3" />
+      <apex:pageBlockSection id="pgSect2" columns="1">
+        <apex:pageBlockSectionItem >
+          <apex:pageBlockTable rules="all" id="pgTable" value="{!lstCase}" var="cs">
+            <apex:column headerValue="{!$Label.HUMCaseID}">
+              <a href="javascript:void(0);" id="{!cs.Id}" onmouseover="openPopUp('{!cs.Id}','');" onmouseout="clearPopUp();" onclick="openTab('{!JSENCODE(cs.id)}','{!JSENCODE(cs.CaseNumber)}'); return false"  >{!cs.CaseNumber}</a>
+            </apex:column>
+            <apex:column value="{!cs.Origin}">
+              <apex:facet name="header">
+                <apex:commandLink reRender="pgSect2,pgSect3" action="{!sortResultPage}" value="{!$Label.HUMCaseOrigin}{!IF(sSortExpression=='Origin',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort2">
+                  <apex:param value="Origin" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+            </apex:column>
+            <apex:column value="{!cs.Type}">
+              <apex:facet name="header">
+                <apex:commandLink reRender="pgSect2,pgSect3" action="{!sortResultPage}" value="{!$Label.HUMCaseType}{!IF(sSortExpression=='Type',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSor3t">
+                  <apex:param value="Type" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+            </apex:column>
+            <apex:column value="{!cs.Classification_Id__r.Name}">
+              <apex:facet name="header">
+                <apex:commandLink reRender="pgSect2,pgSect3" action="{!sortResultPage}" value="{!$Label.HUMCaseClassification}{!IF(sSortExpression=='Classification_Id__r.Name',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort4">
+                  <apex:param value="Classification_Id__r.Name" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+            </apex:column>
+            <apex:column headerValue="{!$Label.HUMCaseIntent}">
+              <apex:outputText value="{!cs.Intent_Id__r.Name}" />
+            </apex:column>
+            <apex:column value="{!cs.Product__c}">
+              <apex:facet name="header">
+                <apex:commandLink reRender="pgSect2,pgSect3" action="{!sortResultPage}" value="{!$Label.HUMCaseProduct}{!IF(sSortExpression=='Product__c',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort5">
+                  <apex:param value="Product__c" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+            </apex:column>
+            <apex:column value="{!cs.Interacting_With__r.Name}">
+              <apex:facet name="header">
+                <apex:commandLink reRender="pgSect2,pgSect3" action="{!sortResultPage}" value="{!$Label.HUMIntWithFieldLabel}{!IF(sSortExpression=='Interacting_With__r.Name',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort6">
+                  <apex:param value="Interacting_With__r.Name" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+            </apex:column>
+            <apex:column value="{!cs.Interacting_With_Type__c}">
+              <apex:facet name="header">
+                <apex:commandLink reRender="pgSect2,pgSect3" action="{!sortResultPage}" value="{!$Label.HUMIntWithTypeFieldLabel}{!IF(sSortExpression=='Interacting_With_Type__c',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort7">
+                  <apex:param value="Interacting_With_Type__c" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+            </apex:column>
+            <apex:column value="{!cs.Interacting_About__c}">
+              <apex:facet name="header">
+                <apex:commandLink reRender="pgSect2,pgSect3" action="{!sortResultPage}" value="{!$Label.HUMIntAboutFieldLabel}{!IF(sSortExpression=='Interacting_About__c',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort11">
+                  <apex:param value="Interacting_About__c" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+            </apex:column>
+            <apex:column value="{!cs.Status}">
+              <apex:facet name="header">
+                <apex:commandLink reRender="pgSect2,pgSect3" action="{!sortResultPage}" value="{!$Label.HUMCaseStatus}{!IF(sSortExpression=='Status',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort8">
+                  <apex:param value="Status" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+            </apex:column>
+            <apex:column value="{!cs.Priority}">
+              <apex:facet name="header">
+                <apex:commandLink reRender="pgSect2,pgSect3" action="{!sortResultPage}" value="{!$Label.HUMCasePriority}{!IF(sSortExpression=='Priority',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort9">
+                  <apex:param value="Priority" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+            </apex:column>
+            <apex:column >
+              <apex:outputText value="{!mapCreatedDates[cs.Id]}" />
+              <apex:facet name="header">
+                <apex:commandLink reRender="pgSect2,pgSect3" action="{!sortResultPage}" value="{!$Label.HUMCaseCreatedDate}{!IF(sSortExpression=='CreatedDate',IF(sortDirection='DESC','▼','▲'),'')}" id="cmdSort10">
+                  <apex:param value="CreatedDate" name="column" assignTo="{!sSortExpression}" ></apex:param>
+                </apex:commandLink>
+              </apex:facet>
+            </apex:column>
+            <apex:column headerValue="{!$Label.HUMCaseClosedDate}">
+              <apex:outputText value="{!mapClosedDates[cs.Id]}" />
+            </apex:column>
+            <apex:column headerValue="{!$Label.HUMCaseCreatedBy}">
+              <apex:outputText value="{!cs.CreatedBy.Name}" />
+            </apex:column>
+            <apex:column headerValue="{!$Label.HUMCaseQueue}">
+              <apex:outputText value="{!cs.Created_By_Queue__c}" />
+            </apex:column>
+          </apex:pageBlockTable>
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+      <apex:pageblockSection id="pgSect3" columns="1">
+        <apex:outputPanel layout="block" styleClass="pSearchShowMore" id="otpNav">
+          {!$Label.HUMTotalRecordsFound}
+          <apex:outputText rendered="{!IF((Con.resultSize == iConstantValue),true,false)}">{!$Label.HUMMaximumPageSize}</apex:outputText>
+          <apex:outputText rendered="{!IF(Con.resultSize < iConstantValue ,true,false)}">{!Con.resultSize}</apex:outputText>
+          &nbsp;
+          <apex:commandButton action="{!first}" reRender="pgSect2,pgSect3" title="First Page" value="{!$Label.HUMFirstLabel}" rendered="{!Con.HasPrevious}" />&nbsp;
+          <apex:image url="/img/search_prevarrow.gif" title="Previous Page" styleClass="prevArrow" rendered="{!Con.HasPrevious}" />
+          <apex:commandButton action="{!Previous}" rerender="pgSect2,pgSect3" title="Previous Page" value="{!$Label.HUMPreviousLabel}" rendered="{!Con.HasPrevious}" />({!IF(Con.PageNumber == 1,1,((Con.PageNumber -1) * Con.PageSize)+1)}-{!IF(Con.resultSize
+          < Con.PageSize,Con.resultSize,Con.PageNumber * Con.pageSize)})&nbsp;
+          <apex:commandButton title="Next Page" reRender="pgSect2,pgSect3" value="{!$Label.HUMNextLabel}" rendered="{!Con.HasNext}" action="{!Next}" />&nbsp;
+          <apex:image url="/img/search_nextarrow.gif" title="Next Page" styleClass="nextArrow" rendered="{!Con.HasNext}" />
+          &nbsp;<apex:commandButton action="{!last}" reRender="pgSect2,pgSect3" title="Last Page" value="{!$Label.HUMLastLabel}" rendered="{!(Con.HasNext)}" />&nbsp;&nbsp;
+          <apex:commandLink value="Go to list" rendered="{!bviewAll}" onclick="openViewAll('{!$Page.HUMPolicyMemberCaseHistoryRelatedList}','{!objId}'); return false;" />
+        </apex:outputPanel>
+        </apex:pageBlockSection>
+      </apex:pageBlock>
+    <c:HUMConstructorExceptionComponent errorLogs="{!lstLogErrors}"/>
+    <c:HUMActionStatusComponent />
+
+    <apex:actionFunction name="callFunAF" action="{!getCaseComments}" reRender="ComponentRef" oncomplete="onCompleteOfAF('{!sCaseId}');">
+      <apex:param name="caseId" value=""/>
+    </apex:actionFunction>
+
+    <div id="PopUp" class="arrow_box">
+      <c:HUMPopUPForCaseComments id="CustomComponent" CaseId="{!sCaseId}"/>
+    </div>
+
+    <apex:actionStatus id="pleaseWait">
+      <apex:facet name="start">
+        <div class="waitingSearchDiv waitingSearchDivOpacity" style="width: 100%; height: 100%; display: block; opacity: 0.90" ></div>
+        <div id="searchingStatus" class="waitingSearchDiv" style="width: 100%; height: 100%; display: block;">
+          <div class="waitingHolder" style="top: 300px; width: 110px;">
+            <img class="waitingImage" src="/img/loading.gif"/>
+            <span class="waitingDescription">Loading....</span>
+          </div>
+        </div>
+      </apex:facet>
+      <apex:facet name="stop"/>
+    </apex:actionStatus>
+
+  </apex:form>
+</apex:component>

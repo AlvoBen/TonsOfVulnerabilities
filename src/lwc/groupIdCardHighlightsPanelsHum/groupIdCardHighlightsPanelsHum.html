@@ -1,0 +1,59 @@
+﻿<!--
+Function        : LWC to display Highlights section on Group Id card details pages.
+Modification Log:
+* Developer Name                  Date                         Description
+
+* Suraj patil                   12/24/2021                  US: 1464525
+****************************************************************************************************************************-->
+<template>
+    <div if:true={bDataLoaded} class="slds-page-header slds-page-header_record-home">
+        <div class="highlights-container">
+            <div class="slds-page-header__row slds-grid_vertical-align-center">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <lightning-icon icon-name={header.icon.name} size={header.icon.size}
+                                slot="icon">
+                            </lightning-icon>
+                        </div>
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <span>{header.name}</span>
+                                        <span
+                                            class="slds-page-header__title slds-truncate slds-text-heading_medium slds-m-top_x-small">
+                                            <b>{sMemberName}</b>
+                                        </span>
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div if:true={bDataLoaded} class="slds-page-header__row slds-page-header__row_gutters">
+            <div class="slds-page-header__col-details">
+                <div class="slds-grid slds-page-header__detail-row slds-p-top_none slds-p-bottom_none">
+                    <template for:each={oFormFields} for:item='detail'>
+                        <lightning-layout-item padding="around-small" class="slds-page-header__detail-block slds-col"
+                            key={detail.label}>
+                            <div class="slds-truncate field-title" title={detail.label}><b>{detail.label}</b></div>
+                            <div class="slds-truncate" if:false={detail.bIsCustom}>
+                                <div if:false={detail.showIcon} class="details-text-wrap">{detail.value}</div>
+                            </div>      
+                            <span if:true={detail.bIsCustom}>
+                                <lightning-output-field if:true={detail.bAddress} 
+                                    class="details-text-wrap"
+                                    field-name={detail.mapping}
+                                    variant="label-hidden">
+                                </lightning-output-field>
+                            </span>                      
+                        </lightning-layout-item>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

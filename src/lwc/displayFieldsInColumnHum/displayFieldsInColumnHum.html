@@ -1,0 +1,38 @@
+﻿<!--/*******************************************************************************************************************************
+LWC JS Name : DisplayFieldsInColumnHum.HTML
+Function    : This HTML serves as UI to DisplayFieldsInColumnHum
+
+Modification Log: 
+Developer Name           Code Review                      Date                         Description
+*--------------------------------------------------------------------------------------------------------------------------------
+Sagar Gulleve                                         14/07/2022                    User story 3393658 Contact Information Tab.
+Vishal Shinde                                         11/7/2022                     User story 3277055 CRM Service Benefits 2022- Auth/Referral: Lightning Build for Summary & Details - Logging Auth Details
+*********************************************************************************************************************************/ -->
+<template>
+        <template if:true={sectionHeader}>
+            <div class="slds-text-heading_small slds-m-left_medium " style="font-weight: bold;" >
+                <b>{sectionHeader}</b>
+            </div> 
+        </template>
+          <div class=" slds-p-horizontal_xx-small slds-m-left_medium slds-p-top_medium form-details" onclick={handleLogging}>
+            <div class="slds-form" role="list">
+              <div class="slds-form__row">
+                <template for:each={sectionData} for:item="oField"> 
+                  <div class={gridsize} role="listitem" key={oField}>
+                    <div class="logthis slds-form-element slds-form-element_edit slds-form-element_readonly slds-hint-parent"
+                         style="height: 100%" data-id={oField.label} data-label={oField.label} data-value={oField.value} >
+                      <span class="slds-grid ">
+                        <span class="slds-form-element__label field-title"><b>{oField.label}</b></span>
+                          <span class="tooltip" >
+                          <lightning-icon class="myicon" if:true={oField.helpText} size="xx-small"  icon-name="utility:info" ></lightning-icon>
+                          <span class="tooltipContent">{oField.helpText}</span>
+                        </span>
+                      </span>
+                        <span class="slds-hyphenate slds-form-element__static slds-p-top_xx-small">{oField.value} </span>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+</template>

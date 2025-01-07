@@ -1,0 +1,98 @@
+﻿<!--
+Component Name   : ValidOIPolicyMemberID_CMP_HUM.component
+Version          : 1.0
+Created On       : 26 Feb, 2020
+Function         : Component to show Valid OI Policy Member ID Table
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Riddhi Mittal            27366                     06/10/2020                    MBEPlus for Other Insurance Datatable
+ * Amar Gadewar                                       05/03/2021                    User Story 2215191: T1PRJ0001827 - MF 1 - AHT - Ability to automatically launch Dual Eligible tab if the policy is Dual Eligible (RF)
+ * Atia Uzma                                          05/25/2021                    User Story 2325450: T1PRJ0001827 - MF 1 - AHT - Ability to automatically launch Dual Eligible tab if the policy is Dual Eligible (CRM)
+ * Ajay Chakradhar                                    06/22/2021                    REQ - 1755455 - Performance Improvement
+ * Kavya Bondada                                      06/28/2021                    User Story 2402901: T1PRJ0001827 - MF 1 - Iconology - Other Insurance Icon (RF)
+ * Samantha Tennyson                                  06/24/2021                    User Story 2393164: T1PRJ0001827 - MF 1 - SF - TECH - On/Off Switch Cleanup for 6/11/21, 6/25/21, 7/9/21 and 7/23/21 releases (CRM)
+ * Pinky Vijur                                        07/14/2023                    User Story 4647074: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Account, Policy Member, Policy, ID Card, & RTI (Group 1)
+  ****************************************************************************************************************************
+ -->
+<apex:component Controller="PolicyMemberDetail_CE_HUM">
+    <apex:attribute name="policymemberid"  assignTo="{!sPolicyMemberId}" type="String" required="true" description="TODO: Describe me"/>
+ 
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/Bootstrap/dist/css/bootstrap.min.css')}" />
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/DataTables-1.13.4/css/dataTables.bootstrap.min.css')}" />
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/DataTables/css/BaseDataTable_CSS_HUM.css')}" />
+    
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}"/>
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}"/>
+     <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Logging/css/LoggingCompCSS.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.MouseHoverPopUp_SR_HUM,'/MouseHoverPopUp_SR_HUM/main_css.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.MouseHoverPopUp_SR_HUM,'/MouseHoverPopUp_SR_HUM/PopUp_File.js')}"/>
+   <apex:includeScript value="{!URLFOR($Resource.ValidOIPolicyMemberId_SR_HUM, 'ValidOIPolicyMemberId_JS_HUM.js')}" />
+
+  <script type="text/javascript">
+    // vAccountDetail = jQuery.noConflict();
+        </script>  
+    
+   <apex:pageBlock mode="maindetail"> 
+                    <apex:outputPanel id="stdMap">
+                    <input type="hidden" id="StandardMapValuesForLogging" value="" />
+                    </apex:outputPanel> 
+                    <apex:pageBlockSection >
+                    </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1" id="thePageBlockSectionCreditCardInfo" html-log_this="true" >
+            <apex:outputpanel html-log_this="true" > 
+                <c:BaseDataTable_CMP_HUM jqueryvariable="jQuery"
+                                         tableid="groupIdCardTable"
+                                         tablecontainerid="groupIdCardTableContainer"
+                                         enablesearch="f"
+                                         info="true"
+                                         keyword="false"
+                                         sort="true"
+                                         columnname="{!columnName}"
+                                         htmlColumnName="Name"                                         
+                                         objName="Account"                                        
+                                         col1_editDelete="false"
+                                         col1_orderable="true"
+                                         columnHeader="{!columnHeader}"
+                                         orderColumn="1"
+                                         orderDirection="asc"
+                                         orderingBool="true" 
+                                         col1_searchable="true"
+                                         col1_accordian="false" 
+                                         accordionColumns="Phone,PersonEmail"                                        
+                                        customDom= '<"row"<"col-sm-6 pull-left domId1"l><"col-sm-6 row domId2"<"pull-right domid3"p> \
+                                        <"btn-group pull-right domid4"<"toolbar">>>>rt<"row"<"col-sm-6 domid5"i><"col-sm-6 domid6"p>>'
+                                        linkClass="IdClass"
+                                        CheckBoxHeader = "false"
+                                        hiddencols= "Phone,PersonEmail,BirthDate"
+                                        tableClass="enable_logging table table-striped table-bordered width100"
+                                        />
+                                        
+            </apex:outputpanel>
+        </apex:pageBlockSection>
+        
+ </apex:pageBlock>
+    <script>  
+        Visualforce.remoting.timeout = '{!$Label.HUMMemWebActivityTimeout}';
+        var vOtherInsurance = ''; 
+        var vAccountId = '{!sAccountId}';
+        var vpolicymemberID = '{!sRecId }';
+        var fOtherInsuranceJsonData = '{!$RemoteAction.PolicyMemberDetail_CE_HUM.getOIData}';  
+        var sPersonID = '{!JSENCODE(sEnterpriseId)}';
+        var sName = '{!JSENCODE(saccName)}';
+        var bisRapidForceUser = {!$Permission.RapidForceUser_AHT_HUM};
+        jQuery(document).ready(function($) 
+        { 
+            Visualforce.remoting.Manager.invokeAction(fOtherInsuranceJsonData , vAccountId , vpolicymemberID , fMethodGetArchivedJsonDataCallback, { buffer: true, escape: true });
+        });  
+        </script>
+         
+    <apex:form >
+    <!-- Hidden field to store a new value of the variable -->
+    <apex:inputHidden value="{!sOtherInsuranceResult}" id="myHiddenField"/>
+    
+    <!-- Action function for the rerendering -->
+    <apex:actionFunction name="passStringToController" action="{!otherInsuranceYesNO}" rerender="myHiddenField"/>
+    </apex:form>
+
+</apex:component>

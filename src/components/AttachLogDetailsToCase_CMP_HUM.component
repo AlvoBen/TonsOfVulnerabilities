@@ -1,0 +1,256 @@
+﻿<!--
+Page Name        : AttachLogDetailsToCase_CMP_HUM
+Version          : 1.0 
+Created Date     : 02/18/2016
+Function         : Component use to display logging information.
+Modification Log :
+* Developer                 Code review         Date                  Description
+* -------------------------------------------------------------------------------------------------
+* Santhi Mandava            24069               02/18/2016            Original Version
+* Santhi Mandava            24308               04/01/2016            Fixed defect 221350.0001. Updated line 56.
+* Santhi Mandava            24488               04/06/2016            Fixed log to alignment issue.
+* Manish Kumar              24880               04/11/2016            Added queue selection logic
+* Santhi Mandava            25389               04/20/2016            Fixed "Interacting with" name issue.(Defect 223338.0001)
+* Manish Kumar              25485               04/21/2016            Removed width for existing case section.
+* Manish Kumar              26376               05/02/2016            Resolved defect#223366.0001. Delay rendering of HoverOver
+* Santhi Mandava            27918               05/13/2016            Implemented REQ - 267563.
+* Manish Kumar              28163               05/23/2016            Fixed defect#224774.0001
+* Santhi Mandava            30174               06/15/2016            Fixed defect#229945.0001  
+* Santhi Mandava            32175               06/27/2016            Fixed defect#230398.0001  
+* Manish Kumar              33921               07/18/2016            Fixed defect#D-00463. Enabled encryption for logged records
+* Prachi Bhasin             33332               07/18/2016            Changes made as part of REQ- 270349  
+* Manish Kumar              35877               08/15/2016            Worked on REQ#279125 for Attachment_Key encryption
+* Santhi Mandava            40488               08/24/2016            Worked on REQ#275929 for DPaaS error handling.
+* Santhi Mandava            48114               10/07/2016            Fixed defects 244345.0001 and 244343.0001
+* Manish Kumar              60470               01/27/2017            Worked on Defect#243750, REQ#296700. Incorporated changes for Datatable
+                                                                      in "Existing case" scenario.
+* Muralidhar Kollu          73102               03/06/2017            Defect 260320.0001 - Only case is displaying when user initally clicks existing case button.                           
+* Prasanthi Kandula         77514               03/15/2017            Fixed defect #260321.0001 REQ-304938
+* Pallavi r                 82026               04/05/2017            REQ 306335 - modified as per new ctci model;                              
+* Santhi Mandava                                05/19/2017            Fixed CA ticket 6703771 REQ - 313480
+* Amar Gadewar									03/18/2018			  REQ - 357693 Logging - Ability to display Information Message to User if Existing Case is open in a tab. (RF+CRM)
+* Asish Behera                                  03/20/2018            REQ - 357690-Ability to Attach an Interaction to an Existing Case When Logging CR5581 (RF)    
+* Amar Gadewar           			            04/12/2018            REQ - 360211 - Quality/AHT - Ability to Attach an Interaction to an Existing Case When Logging CR5581 (CRM)
+* Prudhvi Pamarthi                             02/06/2019                 REQ - 361155 - Not allowing case creation on Legacy Deleted policies
+* Asish Behera                                  02/26/2019            REQ - 383941 User - Ability to set the Classification on the Case Edit Page Based on the Page a User Logged from (RF)
+* Rakesh Patni                                  01/29/2020            Defect - 454969.0001 fix. Changing date format
+* Santhi Mandava                                02/19/2020            Added pause logging functionality for rapidforce users
+------------------------------------------------------------------------------------------------------------>
+
+<apex:component id="AttachLogDetailsToCase_CMP_HUM" controller="AttachLogDetailsToCase_C_HUM" allowDML="true">
+    
+    <apex:attribute name="ObjectId" assignTo="{!sObjectId}" type="String" description="SFDC Id of the selected object"/>
+    <apex:attribute name="legacyDeleteCheck" assignTo="{!blegacyDeleteCheck}" type="Boolean" required="false" description="Boolean value to disable Start logging button"/>
+
+    <apex:includeScript value="{!URLFOR($Resource.HUMCaseHistoryComponent,'/HUMCaseHistoryComponent/main.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.HUMCaseHistoryComponent,'/HUMCaseHistoryComponent/main.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Logging/css/style.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.AttachLogDetailsToCase_SR_HUM,'/AttachLogDetailsToCase_SR_HUM.css')}"/>     
+    <apex:actionFunction name="associateInteractiontToCase" action="{!associateInteractiontToCase}" reRender="ComponentRef" >
+        <apex:param name="InteractionId" value="" assignTo="{!sInteractionId}"/>        
+        <apex:param name="caseId" value="" assignTo="{!sSelectedCaseId}"/>
+    </apex:actionFunction>
+    <script>
+        
+        var takeScreenshot = '{!$Component.comppb.takeScreenshot}';
+        var takeContiniousScreenshot = '{!$Component.comppb.continueTakingScreenshot}';
+        var selectCaseRB = '{!$Component.comppb.caseoption}';
+        var loginBtn = '{!$Component.comppb.loginBtn}';
+        var moreCaseFoundMessage = '{!$Component.moreCaseFound}';
+        var noCaseFoundMessage = '{!$Component.noCaseFound}';
+        var caseSelectionOption = '{!$Component.comppb.caseoption}';
+        var classfication = '';
+        loginPauseBtn = '{!$Component.comppb.loginPauseBtn}';
+    </script>   
+    
+    <apex:pageBlock id="comppb">
+        <div id="SubtypecalloutErrMessage" style="display:none;">
+            <apex:pageMessage id="idMessages4" severity="ERROR" strength="3" escape="true" summary="{!$Label.Callout_Err_Message_LoggingInfoMsg + dpaasErrorLogName}"/>
+        </div>
+        <div id="calloutErrMessage" style="display:none;">
+            <apex:pageMessage id="idMessages3" severity="ERROR" strength="3" escape="true" summary="{!$Label.Callout_Err_Message_Logging + dpaasErrorLogName}"/>
+        </div>
+         <div id="openSubTabErrorMsg" style="display:none;">
+            <apex:pageMessage id="idMessages5" severity="INFO" strength="2" escape="true" summary="{!$Label.SubTabOpen_Err_Message_LoggingInfoMsg }"/>
+        </div>
+        <br/>
+        <table id="ATDTCT1" log_this="false" border="0" width="670px" align="center">
+            <tr>
+                <td width="130px" style=" text-align:center;">
+                    <apex:commandButton style="font-weight:normal; margin-top:5px; margin-bottom:5px;" styleClass="LoggingClassOnPolicyClick" value="Start Logging" id="loginBtn" onClick="logDetails(true); return false;" disabled="{!blegacyDeleteCheck}"/>
+                  </td>
+                  <td>
+                      <apex:commandButton style="font-weight:normal; margin-top:5px; margin-bottom:5px;margin-right:7px;" styleClass="LoggingClassOnPolicyClick" value="Pause" id="loginPauseBtn" onClick="pauseResumeLogging(); return false;" disabled="{!blegacyDeleteCheck}"/>
+                  </td>
+                <td class="firsttd" width="330px">
+                    <div id="caseSelectionArea" style="text-align:center !important;">
+                        <apex:outputLabel value="Log To:" style="font-weight:bold; float:left; width:15%;margin-top:8.7px;color:#666c71" ></apex:outputLabel>
+                        <apex:selectRadio id="caseoption" style="font-weight:normal; float:right; text-align:center;" onclick="operateButton(this);" onkeypress="return ignoreEnterKey(event);" value="{!selectedCaseOption}" styleClass="radioOpt">
+                            <apex:selectOption itemValue="New Case" itemLabel="New Case"/>
+                            <apex:selectOption itemValue="Existing Case" itemLabel="Existing Case"/>
+                        </apex:selectRadio>
+                    </div>
+                    <div id="displayCaseNumber" style="display:none; font-weight:normal;">
+                        Currently logging to case: <a id="newCaseLink" style="cursor:pointer;" onclick="openSubTabFromLoggingPage(sCaseRecordId,sCaseNumber);"></a>
+                    </div>
+                </td>
+                 <td width="210px">
+                    <apex:commandButton styleClass="cmdBtn" style="width:80px; font-weight:normal;" disabled="{!bIsExistingCase}" value="Log"  id="takeScreenshot" onclick="performClickAction(true); return false;"/>
+                    <apex:commandButton styleClass="cmdBtn" style="width:90px; margin-left:15px; font-weight:normal;" disabled="{!bIsExistingCase}" value="Log & Finish"  id="continueTakingScreenshot" onclick="performClickAction(false); return false;"/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" style=" text-align:center;font-weight:bold;">
+                    <div id="remainderMessge" style="display:none;">
+                        <apex:outputLabel style="color:red;" value="Reminder: You must click the 'Log' or 'Log & Finish' button before closing this tab"></apex:outputLabel>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </apex:pageBlock>
+        <apex:outputPanel id="comp_container" layout="block" html-log_this="false">
+            <div id="dvcasedetails" style="display:none; ">
+            <apex:outputPanel id="pnlcaselist" layout="block" html-log_this="false">
+            	 <apex:outputPanel rendered = "{!NOT(ISBLANK(sClassfication)) && len(sClassfication)>0}">
+                    <script>
+                     classfication = '{!sClassfication}';
+                    </script>
+                </apex:outputPanel> 	            
+                <apex:outputPanel rendered="{!bIsExistingCase}" layout="block">
+                        <div class="col-xs-12 dateFields" style="font-size:12px; padding-left: 0px; margin-bottom: 5px;">
+                             <nav class="navbar navbar-default" style="margin-bottom:0px !important; min-height:0px !important; padding-bottom: 5px;">
+                                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="box-sizing: border-box !important; clear:none !important;">
+                                    <form class="navbar-form navbar-left" role="search1" id="ddFilters1" style="padding: 0px !important;">
+                                        <div class="form-group" style="display: inline-block; margin-bottom:-5px !important;"> 
+                                            <span class="navbar-brand panel-title" style="font-weight:0 !important; padding:5px 15px !important;  height: auto;">Case#</span>
+                                            <input type="text" class="form-control example_disable_while_logging" placeholder="Case#" onkeyup="searchKeywordInDataTable(this, event);" id="keyword_logging" style="box-sizing: border-box !important; width: auto;" />
+                                        </div>
+                                        <div class="form-group" style="display: inline-block; margin-bottom:-5px !important;">
+                                            <span class="navbar-brand panel-title" style="font-weight:bold !important; padding:5px 15px !important; height: auto;">Case Opened: </span>
+                                            <span class="navbar-brand panel-title" style="font-weight:normal !important; padding:5px 15px !important; height: auto;">From</span>
+                                            <input id="dos_start_logging" type="text" class="date-picker form-control" placeholder="From" style="width:auto !important;" onkeyup="dateSlash_logging(this,event);" maxlength="10" />
+                                        </div>
+                                        <div class="form-group" style="display: inline-block; margin-bottom:-5px !important;">
+                                            <span class="navbar-brand panel-title" style="font-weight:normal !important; padding:5px 15px !important;  height: auto;">To</span>
+                                            <input id="dos_end_logging" type="text" class="date-picker form-control" placeholder="To" style="width:auto !important; display: inline;" onkeyup="dateSlash_logging(this,event);" maxlength="10" />
+                                            
+                                            <button type="button" class="btn btn-default example_disable_while_logging" id="searchBtn_logging" onclick="onSearchBtnClick_logging();">Search</button>
+                                            <button type="button" class="btn btn-default example_disable_while_logging" id="clearFilterBtn_logging" onclick="onClearFilterBtnClick_logging();">Clear Filters</button>
+                                        </div>
+                                    </form> 
+                                </div>
+                            </nav>
+                        </div>
+                    
+                    <apex:outputPanel id="messageBlockSection" layout="block" styleClass="col-xs-12">
+                        <apex:outputPanel id="noCaseFound" layout="block" style="display:none">
+                            <apex:pageMessage severity="warning" strength="2" title="" summary="{!$Label.NoCaseFound}"></apex:pageMessage>
+                        </apex:outputPanel>
+                        <apex:outputPanel id="moreCaseFound" layout="block" style="display:none">
+                            <apex:pageMessage severity="info" strength="2" title="" summary="{!$Label.MoreThan200CaseFound}"></apex:pageMessage>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel id="CaseTableList" styleClass="col-xs-12" layout="block">
+                        <div class="table-responsive" id="tableId" style="padding:0px !important;width:1500px;height:357px;overflow:scroll;"> 
+                            <table style="font-size:12px;" id="CaseDetailsTable_Logging" class="table table-striped table-bordered table-hover nowrap" cellspacing="0" >
+                                <thead>
+                                    <tr class="header"> 
+                                        <th></th>
+                                        <th>Case Number</th>
+                                        <th>Case Origin</th>
+                                        <th>Type</th> 
+                                        <th>Classification Name </th>
+                                        <th>Intent Name</th>
+                                        <th>Product</th>
+                                        <th>Interacting With</th>
+                                        <th>Interacting With Type</th>
+                                        <th>Interacting About</th>
+                                        <th>Status</th>
+                                        <th>Priority</th>
+                                        <th>Date/Time Opened</th>
+                                        <th>Date/Time Closed</th>
+                                        <th>Created By</th>
+                                        <th>Created By Queue</th>
+                                     </tr>
+                                 </thead>
+                                 <tbody>
+                                    <apex:repeat value="{!lstFinalCases}" var="cse" id="dataTableBodyId" rendered="{!IF(NOT(ISBLANK(lstFinalCases)), true, false)}">
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox" class="chb_logging" onkeypress="return ignoreEnterKey(event);"  onclick="handleClick(this,'{!cse.Id}','{!cse.CaseNumber}');" log_ignore_click="false" value="{!cse.Id}-{!cse.CaseNumber}"/>
+                                            </td>
+                                            <td>
+                                                <a class="logging_cselnk" href="javascript: openSubTabFromLoggingPage('{!JSENCODE(cse.id)}','{!cse.CaseNumber}');" log_ignore_click="false" id="{!cse.Id}" onmouseover="openPopUp1('{!cse.Id}','');" onmouseout="clearPopUp();">{!cse.CaseNumber}</a>
+                                            </td>
+                                            <td><div class="truncate-ellipsis ellipsisfield" title="{!cse.Origin}"><span>{!cse.Origin}</span></div></td>
+                                            <td><div class="truncate-ellipsis ellipsisfield" title="{!cse.Type}"><span>{!cse.Type}</span></div></td>
+                                            <td>{!cse.CTCI_List__r.Classification__r.Name}</td>
+                                            <td>{!cse.CTCI_List__r.Intent__r.Name}</td>
+                                            <td>{!cse.Product__c}</td>
+                                            <td>{!cse.Interacting_With__r.Name}</td>
+                                            <td>
+                                                <div class="truncate-ellipsis ellipsisfield" title="{!cse.Interacting_With_Type__c}"><span>{!cse.Interacting_With_Type__c}</span></div>
+                                            </td>
+                                            <td>{!cse.Interacting_About__c}</td>
+                                            <td><div class="truncate-ellipsis ellipsisfield" title="{!cse.Status}"><span>{!cse.Status}</span></div></td>
+                                            <td>{!cse.Priority}</td>
+                                            <td><apex:outputText value="{0,date,MM/dd/yyyy hh:mm a}"><apex:param value="{!cse.CreatedDate}" /></apex:outputText></td>
+                                            <td>{!cse.ClosedDate}</td>
+                                            <td>{!cse.CreatedBy.Name}</td>
+                                            <td>{!cse.Created_By_Queue__c}</td>
+                                        </tr>
+                                    </apex:repeat>
+                                </tbody>
+                             </table>
+                        </div>
+                    </apex:outputPanel>
+                    
+                </apex:outputPanel>
+        </apex:outputPanel>
+        </div>
+        
+    </apex:outputPanel>
+    
+    <div id="PopUp" class="arrow_box">
+       <c:HUMPopUPForCaseComments id="CustomComponent" CaseId="{!sCaseId}"/>
+    </div>
+    
+    <apex:actionFunction name="callFunAF" action="{!getCaseId}" reRender="ComponentRef" oncomplete="onCompleteOfAF('{!sCaseID}');">
+        <apex:param name="caseId" value=""/>
+    </apex:actionFunction>
+    
+    <apex:actionFunction name="displayCaseList" action="{!displayCaseList}" oncomplete="getCaseDetails('{!sSelectedCaseId}',JSON.stringify({!sCaseDetailsJSON}),'{!caseLstSize}');" reRender="pnlcaselist,btnLog,pnlMessage" status="pleaseWait"/> 
+    <apex:actionFunction name="openNewCaseAF" action="{!createCaseAndRedirect}" oncomplete="callScreenshotfun('{!sSelectedCaseId}','{!sSelectedCaseNumber}'); return false;" status="pleaseWait">
+        <apex:param name="standardURL" value="" />
+    </apex:actionFunction>
+    <apex:actionFunction name="checkUserQueue" action="{!checkUserQueue}" reRender="queueSelectionPage" oncomplete="logDetailsNow(false,'{!userCurrentQueue}'); return false;" status="pleaseWait"/>
+    <apex:actionFunction name="createRecords" action="{!createAttachmentLogRecords}" oncomplete="openCaseInSubtab(); return false;" reRender="pnlcaselist,btnLog,dispLoggingInfo">
+        <apex:param name="screenshotData" value=""/>
+        <apex:param name="jsonMap" value=""/>
+        <apex:param name="jsonStandardMap" value=""/>
+        <apex:param name="keyDescValue" value=""/>
+        <apex:param name="subtypeCipherValue" value=""/>
+        <apex:param name="attachmentSubType" value=""/>
+        <apex:param name="attachmentKeyValue" value=""/>
+        <apex:param name="caseId" value=""/>
+    </apex:actionFunction>
+    
+    <apex:actionFunction name="notifyNewLoggingSessionStarted" oncomplete="openCaseInSubtabAfterNotifying(); return false;">
+        <apex:param name="loggingFinished" assignTo="{!createNewAttachmentLog}" value=""/>
+    </apex:actionFunction>
+    <apex:actionFunction name="getKeyValueToProcessDataFurther" reRender="pleaseWait" action="{!getKeyValue}" oncomplete="callbackForKeyValue('{!enterpriseId}');"/>
+    <apex:actionFunction name="createErrorLogForDpaasError" action="{!createErrorLog}" oncomplete="showHideDpaasError('block',false);resetPageContentMargin();" reRender="idMessages3">
+        <apex:param name="errorMessage" value=""/>
+        <apex:param name="dpaascallouttype" value=""/>
+    </apex:actionFunction>
+    <apex:actionFunction name="createErrorLogForDpaasSubType" action="{!createErrorLog}" oncomplete="showHideDpaasError('block',true);resetPageContentMargin();" reRender="idMessages4">
+        <apex:param name="errorMessage" value=""/>
+        <apex:param name="dpaascallouttype" value=""/>
+    </apex:actionFunction>
+    <apex:actionFunction name="getCases" action="{!returnListOfCase}" oncomplete="reDrawTable(JSON.stringify({!sCaseDetailsJSON}),'{!caseLstSize}');" reRender="CaseTableList,btnLog,pnlMessage" status="pleaseWait">
+        <apex:param name="searchStartDate" value=""/>
+        <apex:param name="searchEndDate" value=""/>
+        <apex:param name="searchCaseNumber" value=""/>
+    </apex:actionFunction>
+</apex:component>

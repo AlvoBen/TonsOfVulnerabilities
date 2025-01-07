@@ -1,0 +1,60 @@
+﻿<!--
+LWC HTML Name       : commonHighlightPanelIconHum.html
+Function            : Markup to display Highlights panel icons on Person Account and Plan member pages.
+
+Modification Log:
+* Developer Name                        Date                       Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Nilanjana Sanyal                     03/16/2022 				Initial version - Saperating the icon display in a common component (US-3091965, US-3091967)
+
+
+
+
+*******************************************************************************************************************************************************************-->
+
+<template>
+    <div class="icons-container slds-grid">
+    <template if:true={indexIcon}>
+        <!--to display icons in horizontal panel-->
+        <template for:each={hMemberIcons} for:item="item" for:index="index">
+            <!--existing logic to restrict WebRegistered and LowIncomeSubsidy icons on the Policy Member page-->
+            <template if:true={item.bIconVisible}>
+                <!--{index}-->						 
+                <div key={item.sIconName} 
+                class="member-icons slds-p-top_medium slds-grid slds-p-right_large slds-is-relative slds-list_horizontal">
+                    <image key={item.sIconName} src={item.sDocumentId} class="icon-member"></image>
+                    <c-custom-tooltip-hum key={item.sIconName} help-text={item.sIconLabel}>
+                    </c-custom-tooltip-hum>
+                </div>
+            </template>			
+        </template>
+        <!--to display icons in vertical dropdown-->
+        <template if:true={indexDropDown}>
+            <div class="slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open">
+                <!--to display vertical dropdown button--> 
+                <lightning-icon class="slds-icon-utility-down slds-icon_container buttonStyle" icon-name="utility:threedots" size="xx-small" title="" tabindex="-1"  onmouseover={showDropDown} onmouseout={hideDropDown} >
+                    </lightning-icon>
+                <!--to display icon list inside the vertical dropdown--> 
+                <template if:true={boolVisible}>
+                        <div class="slds-dropdown slds-dropdown_left" >
+                            <ul id="expandDropDown" class="slds-listbox slds-listbox_vertical" role="presentation"  >
+                                <!--existing logic to restrict WebRegistered and LowIncomeSubsidy icons on the Policy Member page-->
+                                    <template for:each={vMemberIcons} for:item="item" for:index="index">
+                                        <template if:true={item.bIconVisible}>
+                                        <li role="presentation" class="slds-listbox__item" key={item.sIconName}>
+                                            <div key={item.sIconName} class="member-icons slds-p-top_medium slds-grid slds-p-right_large slds-is-relative">
+                                                <!--{index}-->
+                                                <image key={item.sIconName} src={item.sDocumentId} class="icon-member"></image>
+                                                <span class="slds-truncate" title={item.sIconName}>{item.sIconLabel}</span>
+                                            </div>
+                                        </li>
+                                </template>
+                            </template> 
+                            </ul>
+                        </div>
+                </template>
+            </div>
+        </template>	
+        </template>
+    </div>
+</template>

@@ -1,0 +1,45 @@
+﻿<!-- *****************************************************************************************
+Page Name          : HUMAttachmentDetailOverride
+Version            : 1.0
+Function           : Custom VF for Notes and Attachment in Attachment detail page
+Created Date       : 03/23/2015
+
+Modification Log:
+*   Developer                   Code Review     Date               Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Kritika Popat               21906          03/23/2015        Original Version
+*   Mithra Bharadwaj                                             US#1522825 SonarQube Changes
+**************************************************************************************************************************** -->
+<apex:page id="thePage" standardController="Attachment__c" extensions="HUMAttachmentDetailOverrideExtension" action="{!onPageLoad}">
+
+  <script src="/support/console/32.0/integration.js" type="text/javascript"></script>
+  <script>
+    var lnkBtn = '{!$Component.thePage.theForm.thePageBlock.thePBBtn.linkBtn}';
+    var TabTitleValue='{!JSENCODE(sTabTitle)}';
+    window.onLoad = setMyTabTitle();
+  </script>
+  <apex:includeScript value="{!URLFOR($Resource.HUMAttachmentDetailOverride,'main.js')}" />
+  <apex:StyleSheet value="{!URLFOR($Resource.HUMAttachmentDetailOverride,'main.css')}" />
+
+  <apex:sectionHeader title="{!$Label.HUMAttachment}"  subtitle="{!sTabTitle}"/>
+
+  <br/><br/>
+  <apex:detail subject="{!oAttachment.id}" relatedList="false" title="false" /><br/>
+  <apex:form id="theForm">
+    <apex:pageBlock id="thePageBlock" title="{!$Label.HUMNotesAndAttachment}">
+      <apex:pageblockbuttons id="thePBBtn">
+        <apex:outputLink id="linkBtn" onmouseover="removeUnderlineOnFocus();" styleClass="btn removeUnderline" value="{!$Label.HUMRedirectNotesPage}{!oAttachment.id}{!$Label.HUMReturnUrl}{!oAttachment.id}{!$Label.HUMNonOverride}">{!$Label.HUMViewAll}</apex:outputLink>
+      </apex:pageblockbuttons>
+      <apex:pageBlockSection columns="1">
+        <apex:pageBlockTable value="{!lstAttachmentData}" var="attach">
+          <apex:column headerValue="{!$Label.HUMAttachmentNotesType}" value="{!attach.sType}"/>
+          <apex:column headerValue="{!$Label.HUMAttachmentNotesTitle}" value="{!attach.sTitle}"/>
+          <apex:column headerValue="{!$Label.HUMAttachmentNotesLastModifiedDate}" value="{!attach.sLastModifiedDate}"/>
+          <apex:column headerValue="{!$Label.HUMAttachmentCreatedBy}">
+            <apex:outputLink target="_blank" value="/{!attach.sCreatedById}" >{!attach.sCreatedBy}</apex:outputLink>
+          </apex:column>
+        </apex:pageBlockTable>
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

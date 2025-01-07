@@ -1,0 +1,8 @@
+.existingLoggingBox {
+    width: 1200px !important;
+    /*height: 90% !important;*/
+    position: fixed;
+    top:100px;
+    left: 51px;
+    z-index: 1000;
+}

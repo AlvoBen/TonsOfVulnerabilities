@@ -1,0 +1,99 @@
+﻿<template>
+    <template if:true={showSpinner}>
+        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+    </template>
+    <lightning-card>
+        <div style="height: 320px;">
+
+            <div class="slds-grid slds-gutters slds-m-left_x-small slds-m-right_small">
+                <div class="slds-col slds-text-heading_Medium slds-truncate slds-card__header-title slds-m-top_x-small ">
+                    My Due Work
+                </div>
+                <lightning-button class="slds-float_right" variant="neutral" label="Refresh" onclick={getTasks}></lightning-button>
+            </div>
+            <lightning-layout>
+                <lightning-layout-item size="6" padding="around-small">
+                    <div class="slds-box" style="padding: 0px ; border-color: lightgray ">
+                        <div class="slds-grid slds-p-around_small" style="background-color: #f3f3f3;">
+                            <lightning-icon icon-name="standard:case" size="small" class="slds-m-right_small"></lightning-icon>
+                            <h2 class=" slds-text-heading_xs-small slds-text-title_bold">My Overdue Work ({overdueCount})</h2>
+                        </div>
+                        <div>
+                            <template if:true={noOverdueRecords}>
+                                <div class="slds-border_top" style="border-color: lightgrey; min-height: 200px; ">
+                                    <lightning-datatable class="slds-table_bordered" key-field="neardue"
+                                                         data={neardueData}
+                                                         columns={columns}
+                                                         sorted-by={sortBy}
+                                                         sorted-direction={sortDirection}
+                                                         onsort={doNeardueSorting}
+                                                         hide-checkbox-column
+                                                         resize-column-disabled>
+                                    </lightning-datatable>
+                                </div>
+                            </template>
+                            <template if:false={noOverdueRecords}>
+                                <div class="slds-border_bottom slds-border_top " style="border-color: lightgrey; min-height: 200px; ">
+                                    <lightning-datatable class="slds-table_bordered" key-field="overdue"
+                                                         data={overdueData}
+                                                         columns={columns}
+                                                         sorted-by={sortBy}
+                                                         sorted-direction={sortDirection}
+                                                         onsort={doOverdueSorting}
+                                                         hide-checkbox-column
+                                                         resize-column-disabled>
+                                    </lightning-datatable>
+                                </div>
+
+                                <div style="font-weight: normal;cursor:pointer;" class="slds-align_absolute-center slds-m-vertical_x-small slds-text-link"
+                                     onclick={viewAllOverdue}>View All</div>
+
+                            </template>
+                        </div>
+                    </div>
+                </lightning-layout-item>
+                <lightning-layout-item size="6" padding="around-small">
+                    <div class="slds-box" style="padding: 0px ; border-color: lightgray">
+                        <div class="slds-grid slds-p-around_small" style="background-color: #f3f3f3;">
+                            <lightning-icon icon-name="standard:case" size="small" class="slds-m-right_small"></lightning-icon>
+                            <h2 class=" slds-text-heading_xs-small slds-text-title_bold">My Nearing Due Work ({neardueCount})</h2>
+                        </div>
+                        <div>
+                            <template if:true={noNeardueRecords}>
+                                <div class="slds-border_top " style="min-height: 200px;border-color: lightgrey; ">
+                                    <lightning-datatable class="slds-table_bordered" key-field="neardue"
+                                                         data={neardueData}
+                                                         columns={columns}
+                                                         sorted-by={sortBy}
+                                                         resize-column-disabled
+                                                         sorted-direction={sortDirection}
+                                                         onsort={doNeardueSorting}
+                                                         hide-checkbox-column>
+                                    </lightning-datatable>
+                                </div>
+
+                            </template>
+                            <template if:false={noNeardueRecords}>
+                                <div class="slds-border_bottom slds-border_top" style="min-height: 200px; border-color: lightgrey;">
+                                    <lightning-datatable key-field="neardue"
+                                                         data={neardueData}
+                                                         columns={columns}
+                                                         sorted-by={sortBy}
+                                                         resize-column-disabled
+                                                         sorted-direction={sortDirection}
+                                                         onsort={doNeardueSorting}
+                                                         hide-checkbox-column>
+                                    </lightning-datatable>
+                                </div>
+                                <div style="font-weight: normal;cursor:pointer;" class="slds-align_absolute-center slds-m-vertical_x-small slds-form-element_static slds-text-link"
+                                     onclick={viewAllNeardue}>View All</div>
+                            </template>
+                        </div>
+
+
+                    </div>
+                </lightning-layout-item>
+            </lightning-layout>
+        </div>
+    </lightning-card>
+</template>

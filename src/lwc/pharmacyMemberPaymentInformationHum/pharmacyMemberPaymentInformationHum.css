@@ -1,0 +1,34 @@
+/*.remove-display-sort-icon {
+    visibility: hidden;
+}
+
+  .fixTableHead {
+    overflow-y: auto;
+    height: 320px;
+  }
+  .fixTableHead thead th {
+    position: sticky;
+    top: 0;
+  }
+  table {
+    border-collapse: collapse;        
+    width: 100%;
+  }
+  td {
+    padding: 5px 10px;
+    border: 0px solid #eee;
+  }
+  th {
+    background: #eee;
+  }*/
+
+  .fTableHead{
+    overflow-y: auto;
+  }
+  
+  .fTableHead thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    
+  }

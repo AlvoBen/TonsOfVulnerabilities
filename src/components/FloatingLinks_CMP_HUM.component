@@ -1,0 +1,41 @@
+﻿<!--
+Component Name   : FloatingLinks_CMP_HUM.component
+Version          : 1.0
+Created On       : 05/24/2018
+Function         : VF Re-usable Component to add floating links 
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Darshan Sharma                                       05/24/2018                    Original Version
+* Vinay Lingegowda									   07/22/2019					 REQ - 403671 Quality - All Users - Increase jump links font size (RF)
+* Amar Gadewar                                         03/18/2020                    USER STORY 957439 PR00091574 - MF 1 - Quality - All Users - Increase jump links font size (CRM)
+* Riddhi Mittal                                        07/27/2020                    755539-PR00093155 - MF 21 - Other Insurance (OI) Status in CRM
+* Ajay Chakradhar                                      10/20/2020                    Defect -1837 Fix - Release 10.23.2020 
+********************************************************************************************************************************-->
+<apex:component >
+    <apex:attribute type="String[]" name="lstparam" description="This contains the ids of the elements to be focussed"/>
+    <link rel="stylesheet" href="{!URLFOR($Resource.FloatingLinks_SR_HUM,'FloatingLinks_CSS_HUM.css')}"/> 
+    <div class="flowtinglink_container" >    
+        <apex:variable value="{!0}" var="i"/>
+        <apex:repeat value="{!lstparam}" var="elemId">
+            <apex:variable value="{!i+1}" var="i"/>
+            <apex:outputPanel >                
+                <a class="linklet" id="LoggedInfoId" onclick="floatLinkgotoLocation('{!SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(elemId,' ',''),'&',''),'/',''),'[',''),']',''),'(',''),')','')}');"  data-uidsfdc="22" style="color: #337ab7;text-decoration: none;">
+                    <span class="listTitle cur_pointer">
+                        {!elemId}
+                    </span>
+                </a>
+            </apex:outputPanel>          
+            <apex:outputPanel rendered="{!IF(i<lstparam.size,true,false)}">
+                <span class="pipe" style="margin:0.4%"> | </span> 
+            </apex:outputPanel>
+        </apex:repeat>
+    </div>
+   <style>
+        .flowtinglink_con_rf
+        {
+            font-size:11.33pt;
+        }
+    </style>    
+</apex:component>

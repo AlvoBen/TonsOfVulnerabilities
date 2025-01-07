@@ -1,0 +1,58 @@
+﻿<template>
+    <div id="ExpandableContactSection" class="slds-section slds-is-open">
+        <article class="slds-card">
+            <div class="slds-card__header slds-grid" style="background-color:#F3F2F2">
+                <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                    <div class="slds-media__figure">
+                        <span class="slds-icon_container slds-icon-standard-account" title="account">
+                            <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account"
+                                size="small"></lightning-icon>
+                            <span class="slds-assistive-text">account</span>
+                        </span>
+                    </div>
+                    <div class="slds-media__body">
+                        <h2 class="slds-card__header-title">
+                            <span class="slds-text-title_bold">Contact Handing Alert (2)</span>&nbsp;
+                            <c-custom-tooltip-hum help-text={labels.HumNBAHelptext}>
+                            </c-custom-tooltip-hum>
+                        </h2>
+                    </div>
+                    <div class="slds-no-flex">
+                        <div class="slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open">
+                            <button aria-controls="expandoBookingCalendar" aria-expanded="true"
+                            class="slds-button slds-button_icon ">
+                            <lightning-icon icon-name="utility:down" alternative-text="Show More" size="xx-small"
+                                class="slds-section__title-action-icon"></lightning-icon>
+                            </button>
+                        </div>
+                    </div>
+                </header>
+            </div>
+   
+            <div aria-hidden="false" class="slds-card__body slds-section__content" id="expandoBookingCalendar" style='padding-top:0;'>
+                <div class="slds-tile__detail slds-text-body_small slds-card__body_inner">
+                    <dl class="slds-list_horizontal slds-p-bottom_medium slds-wrap">
+                        <dt class="slds-item_label slds-p-right_none slds-line-clamp" title="Name"><b>Alert Name:</b>
+                        </dt>
+                        <dd class="slds-item_detail slds-line-clamp" title="Description for first label">Healty food
+                            care
+                        </dd>
+                        <dt class="slds-item_label slds-p-right_none slds-line-clamp" title="Phone"><b>Alert Text:</b>
+                        </dt>
+                        <dd class="slds-item_detail" title="Description for second label">
+                            <p class="slds-line-clamp_large">
+                                As of 09/1/2020, this member’s Health Food Card Benefits are increased for the remaining
+                                2020 plan
+                                year. Refer to Healthy Food Card mentor document.
+                            </p>
+                        </dd>
+                        <dt class="slds-item_label slds-p-right_none slds-line-clamp" title="Action"><b>Action:</b>
+                        </dt>
+                        <dd class="slds-item_detail slds-line-clamp" title="Description for first label">Lorem Ipsum
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </article>
+    </div>
+</template>

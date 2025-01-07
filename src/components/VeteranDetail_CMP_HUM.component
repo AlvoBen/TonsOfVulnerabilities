@@ -1,0 +1,90 @@
+﻿<!--
+/*****************************************************************************************************************************************************************
+Apex Class Name : VeteranDetail_CMP_HUM
+Version         : 1.0
+Created On      : 03/04/2021
+Function        : This is a custom component used to display Veteran Details             
+                 
+Modification Log: 
+* Version          Developer Name              Date                       Description
+*-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+*    1.0           Anjani Vaddadi              03/04/2021                Original Version
+*    1.1           Giri Babu                   05/25/2021                US - 2015850 Veterans Update History Tracking  
+*    1.2 	         Ajay Chakradhar             06/22/2021                REQ - 1755455 - Performance Improvement
+* 	 1.3		   Tharun Madishetti		   03/01/2024				 US-5318077 : Consumer Mgt-Classic-VIT Remediation Member Plan and Verify Demographics; VIT37935988,VIT37935989
+ - *******************************************************************************************************************************************************************/
+ -->
+<apex:component controller="VeteranDetail_C_HUM" allowDML="true" id="vetcmp">
+  <apex:attribute assignTo="{!oVeteranDTO}" name="VeteranDTO" type="Veteran_DTO_HUM" required="true" description="This is to get Veteran details of the Member"/>
+ <!-- <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+  <apex:includescript value="/support/console/36.0/integration.js"/> -->
+  <apex:includescript value="{!URLFOR($Resource.VeteranDetail_SR_HUM, 'VeteranDetail_JS_HUM.js')}" />
+
+  <apex:actionFunction name="saveVeteranStatus" action="{!saveVeteranStatus}"  rerender="veternoutput,veteransuccess,veteranMessagePanel,veteranMessage"  oncomplete="saveVeteranStatusComplete(); return false;"/>
+  <apex:outputpanel id="veteranStaticMessagePanel">
+    <apex:pageMessage severity="" escape="true" strength="0"  id="vetStaticMsg"  summary="{!VeteranSectionMessage}"> </apex:pageMessage>
+  </apex:outputpanel>
+  <apex:pageBlockSection id="vetUpdate" columns="2" >
+    <apex:pageBlockSectionItem />
+    <apex:pageBlockSectionItem labelStyle="text-align:left;width:100px;" id="VeteranLabel">
+      <apex:outputLabel html-log_this="false" value="Veteran Health Coverage Status"></apex:outputLabel>
+      <apex:outputLabel value=" "/>
+    </apex:pageBlockSectionItem>
+    <apex:pageblocksectionitem id="vetStatusSecItem">
+      <apex:outputPanel >
+        <apex:outputLabel value="Veteran Status"/>
+      </apex:outputPanel>
+      <apex:outputPanel >
+        <apex:outputText id="selVetStatus" value="{!oVeteranDTO.sVeteranStatus}" styleClass="hidden" />
+        <apex:selectList id="selVetranStatus" onchange="veteranStatusChange()" value="{!oVeteranDTO.sVeteranStatus}" size="1" styleClass="veteran idVeteran_disable_while_logging"  >
+          <apex:selectOptions value="{!VeteranStatusList}" />
+        </apex:selectList>
+      </apex:outputPanel>
+    </apex:pageblocksectionitem>
+    <apex:pageBlockSectionItem labelStyle="text-align:left;width:100%" id="vaHealthSecItem" >
+      <apex:outputPanel >
+        <apex:outputLabel value="VA HealthCare" style="margin-top:1px" />
+        <apex:outputPanel >
+          <apex:inputCheckbox value="{!bVAhealthYes}" styleClass="idVeteran_disable_while_logging" id="cVAHealthYes" style="padding-left:5%;height:11px;margin-top:-3px"/>
+          <label for="{!$Component['cVAHealthYes']}">Yes</label>
+        </apex:outputPanel>
+        <apex:outputPanel >
+          <apex:inputCheckbox value="{!bVAhealthNo}" styleClass="idVeteran_disable_while_logging" id="cVAHealthNo" style="height:11px;margin-left:10px;margin-top:-3px"/>
+          <label for="{!$Component['cVAHealthNo']}">No</label>
+        </apex:outputPanel>
+      </apex:outputPanel>
+      <apex:outputText id="selVAHealth" value="" styleClass="hidden"  />
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem />
+  </apex:pageBlockSection>
+  <apex:outputPanel id="veteransuccess">
+    <apex:outputLabel id="veternoutput" value="{!oVeteranDTO.veteranMessageType}" rendered="false" />
+    <script>
+      var success= '{!JSENCODE(oVeteranDTO.veteranMessageType)}';
+    </script>
+  </apex:outputPanel>
+  <apex:outputPanel >
+    <apex:outputPanel style="padding-left:132px">
+      <a id="veteranTrackLink" href="#" onclick="openTrackingPage()" data-uidsfdc="22" style="color: #015ba7;text-decoration: underline; !important;">
+        Veteran Tracking
+      </a>
+    </apex:outputPanel>
+    <apex:outputPanel layout="block" style="text-align:center">
+      <apex:commandButton id="bSaveVet" styleClass="idVeteran_disable_while_logging" value="Update" onclick="saveVeteranInfo()" reRender="vetUpdate" />
+    </apex:outputPanel>
+  </apex:outputPanel>
+  <script>
+    var sVeteranStatus = '{!JSENCODE(oVeteranDTO.sVeteranStatus)}';
+    var sVAHealthEnrollee = '{!JSENCODE(oVeteranDTO.sVAHealthEnrollee)}';
+    var sName = '{!JSENCODE(oVeteranDTO.sAccountName)}';
+    var sMemberGenKey = '{!JSENCODE(oVeteranDTO.sMemberGenKey)}';
+    var acctId = '{!JSENCODE(oVeteranDTO.sAccountId)}';
+    
+    jQuery( document ).ready(function () {
+    changeListener();
+    setVAHealth();
+    VetsetidAttribute();
+    });
+
+  </script>
+</apex:component>

@@ -1,0 +1,67 @@
+﻿<!--
+Page Name        : HUMMedicareExpAppealProcess
+Version          : 1.0 
+Created Date     : May 19 2015               
+Controller Class : HUMMedicareExpAppealProcessController
+
+*Modification Log :
+* Developer              Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Santhi Mandava                             05/19/2014           Original version.
+* Shreya Choodamani                          06/20/2015           updated code for uniform flow design
+* Prathyu Tushar          324032             01/02/2019           REQ - 380419: Auto route cases for Expedit Appeal Process
+* Amar Gadewar                               06/18/2019           REQ - 399975 - AHT - All Users - Move buttons on the flows to the center of the page (RF)
+* Subhamay Mandal							               07/22/2019           REQ - 404464 - AHT - All Users - Move buttons on the flows to the center of the page (CRM)
+* Mohammed Noor                              06/04/2020           CR674 - US1034997 and US1035031 changes
+* Jasmeen Shangari                           04/21/2021           Checkmarx fixes Azure ID - 2163309
+*********************************************************************************************************************************-->
+<apex:page standardController="Case" extensions="HUMMedicareExpAppealProcessController">
+  <apex:includeScript value="/support/console/31.0/integration.js" />
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY,'jquery.min.js')}"/>
+  <apex:includeScript value="{!$Resource.HUMUnSavedChangesJS}"/>
+  <apex:stylesheet value="{!$Resource.HUMFlowsWordWrap}"/>
+  <script>
+    window.onload = testSetTabUnsavedChanges('Medicare/Medicaid Expedited Appeal');
+    
+	var addExpEventFlag = true; //set the default value as true to fire the event from summary page
+    var selectedCaseId = '{!sSelectedCaseId}';
+  </script>
+  <apex:outputpanel >
+    <style type="text/css">
+        .FlowPageBlockBtns {
+            text-align: left !important;
+        }
+    </style>
+  </apex:outputpanel>
+  <apex:outputPanel id="scriptPanelExp">    
+    <script>                       
+        var sendMessage = function sendMessage(result) {            
+            var tabId = result.id;
+			//send the current tabId in the event message, so on case detail/edit page the listeners can be added for this tab closure.
+            sforce.console.fireEvent('caseMEXPEvent'+selectedCaseId,tabId);
+        };
+        
+        //check if the flow screen is on Summary page and then fire the event
+		if(jQuery("span[id$='DisplayScreen10_NextStepsVerbiage']").length && addExpEventFlag)	
+        {
+          sforce.console.getEnclosingTabId(sendMessage);
+          addExpEventFlag = false;
+        }
+    </script>
+  </apex:outputPanel>
+  <br/>
+  <apex:outputLabel value="{!$Label.HUMMedicareExpeditedAppeal}" style="font-size:16px;font-weight:bold;"/>
+  <br/>
+  <flow:interview id="MEA" name="Medicare_Process_Medicare_Expedited_Appeals_Request" finishLocation="{!FinishPage}" rerender="MEA" rendered="{!bSubmissionPres}">
+    <apex:param name="CaseId" value="{!sSelectedCaseId}"/>
+    <apex:param name="UserId" value="{!$User.Id}"/>
+    <apex:param name="WhatType" value="Case"/>
+    <apex:param name="TemplateSubmissionRecordId" value="{!SubmissionId }"/>
+  </flow:interview>
+
+  <flow:interview id="MEA1" name="Medicare_Process_Medicare_Expedited_Appeals_Request" finishLocation="{!FinishPage}" rerender="MEA1,scriptPanelExp" rendered="{!!bSubmissionPres}">
+    <apex:param name="CaseId" value="{!sSelectedCaseId}"/>
+    <apex:param name="WhatType" value="Case"/>
+    <apex:param name="UserID" value="{!$User.Id}"/>
+  </flow:interview>
+</apex:page>

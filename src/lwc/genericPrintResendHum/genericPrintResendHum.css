@@ -1,0 +1,30 @@
+.THIS.customRadioCls .slds-form-element__control .slds-radio {
+  display: inline-block !important;
+}
+
+.existingLoggingBox {
+  max-width: 80rem !important;
+  width: 1000px !important;
+  max-height: 90rem !important;
+  height: 90% !important;
+  position: absolute;
+  top: 30px;
+  right: 51px;
+  z-index: 1000;
+}
+
+.claimpopoversection{
+  width: 550px;
+  position: fixed;
+  top: 30px;
+  right: 51px;
+  z-index: 1000;
+}
+
+.popoverSection {
+  width: 550px;
+  position: absolute;
+  top: 30px;
+  right: 51px;
+  z-index: 1000;
+}

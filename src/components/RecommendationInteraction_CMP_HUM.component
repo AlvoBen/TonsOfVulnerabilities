@@ -1,0 +1,103 @@
+﻿<!--
+Component Name : RecommendationInteraction_CMP_HUM
+Version         : 1.0
+Created On      : 11/04/2020 
+Function        : This class is used to get recommendation for interaction
+Test Class      : 
+                 
+Modification Log: 
+* Version          Developer Name             Code Review              Date                       Description
+*-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+*    1.0           Suraj patil                                        11/04/2020                 Original Version
+*    1.1           Nirmal Garg                                        12/09/2021                 Replacing window on load function.
+*    1.2           Apurva Urkude                                      02/02/2022                 User Story-2681757 T1PRJ0002606- MF6 - SF - TECH - SonarQube 2021
+
+****************************************************************************************************************************
+-->
+<apex:component id="GuidanceAlertResultsCMP"  controller="RecommendationInteraction_C_HUM"  allowDML="true">
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/DataTables/css/BaseDataTable_CSS_HUM.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.UserAssociation_SR_HUM, '/UserAssociation_SR_HUM/UserAssociation_CSS_HUM.css')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.RecommendationInteraction_SR_HUM, 'RecommendationTable_JS_HUM.js')}" />
+    <apex:attribute name="InteractionRecordId" type="string" description="The Interaction Record ID" assignTo="{!interactionID}" />
+      <script type="text/javascript">
+    <!-- Please do not change this line as it breaks the JS tables. -->
+        //dont enable P9 Critical Fix      var $j = jQuery.noConflict();
+        var vInteractionId = '{!InteractionRecordId}';
+        var vgetRecommendationInfo='{!$RemoteAction.RecommendationInteraction_C_HUM.getRecommendationInfo}';
+        var datatableRowData_guidanceAlertDataTable;
+        jQuery(window).on('load',function()
+        {
+        var vbWithinDateRange = '{!bWithinDateRange }';
+        var vbSingleInteractionMember = '{!bSingleInteractionMember}';
+        var vbValidAccountType ='{!bValidAccountType}';
+
+        if(vbValidAccountType == 'true' && vbWithinDateRange == 'true' && vbSingleInteractionMember == 'true')
+            {
+                Visualforce.remoting.Manager.invokeAction(vgetRecommendationInfo,vInteractionId, fMethodGetAlertInfoJsonDataCallback,{buffer: false,escape: false});
+            }
+            else
+            {
+              //account is member type but date range is beyond
+              if(vbWithinDateRange == 'false' && vbValidAccountType == 'true')
+              {
+              jQuery("[id$='noRecordBeyond']")[0].style.display = 'block';
+              }
+              else if(vbSingleInteractionMember == 'false' && vbValidAccountType == 'true')
+              {
+              jQuery("[id$='moreInteractionMember']")[0].style.display = 'block';
+              }
+              datatableRowData_guidanceAlertDataTable ='{"data":'+JSON.stringify('') +'}';
+              prepareTable_guidanceAlertDataTable();
+            }
+      });
+    </script>
+    <apex:form >
+        <apex:pageBlock id="pgBlock" mode="maindetail">
+        <div id= 'PageMessageId'>
+        <apex:outputPanel id="noRecordBeyond" Styleclass="displayNone" style="width:97%;">
+            <apex:PageMessage Summary="{!$Label.Interaction_Created_Date}" severity="Info" Strength="3" />
+            <apex:pagemessages />
+        </apex:outputPanel>
+        <apex:outputPanel id="moreInteractionMember" Styleclass="displayNone" style="width:97%;">
+          <apex:PageMessage Summary="{!$Label.MoreThanOne_Interaction_Interaction_Member}" severity="Info" Strength="3" />
+          <apex:pagemessages />
+        </apex:outputPanel>
+    </div>
+        <apex:pageMessages id="errMsg" />
+            <apex:pageBlockSection id="pgSect1" collapsible="false" columns="1" >
+                <apex:pageBlockSectionItem >
+                    <apex:outputpanel id="refreshAlertInfoDiv">
+                        <c:BaseDataTable_CMP_HUM col1_accordian="true"
+                            jqueryvariable="jQuery"
+                            tableid="guidanceAlertDataTable"
+                            tablecontainerid="guidanceAlertDataTable_div"
+                            enablesearch="f"
+                            columnname="{!columnName}"
+                            objname="Account"
+                            columnHeader="{!columnHeader}"
+                            accordionColumns="lstQuestion,lstAnswer"
+                            keyword="false"
+                            col1_orderable="false"
+                            col2_orderable="true"
+                            orderDirection="desc"
+                            orderColumn="1"
+                            
+                             />
+                    </apex:outputpanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+
+    <script>
+    var SHOW_ALL_CHILDREN_FLAG = false;
+    var CHILD_DISPLAY_STATE_OVERRIDE = true; 
+    </script>
+    <style>
+      .displayNone
+      {
+      display : none;
+      }
+
+    </style>
+</apex:component>

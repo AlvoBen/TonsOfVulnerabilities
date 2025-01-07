@@ -1,0 +1,265 @@
+﻿<!--
+LWC Name        : rtiResendHum.html
+Function        : LWC to display RTI Send Print Screen 
+
+Modification Log:
+* Developer Name                  Date                         Description
+* Swapnali Sonawane               07/12/2022                   US-3406771 Lightning- RTI - Resend functionality
+* Swapnali Sonawane               08/05/2022                   DF-5521 Yes' and 'No' buttons are not properly aligned in Address verification popover.
+* Sagar Gulleve                   30/09/2022                   US-3676169 MF 3215127- Service - Claims System Integration Claims--Enabling Member Claim Statements Tab Capabilities Member Claim Statements- Send- FAX
+* Sagar Gulleve                   30/09/2022                   US-3684888 MF 3215128 - Service - Claims System Integration-Enabling Provider Claim Statements Tab Capabilities: Provider Claims Statements- Fax Send
+* Abhishek Mangutkar              10/12/2022                   US-3837985 RTI - attach to case upon resend  functionality
+*************************************************************************************************************************** -->
+<template>
+    <div if:false={ismemberproviderstatement} class="slds-text-heading_medium">Select Print Item To</div>
+    <div if:true={ismemberproviderstatement} class="slds-text-heading_medium">Send Claim Statement</div>
+    <b>
+        <div class="slds-text-heading_small">Delivery Method</div>
+    </b>
+    <div class="slds-form-element__control">
+        <span class="slds-radio">
+            <lightning-radio-group name="radioGroup" label="" options={delMethod} value={value} type="radio" onchange={renderTemplate} class="customRadioCls">
+            </lightning-radio-group>
+        </span>
+    </div>
+    <template if:true={loaded}>
+    
+    <template if:true={renderMailUi}>
+
+        <div class="slds-var-p-around_medium">
+            <c-generic-scoped-notification-hum iconname="utility:info" message={labels.RTI_InfoMessage}>
+            </c-generic-scoped-notification-hum>
+        </div>
+
+        <div class="slds-grid slds-wrap slds-var-m-top_x-small slds-var-p-bottom_medium">
+            <div class="slds-col slds-size_12-of-12 slds-text-body_regular slds-var-p-around_medium">
+                <lightning-layout multiple-rows="true">
+                    <lightning-layout-item size="6" class="slds-var-p-around_x-small ">
+                        <div class="slds-form-element">
+                            <div class="slds-form-element__control">
+                                <lightning-input type="text" label="Recipient Name" placeholder=""
+                                    onchange={handleRecName} onkeydown={handleRecName} value={recipientName}
+                                    maxlength="60" message-when-value-missing="Error: You must Enter a Value" required class="validateInput">
+                                </lightning-input>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size="6" class="slds-var-p-around_x-small ">
+                        <div class="slds-form-element">
+                            <div if:false={isproviderstatement} class="slds-form-element__control slds-wrap">
+                                <lightning-combobox label="Recipient Type" name="RecType" value="Member"
+                                    onchange={handleRecType} placeholder="" options={recipientType}
+                                    message-when-value-missing="Error: You must Enter a Value" class="slds-cell-wrap validateInput"
+                                    required>
+                                </lightning-combobox>
+                            </div>
+                            <div if:true={isproviderstatement} class="slds-form-element__control slds-wrap">
+                                <lightning-combobox label="Recipient Type" name="RecType" value="Provider"
+                                    onchange={handleRecType} placeholder="" options={recipientType}
+                                    message-when-value-missing="Error: You must Enter a Value" class="slds-cell-wrap validateInput"
+                                    required>
+                                </lightning-combobox>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="12" class="slds-var-p-around_x-small ">
+                        <div class="slds-form-element">
+                            <div class="slds-form-element__control">
+                                <lightning-input type="text" label="Address Line 1" placeholder=""
+                                    onchange={handleAddress1} onkeydown={handleAddress1} value={AcctData.AddressLine1}
+                                    maxlength="60" message-when-value-missing="Error: You must Enter a Value" required class="validateInput">
+                                </lightning-input>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="12" class="slds-var-p-around_x-small ">
+                        <div class="slds-form-element">
+                            <div class="slds-form-element__control">
+                                <lightning-input type="text" label="Address Line 2" placeholder=""
+                                    onchange={handleAddress2} onkeydown={handleAddress2} value={AcctData.AddressLine2}
+                                    maxlength="60" message-when-value-missing="Error: You must Enter a Value">
+                                </lightning-input>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="4" class="slds-var-p-around_x-small ">
+                        <div class="slds-form-element">
+                            <div class="slds-form-element__control">
+                                <lightning-input type="text" label="City" placeholder="" onchange={handlecity}
+                                    onkeydown={handlecity} value={AcctData.City} maxlength="60"
+                                    message-when-value-missing="Error: You must Enter a Value" required class="validateInput">
+                                </lightning-input>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="4" class="slds-var-p-around_x-small ">
+                        <div class="slds-form-element">
+                            <div class="slds-form-element__control">
+                                <lightning-combobox label="State" name="state" value={AcctData.StateCode}
+                                    onchange={handlestate} placeholder="" options={stateOptions}
+                                    dropdown-alignment="auto" message-when-value-missing="Error: You must Enter a Value"
+                                    required class="validateInput">
+                                </lightning-combobox>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="4" class="slds-var-p-around_x-small ">
+                        <div class="slds-form-element">
+                            <div class="slds-form-element__control">
+                                <lightning-input value={AcctData.ZipCode} onchange={handlezip} onkeydown={handlezip}
+                                    placeholder="" type="text" maxlength="5" label="Zip Code"
+                                    message-when-value-missing="Error: You must Enter a Value" required class="validateInput">
+                                </lightning-input>
+                            </div>
+                        </div>
+                    </lightning-layout-item>                   
+                </lightning-layout>
+                    <template if:true={isSendPrint}>
+                        <div class="exampleHolder">
+                            <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                        </div>
+                    </template>
+                    <template if:true={isAddressVerified}>
+                        <div class="slds-var-p-around_small slds-border_bottom"></div>
+                        <div class="slds-col slds-size_1-of-1 slds-m-top_small">
+                        <div class="slds-grid slds-gutters">
+                            <div class="slds-col slds-size_2-of-12">
+                            </div>
+                    
+                            <div class="slds-col slds-size_4-of-12">
+                                <lightning-input label="Attach To" type="toggle" message-toggle-active="New Case" checked="true"
+                                    message-toggle-inactive="Existing Case" onchange={handleToggle} data-id="caseToggle"></lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_2-of-12">
+                                <span style="width: 15px;">
+                                    <lightning-button variant="brand-outline" label="Cancel" onclick={CancelClick}>
+                                    </lightning-button>
+                                </span>
+                            </div>
+                            <div class="slds-col slds-size_4-of-12">
+                                <lightning-button variant="brand" label="Verify & Resend" onclick={handleAddressVerification}>
+                                </lightning-button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-m-top_small">
+                        <div class="slds-grid slds-gutters">
+                            <div class="slds-col slds-size_12-of-12">
+                                <i>{attachCaseNote}</i>
+                            </div>
+                        </div>
+                    </div>
+                    </template>
+                
+                <template if:false={isAddressVerified}>
+                    <div class="slds-var-p-around_small slds-border_bottom"></div>
+                    <div class="slds-var-m-top_large">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_12-of-12">
+                                <span style="color:red" class="slds-m-bottom_x-small">The Address could not be Verified by USPS, do you wish to Resend
+                                    anyway?</span>
+                            </div>
+                        </div>
+                        <div class="slds-grid slds-wrap slds-p-top_small">
+                            <div class="slds-col slds-size_4-of-12">
+                                
+                            </div>
+                            <div class="slds-col slds-size_4-of-12">
+                                <lightning-input label="Attach To" type="toggle" message-toggle-active="New Case" checked="true"
+                                            message-toggle-inactive="Existing Case" onchange={handleToggle} data-id="caseToggle"></lightning-input>  
+                            </div>
+                            <div class="slds-col slds-size_2-of-12">
+                                <lightning-button variant="brand-outline" class="slds-float_right" label="No"
+                                    onclick={handleNo}>
+                                </lightning-button>
+                            </div>
+                            <div class="slds-col slds-size_2-of-12">
+                                <lightning-button variant="brand" class="slds-float_right" label="Yes"
+                                    onclick={handleYes}>
+                                </lightning-button>
+                            </div>
+                        </div>
+						<div class="slds-col slds-size_1-of-1 slds-m-top_small">
+                            <div class="slds-grid slds-gutters">
+                                <div class="slds-col slds-size_12-of-12">
+                                    <i>{attachCaseNote}</i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </template>
+    <template if:true={renderFaxUi}>
+        <div class="slds-grid slds-wrap slds-var-m-top_x-small slds-var-p-bottom_medium">
+            <div class="slds-col slds-size_12-of-12 slds-text-body_regular slds-var-p-around_medium">
+                <lightning-layout multiple-rows="true">
+                    <lightning-layout-item size="6" class="slds-var-p-around_x-small ">
+                        <div class="slds-form-element">
+                            <div class="slds-form-element__control">
+                                <lightning-input type="text" label="Recipient Name" placeholder=""
+                                    onchange={handleRecName} onkeydown={handleRecName} value={recipientName}
+                                    maxlength="60" message-when-value-missing="Error: You must Enter a Value" required class="validateInput">
+                                </lightning-input>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item size="6" class="slds-var-p-around_x-small ">
+                        <div class="slds-form-element">
+                            <div if:false={isproviderstatement} class="slds-form-element__control slds-wrap">
+                                <lightning-combobox label="Recipient Type" name="RecType" value="Member"
+                                    onchange={handleRecType} placeholder="" options={recipientType}
+                                    message-when-value-missing="Error: You must Enter a Value" class="slds-cell-wrap validateInput"
+                                    required>
+                                </lightning-combobox>
+                            </div>
+                            <div if:true={isproviderstatement} class="slds-form-element__control slds-wrap">
+                                <lightning-combobox label="Recipient Type" name="RecType" value="Provider"
+                                    onchange={handleRecType} placeholder="" options={recipientType}
+                                    message-when-value-missing="Error: You must Enter a Value" class="slds-cell-wrap validateInput"
+                                    required>
+                                </lightning-combobox>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="12" class="slds-var-p-around_x-small ">
+                        <div class="slds-form-element">
+                            <div class="slds-form-element__control">
+                                <lightning-input type="tel" label="Fax Number" placeholder=""
+                                    onchange={handleFaxNumber} onkeydown={handleFaxNumber} value={AcctData.FaxNo} pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" message-when-pattern-mismatch="Error: Please enter valid input"
+                                    maxlength="12" message-when-value-missing="Error: You must Enter a Value" required class="validateInput">
+                                </lightning-input>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+                    </lightning-layout>
+                    <div class="slds-var-p-around_small slds-border_bottom"></div>
+                        <div class="slds-float_right slds-m-left_medium slds-m-top_small">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_5-of-12">
+                                    <i>{attachCaseNote}</i>
+                                </div>
+                                <div class="slds-col slds-size_3-of-12">
+                                    <lightning-input label="Attach To" type="toggle" message-toggle-active="New Case" checked="true"
+                                                message-toggle-inactive="Existing Case" onchange={handleToggle} data-id="caseToggle"></lightning-input>  
+                                </div>
+                                <div class="slds-col slds-size_2-of-12">
+                                    <lightning-button variant="brand-outline" label="Cancel" onclick={CancelClick} class="slds-m-right_large">
+                                    </lightning-button>
+                                </div>
+                                <div class="slds-col slds-size_2-of-12">
+                                    <lightning-button variant="brand" label="Resend" 
+                                        onclick={handleYes}>
+                                    </lightning-button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+    </template>
+</template>
+   
+</template>

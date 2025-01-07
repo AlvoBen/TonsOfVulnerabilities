@@ -1,0 +1,35 @@
+.field-readonly-container {
+    display: flex;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+}
+.account-readonly-label {
+    order: 0;
+    flex-basis: 25%;
+    text-align: right;
+}
+.account-readonly-value {
+    order: 2;
+    flex-basis: 70%;
+}
+.empty-container {
+    order: 1;
+    flex-basis: 5%;
+}
+.title-cont {
+    display: flex;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+}
+.title-empty {
+    display: flex;
+    flex-basis: 10%;
+    order: 0;
+}
+.title-value {
+    display: flex;
+    flex-basis: 80%;
+    order: 1;
+    font-weight: 700;
+    padding-bottom: 1%;
+}

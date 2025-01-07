@@ -1,0 +1,341 @@
+﻿<!--
+Component Name   : HUMAgencyBrokerSearchComponentV2
+Version          : 2.0 
+Created Date     : July 31 2015
+Function         : This VF component is used to search Agency accounts
+Modification Log :
+*                   Developer                 Code Review            Date                        Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*    2.1           Shreya Choodamani           25262                 07/31/2015                 Implementing Async Webservice Callout
+*    2.2           Shreya Choodamani           26152                 09/04/2015                 Added action status for the Reset button to fix defect#: 197004 
+*    2.3           Prerna Prasad               27441                 05/13/2016                 Defect fix #225671.0001             
+*    2.4           Subhamay Mandal                                   02/01/2017                 Added reset all butto
+*    2.5           Subhamay Mandal                                   02/13/2017                 REQ - 301404: Update Reset All button
+*    2.6           Amar Gadewar                                      03/31/2017                 REQ - 305666 - Changing the name of the Reset All button to Clear All Search button (RF)
+*    2.7           Subhamay Mandal                                   05/11/2017                 REQ - 313449 Provide universal reset button in search section to reset the search page(s) (CRM)
+*    2.8           Suresh Gottipati                                  07/30/2018                 Implemented platform encryption changes
+*    2.9           Prudhvi Pamarthi           316969                 01/02/2019                 REQ - 378909 Fix for CA Ticket -7818117
+*    2.10          Deepesh Rao                                       01/29/2019                 REQ-379001  Update Account Name-Agent
+*    2.11          Deepesh Rao                333642                 02/01/2019                 Defect 400266 REQ-379001_Agency/Broker Search Window does not closed, after clicking on the â€œSelectâ€ button
+* Prudhvi Pamarthi												     02/06/2019                 REQ - 361155 - Not allowing case creation on Legacy Deleted policies
+*    2.12          Deepesh Rao                334904                 02/06/2019                Defect 400308-REQ - 379001_Select button not showing for some Agent IDs-Fix
+*    2.13          Prudhvi Pamarthi                                  02/18/2019                 REQ-386667 Fix for CA Ticket -7818117
+*    2.14      	   Deepankar Binjola				 	341599			           03/01/2019				          REQ - 386854 The info in the Provider and unkonwn Provider pop up are not cleared  
+*    2.15          Mohammed Noor                                     07/15/2019                 REQ - 403695 - Fix for Incident 8364762
+*    2.16          Navajit Sarkar				     02/12/2021			REQ - Clicktodial for Agent
+--> 
+<apex:component controller="HUMAgencySearchControllerV2" allowDML="true" id="agencyComponent">
+<script>
+        var sFirstName = '{!$Component.agencyComponent.AgentPageblock.agentpbsection.FirstName}';
+        var sLastName = '{!$Component.agencyComponent.AgentPageblock.agentpbsection.LastName}';
+        var sAgencyState = '{!$Component.agencyComponent.AgentPageblock.agentpbsection.AgencyState}';
+        var sAgencyType = '{!$Component.agencyComponent.AgentPageblock.agentpbsection.AgencyType}';
+        var sAgencyId = '{!$Component.agencyComponent.AgentPageblock.agentpbsection.AgentId}';
+        var sTaxId = '{!$Component.agencyComponent.AgentPageblock.agentpbsection.TaxId}';
+        var AgencySearchFieldsHelpText1 = "{!$Label.HUMAgencySearchFieldsHelpText1}";
+        var AgencySearchFieldsHelpText2 = "{!$Label.HUMAgencySearchFieldsHelpText2}";
+        var AgencySearchFieldsHelpText3 = "{!$Label.HUMAgencySearchFieldsHelpText3}";
+        var AgencySearchFieldsHelpText4 = "{!$Label.HUMAgencySearchFieldsHelpText4}";
+        var AgencyResultHelpText1 = "{!$Label.HUMAgencySearchResultHelpText1}";
+        var AgencyResultHelpText2 = "{!$Label.HUMAgencySearchResultHelpText2}";
+        var HelpTextNonASO = "{!$Label.HUMSearchHelpTextNonASO}";
+        var HelpTextASO = "{!$Label.HUMSearchHelpTextASO}";
+        var AgentValueAgency = "{!$Label.HUMAgencySearchAgentTypeValue2}";
+        var unknownAgencyAccountPage ='{!$Page.HUMUnknownAgencyAccountEdit}';
+function insertAgent(record,taxids)
+  {
+  insertExternalAgent(record,taxids);
+  }
+    </script> 
+    <apex:includeScript value="{!URLFOR($Resource.HUMAgencySearchComponent, 'HUMAgencySearchComponent/AgencySearchScript.js')}" />   
+    <apex:actionFunction name="methodSearchAgency" action="{!searchAgency}" status="buttonStatus" reRender="agencyResults,errorMsgAgency"/>     
+    <apex:stylesheet value="{!$Resource.CustomSearchCSS}" />
+    <!--  Current page specific business logic is incorporated into the Javascript file -->
+    <apex:includeScript value="{!URLFOR($Resource.HUMAgencySearchComponent, 'HUMAgencySearchComponent/AgencySearchScript.js')}" />
+    <apex:StyleSheet value="{!URLFOR($Resource.HUMAgencySearchComponent, 'HUMAgencySearchComponent/AgencySearchCSS.css')}" />
+    <apex:attribute name="HUMSearchController" type="HUMSearchControllerV2"
+        assignTo="{!searchController}" required="false"
+        description="The controller for the page." />
+    <apex:attribute name="searchName" type="String" assignTo="{!key}"
+        required="false"
+        description="Search Context name ,like , Member ,Group etc" />
+  <apex:attribute name="isSearchPage" type="boolean" assignTo="{!bIsSearchPage}" required="false" description="Is search from default search page" default="true" />
+    <!-- Show Error Messages -->
+    <apex:outputpanel id="errorMsgAgency">
+        <apex:pagemessages escape="true" rendered="{!bIsAgencyError && NOT(isInvalidAgencyName)}" />
+        <apex:pageMessage summary="{!$Label.ERROR_AGENCYSEARCH_HUM}" 
+        severity="Error" strength="3" rendered="{!isInvalidAgencyName}" title="{!$Label.ERRORTITLE_AGENCYSEARCH_HUM}"/>
+    </apex:outputpanel>
+
+    <apex:pageBlock mode="edit" title="{!$Label.HUMAgencySearchTitle}"
+        id="AgentPageblock">
+        <apex:pageBlockButtons location="top">
+            <apex:commandButton action="{!searchAgency}" value="{!$Label.HUMSearchButton}" status="buttonStatus" reRender="agencyResults,errorMsgAgency" />
+            <apex:commandButton value="{!$Label.HUMSearchResetButton}" action="{!reset}" status="reset" reRender="errorMsgAgency,agencyResults,AgentPageblock" />
+          <apex:commandButton value="{!$Label.HUMAgencySearchInternalButton}" action="{!searchAgency}" rendered="{!bIsSearchPage}"  status="buttonStatus" reRender="errorMsgAgency,agencyResults">
+                <apex:param name="unknown" value="true" assignTo="{!bIsUnknownAgencySearch}"/>
+            </apex:commandButton>
+          <apex:commandButton value="{!$Label.HUMAgencySearchButtonUnknownGroup}" rendered="{!bIsSearchPage}" onclick="openUnknownAgentAccount();return false;" />
+          <apex:commandButton value="{!$Label.HUMClearAllSearchBtnLabel}" styleclass="resetAllBtn" rendered="{!bIsSearchPage}" status="reset" onclick="getAllNavigationTabs()"/>
+        </apex:pageBlockButtons>
+        <!-- ? Help Feature in search fields section begin -->
+        <div class="pbSubheader brandTertiaryBgr tertiaryPalette"
+            id="AgencySearchPopUp">
+            <h3>
+                {!$Label.HUMLabelSearchFields} <img src="{!$Resource.HUMHoverOverQuestionMark}"
+                    onmouseover="openAgencyPopSearch();"
+                    onmouseout="clearAgencyPopSearch();" />
+            </h3>
+        </div>
+        <div id="AgencyPopUpSearch" class="styleAgencySearchHelp">
+            <SPAN id='AgencyPopUpTextSearch'></SPAN>
+        </div>
+        <!-- ? Help Feature in search fields section end -->
+        <!-- Search Criteria section begin -->
+        <apex:pageBlockSection columns="1" id="agentpbsection">
+            <apex:inputtext value="{!oSearchWrapper.sAgentId}" onkeypress="return noAgencyEnter(event);"
+                label="{!$Label.HUMAgencySearchLabelAgentId}" id="AgentId"
+                onfocus="setBorderagency('AgentId');" onblur="removeBorderagency();"  maxlength="9"/>
+            <apex:inputText label="{!$Label.HUMAgencySearchTaxId}" value="{!oSearchWrapper.sTaxID}" onkeypress="return noAgencyEnter(event);"
+                id="TaxId" onfocus="setBorderagency('TaxId');" onblur="removeBorderagency();" maxlength="9"/>    
+            <!-- Begin Drop down values for Agent Type -->
+            <apex:selectList id="AgencyType" value="{!oSearchWrapper.sAgentType}" onkeypress="return noAgencyEnter(event);"
+                size="1" Label="{!$Label.HUMAgencySearchLabelType}"
+                style="width:150px" onfocus="setBorderagency('AgentType');"
+                onblur="removeBorderagency();">             
+                <apex:selectOption itemValue="{!$Label.HUMAgencySearchAgentTypeValue2}"
+                    itemLabel="{!$Label.HUMAgencySearchAgentTypeValue2}" />
+                <apex:selectOption itemValue="{!$Label.HUMAgencySearchAgentTypeValue1}"
+                    itemLabel="{!$Label.HUMAgencySearchAgentTypeValue3}" />             
+            </apex:selectList>
+            <!-- End Drop down values for Agent Type -->
+            <apex:inputtext value="{!oSearchWrapper.sLastName}" maxlength="36" onkeypress="return noAgencyEnter(event);"
+                label="{!$Label.HUMAgencySearchLabelLastName}" id="LastName"
+                onfocus="setBorderagency('LastName');"
+                onblur="removeBorderagency();" />
+            <apex:inputtext value="{!oSearchWrapper.sAgencyName}" maxlength="105" onkeypress="return noAgencyEnter(event);"
+                label="{!$Label.HUMAgencySearchLabelName}" id="FirstName"
+                onfocus="setBorderagency('FirstName');"
+                onblur="removeBorderagency();" />
+            
+            <apex:selectlist id="AgencyState" onkeypress="return noAgencyEnter(event);"
+                label="{!$Label.HUMAgencySearchLabelState}"
+                value="{!oSearchWrapper.sState}" multiselect="false" size="1"
+                style="width:150px" onfocus="setBorderagency('AgencyState');"
+                onblur="removeBorderagency();">
+                <apex:selectoptions value="{!Agencystatevalue}"></apex:selectoptions>
+            </apex:selectlist>
+        </apex:pageBlockSection>
+        <!-- ? Help Feature in result section begin -->
+        <div class="pbSubheader brandTertiaryBgr tertiaryPalette"
+            id="AgencySearchPopUp" style="">
+            <h3>
+                {!$Label.HUMLabelResult} <img src="{!$Resource.HUMHoverOverQuestionMark}"
+                    onmouseover="openAgencyPop();" onmouseout="clearAgencyPop();" />
+            </h3>
+        </div>
+        <div id="AgencyPopUp" class="stylePanelAgency">
+            <SPAN id='AgencyPopUpText'></SPAN>
+        </div>
+        <!-- ? Help Feature in result section end -->
+        <!-- Results section begin -->
+                <apex:pageBlockSection id="agencyResults" columns="1">
+            <!-- Begin display of results retrieved through query within salesforce  -->
+            
+            <apex:pageBlockTable value="{!lstSObjects}" var="record"
+                 rendered="{!(lstSObjects.size > 0) && (!bExternalResults)}">
+              <apex:column headerValue="Select" width="10%" rendered="{!!bIsSearchPage}">
+                <apex:commandButton value="Select" onclick="populateAccountLookupValuesForAgentGroup('{!record.id}','{!record.Name}','{!record.RecordtypeId}'); " oncomplete="resetAccLookup();" />
+              </apex:column>
+                 <apex:column headerValue="{!$Label.HUMAgencySearchLabelName}"
+                    width="10%" rendered="{!bIsSearchPage}">
+                    <!-- The below command link is used for results from within salesforce -->
+                    <apex:commandLink rendered="{!!ISBLANK(record.Id)}"
+                        onclick="interactionDetails('{!$Label.HUMSearchTypeAgency}',false,null,'{!record.Id}');return false">
+                        {!IF(ISBLANK(TRIM(record.Individual_First_Name__c)),record.Name,record.Individual_First_Name__c)}
+                    </apex:commandLink>
+                 </apex:column>
+                   <apex:column headerValue="{!$Label.HUMAgencySearchLabelName}"
+                 width="10%" rendered="{!!bIsSearchPage}">
+                     {!IF(ISBLANK(TRIM(record.Individual_First_Name__c)),record.Name,record.Individual_First_Name__c)}               
+                </apex:column>
+                <apex:column headerValue="{!$Label.HUMAgencySearchLabelLastName}" width="10%">
+                    <apex:commandLink rendered="{!!ISBLANK(record.Id)}"
+                        onclick="interactionDetails('{!$Label.HUMSearchTypeAgency}',false,null,'{!record.Id}');return false">
+                        {!record.Individual_Last_Name__c}
+                    </apex:commandLink>
+                </apex:column>
+                <apex:column headerValue="{!$Label.HUMAgencySearchLabelAgentId}"
+                    width="10%" value="{!record.Agent_ID__c}" />
+                <apex:column headerValue="{!$Label.HUMAgencySearchTaxId}" width="10%">
+                    <apex:outputPanel rendered="{!bIsUnknownProvider }">
+                        <apex:repeat value="{!record.ConsumerIDs__r}" var="tax">
+                        <apex:outputtext value="{!tax.Consumer_ID__c}"/>&nbsp;
+                        
+                    </apex:repeat>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!!bIsUnknownProvider}">
+                        <apex:repeat value="{!IF(mapConsumerAccount[record.Id] != Null,mapConsumerAccount[record.Id],'')}" var="tax">
+                        <apex:outputtext value="{!tax.Consumer_ID__c}"/>&nbsp;
+                        
+                    </apex:repeat>
+                    </apex:outputPanel>
+                </apex:column>
+                <apex:column headerValue="{!$Label.HUMAgencySearchLabelAddress}"
+                    width="10%" value="{!record.BillingStreet} {!record.BillingCity} {!record.BillingState} {!record.BillingPostalCode}"/>
+                <apex:column headerValue="{!$Label.HUMAgencySearchLabelPhone}"
+                    width="10%"><support:clickToDial number="{!record.Phone}"></support:clickToDial></apex:column>
+                <apex:column headerValue="{!$Label.HUMAgencySearchLabelRecordType}"
+                    width="10%" value="{!record.RecordType.Name}"/>
+                <apex:column HeaderValue="{!$Label.HUMGroupSearchLabelSelect}"
+                    width="5%" rendered="{!bIsSearchPage}">
+                    <!-- The below command button is used for results from within salesforce -->
+                    <apex:commandbutton rendered="{!!ISBLANK(record.Id)}"
+                        onclick="interactionWithDetails('{!$Label.HUMSearchTypeAgency}',false,null,'{!record.Id}');return false"
+                        Value="{!$Label.HUMSearchInteractingWith}" disabled="{!record.ETL_Record_Deleted__c}">
+                    </apex:commandbutton>
+                </apex:column>
+                <apex:column HeaderValue="{!$Label.HUMGroupSearchLabelSelect}"
+                    width="5%" rendered="{!bIsSearchPage}">                 
+                    <!-- The below command button is used for results from within salesforce -->
+                    <apex:commandbutton rendered="{!!ISBLANK(record.Id)}"
+                        onclick="interactionAboutDetails('{!$Label.HUMSearchTypeAgency}',false,null,'{!record.Id}');return false"
+                        Value="{!$Label.HUMSearchInteractingAbout}" disabled="{!record.ETL_Record_Deleted__c}">
+                    </apex:commandbutton>
+                </apex:column>
+             </apex:pageBlockTable>            
+            
+            <apex:outputPanel layout="block" styleClass="pSearchShowMore"
+                id="InternalSearch"  rendered="{!(lstSObjects.size > 0) && (!bExternalResults)}">
+                <apex:commandButton action="{!setAccount.first}" value="First"
+                    disabled="{!!setAccount.hasPrevious}" reRender="AgentPageblock" />
+                <apex:commandButton action="{!setAccount.previous}" value="Previous"
+                    disabled="{!!setAccount.hasprevious}" reRender="AgentPageblock" />
+                <apex:commandButton action="{!setAccount.next}" value="Next"
+                    disabled="{!!setAccount.HasNext}" reRender="AgentPageblock" />
+                <apex:commandButton action="{!setAccount.last}" value="Last"
+                    disabled="{!!setAccount.hasnext}" reRender="AgentPageblock" />
+                {!setAccount.PageNumber} of {!CEILING(setAccount.ResultSize/setAccount.PageSize)} Pages
+            </apex:outputPanel>
+            <!-- End display of results retrieved through query with salesforce  -->
+            
+            <!-- Begin display of results retrieved through integration  -->
+            <apex:actionFunction name="insertExternalAgent" action="{!insertAgentAccount}" rerender="groupresults" oncomplete="getProviderId('{!idGroup}','{!taxId}','')">
+             <apex:param name="AgentAccount" assignTo="{!mapofAgents}" value=""/>
+             <apex:param name="ConsumerID" assignTo="{!consumerIds}" value=""/>
+             </apex:actionfunction>
+            <apex:pageBlockTable value="{!mapRecordset}" var="rec"
+                rendered="{!NOT(ISNULL(mapRecordset)) && iRecordMapSize>0 && bExternalResults}">
+              <apex:column headerValue="Select" width="10%" rendered="{!!bIsSearchPage}">
+                <apex:commandButton value="Select" onclick="populateAccountLookupValuesForAgents('{!JSENCODE(mapRecordset[rec].id)}','{!JSENCODE(mapRecordset[rec].Name)}','{!JSENCODE(mapRecordset[rec].recordTypeId)}','{!mapRecordSetJson[rec]}','{!JSENCODE(mapConsumerTaxIds[rec])}'); return false;"/>
+              </apex:column>
+                <apex:column headerValue="{!$Label.HUMAgencySearchLabelName}"
+                    width="10%" rendered="{!bIsSearchPage}" >                  
+                    <!-- The below command link is used for results from integration which need to be upserted in salesforce -->
+                  <apex:commandLink rendered="{!ISBLANK(mapRecordset[rec].Id)}"
+                      onclick="interactionDetails('{!$Label.HUMSearchTypeAgency}',true,'{!JSENCODE(mapRecordSetJson[rec])}',null,'{!mapConsumerTaxIds[rec]}');return false;">
+                    {!IF(ISBLANK(TRIM(mapRecordset[rec].Individual_First_Name__c)),mapRecordset[rec].Name,mapRecordset[rec].Individual_First_Name__c)}
+                  </apex:commandLink>
+                </apex:column>
+              <apex:column headerValue="{!$Label.HUMAgencySearchLabelName}"
+              width="10%" rendered="{!!bIsSearchPage}">
+              {!IF(ISBLANK(TRIM(mapRecordset[rec].Individual_First_Name__c)),mapRecordset[rec].Name,mapRecordset[rec].Individual_First_Name__c)}
+              </apex:column>
+                <apex:column headerValue="{!$Label.HUMAgencySearchLabelLastName}" width="10%">
+                  <apex:commandLink rendered="{!ISBLANK(mapRecordset[rec].Id)}"
+                      onclick="interactionDetails('{!$Label.HUMSearchTypeAgency}',true,'{!JSENCODE(mapRecordSetJson[rec])}',null,'{!mapConsumerTaxIds[rec]}');return false;">
+                    {!mapRecordset[rec].Individual_Last_Name__c}
+                  </apex:commandLink>
+                </apex:column>              
+                <apex:column headerValue="{!$Label.HUMAgencySearchLabelAgentId}"
+                    width="10%" > {!JSENCODE(mapRecordset[rec].Agent_ID__c)}</apex:Column>
+                <apex:column headerValue="{!$Label.HUMAgencySearchTaxId}"
+                    width="10%">
+                        {!JSENCODE(mapConsumerTaxIds[rec])} &nbsp;
+                </apex:column>
+                <apex:column headerValue="{!$Label.HUMAgencySearchLabelAddress}"
+                    width="10%" >{!JSENCODE(mapRecordset[rec].BillingStreet)} {!JSENCODE(mapRecordset[rec].BillingCity)} {!JSENCODE(mapRecordset[rec].BillingState)} {!JSENCODE(mapRecordset[rec].BillingPostalCode)} </apex:Column>
+                <apex:column headerValue="{!$Label.HUMAgencySearchLabelPhone}"
+                    width="10%" ><support:clickToDial number="{!JSENCODE(mapRecordset[rec].Phone)}"></support:clickToDial> </apex:Column>
+                <apex:column headerValue="{!$Label.HUMAgencySearchLabelRecordType}"
+                    width="10%">  {!JSENCODE(mapRecordset[rec].Agent_Type__c)}</apex:Column>
+                <apex:column HeaderValue="{!$Label.HUMGroupSearchLabelSelect}"
+                    width="5%"  rendered="{!bIsSearchPage}">
+                    <!-- The below command button is used for results from integration which need to be upserted in salesforce -->
+                    <apex:commandbutton rendered="{!ISBLANK(mapRecordset[rec].Id)}"
+                        onclick="interactionWithDetails('{!$Label.HUMSearchTypeAgency}',true,'{!JSENCODE(mapRecordSetJson[rec])}',null,'{!mapConsumerTaxIds[rec]}');return false;"
+                        Value="{!$Label.HUMSearchInteractingWith}" disabled="{!mapRecordset[rec].ETL_Record_Deleted__c}">
+                    </apex:commandbutton>
+                </apex:column>
+                <apex:column HeaderValue="{!$Label.HUMGroupSearchLabelSelect}"
+                    width="5%" rendered="{!bIsSearchPage}">
+                    <!-- The below command button is used for results from integration which need to be upserted in salesforce -->
+                    <apex:commandbutton rendered="{!ISBLANK(mapRecordset[rec].Id)}"
+                        onclick="interactionAboutDetails('{!$Label.HUMSearchTypeAgency}',true,'{!JSENCODE(mapRecordSetJson[rec])}',null,'{!mapConsumerTaxIds[rec]}');return false;"
+                        Value="{!$Label.HUMSearchInteractingAbout}" disabled="{!mapRecordset[rec].ETL_Record_Deleted__c}">
+                    </apex:commandbutton>
+                </apex:column>
+            </apex:pageBlockTable>
+            
+            <apex:outputPanel layout="block" styleClass="pSearchShowMore"
+                id="otpNav" rendered="{!NOT(ISNULL(mapRecordset)) && iRecordMapSize>0 && bExternalResults}">
+                <apex:commandButton action="{!first}" value="First"
+                    disabled="{!!hasprevious}" reRender="AgentPageblock" />
+                <apex:commandButton action="{!previous}" value="Previous"
+                    disabled="{!!hasprevious}" reRender="AgentPageblock" />
+                <apex:commandButton action="{!next}" value="Next"
+                    disabled="{!!hasnext}" reRender="AgentPageblock" />
+                <apex:commandButton action="{!last}" value="Last"
+                    disabled="{!!hasnext}" reRender="AgentPageblock" />
+                {!(iCounter+iPagesize)/iPagesize} of {!CEILING(iRecordMapSize/iPagesize)} Pages
+            </apex:outputPanel>
+            <!-- End display of results retrieved through integration  -->
+        </apex:pageBlockSection>
+        <!-- Results section end -->
+		<!-- Added for reseting the component on click of 'X' button -->
+		<apex:actionFunction action="{!reset}" name="resetAccLookup" status="pleaseWaitIntModal" reRender="" oncomplete="closeAccPopUp();"/>
+		<!-- Added for reseting the component on click of 'X' button -->
+        <apex:actionFunction action="{!searchAgencySoftPhone}" name="searchAgency" status="buttonStatus" reRender="agencyResults,errorMsgAgency" />
+      <apex:actionFunction action="{!reset}" name="resetComponent" reRender="errorMsgGroup,Grouppgblock"/>
+        <apex:actionStatus id="buttonStatus">
+            <apex:facet name="start">
+                <div class="waitingSearchDiv waitingSearchDivOpacity"
+                    style="width: 100%; height: 100%; display: block; opacity: 0.99" />
+                <div id="searchingStatus" class="waitingSearchDiv"
+                    style="width: 100%; height: 100%; display: block;">
+                    <div class="waitingHolder" style="top: 300px; width: 110px;">
+                        <img class="waitingImage" src="/img/loading.gif" /> <span
+                            class="waitingDescription">{!$Label.HUM_Account_AgencySearch}</span>
+                    </div>
+                </div>
+            </apex:facet>
+            <apex:facet name="stop" />
+        </apex:actionStatus>
+        <apex:actionStatus id="reset"> 
+            <apex:facet name="start">
+                <div class="waitingSearchDiv waitingSearchDivOpacity" style="width: 100%; height: 100%; display: block; opacity: 0.90" ></div>
+                <div id="searchingStatus" class="waitingSearchDiv" style="width: 100%; height: 100%; display: block;">
+                    <div class="waitingHolder" style="top: 300px; width: 110px;">
+                        <img class="waitingImage" src="/img/loading.gif"/>
+                        <span class="waitingDescription">{!$Label.HUMSearchResetStatus}</span>
+                    </div>
+                </div>
+                </apex:facet>
+            <apex:facet name="stop"/>
+        </apex:actionStatus>
+		<!-- Added for reseting the component on 'X' button to show loading icon -->
+		<apex:actionStatus id="pleaseWaitIntModal">
+              <apex:facet name="start">
+                <div class="waitingSearchDiv waitingSearchDivOpacity outerPanel" ></div>
+                <div id="searchingStatus" class="waitingSearchDiv innerPanel">
+                  <div class="waitingHolder" style="imageClass">
+                    <img class="waitingImage" src="/img/loading.gif"/>
+                    <span class="waitingDescription">Loading....</span>
+                  </div>
+                </div>
+              </apex:facet>
+              <apex:facet name="stop"/>
+            </apex:actionStatus>
+		<!-- Added for reseting the component on 'X' button to show loading icon -->
+    </apex:pageBlock>
+</apex:component>

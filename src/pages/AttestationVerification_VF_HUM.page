@@ -1,0 +1,73 @@
+﻿<!--
+Page Name        : AttestationVerification_VF_HUM
+Version          : 1.0 
+Created Date     : March 13 2018               
+Controller Class : AttestationVerification_C_HUM
+
+*Modification Log :
+* Developer              Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Bharath Rajappan         204270            03/13/2018           Original version.
+* Moshitha Gunasekaran     218172            04/22/2018           REQ - 359158 Populate Creditable Coverage subtype on completion of ATTVF template
+* Suresh Gottipati                           12/12/2018           Added JS Library file 
+* Bharath Rajappan                           12/19/2018           Defect 392709 fix. Updated Library with CRM ToolKit
+* Vijaya Koriprolu                           02/21/2019           Added Hover message as part of REQ - 382737
+* Amar Gadewar                               06/18/2019           REQ - 399975 - AHT - All Users - Move buttons on the flows to the center of the page (RF)
+* Subhamay Mandal							 07/22/2019           REQ - 404464 - AHT - All Users - Move buttons on the flows to the center of the page (CRM)
+*********************************************************************************************************************************-->
+<apex:page standardController="Case" extensions="AttestationVerification_C_HUM">
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>  
+    <apex:includeScript value="/support/console/31.0/integration.js" /> 
+    <apex:includeScript value="{!$Resource.HUMUnSavedChangesJS}"/> 
+    
+    <apex:includeScript value="{!URLFOR($Resource.AttestationVerification_SR_HUM, 'CreditableMask.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.AttestationVerification_SR_HUM, 'AttestationFlowScript.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.AttestationVerification_SR_HUM, 'AttestationFlowStyles.css')}"/>
+       
+    <script>
+        window.onload = testSetTabUnsavedChanges('Creditable Coverage Attestation');
+        var selectedcasenumber = '{!sCaseNumber}';               
+    </script>
+    <apex:outputpanel >
+        <style type="text/css">
+            .FlowPageBlockBtns {
+                text-align: left !important;
+            }
+        </style>
+    </apex:outputpanel>
+    
+     <!-- Attestation Verification Flow run for New submission -->
+    <flow:interview id="AVPNew" name="AttestationVerificationForm01" finishLocation="{!FinishPage}" rendered="{!!bSubmissionPres}">
+       <apex:param name="WhoId" value="{!sSelectedCaseId}"/>
+        <apex:param name="WhatType" value="Case"/>
+        <apex:param name="UserID" value="{!$User.Id}"/>
+        <apex:param name="SID" value="{!SubmissionId }"/>
+        <apex:param name="EditSequenceNumber" value="{!iEditSequenceNumber}"/>  
+    </flow:interview>   
+    <!-- Attestation Verification Flow run for completed submission -->
+    <flow:interview id="AVPCompleted" name="AttestationVerificationForm01" finishLocation="{!$Page.HUMCloseFlow}" rendered="{!bSubmissionPres}">
+       <apex:param name="WhoId" value="{!sSelectedCaseId}"/>
+        <apex:param name="WhatType" value="Case"/>
+        <apex:param name="UserID" value="{!$User.Id}"/>  
+         <apex:param name="SID" value="{!SubmissionId }"/>      
+        <apex:param name="EditSequenceNumber" value="{!iEditSequenceNumber}"/>  
+    </flow:interview> 
+    <script>    
+    if (jQuery("label[id$='SC6_NeveHadCreditableCoverage_CheckBox.prompt']").length) {
+       
+        jQuery("label[id$='SC6_NeveHadCreditableCoverage_CheckBox.prompt']").closest('td').toggleClass('neverCreditableStyle');
+
+        var ua = window.navigator.userAgent;
+        var msie = ua.indexOf('MSIE');        
+        if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {            
+            jQuery("label[id$='SC6_NeveHadCreditableCoverage_CheckBox.prompt']").closest('td').attr('style', 'text-align: left !important;width: 1% !important;white-space: nowrap !important;max-width: 10px !important');
+        }
+       
+        jQuery(".labelCol").css('width', '1% ', 'important');
+
+        jQuery("label[id$='SC6_NeveHadCreditableCoverage_CheckBox.prompt']").append('<style>.labelCol {width: 1% !important;}</style>');
+
+    }
+    jQuery('input,textarea,option,select').each(function (i) { jQuery(this).attr('tabindex', i + 1); });
+  </script>
+</apex:page>

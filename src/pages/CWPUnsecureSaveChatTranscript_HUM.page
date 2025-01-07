@@ -1,0 +1,13 @@
+﻿<!--
+Page Name        : CWPUnsecureSaveChatTranscript_HUM
+Version          : 1.0 
+Created Date     : 
+Function         : Page to download chat transcript in text document.
+Modification Log :
+*   Modification ID     Developer          Code Review         Date                 Description
+*                       Shivani Shrivastav                     04/27/2023           CWP Unsecure Chat
+* ------------------------------------------------------------------------------------------------------------------------------         
+-->
+<apex:page showHeader="false" controller="CWPUnsecureChat_C_HUM" contentType="text/plain/#transcript.txt">
+<apex:outputText value="{!webChatTranscriptDetail}"/>
+</apex:page>

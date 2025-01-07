@@ -1,0 +1,25 @@
+﻿<!-- *****************************************************************************************
+Page Name          : HUMPolicyMemberDetailPage
+Version            : 1.0
+Function           : This Page updates the exchange details of policy member
+Created On         : 08/22/2014
+
+Modification Log:
+*   Developer           Code Review              Date               Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Anil P                                    08/22/2014          Original Version
+*   Pallavi R                                 03/25/2017          REQ 304134 - GBE Service making 2 callouts
+*   Suresh Gottipati                          12/17/2018          Direct url fix
+****************************************************************************************** -->
+
+<apex:page Controller="HUMPolicyDetailsUpdateController" id="pgId">
+<apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/>
+<script>
+jQuery(document).ready(function() {
+pageLoad();
+});
+</script>
+ <apex:form >
+  <apex:actionFunction name="pageLoad" action="{!getGBEInformationAsync}" id="updatePolicyDetailsAFId" reRender="pgId"/> 
+ </apex:form>
+</apex:page>

@@ -1,0 +1,218 @@
+﻿<!--
+Component Name   : VOBBenefitsSummaryDentalV2_CMP_HUM.component
+Version          : 1.0
+Created On       : 04/11/2018 
+Function         : VF Component to display VOB Dental Benefits Summary
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Shreya Choodamani          26125                    02/01/2016                   Original version
+* Samridh Manucha            26125                    03/22/2016                   Data Plugin and UI changes
+* Pradeepkumar Dani          26125                    04/25/2016                   Added changes for labels and style
+* Vishal Verma               26316                    04/29/2016                   REQ - 258793 :  Adding Additional Fields
+* Apoorv Jain                                         05/12/2016                   Added the Changes for Logging Frame Work.
+* Shiva Pasumarty            48882                    11/22/2016                   REQ - 290153 : VOB UI performance enhancement to reduce high view state memory usage
+* Praveen Kumar Parimi       56654                    01/11/2017                   Created a new version for referencing the new controller.
+* Melkisan Selvaraj         220187                    04/11/2018                   Cloned from BenefitsV1_VF_HUM for REQ - 360140
+* Vishal Verma	            229766                    05/16/2018                   REQ - 355782 : Add Dental Paid Thru Date to Benefits and Accums Summary section
+* Deepankar Binjola								      10/01/2020 				   REQ - 738210 : Add Selling Ledger Number field – Benefits Summary – Dental 
+* Deepankar Binjola							          12/12/2019 				   REQ - 410448 : Added Cobra information to display for Dental policies 
+* Deepankar Binjola								      22/12/2019 				   REQ - 410447 : Retired information to display for Dental policies
+* Riya Agarwal										  18/02/2020				  Defect - 883788 : "Retired” field is not displayed between “Cobra” and “Deductible Type” field
+* Satyam Malviya									  02/24/2020                  Added a blank value in place of selling ledger description to align retired label                    
+* Shailesh Mali										  04/15/2020					REQ - 738193 Add Selling Ledger Description field
+* Priyanka Puranik									  07/15/2020					REQ - 1186747 CA ticket-9171042-Not able to log fields in benefits summary section on Benefits and Accumulators page
+* Sayali Gavane									 	  11/25/2020				 REQ - 1457838 - PR00095581 - MF 53 - Out of Area Indicator for CRM
+* Prasanthi Kandula                                   03/25/2021                   US:1437221 Displaying Paid Thru Date for DEN and MED Benefit Summary
+* Pinky Vijur                         4/7/2021        REQ - 2106915: T1PRJ0002606 - MF 6 Swat - TECH - DF-2647 - Regression - Field Value as 'No' displayed without a Label for some of the members on Benefits Summary section in Testfull
+****************************************************************************************************************************
+-->
+<apex:component id="compBenefitsSummaryD" controller="BenefitsV2_C_HUM">
+    <apex:attribute id="PolicyName" name="PolicyName" description="This is Policy Member Name" type="String" required="true"></apex:attribute>
+    <apex:stylesheet value="{!URLFOR($Resource.VOBDENTALBENEFITSSUMMARYV2_SR_HUM, 'VOBDentalBenefitsSummaryV2_CSS_HUM.css')}" />
+    <apex:includeScript value="{!URLFOR($Resource.VOBDENTALBENEFITSSUMMARYV2_SR_HUM, 'VOBDentalBenefitsSummaryV2_JS_HUM.js')}" />
+
+    <div id="BSDstatusImageLoading" class="loadingImageDivCon">
+        <img src="/img/loading.gif" />
+        <span class="waitingDescription"> {!$Label.LOADING_HUM}</span>
+    </div>
+
+    <div id="formBenefitsSummaryD" class="displayNone">
+        <div id="BSDresponseErrors" class="centerAlign">
+        </div>
+
+        <div id="BSDageBlockDiv">
+            <apex:pageBlock id="BSDPageBlock">
+                <apex:pageBlockSection columns="2" id="BSDPageBlockSection">
+                    <apex:pageBlockSectionItem id="BSDPBSI3">
+                        <apex:outputpanel >
+                            <apex:outputLabel value="{!$Label.BenefitsPeriod_BenefitSummaryVOB_HUM}" style="font-size:12px;" />
+                            <div class="imgRightAlign DeleteFlagRecordStyle">
+                                <h3>
+                                    <img src="{!$Resource.HUMHoverOverQuestionMark}" onmouseover="openPopupBSDInfo();" onmouseout="clearPopupBSDInfo();" />
+                                </h3>
+                            </div>
+                            <div id="DentalPolInfoStylePanelBSD" class="DentalBenefitSummaryStyle">
+                                <SPAN id='DentalPolInfoStylePanelTextBSD'>
+                                </SPAN>
+                            </div>
+                        </apex:outputpanel>
+                        <span id="benefitPeriod">
+                        </span>
+                    </apex:pageBlockSectionItem>
+
+                    <apex:pageBlockSectionItem id="BSDPBSI1" html-log_this="false">
+                        <apex:outputpanel >
+                            <apex:outputLabel html-log_this="false" value="{!$Label.PolicyMemberID_BenefitSummaryVOB_HUM}" style="font-size:12px;" />
+                        </apex:outputpanel>
+                        <apex:outputLink id="linkId1" html-log_this="false" value="#" onclick="openPolicyMemberTab();">{!PolicyName}</apex:outputLink>
+                    </apex:pageBlockSectionItem>
+					
+					<apex:pageBlockSectionItem id="BSDPBSI2" html-log_this="true">
+                     <apex:outputpanel >
+						<apex:outputLabel value="{!$Label.Cobra_BenefitSummaryVOB_HUM}" style="font-size:12px;"/>
+						</apex:outputpanel>
+						<span id="Cobra">
+						</span>
+                     </apex:pageBlockSectionItem>
+					
+					<apex:pageBlockSectionItem id="BSDPBSI20">
+						<apex:outputpanel >
+								<apex:outputLabel value="{!$Label.SellingLedgerNumber_BenefitSummaryVOB_HUM}" style="font-size:12px;"/>
+						</apex:outputpanel>
+						<span id="Selling Ledger Number">
+						</span>
+					  </apex:pageBlockSectionItem>
+					  
+					  <apex:pageBlockSectionItem id="BSDPBSI8" html-log_this="true">
+				    <apex:outputpanel >
+							<apex:outputLabel value="{!$Label.Retired_BenefitSummaryVOB_HUM}" style="font-size:12px;"/>
+							</apex:outputpanel>
+							 <span id="Retired">
+							 </span>
+					 </apex:pageBlockSectionItem> 
+					 
+					<apex:pageBlockSectionItem id="BSDPBSI99" html-log_this="true">
+						<apex:outputpanel >
+							<apex:outputLabel value="{!$Label.SellingLedgerDescription_BenefitSummaryVOB_HUM}" style="font-size:12px;"/>						 
+						</apex:outputpanel>
+						<span id="Selling Ledger Description">
+                        </span>
+					</apex:pageBlockSectionItem>
+					  
+                    <apex:pageBlockSectionItem id="BSDPBSI5">
+                        <apex:outputpanel >
+                            <apex:outputLabel value="{!$Label.DeductibleType_BenefitSummaryVOB_HUM}" style="font-size:12px;" />
+                            <div class="imgRightAlign DeleteFlagRecordStyle">
+                                <h3>
+                                    <img src="{!$Resource.HUMHoverOverQuestionMark}" onmouseover="openPopupBSD1Info();" onmouseout="clearPopupBSD1Info();" />
+                                </h3>
+                            </div>
+                            <div id="DentalPolInfoStylePanelBSD1" class="DentalBenefitSummaryDeductibleStyle">
+                                <SPAN id="DentalPolInfoStylePanelTextBSD1">
+                                </SPAN>
+                            </div>
+                        </apex:outputpanel>
+                        <span id="DeductibleType">
+                        </span>
+                    </apex:pageBlockSectionItem>
+					
+                    <apex:pageBlockSectionItem id="BSDPBSI21">
+                        <apex:outputpanel >
+                            <apex:outputLabel value="{!$Label.NetworkDescription_BenefitSummaryVOB_HUM}" style="font-size:12px;" />
+                        </apex:outputpanel>
+                        <span id="Network Description">
+                        </span>
+                    </apex:pageBlockSectionItem>
+
+                    <apex:pageBlockSectionItem id="BSDPBSI7">
+                        <apex:outputpanel >
+                            <apex:outputLabel value="{!$Label.CoverageType_BenefitSummaryVOB_HUM}" style="font-size:12px;" />
+                        </apex:outputpanel>
+                        <span id="CoverageType">
+                        </span>
+                    </apex:pageBlockSectionItem>
+
+                    <apex:pageBlockSectionItem id="BSDPBSI4">
+                        <apex:outputpanel >
+                            <apex:outputLabel value="{!$Label.MaxDependentAge_BenefitSummaryVOB_HUM}" style="font-size:12px;" />
+                        </apex:outputpanel>
+                        <span id="MaxDependentAge">
+                        </span>
+                    </apex:pageBlockSectionItem>
+
+                    <apex:pageBlockSectionItem id="BSDPBSI9">
+                        <apex:outputpanel >
+                            <apex:outputLabel value="{!$Label.PlanOption_BenefitSummaryVOB_HUM}" style="font-size:12px;" />
+                        </apex:outputpanel>
+                        <span id="PlanOption">
+                        </span>
+                    </apex:pageBlockSectionItem>
+
+                    <apex:pageBlockSectionItem id="BSDPBSI6">
+                        <apex:outputpanel >
+                            <apex:outputLabel value="{!$Label.MaxStudentAge_BenefitSummaryVOB_HUM}" style="font-size:12px;" />
+                        </apex:outputpanel>
+                        <span id="MaxStudentAge">
+                        </span>
+                    </apex:pageBlockSectionItem>
+
+                    <apex:PageBlockSectionItem Id="BSDPBSI11">
+                        <apex:outputpanel >
+                            <apex:outputLabel value="{!$Label.BenefitPackageID_BenefitSummaryVOB_HUM}" style="font-size:12px;" />
+                        </apex:outputpanel>
+                        <span id="BenefitPackageId">
+                        </span>
+                    </apex:PageBlockSectionItem>
+
+
+                    <apex:pageBlockSectionItem id="BSDPBSI28">
+                        <apex:outputpanel >
+                            <apex:outputLabel value="{!$Label.Paid_Thru_Date_HUM}" style="font-size:12px;" />
+                        </apex:outputpanel>
+                        <span id="paidThruDate">
+                        </span>
+                    </apex:pageBlockSectionItem>									
+
+                    <apex:pageBlockSectionItem id="BSDPBSI22">
+                        <apex:outputpanel >
+                            <apex:outputLabel value="{!$Label.Market_BenefitSummaryVOB_HUM}" style="font-size:12px;" />
+                        </apex:outputpanel>
+                        <span id="Market">
+                        </span>
+                    </apex:pageBlockSectionItem>
+					
+					 <apex:pageBlockSectionItem id="BSDPBSI12" rendered="{!bIsDenGroup}">
+                       <apex:outputpanel >
+                            <apex:outputLabel value="{!$Label.OutofAreaIndicator_BenefitSummaryVOB_HUM}" style="font-size:12px;" />
+                        </apex:outputpanel>                       
+                        <span id="outOfAreaInd">
+                        </span>
+                    </apex:pageBlockSectionItem>
+					
+                    <apex:pageBlockSectionItem >                       
+                    </apex:pageBlockSectionItem>
+					
+                    <apex:pageBlockSectionItem id="BSDPBSI13" rendered="{!bIsDenGroup}">
+                       <apex:outputpanel >
+                            <apex:outputLabel value="{!$Label.OutofAreaDate_BenefitSummaryVOB_HUM}" style="font-size:12px;" />
+                        </apex:outputpanel>
+                        <span id="outOfAreaDate">
+                        </span>
+                    </apex:pageBlockSectionItem>
+                    
+
+                    <!-- Dental Second Pass Ends  -->
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+      var sStatusImageBSD,sFormPolInfoBSD;
+      dentalBenefitsSummaryStartWaitingIcon();
+      var bSwitchToDisplayPTD = {!bDisplayPTDOnDental};
+    </script>
+</apex:component>

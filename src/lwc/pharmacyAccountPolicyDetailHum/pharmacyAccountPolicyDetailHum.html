@@ -1,0 +1,35 @@
+﻿<template>
+    <div class="slds-var-p-top_xxx-small">
+        <lightning-tabset >
+            <lightning-tab label="Person Account" value="0" 
+                class="slds-p-bottom_none">
+                <lightning-layout  class="detail-container" multiple-rows="true" >
+                    <lightning-layout-item size="12" medium-device-size="12"
+                        class="detail-item slds-var-m-bottom_small">                           
+                             <c-pharmacy-personal-account-tab-hum  rec-id={recId} f-name={fName} l-name={lName}></c-pharmacy-personal-account-tab-hum>   
+</lightning-layout-item>
+                    <lightning-layout-item size="12" medium-device-size="12"
+                    class="detail-item slds-var-m-bottom_small">  
+                    <div class="slds-border_top"></div>
+                        <h3>  <div class="slds-p-around_small slds-text-title_bold">VALIDATE</div></h3>
+                                          
+                    <c-account-security-section-hum  record-id = {recId}></c-account-security-section-hum>
+                </lightning-layout-item>
+                <lightning-layout-item size="12" medium-device-size="12"
+                class="detail-item slds-var-m-bottom_small">
+                    <c-pharmacy-verify-demographics record-id={recId} b-display-box="false"></c-pharmacy-verify-demographics>							 
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-tab>
+            <lightning-tab label="Plan Member" value="1" 
+                class="slds-p-bottom_none">
+                <lightning-layout  class="detail-container">
+                    <lightning-layout-item size="12" medium-device-size="12"
+                        class="detail-item slds-var-m-bottom_small">               
+                            <c-pharmacy-plan-member-tab-hum  rec-id={recId} ent-id={entId}></c-pharmacy-plan-member-tab-hum>
+                        </lightning-layout-item>
+                    </lightning-layout>
+            </lightning-tab>
+        </lightning-tabset>
+    </div>
+</template>

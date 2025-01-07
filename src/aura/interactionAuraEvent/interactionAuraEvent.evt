@@ -1,0 +1,3 @@
+﻿<aura:event type="APPLICATION">
+    <aura:attribute name="message" type="Map" default="{focusedTabId:null, focusedParentTabId:null}"/>
+</aura:event>

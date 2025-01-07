@@ -1,0 +1,68 @@
+﻿<!--
+Component Name   : PharmacyMTMEligibilty_CMP_HUM.component
+Version          : 1.0
+Created On       : February 27 , 2017
+Function         : VF Component to display MTM details
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Vishal Verma                                       03/22/2017                 Original version - Implementation of REQ - 296926 : Added MTM Indicator
+* Rajesh Chandgothia		114002 	         		 07/25/2017					REQ - 323485, CMO CR 5227 (CSI 587)-- 1) remove MTM hover; 2) add 'order status' column; 3) stop translating to OPEN; 4) add 'finished date' to summary
+* Rajesh Chandgothia				      	         08/08/2017					REQ - 323485,Bold MTM Indicator.
+* Rajesh Keswani            134545                   09/20/2017            		REQ - 329038: Following standard warning and error message.
+* Rajesh Keswani            143027                   10/31/2017            		REQ - 335303: Infortmation message format for No data.
+****************************************************************************************************************************
+-->
+<apex:component controller="Pharmacy_C_HUM" allowDML="true">
+	<apex:includeScript value="{!URLFOR($Resource.PharmacyMTM_SR_HUM, 'PharmacyMTM_SR_HUM/PharmacyMTM_JS_HUM.js')}" />
+	<link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.PharmacyMTM_SR_HUM, 'PharmacyMTM_SR_HUM/PharmacyMTM_CSS_HUM.css')}" />
+
+    <div id="mainMTMDiv">
+        <div id="MTMLoadingImageId" class="loadingImageDivCon centerAlign">
+            <img src="/img/loading.gif" />
+            <span class="waitingDescription">{!$Label.LOADING_HUM}</span>
+        </div>
+
+        <div>{!$Label.MTM_ELigible_HUM}
+           <span id="divEligile"  style="font-weight: normal;font-size: 11px !IMPORTANT;"/>
+        </div>
+        <BR/>
+        <div id="divEligibleLink"/>
+    </div>
+
+    <apex:outputpanel id="mtmlRequestPopup">
+    <apex:outputPanel id="pharmacyMTMErrorId" Styleclass="displayNone">
+         <apex:PageMessage Summary="{!$Label.MTM_ELIGIBILITY_ERROR}" severity="Error" Strength="2" title="Error:"  />
+         <apex:pagemessages />
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="pharmacyMTMWarningId" Styleclass="displayNone">
+	      <apex:PageMessage Summary="{!$Label.MTM_ELIGIBILITY_NODATA}" severity="INFO" Strength="2" />
+	      <apex:pagemessages />
+	    </apex:outputPanel>
+	    
+        <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!bMTMRequestPopFlag}" />
+        <apex:outputPanel styleClass="custMTMPopup" layout="block" rendered="{!bMTMRequestPopFlag}">
+            <div class="titleCss">
+                <h4>{!$Label.MTM_Popup_Header_HUM}</h4>
+                <hr/>
+            </div>
+            <div class="MTMPopupTextStyle">
+                {!$Label.MTM_Confirmation_HUM}
+            </div>
+            <apex:commandbutton onclick="updateMTM(); return false;" value="Yes" styleclass="saveBtnCSS" id="Yesmtm" />
+            <apex:commandbutton action="{!hideMTMPop}" value="No" rerender="mtmlRequestPopup" styleclass="cancelBtnCSS" id="Nomtm" />
+            <div id="MTMPopupErrorMsgId" class="displayNone centerAlign"></div>
+        </apex:outputPanel>
+    </apex:outputpanel>
+
+    <apex:actionfunction name="showMTM" action="{!showMTMPop}" rerender="mtmlRequestPopup" />
+    <apex:actionfunction name="closeMTM" action="{!hideMTMPop}" rerender="mtmlRequestPopup" />
+    <apex:actionfunction name="completeMTM" rerender="divEligile divEligibleLink mtmlRequestPopup" />
+
+    <div id="MTMErrorMsgId" class="displayNone centerAlign"></div>
+    <script type="text/javascript">
+        var pharmacyMTMupdateRemoteAction = '{!$RemoteAction.Pharmacy_C_HUM.updateMTM}';
+    </script>
+</apex:component>

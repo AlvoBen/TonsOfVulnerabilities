@@ -1,0 +1,185 @@
+﻿<!--
+Component Name   :CRMRetail_Custom_Notification_Section_LWC_HUM
+Version          : 1.0
+Created On       : 04/22/2022
+Function         : Lightning Web Component to show notification section on interaction detail/edit page 
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*********************************************************************************************************************************************************************
+* Vivek Sharma                                      04/22/2022            User Story 3316820: T1PRJ0154546 / SF / MF9 Storefront - SNP: Change Notifications Section to Custom
+*********************************************************************************************************************************************************************
+-->
+<template>
+    <lightning-card>
+        <lightning-record-view-form record-id={recordId} object-api-name="Storefront_Interaction__c">
+            <section aria-modal="true">
+                <ul class="slds-accordion">
+                    <li class="slds-accordion__list-item">
+                      <section class={sectionClass}>
+                        <div class="slds-accordion__summary">
+                          <h2 class="slds-accordion__summary-heading">
+                            <button class="slds-button slds-button_reset slds-accordion__summary-action" onclick ={handleClick}  title="Notifications">
+                                <lightning-button-icon class = "btnIcon" icon-name={btnClass} variant="bare"></lightning-button-icon>
+                                <span class="slds-accordion__summary-content">{label.NOTIF_HEADER}</span>
+                            </button>
+                          </h2>
+                          <div class="slds-dropdown-trigger slds-dropdown-trigger_click">
+                            <template if:true={isAdmin}>
+                                <lightning-button class="slds-m-top_small" variant="neutral" onclick={openModal} label="Edit Notifications"></lightning-button> 
+                            </template>
+                          </div>
+                        </div>
+                        <div class="slds-accordion__content">
+                            <div class="slds-m-around_medium">
+                                <div class="slds-grid slds-gutters_small full cols-2 desc" >
+                                    <div class="slds-col slds-grid slds-has-flexi-truncate">
+                                        <div class="slds-form-element slds-form-element_readonly slds-grow">
+                                            <lightning-output-field field-name="First_Time_Visitor__c"></lightning-output-field>
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-grid slds-has-flexi-truncate">
+                                        <div class="slds-form-element slds-form-element_readonly slds-grow">
+                                            <lightning-output-field field-name="New_Member__c"></lightning-output-field>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-grid slds-gutters_small full cols-2 desc" >
+                                    <div class="slds-col slds-grid slds-has-flexi-truncate">
+                                        <div class="slds-form-element slds-form-element_readonly slds-grow">
+                                            <lightning-output-field field-name="Veteran__c"></lightning-output-field>
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-grid slds-has-flexi-truncate">
+                                        <div class="slds-form-element slds-form-element_readonly slds-grow">
+                                            <lightning-output-field field-name="Aging_In__c"></lightning-output-field>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-grid slds-gutters_small full cols-2 desc" >
+                                    <div class="slds-col slds-grid slds-has-flexi-truncate">
+                                        <div class="slds-form-element slds-form-element_readonly slds-grow">
+                                            <lightning-output-field field-name="SDoH__c"></lightning-output-field>
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-grid slds-has-flexi-truncate">
+                                        <div class="slds-form-element slds-form-element_readonly slds-grow">
+                                            <lightning-output-field field-name="isGo365Eligible__c"></lightning-output-field>
+                                        </div>
+                                    </div>
+                                </div>
+                                <lightning-layout multiple-rows class="slds-grid slds-gutters_small full cols-2 desc">
+                                    <template for:each={indicators} for:item="field">
+                                        <lightning-layout-item key={field.label} size="6" class="slds-col slds-grid slds-has-flexi-truncate">
+                                            <div class="slds-form-element slds-form-element_readonly slds-grow inputNotification">
+                                                <template if:true={field.isBoolean}>
+                                                    <label class="slds-form-element__label" for={field.label}>{field.label}</label>
+                                                    <div class="slds-form-element__control">
+                                                        <span class="slds-checkbox slds-checkbox_standalone checkbox">
+                                                            <input type="checkbox" id={field.label} name={field.label} disabled="" checked={field.value}/>
+                                                        <span class="slds-checkbox_faux"></span>
+                                                        </span>
+                                                    </div>
+                                                </template>
+                                                <template if:false={field.isBoolean}>
+                                                    <lightning-input label={field.label} value={field.value} readonly type="text"></lightning-input>
+                                                </template>
+                                            </div>
+                                        </lightning-layout-item>
+                                    </template>
+                                </lightning-layout>
+                            </div>
+                        </div>
+                      </section>
+                    </li>
+                </ul>
+            </section>
+        </lightning-record-view-form>
+    </lightning-card>
+    <template if:true={isModalOpen}>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text"></span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{label.EDIT_TEXT}</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <lightning-record-edit-form record-id={recordId} object-api-name="Storefront_Interaction__c">
+                        <lightning-messages> </lightning-messages>
+                        <section aria-modal="true">
+                            <div class="slds-m-around_medium">
+                                <div class="slds-grid slds-gutters_small full cols-2 desc" >
+                                    <div class="slds-col slds-grid slds-has-flexi-truncate">
+                                        <div class="slds-form-element slds-form-element_readonly slds-grow">
+                                            <lightning-input-field field-name="First_Time_Visitor__c"></lightning-input-field>
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-grid slds-has-flexi-truncate">
+                                        <div class="slds-form-element slds-form-element_readonly slds-grow">
+                                            <lightning-input-field field-name="New_Member__c"></lightning-input-field>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-grid slds-gutters_small full cols-2 desc" >
+                                    <div class="slds-col slds-grid slds-has-flexi-truncate">
+                                        <div class="slds-form-element slds-form-element_readonly slds-grow">
+                                            <lightning-input-field field-name="Veteran__c"></lightning-input-field>
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-grid slds-has-flexi-truncate">
+                                        <div class="slds-form-element slds-form-element_readonly slds-grow">
+                                            <lightning-input-field field-name="Aging_In__c"></lightning-input-field>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-grid slds-gutters_small full cols-2 desc" >
+                                    <div class="slds-col slds-grid slds-has-flexi-truncate">
+                                        <div class="slds-form-element slds-form-element_readonly slds-grow">
+                                            <lightning-input-field field-name="SDoH__c"></lightning-input-field>
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-grid slds-has-flexi-truncate">
+                                        <div class="slds-form-element slds-form-element_readonly slds-grow">
+                                            <lightning-input-field field-name="isGo365Eligible__c"></lightning-input-field>
+                                        </div>
+                                    </div>
+                                </div>
+                                <lightning-layout multiple-rows class="slds-grid slds-gutters_small full cols-2 desc">
+                                    <template for:each={indicators} for:item="field">
+                                        <lightning-layout-item key={field.label} size="6" class="slds-col slds-grid slds-has-flexi-truncate">
+                                            <div class="slds-form-element slds-form-element_readonly slds-grow inputNotification">
+                                                <template if:true={field.isBoolean}>
+                                                    <label class="slds-form-element__label" for={field.label}>{field.label}</label>
+                                                    <div class="slds-form-element__control">
+                                                        <span class="slds-checkbox slds-checkbox_standalone checkbox">
+                                                            <input type="checkbox" id={field.label} name={field.label} disabled="" checked={field.value}/>
+                                                        <span class="slds-checkbox_faux"></span>
+                                                        </span>
+                                                    </div>
+                                                </template>
+                                                <template if:false={field.isBoolean}>
+                                                    <lightning-input label={field.label} value={field.value} readonly type="text"></lightning-input>
+                                                </template>
+                                            </div>
+                                        </lightning-layout-item>
+                                    </template>
+                                </lightning-layout>
+                            </div>
+                        </section>
+                        <div class = "modalBtn">
+                            <lightning-button class="slds-m-top_small cancelBtn" variant="neutral" onclick={closeModal} label="Cancel"></lightning-button> 
+                            <lightning-button class="slds-m-top_small" variant="brand" type="submit" name="save" label="Save" onclick={submitDetails}> </lightning-button>
+                        </div>
+                    </lightning-record-edit-form>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

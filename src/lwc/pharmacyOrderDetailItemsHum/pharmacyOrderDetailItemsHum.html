@@ -1,0 +1,50 @@
+﻿<!--
+LWC Name        : pharmacyOrderDetailItemsHum.html
+Function        : LWC to display pharmacy order edit item details.
+
+Modification Log:
+* Developer Name                  Date                         Description
+*
+* Abhishek Mangutkar              03/09/2022                   US - 3139633
+****************************************************************************************************************************-->
+
+<template>
+    <template if:true={orderLineItems}>
+        <template for:each={orderLineItems} for:item="oli">
+            <div key={oli.ScriptKey}>
+
+                <template if:true={oli.splitOrderTo}>
+                    <div class="slds-p-around_small">
+                        <div style="float:left">
+                            <div class="slds-text-heading_small">Split To Order :</div>
+                        </div>
+                        <div style="float:right;width:80%">
+                            <div class="slds-text-link slds-text-heading_small "
+                                style="cursor: pointer;font-weight:bold;" data-id={oli.splitToOrder}
+                                onclick={splitOrderFunctionality}>{oli.splitToOrder}</div>
+
+                        </div>
+                    </div>
+                </template>
+                <template if:true={oli.splitOrderFrom}>
+                    <div class="slds-p-around_small">
+                        <div style="float:left">
+                            <div class="slds-text-heading_small">Split From Order :</div>
+                        </div>
+                        <div style="float:right;width:80%">
+                            <div class="slds-text-link slds-text-heading_small"
+                                style="cursor: pointer;font-weight:bold;" data-id={oli.splitFromOrder}
+                                onclick={splitOrderFunctionality}>{oli.splitFromOrder}</div>
+                        </div>
+                    </div>
+                </template>
+
+                <div>
+					<c-pharmacy-order-detail-item-detail-hum item={oli} payer={payer} called-from-edit-order={calledFromEditOrder}
+                    ondeletescriptkey={handleDeleteScriptKey}></c-pharmacy-order-detail-item-detail-hum>
+                </div>
+
+            </div>
+        </template>
+    </template>
+</template>

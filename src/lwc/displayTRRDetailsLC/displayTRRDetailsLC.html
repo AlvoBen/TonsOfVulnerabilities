@@ -1,0 +1,25 @@
+﻿<!--
+*******************************************************************************************************************************************
+LWC Name        : displayTRRDetailsLC
+Function        : Component used to displaycase TRR template summary page
+
+Modification Log:
+* Developer Name                     Date                         Description
+* Prasuna P                              02/01/2023                   Original Version 
+******************************************************************************************************************************************/
+-->
+<template>
+    <template if:true={showData}>
+    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+        <h2 id="modal-heading-00" class="slds-text-heading_medium slds-hyphenate">TRR</h2>
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"><b>{templateName}</b></h2>
+        <template for:each={finaldata} for:item="oField" >
+            <div key={oField}>
+            <c-display-fields-in-two-column-hum section-header="TRRTemplate" section-data={oField.value}>
+                </c-display-fields-in-two-column-hum>
+            </br>
+        </div>
+        </template>
+    </div>
+</template>
+</template>

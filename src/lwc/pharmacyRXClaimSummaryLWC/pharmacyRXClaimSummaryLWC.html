@@ -1,0 +1,498 @@
+﻿<!--
+/******************************************************************************************************************
+LWC Name           : PharmacyRXClaimsSummaryLWC.html
+Version            : 1.0
+Function           : This js componennt contains logic to fetch and displayPharmacy Rx Claims Summary information on UI.
+Created On         : July 14 2020
+Test Class         : PharmacyRXClaimsSummary_T_HUM
+*******************************************************************************************************************
+Modification Log:
+* Developer Name            Code Review                Date                       Description
+*-------------------------------------------------------------------------------------------------------------------------------
+* Shailesh Mali                                      07/14/2020                 Original Version - REQ - 891651 -- PR00094920- MF 1- Rx Claims- Pharmacy (Rx) Claims Summary page (RxXP) 
+* Shailesh Mali									     07/17/2020		            Defect Fix for IE browser
+* Ranadheer Goud								     07/31/2020					REQ - 1285346 -- PR00094920- MF 1 - SF - TECH - Claims Summary Page - Alternate Accordion Feature (RxXP) (ID# 29) 
+*******************************************************************************************************************/
+-->
+<template>
+    <template if:true={hideMessage}>
+        <div
+            class="slds-box-ph slds-m-bottom_small slds-border_left slds-border_right slds-border_top slds-border_bottom">
+            <lightning-layout horizontal-align="left" class="slds-form slds-form_horizontal" style="padding:0.5rem;">
+                <lightning-layout-Item class="slds-size_2-of-1 slds-m-right_medium">
+                    <lightning-icon icon-name="utility:info" size="small" alternative-text="New note" title="New note">
+                    </lightning-icon>
+                </lightning-layout-Item>
+                <lightning-layout-Item size=10 class="slds-m-top_xx-small" style="width:600px;">
+                    <lightning-formatted-text
+                        value="There is an up-to 48 hour delay in data passing from the claim platform to CRM Service.">
+                    </lightning-formatted-text>
+                </lightning-layout-Item>
+                <lightning-layout-Item alignment-bump="right" size=1>
+                    <lightning-button-icon style="position:absolute;right:2%;margin-top:2.5px;" class="slds-float_right"
+                        icon-name="utility:close" size="small" title="close" variant="bare" onclick={hideStaticMessage}>
+                    </lightning-button-icon>
+                </lightning-layout-Item>
+            </lightning-layout>
+        </div>
+    </template>
+
+    <div class="slds-grid slds-wrap">
+        <div data-id="filterDataId" class="slds-col">
+            <lightning-layout class="slds-builder-header_container slds-builder-header" style="height:51px">
+                <lightning-layout-item style="padding-left:0.3rem;margin-top:10px">
+                    <span class="slds-media__figure slds-p-left_x-small">
+                        <span class="slds-icon_container slds-icon-utility-page slds-current-color">
+                            <lightning-icon class="slds-media__body" style="margin-top: -2px;" icon-name="utility:note"
+                                alternative-text="New note" title="New note">
+                            </lightning-icon>
+                        </span>
+                    </span>
+                </lightning-layout-item>
+                <lightning-layout-item style="margin-top: 15px; width:680px">
+                    <lightning-formatted-text style="color:white" value="Pharmacy (Rx) Claim Summary">
+                    </lightning-formatted-text>
+                </lightning-layout-item>
+            <lightning-layout-item size="4"></lightning-layout-item>
+                <lightning-layout-item style="margin-top: 15px;">
+                    <lightning-formatted-text value="Customer :"></lightning-formatted-text>
+                    <lightning-formatted-text value={customerValue}>
+                    </lightning-formatted-text>
+                </lightning-layout-item>&nbsp;&nbsp;&nbsp;
+                <lightning-layout-item style="margin-top: 15px;">
+                    <lightning-formatted-text value="Client :">
+                    </lightning-formatted-text>
+                    <lightning-formatted-text value={clientValue}>
+                    </lightning-formatted-text>
+                </lightning-layout-item>
+                <lightning-layout-item>
+                    <div
+                        class="slds-col_bump-right slds-media__figure slds-builder-header slds-builder-header__item slds-builder-header__item-label slds-media slds-media_right">
+                        <ul>
+                            <li class="slds-builder-header__nav-item">
+                                <span class="slds-media__figure">
+                                    <span
+                                        class="slds-icon_container slds-border_left slds-border_right slds-icon-utility-page slds-current-color">
+                                        <lightning-icon size="x-small" style="height:52px;width:40px" variant="warning"
+                                            icon-name="utility:filterList" title="clik to open more filters"
+                                            onclick={showFilterOptions}
+                                            class="slds-media__figure slds-p-left_x-small slds-float_right slds-align_absolute-center ">
+                                        </lightning-icon>
+                                    </span>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </lightning-layout-item>
+                <lightning-layout-item style="margin-top: 5px;padding:0.3rem;">
+                    <lightning-button-menu alternative-text="Show menu" icon-name="utility:chevrondown" style="width: max-content"
+                        label="Show/Hide Columns &#10240;">
+                        <lightning-checkbox-group name="Show/Hide Columns" label="" options={options} value={value}
+                            onchange={handleShowHideColumnsChange} class="slds-float_left" style="padding:0.5rem">
+                        </lightning-checkbox-group>
+                    </lightning-button-menu>
+                </lightning-layout-item>
+            </lightning-layout>
+        </div>   
+    </div>
+
+    <template if:true={showHideFilters}>
+        <div class="slds-box card">
+            <div class="slds-grid slds-wrap slds-size_12-of-12 ">
+                <div class="slds-size_1-of-8" style="margin-right: 1%;">
+                    <lightning-formatted-rich-text value="&lt;h5>Select Fill Date&lt;/h5>">
+                    </lightning-formatted-rich-text>
+                    <span class="slds-size--11-of-12">
+                        <lightning-input type="date" class="width125" id="fieldid1" data-id="fromFillDate"
+                            name="fillDateInput1" date-style="short" variant="label-hidden" label="Select Date"
+                            placeholder="From" onchange={searchTable}></lightning-input>
+                    </span>
+                </div>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <div class="slds-size_1-of-8" style="margin-right: 1%; ">
+                    <span class="slds-size--11-of-12">
+                        <lightning-formatted-rich-text style="visibility:hidden" value="&lt;h5>Select Fill Date&lt;/h5>">
+                        </lightning-formatted-rich-text>
+                        <lightning-input type="date" class="width125" id="fieldid2" data-id="toFillDate"
+                            name="fillDateInput2" date-style="short"  variant="label-hidden" placeholder="To" onchange={searchTable}>
+                        </lightning-input>
+                    </span>
+                    <template if:true={validationcheck}>
+                        <div class="slds-text-color_error">To Date can not be less than From Date.</div>
+                    </template>
+                </div>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <div class="slds-size_1-of-8" style="margin-right: 1%;">
+                    <lightning-formatted-rich-text value="&lt;h5>Claim ID&lt;/h5>"></lightning-formatted-rich-text>
+                    <lightning-input type="text" class="width125" data-id="claimId" name="claimIdInput"
+                        placeholder="Enter Claim ID" label="Claim ID" variant="label-hidden" onkeyup={searchTable}>
+                    </lightning-input>
+                </div>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <div class="slds-size_1-of-8" style="margin-right: 1%;">
+                    <lightning-formatted-rich-text value="&lt;h5>Rx Number&lt;/h5>"></lightning-formatted-rich-text>
+                    <lightning-input type="text" class="width125" data-id="rxNumberId" name="rxNumberIdInput"
+                        placeholder="Enter RX Number" label="Rx Number" variant="label-hidden" onkeyup={searchTable}>
+                    </lightning-input>
+                </div>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <div class="slds-size_1-of-8">
+                    <lightning-formatted-rich-text value="&lt;h5>Drug Name&lt;/h5>"></lightning-formatted-rich-text>
+                    <lightning-input type="text" class="width125" data-id="drugNameId" name="drugNameIdInput"
+                        placeholder="Enter Drug Name" label="Drug Name" variant="label-hidden" onkeyup={searchTable}>
+                    </lightning-input>
+                </div>
+                <template if:true={hideFilterButtonAndLink}>
+                    <div class="slds-size_1-of-8"> </div>
+                    <lightning-button style="margin-top: 1.8%;width:max-content" icon-name="utility:close" icon-position="right"
+                        label="Clear Filters" title="Clear Filters" onclick={resetData} disabled={disabledClearFilter}>
+                    </lightning-button>
+                    <div class="slds-size_3-of-8"></div>
+                    <div class="slds-size_1-of-8 slds-p-top_x-small" style="width:200px;">
+                        <span>
+                            <href class="showFilters" onclick={showAdditionalFilters}>Show Additional Filters</href>
+                        </span>
+                    </div>
+                </template>
+            </div>
+            <template if:true={showAdditionFiltersValues}>
+                <div class="slds-grid slds-wrap slds-size_12-of-12 ">
+                    <div class="slds-size_1-of-8" style="margin-right: 1%;">
+                        <lightning-formatted-rich-text value="&lt;h5>Quantity&lt;/h5>">
+                        </lightning-formatted-rich-text>
+                        <lightning-input type="text" class="width125" data-id="quantityId" name="quantityIdInput"
+                            placeholder="Enter Quantity" label="Quantity" variant="label-hidden" onkeyup={searchTable}>
+                        </lightning-input>
+                    </div>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <div class="slds-size_1-of-8" style="margin-right: 1%;">
+                        <lightning-formatted-rich-text value="&lt;h5>Claim Status&lt;/h5>">
+                        </lightning-formatted-rich-text>
+                        <lightning-combobox class="width125" data-id="claimStatusId" name="claimStatusIdInput"
+                            placeholder="Select Claim Status" label="Claim Status" variant="label-hidden"
+                            options={claimStatusComboBoxOption} onchange={searchTable}>
+                        </lightning-combobox>
+                    </div>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <div class="slds-size_1-of-8" style="margin-right: 1%;">
+                        <lightning-formatted-rich-text value="&lt;h5>Pharmacy Name&lt;/h5>">
+                        </lightning-formatted-rich-text>
+                        <lightning-input type="text" class="width125" data-id="pharmacyNameId"
+                            name="pharmacyNameIdInput" placeholder="Enter Pharmacy Name" label="Pharmacy Name"
+                            variant="label-hidden" onkeyup={searchTable}></lightning-input>
+                    </div>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <div class="slds-size_1-of-8" style="margin-right: 1%;">
+                        <lightning-formatted-rich-text value="&lt;h5>Client ID&lt;/h5>">
+                        </lightning-formatted-rich-text>
+                        <lightning-input type="text" class="width125" data-id="clientId" name="clientIdInput"
+                            placeholder="Enter Client ID" label="Client ID" variant="label-hidden"
+                            onkeyup={searchTable}></lightning-input>
+                    </div>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <div class="slds-size_1-of-8">
+                        <lightning-formatted-rich-text value="&lt;h5>Days Supply&lt;/h5>">
+                        </lightning-formatted-rich-text>
+                        <lightning-input type="text" class="width125" data-id="daysSupplyId" name="daysSupplyIdInput"
+                            placeholder="Enter Days Supply" label="Days Supply" variant="label-hidden"
+                            onkeyup={searchTable}></lightning-input>
+                    </div>
+                    <div class="slds-size_1-of-8"></div>
+                    <lightning-button style="margin-top: 1.8%;width:max-content" icon-name="utility:close" icon-position="right"
+                        label="Clear Filters" title="Clear Filters" onclick={resetData} disabled={disabledClearFilter}>
+                    </lightning-button>
+                    <div class="slds-size_3-of-8"></div>
+                    <div class="slds-size_1-of-8 slds-p-top_x-small">
+                        <span>
+                            <href class="showFilters" onclick={hideAdditionalFilters}>Hide Additional Filters</href>
+                        </span>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </template>
+
+    <template if:true={accordionSwitch}>
+        <lightning-button label="View" variant="brand" onclick={compareNow} disabled={compareDisabled}>
+        </lightning-button>
+        <!--Final Lightning Datatable START -->
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col">
+        <lightning-datatable
+            class="PharmacyClaimsDataTable slds-table slds-table_wrap-text-max-lines_true slds-table_bordered slds-table_striped  slds-table_bordered"
+            key-field="ClaimID"
+            data={pharmacyRXData}         
+            columns={columns}
+            default-sort-direction="asc"
+            onrowaction={navigateToDetail}
+            onsort={updateColumnSorting} 
+            sorted-by={sortedBy}
+            sorted-direction={sortedDirection}
+            max-row-selection="5"
+            onrowselection={getSelectedRow}
+            column-widths-mode="auto"
+            min-column-width ="50"
+            max-column-width = "600">
+        </lightning-datatable>
+    </div>
+
+        </div>
+        <!--Final Lightning Datatable END -->
+    </template>
+
+    <template if:false={accordionSwitch}>
+        <!--Final Lightning Datatable START -->
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col">
+        <lightning-datatable
+            class="PharmacyClaimsDataTable slds-table slds-table_wrap-text-max-lines_true slds-table_bordered slds-table_striped  slds-table_bordered"
+            key-field="ClaimID"
+            data={pharmacyRXData}         
+            columns={columns}
+            default-sort-direction="asc"
+            onrowaction={navigateToDetail}
+            onsort={updateColumnSorting} 
+            sorted-by={sortedBy}
+            sorted-direction={sortedDirection} 
+            min-column-width ="50"
+            max-column-width = "600"
+            hide-checkbox-column
+            >
+        </lightning-datatable>
+        </div>
+        </div>
+        <!--Final Lightning Datatable END -->
+    </template>
+
+    <!-- Disply Error Message  START -->
+    <template if:true={displayErrorMessage}>
+        <br />
+        <div class="slds-notify_container slds-is-relative">
+            <div class="slds-notify slds-notify_toast slds-theme_error" role="status">
+                <span class="slds-assistive-text">error</span>
+                <span class="slds-icon_container slds-icon-utility-error slds-m-right_small slds-no-flex slds-align-top"
+                    title="Description of icon when needed">
+                    <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#error"></use>
+                    </svg>
+                </span>
+                <div class="slds-notify__content">
+                    <h2 class="slds-text-heading_small ">An error occurred retrieving Pharmacy RX Claim Summary for this
+                        Member. Please try again. If this error continues, contact Help Desk.</h2>
+                </div>
+                <div class="slds-notify__close">
+                    <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close"
+                        onclick={hideError}>
+                        <lightning-icon icon-name="utility:close" size="small" variant="inverse"> </lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template if:true={displayNoDataMessage}>
+        <br />
+        <div class="slds-notify_container slds-is-relative">
+            <div class="slds-notify slds-notify_toast slds-theme_error" role="status">
+                <span class="slds-assistive-text">error</span>
+                <span class="slds-icon_container slds-icon-utility-error slds-m-right_small slds-no-flex slds-align-top"
+                    title="Description of icon when needed">
+                    <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#error"></use>
+                    </svg>
+                </span>
+                <div class="slds-notify__content">
+                    <h2 class="slds-text-heading_small ">No records to display.</h2>
+                </div>
+                <div class="slds-notify__close">
+                    <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close"
+                        onclick={hideNoDataMsg}>
+                        <lightning-icon icon-name="utility:close" size="small" variant="inverse"> </lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+    <!--Disply Error Message  END -->
+
+    <!-- PageLength and Pagination  START -->
+    <lightning-layout style="padding-top: 5px;" horizontal-align="spread"  >
+        <lightning-layout-item size="1" style=" width:120px">
+            <lightning-combobox data-id="comboboxDataId" class="combox" name="Number of Records" label=""
+                value={recordsPerPage} placeholder={recordsPerPage} options={comboBoxOption}
+                onchange={handleComboBoxChange} dropdown-alignment="auto" style="width:120px;">
+            </lightning-combobox>
+        </lightning-layout-item>
+        <lightning-layout-item size="8" style="padding-top: 10px; margin-left:50px; width:780px;" >
+            Showing {startingRecord1} to {endingRecord} of {totalRecordCount} entries          
+        </lightning-layout-item>
+        <lightning-layout-item size="3" style="padding-top: 4px;" >
+            <div class="slds-align_absolute-center slds_float-right" >
+                <ul class="slds-button-group-row">
+                    <lightning-button label="Previous" variant={changeVariantPrevious} onclick={handlePreviousPage}
+                        disabled={isFirstPage}>
+                    </lightning-button>
+                    <template if:true={isFirstButton}>
+                        <lightning-button data-id="firstButtonId" variant={changeVariantFirst} title="first"
+                            label={showButtonFirst} onclick={showCurrentPageData}></lightning-button>
+                    </template>
+                    <template if:true={isSecondButton}>
+                        <lightning-button data-id="secondButtonId" variant={changeVariantSecond} title="second"
+                            label={showButtonSecond} onclick={showCurrentPageData}></lightning-button>
+                    </template>
+                    <template if:true={isThirdButton}>
+                        <lightning-button data-id="thirdButtonId" variant={changeVariantThird} title="third"
+                            label={showButtonThird} onclick={showCurrentPageData}></lightning-button>
+                    </template>
+                    <lightning-button label="Next" variant={changeVariantNext} onclick={handleNextPage}
+                        disabled={isLastPage}>
+                    </lightning-button>
+                </ul>
+            </div>
+        </lightning-layout-item>
+    </lightning-layout>
+    <!-- PageLength and Pagination  END -->
+
+    <!-- To Compare Rows START-->
+    <lightning-card class="detailedRows" if:true={showComparison}>
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col">
+        <center>
+            <h3 slot="title" style="background-color:rgb(22, 50, 92);color:white;font-weight:bolder"
+                class="slds-p-around_medium">
+                <lightning-icon icon-name="utility:connected_apps" style="fill: white;" size="small"></lightning-icon>
+                Detailed Rows
+            </h3>
+        </center>
+        <center slot="footer" style="position: absolute;bottom:0;left:0;right:0">
+            <div>
+                <lightning-badge style="cursor: pointer;" label="Go to Top" onclick={gotoTop}></lightning-badge>
+            </div>
+        </center>
+        <template for:each={toCompareRowsTable} for:item="r" for:index="i">
+            <lightning-datatable
+                class=" slds-table  slds-table_wrap-text-max-lines_true slds-table_bordered slds-table_striped  slds-table_bordered"
+                key-field="Id" key={r.ClaimID} data-name={i} data={r.row} onrowaction={expandRow}
+                columns={eachRowColumn} hide-checkbox-column>
+            </lightning-datatable>
+            <template if:true={r.isExpanded}>
+                <template for:each={r.row} for:item="singleRow">
+
+                    <div key={singleRow.ClaimID}
+                        class=" slds-form_horizontal slds-form slds-grid slds-wrap slds-p-left_x-small slds-m-left_none slds-m-right_none slds-m-bottom_none "
+                        style="border-left:1px gray solid;border-right:1px gray solid;border-top:1px gray solid;">
+                        <div class="slds-col slds-size_3-of-12 slds-m-right_none slds-m-bottom_none">
+                            <div>
+                                <legend style="margin-top:1.5%;"
+                                    class="slds-form-element__legend  slds-form-element__label">Date Updated</legend>
+                                <legend style="margin-top:1.5%;font-weight: unset;"
+                                    class="slds-form-element__legend slds-m-left_small slds-form-element__label">
+                                    {singleRow.DateUpdated}</legend>
+
+                            </div>
+                            <hr class="noMargin">
+                            <div>
+                                <legend style="margin-top:1.5%;"
+                                    class="slds-form-element__legend  slds-form-element__label">Patient Paid</legend>
+                                <legend style="margin-top:1.5%;font-weight: unset;"
+                                    class="slds-form-element__legend slds-m-left_small slds-form-element__label">
+                                    ${singleRow.PatientPaid}</legend>
+                            </div>
+                            <hr class="noMargin">
+                        </div>
+                        <div class="slds-col slds-size_3-of-12 slds-m-right_none slds-m-bottom_none">
+                            <div>
+                                <legend style="margin-top:1.5%;"
+                                    class="slds-form-element__legend  slds-form-element__label">LICS Code</legend>
+                                <legend style="margin-top:1.5%;font-weight: unset;"
+                                    class="slds-form-element__legend slds-m-left_small slds-form-element__label">
+                                </legend>
+                            </div>
+                            <hr class="noMargin">
+
+                            <div>
+                                <legend style="margin-top:1.5%;"
+                                    class="slds-form-element__legend  slds-form-element__label">LICS Effective Date
+                                </legend>
+                                <legend style="margin-top:1.5%;font-weight: unset;"
+                                    class="slds-form-element__legend slds-m-left_small slds-form-element__label">
+                                </legend>
+
+                            </div>
+                            <hr class="noMargin">
+                        </div>
+                        <div class="slds-col slds-size_3-of-12  slds-m-right_none slds-m-bottom_none">
+                            <div>
+                                <legend style="margin-top:1.5%;"
+                                    class="slds-form-element__legend  slds-form-element__label">NDC</legend>
+                                <legend style="margin-top:1.5%;font-weight: unset;"
+                                    class="slds-form-element__legend slds-m-left_small slds-form-element__label">
+                                    {singleRow.NDC}</legend>
+
+                            </div>
+                            <hr class="noMargin">
+
+                            <div>
+                                <legend style="margin-top:1.5%;"
+                                    class="slds-form-element__legend  slds-form-element__label">GCN</legend>
+                                <legend style="margin-top:1.5%;font-weight: unset;"
+                                    class="slds-form-element__legend slds-m-left_small slds-form-element__label">
+                                    {singleRow.GCN}</legend>
+                            </div>
+                            <hr class="noMargin">
+                        </div>
+                        <div class="slds-col slds-size_3-of-12 slds-m-right_none slds-m-bottom_none">
+                            <div>
+                                <legend style="margin-top:1.5%;"
+                                    class="slds-form-element__legend  slds-form-element__label">DEA Code</legend>
+                                <legend style="margin-top:1.5%;font-weight: unset;"
+                                    class="slds-form-element__legend slds-m-left_small slds-form-element__label">
+                                </legend>
+                            </div>
+                            <hr class="noMargin">
+                            <div>
+                                <legend style="margin-top:1.5%;"
+                                    class="slds-form-element__legend  slds-form-element__label">Source</legend>
+                                <legend style="margin-top:1.5%;font-weight: unset;"
+                                    class="slds-form-element__legend slds-m-left_small slds-form-element__label">
+                                    {singleRow.Source}</legend>
+                            </div>
+                            <hr class="noMargin">
+                        </div>
+
+                    </div>
+                    <div key={singleRow.ClaimID} class="slds-form_horizontal slds-form slds-grid slds-wrap slds-p-left_x-small slds-m-left_none slds-m-right_none slds-m-bottom_none "
+                        style="border-left:1px gray solid;border-right:1px gray solid;border-bottom:1px gray solid">
+                        <div class="slds-col slds-size_5-of-12 slds-m-right_none slds-m-bottom_none">
+                            <lightning-datatable data={DeductibleMessages} columns={deductibleMessageColumn}
+                                key-field="DM" hide-checkbox-column  style=" width:90%">
+                            </lightning-datatable>
+                        </div>
+                        <div class="slds-col slds-size_1-of-12 slds-m-right_none slds-m-bottom_none">
+                        </div>
+                        <div class="slds-col slds-size_6-of-12 slds-m-right_none slds-m-bottom_none">
+                            <div>
+                                <legend style="margin-top:1.5%;"
+                                    class="slds-form-element__legend  slds-form-element__label">Pre-Authorization Number
+                                </legend>
+                                <legend style="margin-top:1.5%;font-weight: unset;"
+                                    class="slds-form-element__legend slds-m-left_small slds-form-element__label">
+                                    {singleRow.PreAuthorizationNumber}
+                                </legend>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </template>
+        <br key={r.ClaimID} />
+        <hr  key={r.ClaimID} style="background-color: black;box-shadow:0 0 3px;" class="noMargin">
+        <br key={r.ClaimID} />
+
+        <hr  key={r.ClaimID} class="noMargin">
+        </template>
+        </div></div>
+    </lightning-card>
+    <!-- To Compare Rows END-->
+   
+</template>

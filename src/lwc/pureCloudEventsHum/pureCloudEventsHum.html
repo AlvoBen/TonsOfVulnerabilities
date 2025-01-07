@@ -1,0 +1,15 @@
+﻿<!--*****************************************************************************************************************************
+LWC Name : pureCloudEventsHum.html
+Function    : This LWC component is used to navigate to the crmSearchTabContainer component
+
+Modification Log: 
+Developer Name           Code Review              Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Arpit Jain/navajit Sarkar                     02/09/2021                   Original Version
+* Arpit Jain/Navajit Sarkar                     03/09/2021                   PhoneBook Related Changes
+* Arpit Jain                                    07/12/2021                   US-2357061 : IVR Call End or Transfer
+*******************************************************************************************************************************-->
+<template>
+    <c-phone-book-hum onopencti={openCtiHandler} ontransfercall={handleCallTransfer}
+        onconsultblindclicked={consultBlindHandler} onsecurepayevt={getSecurePayData}></c-phone-book-hum>
+</template>

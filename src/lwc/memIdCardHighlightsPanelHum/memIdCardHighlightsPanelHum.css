@@ -1,0 +1,58 @@
+/*******************************************************************************************************************************
+File Name          : memIdCardHighlightsPanelHum.css
+Version              : 1.0
+Created On           : 02/09/2022
+Function             : css display highlights section on member id card page. 
+
+Modification Log: 
+Developer Name           Code Review                      Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Vamshi Krishna Pemberthi                              02/09/2022                   Initial Version
+*********************************************************************************************************************************/
+
+
+.some-clase{
+    font-weight: 700;
+}
+
+.details-text-wrap{
+    white-space: break-spaces;
+}
+
+.member-icons img {
+    height: 2rem;
+}
+
+.member-icons c-custom-tooltip-hum {
+    position: absolute;
+    left: .5rem;
+    bottom: .5rem;
+}
+
+.jump-links {
+    display: flex;
+    justify-content: space-around;
+    height: 40px;
+    background: white;
+    border-bottom: var(--lwc-borderWidthThin,1px) solid rgb(221, 219, 218);
+    align-items: center;
+}
+
+.jump-links span {
+    color: var(--lwc-brandTextLink,rgb(0, 109, 204));
+    cursor: pointer
+}
+
+.action-button-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.icons-container {
+    align-items: flex-end
+}
+.gbo-alert 
+{
+    margin-right: .5rem;
+}

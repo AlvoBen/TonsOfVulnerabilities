@@ -1,0 +1,70 @@
+﻿<!--
+Component Name   :CRMRetail_Events_LWC_HUM
+Version          : 1.0
+Created On       : 04/22/2022
+Function         : Lightning Web Component to show events on Interactions/Events page 
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*********************************************************************************************************************************************************************
+* Vivek Sharma                                      07/07/2022            User Story 3484064: T1PRJ0154546 / SF / MF9 Storefront Modernization (Business Admin/Super Admin) - Interactions/Events (Right Side)
+* Vivek Sharma                                      08/04/2022            User Story 3516893: T1PRJ0154546 / SF / MF9 Storefront: Calendar Scroll to Top
+* Sahil Verma        	                	        02/28/2023             US-4438175 T1PRJ0154546 / SF / MF9 Storefront: Interaction Display Criteria section Enhancement on Interaction/Events tab
+*********************************************************************************************************************************************************************
+-->
+<template>
+    <lightning-card title="Calendar" class="slds-is-relative">
+        <template if:true={isShowSpinner}>
+            <div class="slds-spinner_container">
+                <div class="slds-spinner slds-spinner--medium  slds-spinner_brand" aria-hidden="false" role="alert">
+                  <div class="slds-spinner__dot-a"></div>
+                  <div class="slds-spinner__dot-b"></div>
+                </div>
+              </div>
+        </template>
+        <lightning-layout >
+            <lightning-layout-item size="5">
+                <div class="slds-p-around_medium lgc-bg">
+                    <lightning-input type="date" 
+                        value={today}
+                        label="Calendar Date"
+                        onchange = {handleDateChange}
+                        required="true"
+                        date-style="short"
+                        message-when-value-missing={label.DATE_VALIDATION_TEXT}
+                        message-when-bad-input={label.DATE_VALIDATION_TEXT}
+                        >
+                    </lightning-input>
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item size="6">
+                <template if:true={showButton}>
+                    <div class="refreshIcon">
+                        <lightning-button-icon icon-name="utility:refresh"  variant="bare" alternative-text="Refresh"  onclick={handleRefresh} class="slds-m-left_xx-small" title="Refresh"></lightning-button-icon>
+                    </div>
+                    <div class="eventBtn">
+                        <lightning-button variant="brand" label="New Event" title="New Event" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+                    </div>
+                </template>
+            </lightning-layout-item>
+        </lightning-layout>
+        <lightning-layout >
+            <lightning-layout-item size="12" padding="around-small" class="slds-grid slds-wrap ">
+                    <div class="datatableClass">
+                        <lightning-datatable
+                            key-field="id"
+                            data={flattenData}
+                            columns={columns}
+                            sorted-by={sortedBy}
+                            sorted-direction={sortedDirection}
+                            default-sort-direction={defaultSortDirection}
+                            onsort={updateColumnSorting}
+                            onrowselection={getSelectedRow} 
+                            selected-rows={selectedRecordList}
+                            >
+                        </lightning-datatable>
+                    </div>
+            </lightning-layout-item>
+        </lightning-layout>
+    </lightning-card>
+</template>

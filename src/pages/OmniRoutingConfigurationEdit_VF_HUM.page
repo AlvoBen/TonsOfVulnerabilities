@@ -1,0 +1,277 @@
+﻿<!--
+Page Name        : OmniRoutingConfigurationEdit_VF_HUM
+Version          : 1.0
+Created Date     : Nov 01 2017
+Function         : This Page is used to create and edit Omni routing configuration
+***********************************************************************************************************************************
+Modification Log:    
+   
+* Developer Name               Review Number                 Date                       Description
+*----------------------------------------------------------------------------------------------------------------------------------
+* Syed Mubarak T                                           11/30/2017                   Original Version
+* Syed Mubarak T                171775                      01/23/2018                  Defect 338122 fix - removed the JS validation and added using VF page functionality
+* Mohammed Noor                                            03/28/2018                   REQ - 357442 - Add Error Messages for Mouse right click paste.
+* Syed Mubarak T                                           12/12/2018                   Added Configuration item Item field and Popup
+* Mohammed Noor											   02/22/2021			 	 	USER STORY 1990238 - Fix Check Marx FLS issue.
+* Mithra Bharadwaj                                                                       US#2241369 SonarQube Changes
+* Vivek														                          07/09/2022		              Updated the JS query to new Datatables to version to 1.12.1
+* Pinky Vijur                                               08/05/2023                  User Story 4647289: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Business Configuration & Omni Channel (Group 2)
+***********************************************************************************************************************************
+-->
+
+<apex:page StandardController="Omni_Routing_Configuration__c" extensions="OmniRoutingConfigurationsEdit_X_HUM" sidebar="false">
+  <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CSS/HoverOver.css')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.OmniRoutingConfigEdit_SR_HUM, 'OmniRoutingConfigEdit_SR_JS_HUM.js')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.OmniRoutingConfigEdit_SR_HUM,'/OmniRoutingConfigEdit_SR_CSS_HUM.css')}"/>
+
+  <apex:includescript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}" />  <!--DT Upgrade-->
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}"/><!--DT Upgrade-->
+  <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}" />
+
+  <apex:pagemessages id="errorMsg" escape="false" />
+  <apex:form id="formId">
+    <apex:pageBlock title="Routing Configurations Edit" >
+
+      <apex:pageBlockSection collapsible="false" title="Basic Information" columns="2">
+
+        <apex:pageBlockSectionItem id="pbSecItemRoutingConfigurationName">
+          <apex:outputPanel >
+            <apex:outputLabel value="Routing Configuration Name" for="routingConfigurationName" id="rcNameLabel" />
+            <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea" >
+              <a onclick="javascript:return false;" html-log_this="false">
+                <apex:image id="lnkImg" height="12" width="12" styleClass="hoverimgStyle" value="{!$Resource.HUMHoverOverQuestionMark}"/>
+                <apex:outputPanel styleClass="hoverfontstyle">
+                  {!$Label.Routing_Config_Name_Help_Text}
+                </apex:outputPanel>
+              </a>
+            </apex:outputPanel>
+          </apex:outputPanel>
+          <apex:outputPanel id="rcNameMainPanel">
+            <apex:outputPanel styleClass="requiredInput" layout="block" id="oprcNameId">
+              <apex:outputPanel styleClass="requiredBlock" layout="block" id="oprrcNameId" />
+              <apex:inputField html-Maxlength="80" id="routingConfigurationName" value="{!omniRoutingConfig.Name}" onkeyup="valName(this,event)" />
+            </apex:outputPanel>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+
+        <!-- Configuration item name start -->
+        <apex:pageBlockSectionItem id="pbSecConfigItemId">
+          <apex:outputLabel value="Configuration Item" id="ConfigItemIdLabel"/>
+          <apex:outputPanel id="opnlConfig">
+            <apex:outputPanel styleClass="requiredInput" layout="block" id="opCBCId">
+              <apex:outputPanel styleClass="requiredBlock" layout="block" id="oprCBCId" />              
+              <apex:inputField value="{!omniRoutingConfig.Configuration_Item_Name__c}" id="hdnConfigitemNameId" />
+              <apex:outputPanel >
+                <a href="#" style="text-decoration:none;">
+                  <apex:image styleClass="lookupIcon" value="/s.gif"/>
+                </a>
+                <apex:actionSupport event="onclick" action="{!getopenConfigLookup}" reRender="updatePopUp" oncomplete="resetComponent();"/>
+              </apex:outputPanel>
+            </apex:outputPanel>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+
+        <apex:inputField id="isActive" value="{!omniRoutingConfig.Is_Active__c}"/>
+      </apex:pageBlockSection>
+
+      <apex:pageBlockSection collapsible="false" title="Routing Settings" columns="1">
+        <apex:outputPanel >
+          <apex:outputText value="{!$Label.Routing_Message_Info_Message}" id="routingSettingsInfo" />
+        </apex:outputPanel>
+        <apex:pageBlockSectionItem id="pbSecItemRoutingPriority">
+          <apex:outputPanel >
+            <apex:outputLabel value="Routing Priority" for="routingPriority" id="rpLabel" />
+            <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea" >
+              <a onclick="javascript:return false;" html-log_this="false">
+                <apex:image id="lnkImg" height="12" width="12" styleClass="hoverimgStyle" value="{!$Resource.HUMHoverOverQuestionMark}"/>
+                <apex:outputPanel styleClass="hoverfontstyle">
+                  {!$Label.Routing_Priority_Info}
+                </apex:outputPanel>
+              </a>
+            </apex:outputPanel>
+          </apex:outputPanel>
+          <apex:outputPanel id="rpMainPanel">
+            <apex:outputPanel styleClass="requiredInput" layout="block" id="opCBCId">
+              <apex:outputPanel styleClass="requiredBlock" layout="block" id="oprCBCId" />
+              <apex:inputField html-Maxlength="9" id="routingPriorityValue" value="{!omniRoutingConfig.Routing_Priority__c}" onkeyup="valNumeric(this,event)" />
+            </apex:outputPanel>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem id="pbSecItemPushTimeOut">
+          <apex:outputPanel >
+            <apex:outputLabel value="Push Time-Out (seconds)" for="pushTimeOut" id="ptoLabel" />
+            <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea" >
+              <a onclick="javascript:return false;" html-log_this="false">
+                <apex:image id="lnkImg" height="12" width="12" styleClass="hoverimgStyle" value="{!$Resource.HUMHoverOverQuestionMark}"/>
+                <apex:outputPanel styleClass="hoverfontstyle">
+                  {!$Label.Push_Timeout_Info}
+                </apex:outputPanel>
+              </a>
+            </apex:outputPanel>
+          </apex:outputPanel>
+          <apex:outputPanel id="ptoMainPanel">
+            <apex:outputPanel styleClass="requiredInput" layout="block" id="opPTOId">
+              <apex:outputPanel styleClass="requiredBlock" layout="block" id="oprPTOId" />
+              <apex:inputField html-Maxlength="9" id="pushTimeOut" value="{!omniRoutingConfig.Push_Time_Out__c}" onkeyup="valNumeric(this,event)" />
+            </apex:outputPanel>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+
+      <!--  capacity fields start -->
+      <apex:pageBlockSection collapsible="false" title="Work Item Size" columns="1">
+        <apex:outputPanel >
+          <apex:outputText value="{!$Label.Work_Item_Size_Info_Message}" id="workItemSizeInfo" />
+        </apex:outputPanel>
+        <apex:pageBlockSectionItem id="pbSecItemUnitOfCapacity">
+          <apex:outputPanel >
+            <apex:outputLabel value="Unit of Capacity" for="ipUnitOfCapacity" id="uCapacityLabel" />
+            <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea" >
+              <a onclick="javascript:return false;" html-log_this="false">
+                <apex:image id="lnkImg" height="12" width="12" styleClass="hoverimgStyle" value="{!$Resource.HUMHoverOverQuestionMark}"/>
+                <apex:outputPanel styleClass="hoverfontstyle">
+                  {!$Label.Unit_Of_Capacity_Help_Text}
+                </apex:outputPanel>
+              </a>
+            </apex:outputPanel>
+          </apex:outputPanel>
+          <apex:outputPanel id="uCapacityMainPanel">
+            <apex:outputPanel styleClass="requiredInput" layout="block" id="opUCId">
+              <apex:outputPanel styleClass="requiredBlock" layout="block" id="opUCIpId" />
+              <apex:inputField html-Maxlength="4" id="ipUnitOfCapacity" value="{!omniRoutingConfig.Unit_of_Capacity__c}" onkeyup="valDecimal(this,event)" />
+            </apex:outputPanel>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem id="pbSecItemPercentageOfCapacity">
+          <apex:outputPanel >
+            <apex:outputLabel value="Percentage of Capacity" for="ipPercentageOfcapacity" id="pCapacityLabel" />
+            <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea" >
+              <a onclick="javascript:return false;" html-log_this="false">
+                <apex:image id="lnkImg" height="12" width="12" styleClass="hoverimgStyle" value="{!$Resource.HUMHoverOverQuestionMark}"/>
+                <apex:outputPanel styleClass="hoverfontstyle">
+                  {!$Label.Percentage_Of_Capacity_Help_Text}
+                </apex:outputPanel>
+              </a>
+            </apex:outputPanel>
+          </apex:outputPanel>
+          <apex:outputPanel id="pCapacityMainPanel">
+            <apex:outputPanel styleClass="requiredInput" layout="block" id="opPCId">
+              <apex:outputPanel styleClass="requiredBlock" layout="block" id="opPCIpId" />
+              <apex:inputField html-Maxlength="3" id="ipPercentageOfcapacity" value="{!omniRoutingConfig.Percentage_of_Capacity__c}" onkeyup="valNumeric(this,event)" /> %
+            </apex:outputPanel>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+
+
+      <apex:pageBlockButtons >
+        <apex:commandButton value="Save" reRender="errorMsg" onclick="validateData(); return false;" />
+        <apex:actionFunction name="saveRoutingConfig" action="{!save}" rerender="errorMsg"/>
+        <apex:commandButton value="Cancel" action="{!cancel}"/>
+      </apex:pageBlockButtons>
+    </apex:pageBlock>
+    <apex:actionFunction name="showMessage" action="{!showErrorMessage}" rerender="errorMsg">
+      <apex:param name="errorLevel" assignTo="{!errorLevel}" value="" />
+      <apex:param name="messageName" assignTo="{!messageName}" value="" />
+    </apex:actionFunction>
+
+
+
+    <!-- Configuration item popup begin -->
+	<apex:actionFunction name="assignConfig" action="{!assignConfigItem}" oncomplete="closePopUp(); return false;" reRender="opnlConfig">
+          <apex:param name="configItemName" value="" assignTo="{!sConfigItemName}"/>
+          <apex:param name="businessAreaName" value="" assignTo="{!BusinessAreaName}"/>          
+	</apex:actionFunction>
+    <apex:actionFunction name="closePopUp" action="{!getopenConfigLookup}" reRender="updatePopUp"/>
+    <apex:outputPanel id="updatePopUp">
+      <apex:outputPanel layout="block" rendered="{!viewLookup}" styleClass="popupBackground"/>
+      <apex:outputPanel layout="block" rendered="{!viewLookup}" styleClass="custPopup">
+        <apex:actionStatus id="pleaseWaitIntModal">
+          <apex:facet name="start">
+            <div class="waitingSearchDiv waitingSearchDivOpacity outerPanel" ></div>
+            <div id="searchingStatus" class="waitingSearchDiv innerPanel">
+              <div class="waitingHolder" style="imageClass">
+                <img class="waitingImage" src="/img/loading.gif"/>
+                <span class="waitingDescription">Loading....</span>
+              </div>
+            </div>
+          </apex:facet>
+          <apex:facet name="stop"/>
+        </apex:actionStatus>
+        <apex:outputPanel >
+          <a href="#" style="text-decoration:none; text-align:right;">
+            <img src="/EXT/theme/sfdc/images/tabs/tab-close.gif" class="lookupCloseButton"/>
+          </a>
+          <apex:actionSupport event="onclick" action="{!getopenConfigLookup}" reRender="updatePopUp"/>
+        </apex:outputPanel>
+        <apex:pageMessages id="pbsUpMsg"/>
+        <div class="pbSubheader brandTertiaryBgr first tertiaryPalette" style="text-align:left;" >
+          <h4>Configuration Items</h4>
+        </div>
+        <div class="ConfigLookup">
+          <apex:outputPanel id="ConfigResults" rendered="{!lstConfigItems != null}">
+            <table id="ConfigItemTable" class="table table-striped table-bordered width100">
+              <thead>
+                <tr style="text-align:left;">
+                  <th>Select</th>
+                  <th>Business Area</th>
+                  <th>Work Item</th>
+                  <th>Maximum Limit</th>
+                  <th>Max No. of Work Item</th>
+                  <th>Default Omni Queue</th>
+                  <th>Overflow Assignee Queue</th>
+                </tr>
+              </thead>
+              <tbody>
+                <apex:repeat value="{!lstConfigItems}" var="cItem">
+                  <tr>
+                    <td width="10%" style="text-align:center;">
+                      <apex:commandButton value="Select" onclick="assignConfig('{!JSENCODE(cItem.Name)}','{!JSENCODE(cItem.Business_Area__c)}'); return false;"/>
+                    </td>
+                    <td width="10%" style="text-align:center;">
+                      <apex:outputField value="{!cItem.Business_Area__c}"/>
+                    </td>
+                    <td width="10%" style="text-align:center;">
+                      <apex:outputField value="{!cItem.Work_Item__c}" />
+                    </td>
+                    <td width="10%" style="text-align:center;">
+                      <apex:outputField value="{!cItem.Maximum_Limit__c}" />
+                    </td>
+                    <td width="10%" style="text-align:center;">
+                      <apex:outputField value="{!cItem.Maximum_No_of_Work_Items__c}" />
+                    </td>
+                    <td width="10%" style="text-align:center;">
+                      <apex:outputField value="{!cItem.Default_Queue_Name__c}" />
+                    </td>
+                    <td width="10%" style="text-align:center;">
+                      <apex:outputField value="{!cItem.Overflow_Assignee_Queue__c}" />
+                    </td>
+                  </tr>
+                </apex:repeat>
+              </tbody>
+            </table>
+          </apex:outputPanel>
+          <apex:outputPanel id="opConfigNotFound" rendered="{!lstConfigItems == null}">
+            <h4>No Configuration Items found</h4>
+            </apex:outputpanel>
+          </div>
+      </apex:outputPanel>
+    </apex:outputPanel>
+
+
+
+    <script type="text/javascript">
+      //dont enable P9 Critical Fix            var jQuery$ = jQuery.noConflict();
+      var PushTimeOutBlankError = '{!$Label.Push_Time_Out_Blank_Error}';
+      var pushTimeOutRangeError = '{!$Label.Push_Time_Out_Range_Error}';
+      var routingPriorityError = '{!$Label.Routing_Priority_Blank_Error}';
+      var routingConfigNameBlankError = '{!$Label.Routing_Config_Name_Error}';
+      var routingConfigError ='{!$Label.Routing_Config_Name_Help_Text}';
+
+    </script>
+  </apex:form>
+
+</apex:page>

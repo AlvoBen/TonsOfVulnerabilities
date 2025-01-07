@@ -1,0 +1,23 @@
+﻿/****************************************************************************************
+Apex Class Name  : EligiblitySuccessMockResponse_T_HUM
+Version          : 1.0 
+Created Date     : 25-06-2020
+Function         : Test class to EligiblityRequest_D_HUM Apex class 
+Modification Log
+*      Developer               Code Review            Date                 Description
+* --------------------------------------------------------------------------------------------------------        
+*   Riddhi Mittal                                 25/06/2020              Original Version     
+***********************************************************************************************************/
+@istest
+global class EligiblitySuccessMockResponse_T_HUM implements HttpCalloutMock 
+{
+    global HTTPResponse respond(HTTPRequest req) 
+    {
+        // Creating a fake success response
+        HttpResponse res = new HttpResponse();
+        res.setHeader('Content-Type', 'application/json');
+        res.setBody('{"ValidateEligibilityResponse":{"timestamp":"2020-06-18 01:04:25.031123 z","result":"OK","responseCode":"","requestid":"69d4542f-ee7c-ff05-e63e-1b6dde7ee302f","members":[{"eligibilities":[{"groupRecord":{"groupId":"923382","dualDemoIndicator":"false","platformCode":"EM","ediGroupIndicator":"false","exchangeIndicator":"false","exchangeType":"","product":"MED","productType":"NPOS","productTypeCode":"NPOSMO","asoIndicator":"false","majorLOB":""},"heirarchy":"19","template":"GBO","ruleName":"GBO Group NON EDI-Medical","editableDemographicType":{"mailingAddress":"EDIT","residentialAddress":"EDIT","workEmail":"EDIT","homeEmail":"EDIT","homePhone":"EDIT","workPhone":"EDIT","name":"EDIT","gender":"EDIT","dob":"EDIT","ssn":"EDIT"},"contactHierarchyMessage":"Humana will accep","criticalHierarchyMessage":"Humana will accept demographi","routingMessage":"Member has a commercial","errorMessage":"","eligible":"true","error":"false"}]},{"eligibilities":[{"groupRecord":{"groupId":"923382","dualDemoIndicator":"false","platformCode":"EM","ediGroupIndicator":"false","exchangeIndicator":"false","exchangeType":"","product":"MED","productType":"NPOS","productTypeCode":"NPOSMO","asoIndicator":"false","majorLOB":""},"heirarchy":"19","template":"GBO","ruleName":"GBO Group NON EDI-Medical","editableDemographicType":{"mailingAddress":"EDIT","residentialAddress":"EDIT","workEmail":"EDIT","homeEmail":"EDIT","homePhone":"EDIT","workPhone":"EDIT","name":"EDIT","gender":"EDIT","dob":"EDIT","ssn":"EDIT"},"contactHierarchyMessage":"Humana will accept demographie","criticalHierarchyMessage":"Humana will accept demographi","routingMessage":"Member has a commercial produc","errorMessage":"","eligible":"true","error":"false"}]},{"eligibilities":[{"groupRecord":{"groupId":"923382","dualDemoIndicator":"false","platformCode":"EM","ediGroupIndicator":"false","exchangeIndicator":"false","exchangeType":"","product":"MED","productType":"NPOS","productTypeCode":"NPOSMO","asoIndicator":"false","majorLOB":""},"heirarchy":"19","template":"GBO","ruleName":"GBO Group NON EDI-Medical","editableDemographicType":{"mailingAddress":"EDIT","residentialAddress":"EDIT","workEmail":"EDIT","homeEmail":"EDIT","homePhone":"EDIT","workPhone":"EDIT","name":"EDIT","gender":"EDIT","dob":"EDIT","ssn":"EDIT"},"contactHierarchyMessage":"Humana will accept demographic change","criticalHierarchyMessage":"Humana will accept demographic changee","routingMessage":"Member has a commercial product","errorMessage":"","eligible":"true","error":"false"}]},{"eligibilities":[{"groupRecord":{"groupId":"923382","dualDemoIndicator":"false","platformCode":"EM","ediGroupIndicator":"false","exchangeIndicator":"false","exchangeType":"","product":"MED","productType":"NPOS","productTypeCode":"NPOSMO","asoIndicator":"false","majorLOB":""},"heirarchy":"19","template":"GBO","ruleName":"GBO Group NON EDI-Medical","editableDemographicType":{"mailingAddress":"EDIT","residentialAddress":"EDIT","workEmail":"EDIT","homeEmail":"EDIT","homePhone":"EDIT","workPhone":"EDIT","name":"EDIT","gender":"EDIT","dob":"EDIT","ssn":"EDIT"},"contactHierarchyMessage":"Humana will accept demographic changge","criticalHierarchyMessage":"Humana will accept demographic changge","routingMessage":"Member has a commercial product.  Demographics must be made by commercial contact centera.","errorMessage":"","eligible":"true","error":"false"}]}]}}');
+        res.setStatusCode(200);
+        return res;
+    }
+}

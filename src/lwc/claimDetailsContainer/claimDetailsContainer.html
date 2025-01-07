@@ -1,0 +1,71 @@
+﻿<template>
+    <lightning-card title="Claim Detail" style="height: 400px !important;">
+        <lightning-tabset style="height: 400px !important;">
+            <lightning-tab label="Line Items" value="1" onactive={handleActive}>
+                <lightning-layout>
+                    <lightning-layout-item size="12">
+						<c-claim-Line-Item-Detail-H-U-M onremitvalue={handleremitvalue}></c-claim-Line-Item-Detail-H-U-M>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-tab>
+            <lightning-tab
+                label="Claim Payment Details"
+                value="2"
+                onactive={handleActive}>
+                <lightning-layout>
+					<lightning-layout-item size="12">
+						<c-claim-Payment-Detail-Detail-H-U-M
+                        claimdetail ={claimDetail}></c-claim-Payment-Detail-Detail-H-U-M>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-tab>
+	     <template if:true={isDental}>
+            <lightning-tab
+                label="MTV Remarks"
+                value="3"
+                onactive={handleActive}>
+                <lightning-layout size="12">
+                    <lightning-layout-item >
+					<c-mtv-remarks-lc-hum
+                            claimnumber={claimnum}
+                            user-agent={userAgent}
+                            onerror={handleErrorMeesage}
+                        ></c-mtv-remarks-lc-hum>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-tab>
+	     </template>
+            <lightning-tab
+                label="Member Claim Statements"
+                value="4"
+                onactive={handleActive}>
+                <lightning-layout>
+                    <lightning-layout-item size="12">
+                        <c-member-Claim-Statements
+						accountid={AccountId}></c-member-Claim-Statements>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-tab>
+            <lightning-tab
+                label="Provider Claim Statements"
+                value="5"
+                onactive={handleActive}>
+                <lightning-layout>
+                    <lightning-layout-item size="12">
+                      <c-provider-claim-statements remitt-id={remittId} accountid={AccountId} ongetremittid={getRemitId}></c-provider-claim-statements>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-tab>
+        </lightning-tabset>
+        <template if:true={bIsLoading}>
+            <div style="height: 600px;"></div>
+            <div class="loading-spinner">
+                <lightning-spinner
+                    alternative-text="Loading"
+                    variant="Brand"
+                    size="Large"
+                ></lightning-spinner>
+            </div>
+        </template>
+    </lightning-card>
+</template>

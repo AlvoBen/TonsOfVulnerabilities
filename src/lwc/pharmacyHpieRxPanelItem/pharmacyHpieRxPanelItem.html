@@ -1,0 +1,101 @@
+﻿<!--
+Function        : LWC to callout HPIE Integration methods from apex .
+
+Modification Log:
+* Developer Name                  Date                         Description
+****************************************************************************************************************************
+* Nirmal Garg                    08/25/2023                    Initial Version
+*****************************************************************************************************************************-->
+<template>
+    <li class="slds-accordion__list-item">
+        <section class="slds-accordion__section slds-is-open">
+            <div class="slds-accordion__summary">
+                <h2 class="slds-accordion__summary-heading">
+                    <button class="slds-button  slds-accordion__summary-action" aria-controls="referenceId-42"
+                        aria-expanded="true" title="Accordion summary">
+                        <lightning-icon size="x-small" icon-name={expandCollapseIcon}
+                            onclick={toggleDetailSection}></lightning-icon>
+                        <span class="slds-accordion__summary-content">{item.orderId}</span>
+                    </button>
+                </h2>
+            </div>
+            <div class="slds-accordion__content" if:true={expanded}>
+                <template for:each={item.items} for:item="pres">
+                    <div class="slds-grid slds-wrap" key={pres.key}>
+                        <div class="slds-col slds-size_6-of-12">
+                            <div class="slds-text-title slds-truncate">RX:
+                                {pres.key}
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_6-of-12">
+                            <div class="slds-grid slds-grid_align-end">
+                                <div class="slds-col">
+                                    <div class="slds-text-title slds-truncate">
+                                        {pres.status}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-wrap" key={pres.key}>
+                        <div class="slds-col slds-size_12-of-12">
+                            <div class="slds-text-title slds-truncate">
+                                Written Drug
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_12-of-12">
+                            <div class="slds-text-heading_small">
+                                <strong>{pres.writtenDrug}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-wrap" key={pres.key}>
+                        <div class="slds-col slds-size_12-of-12">
+                            <div class="slds-text-title slds-truncate">
+                                Dispensed Drug
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_12-of-12">
+                            <div class="slds-text-heading_small">
+                                <strong>{pres.dispensedDrug}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-wrap" key={pres.key}>
+                        <div class="slds-col slds-size_4-of-12">
+                            <div class="slds-text-title slds-truncate">
+                                Quantity
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_4-of-12">
+                            <div class="slds-text-title slds-truncate">
+                                Days Supply
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_4-of-12">
+                            <div class="slds-text-title slds-truncate">
+                                Refill Remaining
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_4-of-12">
+                            <div class="slds-text-heading_small">
+                                <strong>{pres.quantity}</strong>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_4-of-12">
+                            <div class="slds-text-heading_small">
+                                <strong>{pres.daysSupply}</strong>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_4-of-12">
+                            <div class="slds-text-heading_small">
+                                <strong>{pres.refillsRemaining}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-border_bottom slds-p-top_small" key={item.key}></div>
+                </template>
+            </div>
+        </section>
+    </li>
+</template>

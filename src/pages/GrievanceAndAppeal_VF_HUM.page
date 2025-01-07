@@ -1,0 +1,133 @@
+﻿<!--
+Page Name        : GrievanceAndAppeal_VF_HUM.page
+Version          : 1.0 
+Created Date     : 10/29/2018 
+Function         : Visualforce page to view Case comments related to Grievance and Appeal.
+Modification Log :
+*  Developer          Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+* Ajay Chakradhar      --               10/29/2018            Original Version
+* Riya Agarwal 							11/12/2020			  REQ - 1625475-PR00094226 - CR AEP readiness -Research - Critical Security Issues
+* Priyanka Puranik						04/05/2021			  REQ: 2074641 Hide and Collapse Section not working for Grievance 
+																& Appeal Cases and Provider Correspondence Disputes Cases pages
+* Swapnali Sonawane                     04/09/2021            Req 2119511 added ExRM Fields to MHK Web Service and Additional Data for G&A Status Page in CRM	
+* Abhishek Mangutkar					04/21/2021			  Req - 2164076 CheckMarx Vulnerabilities Fix - MHK, Grievance Appeals, Provider Disputes															
+* Kavya Bondada                         06/01/2021            User Story 2366257: T1PRJ0001827 - MF 1 - AHT - Ability to copy information in CRM - Phase 3 (RF)
+* Anand Kumar                           07/13/2021            User Story 2451218: T1PRJ0001827 - MF 1 - AHT - Ability to copy information in CRM - Phase 3 (RF)
+* Pallavi Shewale                       08/09/2021            User Story 1801179: T1PRJ0002472  - MVP MF 6 - Grievance & Appeals page - Strides
+* Amar Gadewar                          08/09/2021            User Story 2551528: T1PRJ0001827 - MF 1 - AHT - Ability to copy information in CRM - Phase 4 (RF)
+* Nirmal Garg							09/16/2021			  Added browser logic for coveo
+* Venkata Nagasiva						    4/29/2022				User Story 3213674: T1PRJ0272548 - SF Legacy API Retirement Upgrade API version for Integrationjs Misc
+* Pinky Vijur                           07/14/2023             User Story 4647183: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Billing, Health Resource, Grievance & Appeals, & MTV (Group 1)
+-------------------------------------------------------------------------------------------------------------------------------->
+<apex:page controller="GrievanceAndAppealComponent_C_RT_HUM" showheader="true" sidebar="false" tabStyle="case" id="grievancePageId">
+ 	<apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+    <apex:includeScript value="/support/console/54.0/integration.js"  />
+    <apex:includeScript value="{!URLFOR($Resource.html2canvas, '/html2canvas.min.js')}" />
+    
+    
+    <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.GrievanceAndAppealComponent_SR_RT_HUM, 'GrievanceAndAppealComponent_JS_HUM.js')}" />  
+    <apex:stylesheet value="{!URLFOR($Resource.GrievanceAndAppealComponent_SR_RT_HUM,'GrievanceAndAppealComponent_CSS_HUM.css')}"/>
+    
+    <apex:includeScript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/CopyToClipBoard/CopyToClipBoard.js')}"/>
+    <link rel="stylesheet" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/Bootstrap-3.3.6/css/bootstrap.min.css')}" />
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, '/DataTables-1.13.4/css/dataTables.bootstrap.min.css')}" /><!--DT Upgrade-->
+    <link rel="stylesheet" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, '/DataTables/css/BaseDataTable_CSS_HUM.css')}" />
+    
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}"/>
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}"/>
+      
+    <script type="text/javascript">
+//dont enable P9 Critical Fix    vAccountDetail = jQuery.noConflict();
+    </script>
+    <script>
+        if (sforce.console.isInConsole()) 
+        {
+            sforce.console.setTabTitle('G&A Status-'+'{!JSENCODE(sAccountName)}');
+            sforce.console.setTabTextStyle('font-size:99%;', null, null);
+        }
+       
+    </script> 
+
+    <apex:pageBlock mode="maindetail" id="pageBlock">
+		<apex:outputPanel id="gcoveo" rendered="{!bCoveoUser}">
+			<div id = "coveoButton" style = "font-size: 12px;margin-bottom:1%;margin-top:1%">
+				<c:UnifiedSearch_CMP_HUM policyMemberId="{!sRecId}" id="uniId" pageNameToPass="Grievance & Appeal Status" ></c:UnifiedSearch_CMP_HUM>    
+			</div>   
+		</apex:outputPanel>      
+          <img src="/img/s.gif" class="pageTitleIcon" alt="Grievance & Appeal Cases" title="Grievance & Appeal Cases" />
+          <h1 style="font-size: 24px;">Grievance and Appeal Cases</h1>
+       
+      
+        <apex:pageblockSection >
+              <apex:pageBlockSectionItem >
+              </apex:pageBlockSectionItem>
+        </apex:pageblockSection>     
+   
+     <apex:pageBlockSection title="Grievance & Appeal Cases"  collapsible="true" columns="1" id="thePageBlockSectionCreditCardInfo">         
+              <apex:pageBlockSectionItem >
+              </apex:pageBlockSectionItem>
+              <apex:pageBlockSectionItem >
+              <apex:form >  
+               <apex:actionFunction name="showMessage" action="{!showPageMessage}" rerender="showmsg,dtTableOutPanel"> 
+               <apex:param name="level" assignTo="{!level}" value="" />
+               <apex:param name="message" assignTo="{!message}" value="" />
+               </apex:actionFunction>           
+               
+                <apex:pageMessages id="showmsg" />
+               
+               </apex:form>
+              </apex:pageBlockSectionItem>
+       </apex:pageblockSection>
+        
+        <apex:pageblockSection id="pageBlockSection"> 
+           <apex:outputpanel rendered="{!isRendered}" id="dtTableOutPanel"> 
+                <c:BaseDataTable_CMP_HUM rendered="{!isRendered}" jqueryVariable="jQuery"
+                                         tableid="groupIdCardTable"
+                                         tablecontainerid="groupIdCardTableContainer"
+                                         enablesearch="f"
+                                         info="true"
+                                         keyword="false"
+                                         sort="true"
+                                         htmlColumnName="caseNotifications"
+                                         columnname="{!columnName}"
+                                         objName="Case"                                        
+                                         col1_editDelete="false"
+                                         col1_orderable="false"
+                                         columnHeader="{!columnHeader}"
+                                         orderColumn="1"
+                                         orderDirection="asc"
+                                         orderingBool="true" 
+                                         col1_searchable="true"
+                                         col1_accordian="true"
+                                         accordionColumns="sServiceType,sRequestType,sDateofDetermination,sAssignedAnalyst,context,medhokID,notifications,sCase,sDueDate,sMemberCardId,sDatesOfService,sClaimNumber,sAllegation,sFinalResolutionCaseNote,sProviderTaxID"
+                                        linkClass="IdClass"
+                                        CheckBoxHeader="false"
+                                        />
+                                        
+            </apex:outputpanel>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+ 
+    <script>  
+        Visualforce.remoting.timeout = '{!$Label.HUMMemWebActivityTimeout}';
+        var vAccountId = '{!JSENCODE(sAccountId)}';
+		var bSwitchGNAStatus='{!bSwitchGNAStatus}';  //REQ-2119511
+        var vArchiveAttachmentsJsonData = '{!$RemoteAction.GrievanceAndAppealComponent_C_RT_HUM.getArchiveAttachments}';  
+        var accessRFPermissionSet = {!$Permission.RapidForceUser_AHT_HUM};       
+        jQuery(document).ready(function($) 
+        {
+            Visualforce.remoting.Manager.invokeAction(vArchiveAttachmentsJsonData , '{!JSENCODE(sAccountId)}', fMethodGetArchivedJsonDataCallback, { buffer: true, escape: true });
+        
+        });   
+    
+    var pageId= document.getElementById('{!$Component.pageBlock.pageBlockSection}');
+    jQuery(".hideListButton").click(function(){
+        jQuery(pageId).toggle();
+        });
+    
+    
+    </script>
+       
+</apex:page>

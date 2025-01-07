@@ -1,0 +1,151 @@
+﻿<!--
+Page Name        : Omni_CaseAssignmentRuleEdit_VF_HUM
+Version          : 1.0
+Created Date     : Dec 27 2017
+Function         : This Page is used to create and edit Omni Case Assignment Rules
+***********************************************************************************************************************************
+Modification Log:    
+   
+* Developer Name               Review Number              Date                   Description
+*----------------------------------------------------------------------------------------------------------------------------------
+* Mohammed Noor                163314                   12/27/2017               Original Version
+* Mohammed Noor                173337                   01/22/2018               Fix for Defect# 338926.
+* Manoj Chaurasia              210171                   04/02/2018               REQ-357261: Addition of “In” and "Not In" within the “Operator” pick list 
+* Mohammed Noor                213637                   04/10/2018               REQ-359240 - Date fields available as Age criteria in Omni Channel.
+* Mohammed Noor                219044                   04/23/2017               REQ-357523 - Fix for Defect# 354993.
+* Syed Mubarak T									03/19/2019			  REQ - 386810 - Omni Configuration Item changes
+* Mohammed Noor                                         01/10/2020               Fix for Defect# 454188.0001
+* Mohammed Noor											02/22/2021			 	 USER STORY 1990238 - Fix Check Marx FLS issue.
+* Mithra Bharadwaj                                      02/09/2021                US#2241369 SonarQube Changes
+* Pinky Vijur                                           08/05/2023                User Story 4647289: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Business Configuration & Omni Channel (Group 2)
+***********************************************************************************************************************************
+-->
+<apex:page standardController="Omni_Case_Assignment_Rule__c" sidebar="false" extensions="Omni_CaseAssignmentRuleEdit_X_HUM">
+  <apex:styleSheet value="{!URLFOR($Resource.OmniQueueEdit_SR_HUM, 'OmniQueueEdit_SR_CSS_HUM.css')}" />
+  <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}" /> <!--DT Upgrade-->
+  <!-- Datatables Bootstrap CSS -->
+  <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}"/><!--DT Upgrade-->
+  <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}" />
+  <apex:includeScript value="{!URLFOR($Resource.Omni_CaseAssignmentRuleEdit_SR_HUM, 'Omni_CaseAssignmentRuleEdit_SR_HUM/Omni_CaseAssignmentRuleEdit_SR_JS_HUM.js')}" />
+  <apex:sectionHeader Title="Omni Case Assignment Rule Edit" subtitle="{!omniRule.Name}" id="secHeader"/>
+  <apex:form id="pgForm">
+    <div id="savingStatus" class="waitingSearchDiv" style="width: 100%; height: 100%;text-align: center; display: none;opacity: 0.90">
+      <div class="waitingHolder" style="top: 300px; width: 110px;">
+        <img class="waitingImage" src="/img/loading.gif"/>
+        <span class="waitingDescription">Loading....</span>
+      </div>
+    </div>
+    <apex:pageMessages id="errorMsg"/>
+    <apex:actionFunction name="fetchruleCriteira" action="{!getRuleCriterias}" oncomplete="drawTable('{!JSENCODE(ruleCriteriaJSON)}');" reRender="tablePanel"/>
+    <apex:actionFunction name="showErrMsg" action="{!showErrorMessage}" reRender="errorMsg" />
+    <apex:actionFunction name="saveAssignmentRule" action="{!saveRecord}" rerender="errorMsg" oncomplete="if({!!bError})saveRedirect();" >
+		<apex:param name="finalJSON" value="" assignTo="{!updtCriteriaJSON}"/>
+        <apex:param name="nameErr" value="false" assignTo="{!bNameError}"/>
+        <apex:param name="evalOrderErr" value="false" assignTo="{!bEvalOrderError}"/>
+        <apex:param name="unsavedRCError" value="false" assignTo="{!bUnsavedRCError}"/>
+    </apex:actionFunction>
+    <apex:actionFunction name="saveRedirect" action="{!save}" />
+    <apex:actionFunction name="refreshErrMessage" reRender="errorMsg" />    
+    <apex:pageBlock id="pgBlk" title="Rule Detail Edit" mode="edit">
+      <apex:pageBlockButtons id="pgBlkButtons">
+        <apex:commandButton value="Save" onclick="getCriteria(); return false;" reRender="errorMsg"/>
+        <apex:commandButton value="Cancel" action="{!cancel}"/>
+      </apex:pageBlockButtons>
+
+      <apex:pageBlockSection id="pbSec" >
+        <apex:pageBlockSectionItem id="pbSecItemRName">
+          <apex:outputLabel value="{!$ObjectType.Omni_Case_Assignment_Rule__c.fields['Name'].label}" for="assginmentRName"/>
+          <apex:outputPanel styleClass="requiredInput"  layout="block" id="opRName">
+            <apex:outputPanel styleClass="requiredBlock" layout="block" id="oprRName" />
+            <apex:inputField value="{!omniRule.Name}" id="assginmentRName" onkeyup="valName(this,event)"/>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem id="pbSecItemWQueue" >
+
+          <apex:outputLabel value="{!$ObjectType.Omni_Case_Assignment_Rule__c.fields['WorkQueue__c'].label}" for="WQueue"/>
+          <apex:outputPanel onclick="renderWorkQueueView();">
+            <apex:inputField value="{!omniRule.WorkQueue__c}" id="WQueue" onchange="renderWorkQueueView();" />
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem id="pbSecItemROrder">
+          <apex:outputLabel value="{!$ObjectType.Omni_Case_Assignment_Rule__c.fields['Evaluation_Order__c'].label}" for="assignmentROrder"/>
+          <apex:outputPanel styleClass="requiredInput"  layout="block" id="opROrder">
+            <apex:outputPanel styleClass="requiredBlock" layout="block" id="oprROrder" />
+            <apex:inputField value="{!omniRule.Evaluation_Order__c}" id="assignmentROrder" onkeyup="valNumeric(this,event)"/>
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem id="pbSecItemWQueueView">
+          <apex:outputLabel value="{!$ObjectType.Omni_Case_Assignment_Rule__c.fields['WorkQueueView__c'].label}" for="WQueueView"/>
+          <apex:outputPanel id="workQueueDiv">
+            <apex:inputField value="{!omniRule.WorkQueueView__c}" id="WQueueView"  />
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+
+
+        <apex:pageBlockSectionItem id="pbSecItemROQueue">
+          <apex:outputLabel value="{!$ObjectType.Omni_Case_Assignment_Rule__c.fields['Omni_Queue__c'].label}" for="ROQueue"/>
+          <apex:outputPanel styleClass="requiredInput"  layout="block" id="opROQueue">
+            <apex:outputPanel styleClass="requiredBlock" layout="block" id="oprROQueue" />
+            <apex:inputField value="{!omniRule.Omni_Queue__c}" id="ROQueue" />
+          </apex:outputPanel>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem />
+
+        <apex:pageBlockSectionItem id="pbSecItemRActive">
+          <apex:outputLabel value="{!$ObjectType.Omni_Case_Assignment_Rule__c.fields['Is_Active__c'].label}" for="RActive"/>
+          <apex:inputField value="{!omniRule.Is_Active__c}" id="RActive" />
+        </apex:pageBlockSectionItem>
+
+      </apex:pageBlockSection>
+      <apex:pageBlockSection title="Rule Criteria" columns="1">
+        <apex:outputPanel id="tablePanel">
+          <apex:commandButton onclick="addNewRow();return false;" id="newCriteriaBtn" value="New Criteria" /> <br/><br/>
+          <table id="criteriaTable" class="table table-striped table-bordered  dataTable no-footer width100">
+          </table>
+        </apex:outputPanel>
+
+        <apex:outputPanel id="opRuleCriteriaFields">
+          <script>
+            var fieldsJSON = '{!JSENCODE(fieldListJSON)}';
+          </script>
+        </apex:outputPanel>
+
+        <apex:actionFunction name="invokeFieldsList" action="{!getFieldsListJSON}" rerender="opRuleCriteriaFields" oncomplete="loadFieldsList();">
+          <apex:param name="objectName" assignTo="{!selectedObjectName}" value=""/>
+        </apex:actionFunction>
+
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+  </apex:form>
+  <script>
+    var operators = JSON.parse('{!$Label.OmniRule_Operators}');
+    var booleanOperators = operators.booleanOperators.sort();
+    var stringOperators = operators.stringOperators.sort();
+    var numericOperators = operators.numericOperators.sort();
+    var dateOperators = operators.dateOperators.sort();
+    var allOperators = operators.allOperators.sort();
+
+    var fieldsMap = new Map();
+    var objectJSON = '{!JSENCODE(objectJSON)}';
+
+    //dont enable P9 Critical Fix    var jQuery$ = jQuery.noConflict();
+    jQuery(document).ready(function () {
+    renderWorkQueueView();
+    fetchruleCriteira();
+
+    jQuery.each(JSON.parse('{!fieldObjJSON}'), function(index, value){
+    fieldsMap.set(value.MasterLabel, value);
+    });
+    });
+  </script>
+  <style>
+    .criteriaError {
+    border-style: solid;
+    background-color : red;
+    }
+  </style>
+</apex:page>

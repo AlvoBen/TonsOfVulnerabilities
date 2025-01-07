@@ -1,0 +1,441 @@
+﻿<!--
+Page Name        : BillingDetailsV1_VF_HUM
+Version          : 1.0 
+Created Date     : 08/22/2016
+Function         : Component to display related cases of Account, Policy and Policy Member.
+Modification Log :
+*   Developer                  Code Review         Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Pallavi Ravishankar          36948          08/22/2016           Original Version - REQ 279160 & REQ 277217 - display billing Profile Details         
+*   Prasanthi Kandula            40488          09/01/2016           REQ - 269757 Logging for Group/Member Billing Detail Pages
+*   Manish Kumar                                01/27/2017           Worked on Defect#243750, REQ#296700. Incorporated changes for Datatable as per latest standards
+* 	Sumit Pharande				 237145		    06/11/2018			 REQ-351192 Add Payer Information Section to Member Billing Detail Page
+*   Sumit Pharande	             243694			06/13/2018           Billing Service V2 
+*   Sumit Pharande                              07/10/2018           REQ-352427 Address Logging
+*   Sumit Pharande								11/05/2019			 REQ- 412009 Converting Billing SOAP service to rest service
+*   Harish Gowda                                02/24/2020           USER STORY 889485 PR00091574 - MF 1 - AHT - Add jump links on Billing Profile Detail page (RF)
+*   Amar Gadewar                                03/19/2020           USER STORY 939165 PR00091574 - MF 1 - AHT - Add jump links on Billing Profile Detail page (CRM)
+*   Santhi Mandava                              04/03/2020           US - 995046 Removed Rapid force switch
+*   Y Sunil Kumar Reddy				04/20/2021	     User Story 2112364: T1PRJ0001827 - MF 1 - AHT - Add left hand link panel and links on Billing Profile detail page (RF)
+*	Rahul Chaurasia								06/04/2021			 US 2105043 - T1PRJ0003805 - MF 02 - Overnight Mailing Address for Group Billing Profile Detail Page
+*   Atia Uzma                                   06/11/2021           User Story 2347966: T1PRJ0001827 - MF 1 - AHT - Add left hand link panel and links on Billing Profile detail page (CRM)
+*   Y Sunil Kumar Reddy				06/22/2021	     Bug 2408729: REGRESSION_Alignment not proper after scrolling on the Member/Group Billing detail pages
+*	Rahul Chaurasia								07/14/2021			 US - 2450008 - T1PRJ0002606- 2021 MF6 - SF - TECH -(DF-3301 ) Member ID(displayed on top) on the Member Billing Profile page is not beside the icon
+*   Swapnali Sonawane                           08/03/2021           REQ-1801272 Member Billing Profiles Detail page - Strides
+*   Nirmal Garg								    09/16/2021			 Added browser logic for coveo
+*   Suraj Patil								    06/15/2022			 REQ - 3422646 T1PRJ0272555 - 2022 MF6 - INCIDENT - INC1632586
+*   Pinky Vijur                                 07/14/2023           User Story 4647183: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Billing, Health Resource, Grievance & Appeals, & MTV (Group 1)
+-------------------------------------------------------------------------------------------------------------------------------->
+<apex:page tabStyle="Policy_Member__c" sidebar="false" controller="BillingDetailsV2_C_HUM">
+    <meta content='maximum-scale=1.0, initial-scale=1.0, width=device-width' name='viewport'/>
+    <apex:includeScript value="/support/console/36.0/integration.js" />
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}"/> 
+   
+     <apex:includeScript value="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}"/>
+     <apex:includeScript value="{!URLFOR($Resource.html2canvas, '/html2canvas.min.js')}"/>    
+    
+    <!-- Static Resource-->
+    <apex:includeScript value="{!URLFOR($Resource.BillingDetailsV1_SR_HUM,'/BillingDetailsV1.js')}"/>
+    <apex:StyleSheet value="{!URLFOR($Resource.BillingDetailsV1_SR_HUM, '/BillingDetailsV1.css')}" />
+    <apex:StyleSheet value="{!URLFOR($Resource.BillingProfiles_JS_HUM, '/BillingProfiles_JS_HUM/BillingProfiles.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.ClinicalAuthSummary_JS_HUM,'/ClinicalAuthsummaryCSS.css')}"/>
+    
+	<style>
+        
+        body .bPageTitle .ptBody .pageType{
+        margin-top:5px;
+        }
+        .pageDescription {
+        margin-top:-10px;
+        }
+		
+    </style>    
+    
+    <div id="leftPanel" style="float:left;height:100%;width:280px;position:fixed;z-index:1000;background-color:#FFFFFF;">
+        <div id="column1" style="overflow:auto; height:100%; float:left; font-size:12px; top:0px; width:280px;text-decoration:underline;background-color:#FFFFFF;">
+            <c:DynamicCustomLinks_CMP_HUM DynamicLinkController="{!this}"/>  
+        </div>
+    </div> 
+    <div id="loggingStickyHeader" style="font-size:12px; position:fixed; z-index:5;top:0px; overflow-x:auto; background:#FFFFFF;margin-left:280px;float:left; width:82%;" class="fixedDiv">
+        <c:Logging_CMP_HUM DisplayMessage="true" Logging_Color="red" AttachmentKey="{!sAccNumber}" AttachmentDesc="AccountNumber" Logged_Item_Color="blue" Screenshot_Area_Id="pageContent" RecordId="{!sObjId}" />  
+        <c:FloatingLinks_CMP_HUM lstparam="{!lstFloatLinkelem}"/> 
+    </div>
+    <div id="pageContent" style="margin-top:10%; background:white;margin-left:280px;float:left; width:82%">
+		<apex:outputPanel id="bcoveo" rendered="{!bCoveoUser}">
+			<div style = "font-size: 12px;">
+				<c:UnifiedSearch_CMP_HUM id="uniId" policyMemberId="{!sObjId}" pageNameToPass="Member Billing Profile Detail" customMargin="true" customMarginValue="20px"/>       
+			</div>
+		</apex:outputPanel>
+        <div class="sectionheader" >  
+            <table class="pageHeader enable_logging pageHeaderName" style="white-space: nowrap; font-size:12px !important;" >
+                <tr>
+                    <td>               
+                        <apex:sectionHeader id="idBillingDetail"  title="{!sSectionHeader}" subtitle="{!sName}" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <apex:form style="font-size:12px;" >
+            <apex:outputPanel id="msgs">
+                <apex:pageMessages rendered="{!bShowError}" ></apex:pageMessages>
+            </apex:outputPanel>
+            <apex:outputPanel id="stdMap">
+                <input type="hidden" id="StandardMapValuesForLogging" value="{!standardMapvalue}" />
+            </apex:outputPanel>
+            <apex:outputPanel id="pnlDetails">
+                <apex:outputpanel id="renderDetails" rendered="{!isProfileDetailsVisible}">
+                    <apex:outputpanel >
+                        <apex:pageBlock mode="maindetail">
+                            <input type="hidden" value="{!oProfileDetails.sGroupPIDNumber}" id="groupPIDNumberId" />
+                            <input type="hidden" value="{!oProfileDetails.iProfileNumber}" id="profileNumberId" />
+                            <a id="ProfileAccountInformation" name="ProfileAccountInformation"></a>
+                            <apex:pageBlockSection id="ProfileAccountInformationpbs" collapsible="true" title="Profile Account Information" columns="2">
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Group/PID"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sGroupPIDNumber}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Profile"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.iProfileNumber}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Effective Date"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sEffectiveDate}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="End Date"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sEndDate}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Account Number"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.iAccountNumber}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Bill Block"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sBillBlock}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Profile Type"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sProfileType}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Product Type"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sProductType}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Profile Status"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sStatus}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Term Reason"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sTermReasonCode}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Profile Name"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sProfileAccountName}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Billing Platform"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sBillingPlatform }"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Bill Method"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sBillMethod}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Recurring Payment Option"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sRecurringPaymentOption}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Last Bill Period End Date"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sLastBillPeriodEndDate}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Next Bill Date"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sNextBillDate}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Billing Frequency"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sBillingFrequency}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Billing Mode"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sProfBillingMode}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Delinquent Date"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sDelinquentDate}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Paid Thru Date"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sPaidThruDate}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Collection Status Code"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sCollectionStatusCode}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Protect Until Date"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sProtectUntilDate}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Bill Hold"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sBillHold}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Bill Hold Reason"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sBillHoldReason}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                        </apex:pageBlock>
+                    </apex:outputpanel>
+                    
+                    <apex:outputpanel >
+                        <apex:pageBlock mode="maindetail">
+                            <a id="PayerInformation" name="PayerInformation"></a>
+                            <apex:pageBlockSection id="PayerInformationpbs" collapsible="true" title="Payer Information" columns="2">
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Payer Name"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sProfileAccountName}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Billing Address"></apex:outputLabel>
+                                    <apex:outputpanel >
+                                        <apex:outputText value="{!oProfileDetails.sAddress}" ></apex:outputText>
+                                    </apex:outputpanel>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                        </apex:pageBlock>
+                    </apex:outputpanel>
+                    
+                    <apex:outputpanel >
+                        <apex:pageBlock mode="maindetail">
+                            <a id="BalanceInformation" name="BalanceInformation"></a>
+                            <apex:pageBlockSection id="BalanceInformationpbs" collapsible="true" title="Balance Information" columns="2">
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Current Account Balance"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dCurrentAccountBalance}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Current Account Balance (Non-SSA)"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dCurrentAccBalNonSSA}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Past Due Balance"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dPastDueBalance}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Past Due Balance (Non-SSA)"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dPastDueBalanceNonSSA}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                        </apex:pageBlock>
+                    </apex:outputpanel>
+                    
+                    <apex:outputpanel >
+                        <apex:pageBlock mode="maindetail">
+                            <a id="LastPaymentInformation" name="LastPaymentInformation"></a>
+                            <apex:pageBlockSection id="LastPaymentInformationpbs" collapsible="true" title="Last Payment Information" columns="2">
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Payment Amount"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dPaymentAmount}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Allocation Date"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sAllocationDate}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Payment Type"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sPaymentType}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Received Date"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sReceivedDate}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Check Number"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.iCheckNumber}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem > 
+                                    <apex:outputPanel > 
+                                        <apex:outputLabel value="Draft Date"></apex:outputLabel><apex:image styleClass="imageStyle" value="{!$Resource.HUMHoverOverQuestionMark}" onmouseover="openHoverPopDraftDate();" onmouseout="clearHoverDraftDate();"/>
+                                        <div id="draftDatePopUpDiv" class="stylePanelDraftDate">
+                                            <SPAN id='draftDatePopUpText'></SPAN>
+                                        </div>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel > 
+                                        <apex:outputText value="{!oProfileDetails.sNextRecurringDate}"></apex:outputText>                        
+                                    </apex:outputPanel>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                        </apex:pageBlock>
+                    </apex:outputpanel>
+                    
+                    <apex:outputpanel >
+                        <apex:pageBlock mode="maindetail">
+                            <a id="CollectionInformation" name="CollectionInformation"></a>
+                            <apex:pageBlockSection id="CollectionInformationpbs" collapsible="true" title="Collection Information" columns="2">
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Next Action CD"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sNextActionCD}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Next Action Date"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sNextActionDate}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Expected Term Action Date"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sExpectedTermActionDate}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Expected Term Date"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sExpectedTermActionDate}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSection ></apex:pageBlockSection>
+                                <apex:pageBlockSectionItem >                        
+                                    <apex:outputLabel value="Overnight Billing Address"></apex:outputLabel>                       
+                                    <apex:outputText value="{!$Label.Overnight_Billing_Address}" escape="false"  html-log_this="true"></apex:outputText>
+                                </apex:pageBlockSectionItem> 
+                            </apex:pageBlockSection>
+                        </apex:pageBlock>
+                    </apex:outputpanel>
+                    
+                    <apex:outputpanel >
+                        <apex:pageBlock mode="maindetail" >
+                            <a id="RateInformation" name="RateInformation"></a>
+                            <apex:pageBlockSection id="RateInformationpbs" collapsible="true" title="Rate Information" columns="1" >
+                                <apex:pageblockSectionItem html-log_this="false">
+                                    <apex:outputLabel html-log_this="false" value="Note: These amounts do not include any fees/discounts/adjustments calculated at 
+                                                                                   time of billing and should not be construed as a total billed amount."></apex:outputLabel>
+                                </apex:pageblockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Billing Mode"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sProfBillingMode}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem />
+                                <apex:pageBlockSectionItem labelTitle="Hello" html-log_this="false" labelStyle="color:black;font-weight: 700;" >
+                                    <apex:outputLabel id="lblRateTypeDes" html-log_this="false" style="color:black;font-weight: bold;" value="Rate Type Description"></apex:outputLabel>
+                                    <apex:outputLabel value="" ></apex:outputLabel>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Premium"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dPremium}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Optional Supplemental Premium"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dOptionalSupplementalPremium}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Discounts"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dDiscounts}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Subsidies"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dSubsidies}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Penalties"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dPenalties}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Fees"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dFees}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Others"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dOthers}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageblockSectionItem >
+                                    <apex:outputLabel value="" ></apex:outputLabel>
+                                    <div class="line"/>
+                                </apex:pageblockSectionItem>
+                                <apex:pageBlockSectionItem dataStyle="color:black;font-weight: bold;" labelStyle="color:black;font-weight: bold;">
+                                    <apex:outputLabel value="Net Monthly Premium Amount" style="color:black;font-weight: bold;" ></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dNetMonthlyPremiumAmount}" style="color:black;font-weight: bold;" ></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                            </apex:pageBlockSection>
+                        </apex:pageBlock>
+                    </apex:outputpanel>
+                    
+                    <apex:outputpanel >
+                        <apex:pageBlock mode="maindetail">
+                            <a id="LastInvoiceSummary" name="LastInvoiceSummary"></a>
+                            <apex:pageBlockSection id="LastInvoiceSummarypbs" collapsible="true" title="Last Invoice Summary" columns="2">
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Invoice Due Date"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sInvoiceDueDate}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Coverage Begin Date"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sCoverageBeginDate}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Amount Due From Last Invoice"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dAmountDueFromLastInvoice }"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Create Date"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.sCreateDate}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Total Payments Received"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dTotalPaymentsReceived}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem />
+                                <apex:pageblockSectionItem >
+                                    <apex:outputLabel value="" ></apex:outputLabel>
+                                    <div class="line"/>
+                                </apex:pageblockSectionItem>
+                                <apex:pageBlockSectionItem />
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Amount Past Due"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dAmountPastDue}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem />
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Premiums This Period"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dPremiumsThisPeriod}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem />
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Member Adjustments"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dMemberAdjustments}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem />
+                                <apex:pageBlockSectionItem >
+                                    <apex:outputLabel value="Fees and Other Adjustments"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dFeesAndOtherAdjustments}"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem />
+                                <apex:pageblockSectionItem >
+                                    <apex:outputLabel value="" ></apex:outputLabel>
+                                    <div class="line"/>
+                                </apex:pageblockSectionItem>
+                                <apex:pageBlockSectionItem />
+                                <apex:pageBlockSectionItem dataStyle="color:black;font-weight: bold;" labelStyle="color:black;font-weight: bold;">
+                                    <apex:outputLabel value="Total Amount Due" style="color:black;font-weight: bold;"></apex:outputLabel>
+                                    <apex:outputText value="{!oProfileDetails.dTotalAmountDue}" style="color:black;font-weight: bold;"></apex:outputText>
+                                </apex:pageBlockSectionItem>
+                                <apex:pageBlockSectionItem />
+                            </apex:pageBlockSection>
+                        </apex:pageBlock>
+                    </apex:outputpanel>       
+                </apex:outputpanel>
+            </apex:outputpanel>
+            <apex:actionFunction name="getProfileDetails" action="{!getProfileDetails}"  rerender="pnlDetails,msgs,stdMap,loggingStickyHeader" oncomplete="returnDetails();">
+                <apex:param name="sIdType" value=""/>
+            </apex:actionFunction>
+        </apex:form>
+    </div>
+	<script>
+    function returnDetails()
+    {
+        //var height_of_sectionHeader = jQuery("#loggingStickyHeader").innerHeight();
+        //if(height_of_sectionHeader < 50){
+          jQuery('#pageContent').css({"margin-top":"18%"});
+		  //}
+		sforce.console.setTabTitle('Profile '+document. getElementById('profileNumberId').value+': '+'{!sName}');
+    }
+    </script>
+</apex:page>

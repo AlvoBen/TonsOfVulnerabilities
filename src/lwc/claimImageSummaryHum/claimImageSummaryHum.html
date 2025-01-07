@@ -1,0 +1,158 @@
+﻿<template>
+    <template if:false={noResult}>
+        <div class="slds-card">
+            <div class="slds-p-top_medium slds-p-around_small">
+                <div if:true={isLoading}>
+                    <div class="spinnercls slds-align_absolute-center" >
+                        <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                    </div>
+                </div>
+                <div if:false={isLoading}>
+				<div if:false={issingleImage}>
+                <div style="background: #efefef;" class="slds-p-around_small">
+                    <span class="slds-m-right_small slds-m-left_small"></span>
+                    <lightning-icon icon-name="utility:info" alternative-text="info" size="small"></lightning-icon>
+                    <span class="slds-p-left_small">
+                        <lightning-formatted-text value={infoMsg}>
+                        </lightning-formatted-text>
+                    </span>
+                </div>
+				</div>
+
+                
+                <div class="slds-p-top_medium">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-label="Claim Image">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <div if:true={focus1} class="my-class slds-truncate" title="ECN">ECN/DCN
+                                        <lightning-icon onclick={updateColumnSorting} icon-name={ecnDcnIconHandler}
+                                            alternative-text="ECN/DCN" size="xx-small"
+                                            class="my-icon  slds-m-left_small pointer"></lightning-icon>
+                                    </div>
+                                    <div if:false={focus1} class="my-class2 slds-truncate" title="ECN/DCN">ECN/DCN
+                                        <lightning-icon onclick={updateColumnSorting} icon-name={ecnDcnIconHandler}
+                                            alternative-text="ECN/DCN" size="xx-small"
+                                            class="my-icon  slds-m-left_small pointer"></lightning-icon>
+                                    </div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div if:true={focus2} class="my-class slds-truncate" title="Receipt">Receipt
+                                        <lightning-icon onclick={updateColumnSorting} icon-name={ReceiptIconHandler}
+                                            alternative-text="Receipt" size="xx-small"
+                                            class="my-icon  slds-m-left_small pointer"></lightning-icon>
+                                    </div>
+                                    <div if:false={focus2} class="my-class2 slds-truncate" title="Receipt">Receipt
+                                        <lightning-icon onclick={updateColumnSorting} icon-name={ReceiptIconHandler}
+                                            alternative-text="Receipt" size="xx-small"
+                                            class="my-icon  slds-m-left_small pointer"></lightning-icon>
+                                    </div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div if:true={focus3} class="my-class slds-truncate" title="Servicing Prov">
+                                        Servicing Prov
+                                        <lightning-icon onclick={updateColumnSorting}
+                                            icon-name={ServicingProvIconHandler} alternative-text="Servicing Prov"
+                                            size="xx-small" class="my-icon  slds-m-left_small pointer"></lightning-icon>
+                                    </div>
+                                    <div if:false={focus3} class="my-class2 slds-truncate" title="Servicing Prov">
+                                        Servicing Prov
+                                        <lightning-icon onclick={updateColumnSorting}
+                                            icon-name={ServicingProvIconHandler} alternative-text="Servicing Prov"
+                                            size="xx-small" class="my-icon  slds-m-left_small pointer"></lightning-icon>
+                                    </div>
+
+                                </th>
+                                <th class="" scope="col">
+                                    <div if:true={focus4} class="my-class slds-truncate" title="Billing Prov">Billing
+                                        Prov
+                                        <lightning-icon onclick={updateColumnSorting} icon-name={BillingProvIconHandler}
+                                            alternative-text="Billing Prov" size="xx-small"
+                                            class="my-icon  slds-m-left_small pointer"></lightning-icon>
+                                    </div>
+                                    <div if:false={focus4} class="my-class2 slds-truncate" title="Billing Prov">Billing
+                                        Prov
+                                        <lightning-icon onclick={updateColumnSorting} icon-name={BillingProvIconHandler}
+                                            alternative-text="Billing Prov" size="xx-small"
+                                            class="my-icon  slds-m-left_small pointer"></lightning-icon>
+                                    </div>
+
+                                </th>
+                                <th class="" scope="col">
+                                    <div if:true={focus5} class="my-class slds-truncate" title="Repriced">Repriced
+                                        <lightning-icon onclick={updateColumnSorting} icon-name={RepricedIconHandler}
+                                            alternative-text="Repriced" size="xx-small"
+                                            class="my-icon  slds-m-left_small pointer"></lightning-icon>
+                                    </div>
+                                    <div if:false={focus5} class="my-class2 slds-truncate" title="Repriced">Repriced
+                                        <lightning-icon onclick={updateColumnSorting} icon-name={RepricedIconHandler}
+                                            alternative-text="Repriced" size="xx-small"
+                                            class="my-icon  slds-m-left_small pointer"></lightning-icon>
+                                    </div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div if:true={focus6} class="my-class slds-truncate" title="Frequency">Frequency
+                                        <lightning-icon onclick={updateColumnSorting} icon-name={FrequencyIconHandler}
+                                            alternative-text="Frequency" size="xx-small"
+                                            class="my-icon  slds-m-left_small pointer"></lightning-icon>
+                                    </div>
+                                    <div if:false={focus6} class="my-class2 slds-truncate" title="Frequency">Frequency
+                                        <lightning-icon onclick={updateColumnSorting} icon-name={FrequencyIconHandler}
+                                            alternative-text="Frequency" size="xx-small"
+                                            class="my-icon  slds-m-left_small pointer"></lightning-icon>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={resp} for:item="row">
+                                <tr key={row.sECN}>
+                                    <td>
+                                        <a href={row.sClaimURL} target="_blank" rel="noopener noreferrer">{row.sECN}</a>
+
+                                    </td>
+                                    <td>
+                                        <div>{row.Receipt_Date}</div>
+                                    </td>
+                                    <td>
+
+                                        <div><b>Servicing Prov Id: </b>{row.sRendering_Provider_Id}</div>
+                                        <div><b>Servicing Prov Name: </b>{row.sRendering_Provider_Last_Facility_Name}</div>
+
+                                    </td>
+                                    <td>
+
+                                        <div><b>Billing Prov Id: </b>{row.sBilling_provider_id}</div>
+                                        <div><b>Billing Prov Name: </b>{row.sBilling_Provider_Last_Facility_Name}</div>
+                                        <div><b>Billing Amt: </b>{row.dTotal_Billed_Charges}</div>
+
+                                    </td>
+                                    <td>
+
+                                        <div>{row.bRepriced}</div>
+
+                                    </td>
+                                    <td>
+
+                                        <div>{row.sClaim_Frequency_Code}</div>
+
+                                    </td>
+
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template if:true={noResult}>
+        <div class="slds-card">
+            <div class="slds-p-top_medium slds-p-around_small">
+        <c-search-no-result-hum no-result-message="No Claim Image to Display" message-with-icon="true">
+        </c-search-no-result-hum>
+        </div>
+        </div>
+    </template>
+</template>

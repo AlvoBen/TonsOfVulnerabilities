@@ -1,0 +1,44 @@
+﻿<!--
+Aura component Name        : SearchEnrollmentDetails_CMP_HUM.cmp
+Function                   : To Open enrollment member record in seperate tab
+
+Modification Log:
+* Developer Name                     Date                         Description
+* Muthukumar                        07/29/2022                 	US-3255798 Original Version 
+* Muthukumar                        09/29/2022                 	US-3398943 Home office/ Contract protected data implementation
+* Bhakti Vispute					10/17/2022					User Story 3495720: T1PRJ0170850- MF 20034 - Enrollment Search / TRR Details Tab - Detail Page Creation and Field Population
+* Visweswararao Jayavarapu          30/08/2022                  User Story 3481400: Enrollment Search / H1 Market Place Tab - Detail Page Creation and Field Population
+*Visweswararao Jayavarapu           30/08/2022                  User Story 3483233: T1PRJ0170850- MF 20035- Lightning - - Enrollment Search / H1 Market Place - Applications Misc Tab fields population
+*Visweswararao Jayavarapu           30/08/2022                  User Story 3481578: T1PRJ0170850- MF 20035- Lightning - - Enrollment Search / H1 Market Place - Billing Information Tab fields population
+*Visweswararao Jayavarapu           30/08/2022                  User Story 3482496: T1PRJ0170850- MF 20035- Lightning - - Enrollment Search / H1 Market Place - Benefit & AgentTab fields population
+*-->
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable">
+    <aura:attribute name="accountDetailId" type="String" />
+	<aura:attribute name="tabdetails" type="String" />
+    <aura:attribute name="memberData" type="List"/>
+    <lightning:unsavedChanges aura:id="unsavedpopup" onsave="{!c.handleSave}"
+    ondiscard="{!c.handleDiscard}" />
+    <lightning:workspaceAPI aura:id="workspace" />
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+	<aura:if isTrue="{!v.tabdetails=='enrollmentMemberDetailPageHUM'}">
+        <div class="slds-theme_shade field-title slds-theme_backgroundColor-white">
+            <c:enrollmentMemberDetailPageHUM enrollmentMemberData='{!v.memberData}'></c:enrollmentMemberDetailPageHUM>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.tabdetails=='protectedAccount'}">
+        <div class="slds-theme_shade">
+            <c:accountDetailPageProtectedHum ></c:accountDetailPageProtectedHum>
+        </div>
+    </aura:if>
+	
+	<aura:if isTrue="{!v.tabdetails=='TRRDetailPage'}">
+        <div class="slds-theme_shade field-title slds-theme_backgroundColor-white">
+            <c:enrollmentTRRMemberDetailPageHUM enrollmentMemberData='{!v.memberData}'></c:enrollmentTRRMemberDetailPageHUM>
+        </div>
+    </aura:if>
+	<aura:if isTrue="{!v.tabdetails=='H1MarketPlaceMemberDetailPageHUM'}">
+        <div class="slds-theme_shade field-title slds-theme_backgroundColor-white">
+            <c:h1MarketPlaceMemberDetailPageHUM enrollmentMemberData='{!v.memberData}'></c:h1MarketPlaceMemberDetailPageHUM>
+        </div>
+    </aura:if>
+</aura:component>

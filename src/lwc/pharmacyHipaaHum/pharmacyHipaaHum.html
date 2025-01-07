@@ -1,0 +1,19 @@
+﻿<template>
+    <div>
+        <lightning-layout  class="detail-container">
+            <lightning-layout-item size="12" medium-device-size="12"
+            class="detail-item slds-var-m-bottom_small">   
+                <c-account-detail-p-o-a-hum  record-id={recId} displayheader={displayHeader}>
+                </c-account-detail-p-o-a-hum>    
+            </lightning-layout-item>
+        
+        </lightning-layout>
+        <lightning-layout  class="detail-container">
+            <lightning-layout-item size="12" medium-device-size="12"
+            class="detail-item slds-var-m-bottom_small">                           
+                <c-account-detail-associated-form-h-u-m  record-id={recId} displayheader={displayHeader} >
+                </c-account-detail-associated-form-h-u-m>           
+            </lightning-layout-item>
+        </lightning-layout>
+    </div>
+</template>

@@ -1,0 +1,24 @@
+﻿<template>
+    <lightning-card title={titleName} icon-name="custom:custom63">
+        <div class="slds-grid slds-m-top_small slds-m-bottom_small slds-m-left_large slds-m-right_large">
+            <div class="slds-col slds-size_2-of-4">
+                <div class="account-readonly-container">
+                    <template for:each={inputArray} for:item="key">
+                        <div class="field-readonly-container slds-p-top_small" 
+                                key={key.order}>
+                            <div class="account-readonly-label">
+                                <lightning-formatted-text 
+                                    value={key.label}></lightning-formatted-text>
+                            </div>
+                            <div class="empty-container"></div>
+                            <div class="account-readonly-value">
+                                <lightning-formatted-text 
+                                    value={key.value}></lightning-formatted-text>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </lightning-card>
+</template>

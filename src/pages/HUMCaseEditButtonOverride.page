@@ -1,0 +1,21 @@
+﻿<!--
+
+Page Name        : HUMQueueSelectionController
+Version          : 1.0 
+Created Date     : June 4 2014
+Function         : Page is used to override the Edit Case button
+
+Modification Log :
+*   Developer Name               Code Review                Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   M Surya Kumari                  17076                         06/13/2014            Original Version 
+*   Mithra Bharadwaj                                              02/09/2021          US#1522825 SonarQube Changes
+-->
+<apex:page standardController="Case" action="{!reDirectPageForEdit}" extensions="HUMCaseNewEditButtonOverrideExtension">
+    <apex:includeScript value="/support/console/25.0/integration.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.HUMCaseEditButtonOverride,'/CaseEDitButtonOverrride/main.js')}"/>
+       
+    <script type="text/javascript">
+        var PageFrom = '{!JSENCODE(sPageTitle)}' ;
+    </script>     
+</apex:page>

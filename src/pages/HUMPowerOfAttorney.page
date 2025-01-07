@@ -1,0 +1,40 @@
+﻿<!-- *****************************************************************************************
+Page Name          : HUMPowerOfAttorney
+Version            : 1.0
+Function           : Page to display Power of Attorney related to specific Member
+Created Date       : 09/04/2015
+
+Modification Log:
+*   Developer                   Code Review     Date               Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Manish Kumar                22269           09/04/2015          Original Version
+**************************************************************************************************************************** -->
+
+<apex:page id="POA" standardController="Account" extensions="HUMPowerOfAttorneyExtension">
+    
+    <apex:stylesheet value="{!URLFOR($Resource.HUMPOA_SR, 'main.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.HUMPOA_SR, 'main.js')}"/>
+    
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageBlockTable value="{!lstKeyTOCIMember}" var="poa">
+                <apex:column headerValue="{!lstFieldSet[0]}" value="{!mapServiceResponse[poa][0]}"/>
+                <apex:column headerValue="{!lstFieldSet[1]}" value="{!mapServiceResponse[poa][1]}"/>
+                <apex:column headerValue="{!lstFieldSet[2]}" value="{!mapServiceResponse[poa][2]}"/>
+                <apex:column value="{!mapServiceResponse[poa][3]}">
+                    <apex:facet name="header">
+                        <div style="POAStylePanel">
+                        <h3>
+                            {!lstFieldSet[3]}
+                            <img src="{!$Resource.HUMHoverOverQuestionMark}" onmouseover="openPOAPop();" onmouseout="clearPOAPop();"/>
+                        </h3> 
+                    </div>
+                    <div id="POAPopUp" class="POAStylePanel">
+                        <SPAN id='POAPopUpText'></SPAN>
+                    </div>
+                    </apex:facet>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

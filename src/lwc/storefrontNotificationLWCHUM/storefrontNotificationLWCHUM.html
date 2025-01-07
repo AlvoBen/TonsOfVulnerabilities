@@ -1,0 +1,87 @@
+﻿<!--
+Page Name        : storefrontNotificationLWCHUM
+Version          : 1.0 
+Created Date     :03/10/2021
+Function         : Lightning Web Component used Notification functionality for CRM Retail.
+Modification Log :
+* Developer                 Code review         Date                  Description
+*************************************************************************************************
+* Abhishek Maurya       	                	 03/10/2021            	Original Version
+* Abhishek Maurya                                05/14/2021             User Story 2072454 CRM Storefront Notifications: Veteran Eligibility for Action Required Prompt  
+* Vinoth L                                       09/26/2021             User Story 2635072 -CRM Storefront Task Management: Action Required Prompt
+* Vinoth L                                  	 06/15/2022             User Story 3316885: T1PRJ0154546 / SF / MF9 Storefront - SNP: Action Required/Account Hover/Alert Icon
+* Vinoth L                                       11/28/2022             User Story 4012388 T1PRJ0154546 / SF/ MF9 Storefront - Ability to View First Time Visit - Currebnt CY in Storefront  
+* Vinoth L                      				 08/26/2023             User Story 5012060: T1PRJ0154546 / DP / MF9 Storefront - Add preferred name on Account     
+************************************************************************************************** -->
+<template>
+    <!--Use template if:true to display/hide popup based on isModalOpen value--> 
+    <template if:true={isModalOpen}>
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <div class="slds-grid slds-wrap">
+                      <div class="slds-col slds-size_11-of-12">
+                        <span><h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"><b>Action Required</b></h2></span>
+                      </div>
+                      <div class="slds-col slds-size_1-of-12">
+                        <span> <lightning-button-icon size="small" 
+                            onclick={closeModal} variant="inverse" 
+                            icon-name="utility:close" 
+                             alternative-text="close">
+                             </lightning-button-icon>
+                        </span>
+                      </div>
+                    </div>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">                    
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col contentdisplay">
+                            <template if:true={showPreferredName}>
+                                <span><b>{notificationData.Name} <i>({notificationData.accountPreferredName})</i></b> ({notificationData.visitorType})  {notificationData.midText} </span>                         
+                            </template>
+                            <template if:false={showPreferredName}>
+                                <span><b>{notificationData.Name}</b> ({notificationData.visitorType})  {notificationData.midText} </span>                         
+                            </template>
+                        </div>
+                        <div class="slds-col contentMargin">
+                            <template if:true={isShowToolTip}>
+                                <span>
+                                    <lightning-helptext content={firstTimeHelpText}></lightning-helptext>                   
+                                </span>                            
+                            </template>
+                        </div>
+                    </div> 
+                    <template if:true ={isFstTimeClndrVst}>
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col contentdisplay">
+                            <span>{fstTimeClndrVstText}</span>                         
+                            </div>
+                            <div class="slds-col contentMargin">                                
+                                <span>
+                                    <lightning-helptext content={firstTimeCldrHelpText}></lightning-helptext>                   
+                                </span> 
+                            </div>
+                        </div>                     
+                    </template>            
+                    <template if:true={notificationData.allNotification}>
+                        <template for:each={notificationData.allNotification} for:item="data">
+                            <div key={data.Id}>
+                                <lightning-input data-item={data.notificationTypeAsKey} onchange={handleCheckboxChange} type="checkbox" field-level-help={data.Instructions} label={data.notilabel}></lightning-input>
+                            </div>
+                        </template>                         
+                        <template if:true={isSpecialNeedsPlan}><br/>{snpText}:<b> {notificationData.visitorIndicator}</b></template>                        
+                    </template>
+                </div>
+                <!-- Modal/Popup Box LWC footer starts here -->
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick={closeModal} title="Cancel">Cancel</button>
+                    <button class="slds-button slds-button_brand" disabled={ackBtnDis} onclick={submitDetails} title="Acknowledge">Acknowledge</button>
+                </footer>
+            </div>
+        </section>   
+        <div data-id="divblock" class="slds-backdrop slds-backdrop_open"></div>    
+    </template>           
+ </template>

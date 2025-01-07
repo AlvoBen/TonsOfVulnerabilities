@@ -1,0 +1,63 @@
+﻿<!--
+/*******************************************************************************************************************************
+LWC JS Name : memberIdCardsPolicyMember.js
+Function    : This JS serves as controller to memberIdCardsPolicyMember.html. 
+
+Modification Log: 
+Developer Name           Code Review                      Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Vamshi Krishna Pemberthi                              02/09/2022                    initial version(azure # )
+* Vamshi Krishna Pemberthi                              03/25/2022                    User Story 3201377: ID cards adding Product Type Code to the policy tabs within history/ordering screen
+* Apurva Urkude										    02/03/2023                    UserStory 4100199: Lightning- MCD- Not able to order ID Card for OH Medicaid Pending Plan Group 325240
+*********************************************************************************************************************************/
+-->
+<template>
+    <lightning-layout class="slds-grid template-full-width">
+        <lightning-layout-item if:true={bMedPolicy} >
+            <template if:true = {accPolicy}>
+                <lightning-tabset class="hc-custom-tab-style">
+                        <template for:each= {accPolicy} for:item="med">
+                        <lightning-tab label={med.tabName} key={med.Id} data-item={med} data-segment ={med.Segment_Indicator__c} onactive = "{handleActive}" >                           
+                            <lightning-layout>
+                                <lightning-layout-item> 
+                                    <c-member-id-card-status-hum s-pol-mem-id={med.Id} s-record-id={sRecordId} s-pol-id={med.PlanId}
+                                    s-subscriber-id={med.SubscriberId} s-grp-number={med.Plan.Payer.Source_Customer_Key__c} mem-plan-rec={med}>
+                                    </c-member-id-card-status-hum>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </br>
+                        </lightning-tab>
+                    </template>
+                </lightning-tabset>             
+            </template>
+            <template if:false = {accPolicy} >
+                <div style="padding-left : 220px;">
+                    <c-search-no-result-hum no-result-message={noActMemMsg}   message-with-icon="true"></c-search-no-result-hum>
+                </div>
+            </template>   
+        </lightning-layout-item>
+
+        
+        <lightning-layout-item if:true ={bDenPolicy} >
+            <template if:true = {accPolicy}>
+                <lightning-tabset >
+                    <template for:each= {accPolicy} for:item="den">
+                        <lightning-tab label={den.tabName} key={den.Id} onactive = "{handleActive}" >
+                            
+                            <c-member-id-card-status-hum s-pol-mem-id={den.Id} s-record-id={sRecordId} s-pol-id={den.PlanId}
+                            s-subscriber-id={den.SubscriberId} s-grp-number={den.Plan.Payer.Source_Customer_Key__c} mem-plan-rec={den}>
+                            </c-member-id-card-status-hum>
+                        </lightning-tab>
+                    </template>
+                </lightning-tabset>
+            </template>
+
+            <template if:false= {accPolicy} >
+                <div style="padding-left : 220px;">
+                    <c-search-no-result-hum no-result-message={noActMemMsg}   message-with-icon="true"></c-search-no-result-hum>
+                </div>
+            </template>
+
+        </lightning-layout-item>
+    </lightning-layout>
+</template>

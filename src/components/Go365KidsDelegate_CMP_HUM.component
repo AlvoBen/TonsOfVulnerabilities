@@ -1,0 +1,61 @@
+﻿<!--
+Component Name   : Go365KidsDelegate_CMP_HUM.component
+Version          : 1.0
+Created On       : 01/31/2017
+Function         : VF Component to display Kids Delegate details.
+
+Modification Log: 
+* Developer Name           Code Review                 Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Gargey Sharma               70895                  01/31/2017                     Original version  
+* Anupama Tavva               70895                  02/21/2017                     For REQ-301565 Added div for loading message in 
+																					Go365kidsDelegationSection.
+* Priyanka Puranik                                 	02/08/2021                  	REQ - 1625475: PR00094226 - CR AEP readiness -Research - Critical Security Issues																					                                                                                   Go365kidsDelegationSection.             
+* Ravikanth Samudrala                                  04/26/2022                  3213502 -T1PRJ0272548 - SF Legacy API Retirement Upgrade API Version for Integrationjs Go365
+* Pinky Vijur                                          08/05/2023                  User Story 4647299: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Miscellaneous (Group 2)
+****************************************************************************************************************************
+-->
+<apex:component controller="Go365KidsDelegate_C_HUM">
+  
+    <apex:attribute id="sBirthDate" name="sBirthDate" description="This is birthdate for interacting about account." type="String" required="true" />
+    <apex:attribute id="sEnterpriseId" name="sEnterpriseId" description="This is Enterprise ID for account." type="String" required="true" />
+    <script src="/support/console/54.0/integration.js"></script>
+    <apex:includeScript value="{!URLFOR($Resource.CRM_JQUERY, 'jquery.min.js')}" />
+    <script src="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.js')}"></script> <!--DT upgrade-->
+    <script src="{!$Resource.Go365KidsDelegates_SR_HUM}"></script>
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}" /><!--DT upgrade-->
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Logging/css/LoggingCompCSS.css')}" />
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.Go365_CSS_SR_HUM)}" />
+    <link rel="stylesheet" text="text/css" href="{!URLFOR($Resource.HUMMemberSearchComponent,'HUMMemberSearchComponent/HUMMemberSearchCSS.css')}" />
+ 
+    <apex:pageBlock id="pgblckmemdel" mode="maindetail">
+        <apex:pageBlockSection id="kidsDelegatesSection" title="{!$Label.Go365KidsDelegates_SectionName}" showheader="true" collapsible="true" columns="1">
+            <apex:form id="memdelform">
+                <apex:actionFunction action="{!displayPageMessage}"  name="displayPageMessage" rerender="pageMessage" onComplete="callService(sAge);">
+                    <apex:param name="sAge" assignTo="{!sAge}" value="" />
+                </apex:actionFunction>
+            </apex:form>
+            <div>
+                <apex:outputPanel id="pageMessage"  styleClass="messageFont">
+                    <apex:pageMessages escape="false"></apex:pageMessages>
+                </apex:outputPanel>
+            </div>
+            <!-- This block will render a spinner image to indicate table loading in the UI -->
+           <div class="loadingImgStyle" id="Go365KidsDelegate_loadingImage">
+               <img src="/img/loading.gif" />
+               <span class="waitingDescription"> {!$Label.LOADING_HUM}</span>
+           </div>
+            <div id="resultsGo365KidsDelegates">
+                <table id="kidsDelegates" class="table table-striped table-bordered  table-hover responsive nowrap width100"></table>
+            </div>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    <script>
+        var remoteActionMemDel = "{!$RemoteAction.Go365KidsDelegate_C_HUM.getKidsDelegateDetails}";
+        Visualforce.remoting.timeout = "{!$Label.HUMMemWebActivityTimeout}";
+    var sDateOfBirth = "{!JSENCODE(sBirthDate)}";
+    var sEntId = "{!JSENCODE(sEnterpriseId)}";
+    var sAge = calculateAge(sDateOfBirth);
+        displayPageMessage(sAge);
+    </script>
+</apex:component>

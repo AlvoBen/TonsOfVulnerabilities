@@ -1,0 +1,272 @@
+﻿<!--
+Component        : PharmacyAuthorizationsDetailHum
+Version          : 1.0
+Created On       : 10/14/2021
+Function         : Component to display to pharmacy authorization details
+
+Modification Log:
+* Developer Name                    Date                         Description
+* Nirmal Garg                       10/14/2021                   Original Version
+* Swapnali Snawane                  08/05/2022                   DF#5522  Auth/Referral: Lightning Pharmacy Authorizations Component/hover overs - Outcome verbiage with "Read More" has a spelling error
+* Divya Bhamre                      10/28/2022                    US - 3833519
+*Apurva Urkude                       11/08/2022                   US- 3747520
+* Pinky Vijur						04/03/2023					  User Story 4401068: C04; Authorization/Referral Verification; LIGHTNING--T1PRJ0891742-CRM IOP-2022-6037203—Pharmacy Authorization Details: add ‘Department’, ‘Coverage Start Date’ & ‘Coverage End Date’
+* Nirmal Garg				        06/23/2023                   US - 4762833 - Fix Pharmacy authorization scrolling and keyword search issue
+*------------------------------------------------------------------------------------------------------------------------------
+-->
+<template>
+    <template if:true={auth}>
+        <lightning-card>
+            <div class="slds-box" onclick={handleLogging}>
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_4-of-12 slds-border_right logthis" data-logid={generateLogId}
+                         data-label="Rx Name/Strength, Request Date, Decision Date"
+                         data-id="Rx Name/Strength, Request Date, Decision Date" data-value={getrxdata}>
+                        <lightning-layout multiple-rows="true">
+                            <lightning-layout-item size="10">
+                                <lightning-layout multiple-rows="true">
+                                    <span class="authlabel">Rx Name/Strength</span>
+                                    <lightning-layout-item size="12">
+                                        <span class="authvalue">
+                                            {getdrugname}
+                                        </span>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="12">
+                                        <span class="authvalue slds-wrap" title={getdrugcontent}>
+                                            {getdrugcontent}
+                                        </span>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="2">
+                                <c-generic-copy-icon-hum copycontent={auth.drugName}></c-generic-copy-icon-hum>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="6">
+                                <lightning-layout multiple-rows="true">
+                                    <lightning-layout-item size="12">
+                                        <span class="authlabel">Request Date</span>
+                                        <c-generic-help-text-hum helptext="Date when the doctor sent complete request to HCPR and HCPR started their decision-making."></c-generic-help-text-hum>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="12">
+                                        <span class="authvalue slds-wrap"
+                                              title={auth.creationDate}>{auth.creationDate}</span>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="6">
+                                <lightning-layout multiple-rows="true">
+                                    <lightning-layout-item size="12">
+                                        <span class="authlabel">Decision Date</span>
+                                        <c-generic-help-text-hum helptext="Date a decision was made on the authorization
+										request, or the date when the EOC was aborted."></c-generic-help-text-hum>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="12">
+                                        <span class="authvalue slds-wrap"
+                                              title={auth.decisionDate}>{auth.decisionDate}</span>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </div>
+                    <div class="slds-col slds-size_8-of-12">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-p-around_xx-small slds-size_4-of-12 logthis"
+                                 data-logid={generateLogId} data-label="Event Type" data-id="EventType"
+                                 data-value={auth.eventType}>
+                                <lightning-layout multiple-rows="true">
+                                    <lightning-layout-item size="12">
+                                        <span class="authlabel" style="text-align: right;">Event Type</span>
+                                        <c-generic-help-text-hum helptext="The request level of the decision."></c-generic-help-text-hum>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="12">
+                                        <span class="authvalue slds-wrap" title={auth.eventType}
+                                              style="text-align: right;">{auth.eventType}</span>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </div>
+                            <div class="logthis slds-col slds-p-around_xx-small slds-size_2-of-12"
+                                 data-logid={generateLogId} data-label="Qty / Sply" data-id="Qty / Sply"
+                                 data-value={qtysupplydata}>
+                                <lightning-layout multiple-rows="true">
+                                    <lightning-layout-item size="12">
+                                        <span class="authlabel" style="text-align: right;">Qty / Sply</span>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="12">
+                                        <span class="authvalue" style="text-align: right;">
+                                            {auth.quantity} /
+                                            {auth.daysSupply}
+                                        </span>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </div>
+                            <div class="logthis slds-col slds-p-around_xx-small slds-size_3-of-12"
+                                 data-logid={generateLogId} data-label="MDO" data-id="MDO" data-value={auth.mdo}>
+                                <lightning-layout multiple-rows="true">
+                                    <lightning-layout-item size="12">
+                                        <span class="authlabel">MDO</span>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="12">
+                                        <span class="authvalue slds-wrap" title={auth.mdo}>{auth.mdo}</span>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </div>
+                            <div class="slds-col slds-p-around_xx-small slds-size_3-of-12 logthis"
+                                 data-logid={generateLogId} data-label="Phone" data-id="Phone" data-value={auth.phone}>
+                                <lightning-layout multiple-rows="true">
+                                    <lightning-layout-item size="12">
+                                        <span class="authlabel">Phone</span>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="12">
+                                        <template if:true={auth.phone}>
+                                            <lightning-icon icon-name="utility:end_call" alternative-text="Phone"
+                                                            size="x-small" title="Phone">
+                                            </lightning-icon>
+                                        </template>
+                                        <span class="authvalue" title={auth.phone}>{auth.phone}</span>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </div>
+                        </div>
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-p-around_xx-small slds-size_3-of-12 logthis"
+                                 data-logid={generateLogId} data-label="Outcome" data-id="Outcome"
+                                 data-value={auth.authDescription}>
+                                <lightning-layout multiple-rows="true">
+                                    <lightning-layout-item size="12">
+                                        <span class="authlabel" style="text-align: right;">Outcome</span>
+                                        <c-generic-help-text-hum helptext="Status of decision."></c-generic-help-text-hum>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="12">
+                                        <span class="authvalue slds-wrap" title={auth.authDescription}
+                                              style="text-align: right;">{auth.authDescription}</span>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </div>
+                            <template if:true={showDateAndDept}>
+                                <template if:true={getOutcomeValue}>
+                                    <div class="slds-col  slds-p-around_xx-small slds-size_3-of-12 logthis"
+                                         data-logid={generateLogId} data-label="Coverage Start Date"
+                                         data-id="CoverageStartDate" data-value={auth.coverageStartDate}>
+                                        <lightning-layout multiple-rows="true">
+                                            <lightning-layout-item size="12">
+                                                <span class="authlabel">Coverage Start Date</span>
+                                                <c-generic-help-text-hum helptext="When approved/ partially approved, Date
+												the Authorization begins."></c-generic-help-text-hum>
+                                            </lightning-layout-item>
+                                            <lightning-layout-item size="12">
+                                                <span class="authvalue slds-wrap"
+                                                      title={auth.coverageStartDate}>{auth.coverageStartDate}</span>
+                                            </lightning-layout-item>
+                                        </lightning-layout>
+                                    </div>
+                                    <div class="slds-col slds-p-around_xx-small slds-size_3-of-12 logthis"
+                                         data-logid={generateLogId} data-label="Coverage End Date"
+                                         data-id="CoverageEndDate" data-value={auth.coverageEndDate}>
+                                        <lightning-layout multiple-rows="true">
+                                            <lightning-layout-item size="12">
+                                                <span class="authlabel" style="text-align: right;">
+                                                    Coverage End
+                                                    Date
+                                                </span>
+                                                <c-generic-help-text-hum helptext="When approved/ partially approved, Date
+												the Authorization ends."></c-generic-help-text-hum>
+                                            </lightning-layout-item>
+                                            <lightning-layout-item size="12">
+                                                <span class="authvalue slds-wrap" title={auth.coverageEndDate}
+                                                      style="text-align: right;">{auth.coverageEndDate}</span>
+                                            </lightning-layout-item>
+                                        </lightning-layout>
+                                    </div>
+                                </template>
+                                <template if:true={auth.hasValidDepartment}>
+                                    <div class="slds-col slds-p-around_xx-small slds-size_3-of-12 logthis"
+                                         data-logid={generateLogId} data-label="Department" data-id="Department"
+                                         data-value={auth.departmentCode}>
+                                        <lightning-layout multiple-rows="true">
+                                            <lightning-layout-item size="12">
+                                                <span class="authlabel" style="text-align: right;">Department</span>
+                                                <lightning-button-icon tooltip="Signifies where the EOC was started, or who handles it.
+														See your area’s processes and procedures for additional information." icon-name="utility:info"
+                                                                       variant="bare" alternative-text="">
+                                                </lightning-button-icon>
+                                            </lightning-layout-item>
+                                            <lightning-layout-item size="12">
+                                                <span class="authvalue slds-wrap" title={auth.departmentCode}
+                                                      style="text-align: right;">{auth.departmentCode}</span>
+                                            </lightning-layout-item>
+                                        </lightning-layout>
+                                    </div>
+                                </template>
+                            </template>
+                            <div class="slds-col slds-size_9-of-12">
+                                <template if:false={auth.isReadMoreEligible}>
+                                    <div class="logthis slds-p-around_xx-small" data-logid={generateLogId}
+                                         data-label="Outcome Verbiage" data-id="Outcome Verbiage"
+                                         data-value={auth.denialLanguage}>
+                                        <lightning-layout multiple-rows="true">
+                                            <lightning-layout-item size="12">
+                                                <span class="authlabel">Outcome Verbiage</span>
+                                                <c-generic-help-text-hum helptext="Explains the reason for the authorization's denial; or if
+												approved, provides the end date."></c-generic-help-text-hum>
+                                            </lightning-layout-item>
+                                            <lightning-layout-item size="12">
+                                                <span class="authvalue slds-wrap" title={auth.denialLanguage}>
+                                                    {auth.denialLanguage}
+                                                </span>
+                                            </lightning-layout-item>
+                                        </lightning-layout>
+                                    </div>
+                                </template>
+                                <template if:true={auth.isReadMoreEligible}>
+                                    <div class="logthis slds-p-around_xx-small" data-logid={generateLogId}
+                                         data-label="Outcome Verbiage" data-id="Outcome Verbiage"
+                                         data-value={getOutcomeVerbiage}>
+                                        <lightning-layout multiple-rows="true">
+                                            <lightning-layout-item size="12">
+                                                <span class="authlabel">Outcome Verbiage</span>
+                                                <c-generic-help-text-hum helptext="Explains the reason for the authorization's denial; or if
+												approved, provides the end date."></c-generic-help-text-hum>
+                                            </lightning-layout-item>
+                                            <lightning-layout-item size="12">
+                                                <span class="authvalue slds-wrap" title={getOutcomeVerbiage}>
+                                                    {getOutcomeVerbiage}
+                                                </span>
+                                                <span style="color: rgb(1, 118, 211); cursor: pointer;"
+                                                      onclick={displayReadMore}>--Read More--</span>
+                                            </lightning-layout-item>
+                                        </lightning-layout>
+                                        <section if:true={displayPopOver} aria-describedby="dialog-body-id-741"
+                                                 aria-labelledby="dialog-heading-id-746"
+                                                 class=" slds-theme_alt-inverse slds-popover slds-nubbin_top-right slds-popover_medium"
+                                                 role="dialog" style="position: absolute;">
+                                            <span style="cursor:pointer; color:white; font-size: 12px;"
+                                                  class="slds-text-heading_medium slds-float_right slds-p-vertical_xx-small slds-p-horizontal_small"
+                                                  onclick={closePopOver}>X</span>
+                                            <div class="slds-theme_alt-inverse slds-popover__body slds-popover__body_small slds-wrap"
+                                                 id="dialog-body-id-741" style="height: 100px;">
+                                                <div class="slds-media slds-wrap">
+                                                    <div class="slds-media__body slds-wrap">
+                                                        <template if:true={auth.denialLanguage}>
+                                                            <div class="slds-wrap">
+                                                                {auth.denialLanguage}
+                                                            </div>
+                                                        </template>
+                                                        <template if:false={auth.denialLanguage}>
+                                                            <div class="slds-wrap">
+                                                                <span></span>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </lightning-card>
+    </template>
+</template>

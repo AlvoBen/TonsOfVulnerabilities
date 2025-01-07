@@ -1,0 +1,19 @@
+﻿<!--
+Component Name   : PhoneBook_CMP_HUM
+Version          : 1.0
+Created On       : 02/09/2021
+Function         : Lightning Component to open the Phonebook Utility.
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *****************************************************************************************************************************
+ * Arpit jain/Navajit Sarkar                            02/09/2021                    Original version
+ * Arpit jain/Navajit Sarkar                            03/09/2021                    PhoneBook related Changes
+ ****************************************************************************************************************************
+ -->
+<aura:component implements="flexipage:availableForAllPageTypes" access="global">
+	<lightning:utilityBarAPI aura:id="utilitybar" />
+	<lightning:workspaceAPI aura:id="workspace" />
+	<c:pureCloudEventsHum onparentcalltransfer="{!c.openPhonebook}" onparentopencti="{!c.openutility}"
+	ondisablepopout="{!c.disablepopout}" onopenAboutPage = "{!c.handleNavigateToAboutPage}" aura:id="phoneBook" />
+</aura:component>

@@ -1,0 +1,37 @@
+.record-form-container .slds-card:nth-child(2) {
+    padding-bottom: 2rem;
+}
+
+.record-form-container .custom-help-tool button {
+    padding: 0 0 0 0.5rem !important;
+}
+
+.slds-custom {
+    display: flex;
+}
+
+.record-form-container {
+    flex: 1;
+}
+.slds-form__row{
+    margin: 6px;
+}
+
+.custom-tooltip-link {
+    text-decoration: underline;
+    color: rgb(0, 95, 178);
+    cursor: pointer;
+    font-size: 13px
+}
+.hc-standard-table-styles{
+    background: #f5f1f3;
+    padding: .5rem 1rem;
+}
+
+.slds-media{
+    padding:13px;
+    font-size: 15px
+}
+.helptextcss{
+    
+}

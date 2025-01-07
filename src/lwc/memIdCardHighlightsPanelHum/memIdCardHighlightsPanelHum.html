@@ -1,0 +1,159 @@
+﻿<!--
+/*******************************************************************************************************************************
+File Name          : memIdCardHighlightsPanelHum.HTML
+Version              : 1.0
+Created On           : 02/09/2022
+Function             : Component to display highlights section on member id card page. 
+
+Modification Log: 
+Developer Name           Code Review                      Date                       Description
+*--------------------------------------------------------------------------------------------------------------------------------
+* Vamshi Krishna Pemberthi                              02/09/2022                   Initial Version
+* Vishal Shinde                                         19/09/2022                   3808961 - Updating page header- Auths, ID Cards, Billing and Claims
+* Vishal Shinde                                         11/07/2022                   3771949 - CRM Service Billing Systems Integration: Lightning - ID Cards- Logging on Lightning & Classic (Surge)
+* Abhishek Mangutkar                                    03/01/2023                   US 4286520 Remove logic for assign member plan id for logging cases 
+*********************************************************************************************************************************/
+-->
+<template>
+    <div class="highlights-panel">
+      <lightning-record-view-form record-id={sRecordId} object-api-name="Account" onload={handleLoad}>
+        <div class="slds-page-header slds-page-header_record-home">
+          <div class="highlights-container">
+             <div class="slds-page-header__row slds-grid_vertical-align-center">
+               <div class="slds-page-header__col-title">
+                 <div class="slds-media">
+                   <div class="slds-media__figure">
+                      <lightning-icon icon-name="standard:contact" size={oDetails.object.icon.size} slot="icon"></lightning-icon> 
+                   </div>
+                   <div class="slds-media__body">
+                      <div class="slds-page-header__name">
+                        <div class="slds-page-header__name-title">
+                          <h1>
+                            <span>{oDetails.object.name}</span>
+                            <span class="slds-page-header__title slds-truncate slds-text-heading_medium slds-m-top_x-small">
+                               <b>{sName}        </b>
+                               <span style="display:none">
+                                 <lightning-output-field field-name={oDetails.recodDetail.mapping}
+                                   variant="label-hidden">
+                                 </lightning-output-field>
+                               </span>
+                               <span>
+                                <lightning-icon icon-name="utility:copy" size="small" alternative-text="Copy" title="Copy" ></lightning-icon> 
+                               </span>
+                            </span>
+                          </h1>
+                        </div>
+                      </div>
+                   <template if:true={showLoggingIcon}>
+                    <div
+                        class="slds-size_1-of-10"
+                        style="
+                            width: 40px;
+                            margin-left: 900px;
+                            float: right;
+                        "
+                    >
+                        <c-lightning-logging-component-hum
+                            record-id={loggingRecordId}
+                            networkid={netWorkId}
+                            profilename={profilename}
+                            workqueue={workQueue}
+                            related-field={sPlanMemId}
+                            auto-logging={autoLogging}
+                            type="ID Card"
+                            subtype="ID Card"
+                            attachmentkey={personid}
+                            attachmentdescription="Enterprise Id"
+                        >
+                        </c-lightning-logging-component-hum>
+                    </div>
+                </template>
+                   </div>
+                 </div>
+               </div>
+               <div class="slds-page-header__col-actions">
+                 <div class="slds-page-header__controls">
+                   <div class="slds-page-header__control action-button-col">
+                      <div>
+                        <div class="slds-grid slds-wrap slds-grid_align-end">
+                         <template if:false={bMemberIdcards}>
+                          <template if:true={bShowVerifyButton}>
+                            <template if:true={bShowDemographics}>
+                               <lightning-icon icon-name="utility:warning" size="small" alternative-text="Warning!"
+                                 title="Warning" variant="error" class="slds-p-horizontal_medium">
+                               </lightning-icon>
+                            </template>
+                          </template>
+                         </template>
+                        </div>
+                      </div>
+                   </div>
+                 </div>
+               </div>
+             </div>
+             <div class="slds-grid slds-grid_align-spread slds-page-header__row slds-grid_vertical-align-center">
+               <div class="icons-container slds-grid">
+                <div class="slds-grid slds-wrap slds-m-left_small slds-m-right_small info-bg">
+                  <div class="slds-col slds-size_9-of-10 slds-m-left_x-small" >
+                    <span >
+                     <!--  <img src={birthDayIcon} class="an_image slds-col-3 ">
+                      <img src={peopleGroupIcon} class="an_image slds-col-3 ">
+                      <img src={plusSignIcon} class="an_image slds-col-3 ">
+                      <img src={dollarCupIcon} class="an_image slds-col-3 ">-->
+                    </span>
+                  </div>
+                  
+                 </div>
+               </div>
+             </div>
+          </div>
+    
+          <div class="slds-page-header__row slds-page-header__row_gutters">
+             <div class="slds-page-header__col-details">
+               <div class="slds-grid slds-page-header__detail-row slds-p-top_none slds-p-bottom_none">
+                 <template for:each={oDetails.recodDetail.fields} for:item='detail'>
+                   <lightning-layout-item padding="around-small" 
+                   class="slds-page-header__detail-block slds-col link-item-width" key={detail.label}>
+                      <div class="slds-truncate field-title" title={detail.label}><b>{detail.label}</b></div>
+                      <div class="slds-truncate" if:false={detail.bIsCustom}>
+                        <lightning-output-field class="details-text-wrap" field-name={detail.mapping}
+                          variant="label-hidden">
+                        </lightning-output-field>
+                      </div>
+                      <span if:true={detail.bIsCustom}>
+                        <span if:true={detail.bAge}>{iAge}</span>
+                        <span if:true={detail.bRecordTypeName}>{sRecordTypeName}</span>
+                        <lightning-output-field if:true={detail.bAddress} class="details-text-wrap remove-link" field-name={detail.mapping} 
+                        variant="label-hidden">
+                        </lightning-output-field>
+                        <span if:true={detail.bTaxIds}>
+                          <lightning-formatted-rich-text value={sTaxIds}></lightning-formatted-rich-text>
+                          <c-custom-tooltip-hum if:true={bTaxIdViewAll} link-type=true link-text="View All"
+                            help-text={sTaxIdHover}></c-custom-tooltip-hum>
+                        </span>
+                        <span if:true={detail.bWorkPhone}>
+                          <lightning-formatted-phone value={sWorkPhonePlusExt}>
+                          </lightning-formatted-phone>
+                        </span>
+                        <span if:true={detail.bIsWork}>
+                          <lightning-click-to-dial value={sOtherphone}>
+                          </lightning-click-to-dial>
+                        </span>
+                        <span if:true={detail.bIsHome}>
+                          <lightning-click-to-dial value={sHomephone}>
+                          </lightning-click-to-dial>
+                        </span>
+                        <span if:true={detail.bIsPhone}>
+                          <lightning-click-to-dial value={sphone}>
+                          </lightning-click-to-dial>
+                        </span>
+                      </span>
+                   </lightning-layout-item>
+                 </template>
+               </div>
+             </div>
+          </div>
+        </div>
+      </lightning-record-view-form>
+    </div>
+    </template>

@@ -1,0 +1,615 @@
+﻿<apex:page controller="SFDC_entityListController">
+
+    <apex:includeScript value="/support/console/34.0/integration.js"/>
+    <script type="text/javascript">
+		var subtabEntityIds;
+    
+        function addLoadEvent(func)
+         {
+            var oldonload = window.onload;
+            if (typeof window.onload != 'function'){
+                window.onload = func;
+            }
+            else {
+                window.onload = function(){
+                    if (oldonload)
+                    {
+                        oldonload();
+                    }
+                    func();
+                }
+            }
+        }
+
+        function getSubtabObjectListRemote(){
+            var tabEntityPick = document.getElementById('{!$Component.frmInput.entityPickList}');
+            var tabEntityNameRem = tabEntityPick.options[tabEntityPick.selectedIndex].value;
+
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.SFDC_entityListController.getSubtabEntityList}',
+                tabEntityNameRem,
+                function(result, event){
+                	if (event.status) {
+                        var objectSelect = document.getElementById('subtabEntityPicklist');
+                        var i;
+                        // Clear the options in the subtab Entity list
+    					for(i = objectSelect.options.length - 1 ; i >= 0 ; i--)
+    					{
+        					objectSelect.remove(i);
+    					}
+
+                        for(var i=0; i < result.length; i++){
+                        	var el = document.createElement("option");
+                            el.textContent = result[i];
+                            el.value = result[i];
+                            objectSelect.appendChild(el);
+                        }
+                        // Get the Subtab EntityIDs needed to run the tests with subtabs
+                        setTimeout(getSubtabEntityIdsRemote,1000);
+                    } else if (event.type ==='exception'){
+                        alert('Exception: ' + event.message + '---' + event.where);
+                    } else {
+                        alert('Response Errors: ' + event.mesage);
+                    }
+                },
+                {escape: true} 
+            );
+        }
+
+    	function getSubtabEntityIdsRemote(){
+            var subtabEntityPick = document.getElementById('subtabEntityPicklist');
+            var subtabEntityNameRem = subtabEntityPick.options[subtabEntityPick.selectedIndex].value;
+            //            alert('getSubtabEntityIdsRemote: ' + subtabEntityNameRem);
+        	Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.SFDC_entityListController.retrieveSubtabEntityIds}',
+                subtabEntityNameRem,
+                function(result, event){
+                	if (event.status) {
+                        // Reset the subtabEntityIds only if it is not null
+                        if (subtabEntityIds != null) {
+                        	subtabEntityIds.length = 0;
+                        }
+                        subtabEntityIds = result;
+                    } else if (event.type ==='exception'){
+                        alert('Exception: ' + event.message + '---' + event.where);
+                    } else {
+                        alert('Response Errors: ' + event.mesage);
+                    }
+                },
+                {escape: true} 
+            );
+        }    
+    
+    	function toggleCmdButtons(visible){
+        	
+            var displayed = visible == true?'block':'none';
+			var currentTest = document.getElementById('TestName').innerText;
+            var testNumber = currentTest.substr(currentTest.length -1); 
+            for(var i=1;i<6;i++){
+                if ( testNumber != i){
+                    document.getElementById('spn0' + i).style.display= displayed;
+                }
+                document.getElementById('cmdBase0'+i).style.display= displayed;
+			}
+            
+            if ( visible == true){
+            	document.getElementById("TestMsg").innerHTML = " Test Completed";
+            	document.getElementById("TestStatus").style.backgroundColor = "lightGreen";
+            } else {
+            	document.getElementById("TestProgress").innerHTML = "";
+            	document.getElementById("TestMemData").innerHTML = "";
+	            document.getElementById("TestMsg").innerHTML = " Test Running";
+    	        document.getElementById("TestStatus").style.backgroundColor = "yellow";
+            }
+        }
+    
+    //* * * * * * * * * * * * * * * * * * * * * //
+    //*************** Test Setup ***************//
+    //* * * * * * * * * * * * * * * * * * * * * //
+        
+        // Gets all 18-digit IDs of the entity type selected in the picklist
+        // Input is the number of records needed at a minimum
+        function getEntityIds(minRecordsNeeded) {
+            var myPicklistElement = document.getElementById('{!$Component.frmInput.entityPickList}');
+            var myPicklistValue = myPicklistElement.options[myPicklistElement.selectedIndex].value;
+            
+            var entityIdList = [];
+            entityIdList = makeArrayFromString(getEntityIdList());
+            
+            // Verify there are enough records to run the test
+            if (entityIdList.length < minRecordsNeeded) {
+                alert('Not enough records of type ' + myPicklistValue +  ' to run the test. Need '
+                    + minRecordsNeeded + ' records but only have ' + entityIdList.length +
+                    ' records.  Please select another entity type in the picklist.');
+                return;
+            }
+            
+            return getEntityIdDigits(entityIdList);
+            
+        }
+        
+        // Get the appropriate ID lengths of an array of 18-digit IDs based on picklist
+        function getEntityIdDigits(entityIdArray) {
+            var myPicklistElement = document.getElementById('idLengthPickList');
+            var entityIdLen = myPicklistElement.options[myPicklistElement.selectedIndex].value;
+        
+            var entityIdList = (entityIdLen == 'digit15') ? 
+                make15DigitIdArray(entityIdArray) : entityIdArray;
+            return entityIdList;
+        }
+        
+        // ID list is returned as 1 long string; this turns
+        // them back into arrays
+        function makeArrayFromString(longString) {
+            longString = longString.replace('[','');      // Remove "["
+            longString = longString.replace(']','');      // Replace "]"
+            longString = longString.replace(/\s/g,'');    // Remove whitespace
+            return longString.split(",");
+        }
+        
+        // Create 15-digit ID array from an 18-digit ID Array
+        function make15DigitIdArray(orig18DigitArray) {
+            var new15DigitArray = [];
+            for (i = 0; i < orig18DigitArray.length; i++) { 
+                 new15DigitArray[i] = orig18DigitArray[i].substring(0,15);
+                 //alert(orig18DigitArray[i] + " to " + new15DigitArray[i]);
+            }
+            return new15DigitArray;
+        }
+    
+    //* * * * * * * * * * * * * * * * * * * * * //
+    //************* Test Functions *************//
+    //* * * * * * * * * * * * * * * * * * * * * //
+    
+        //*
+        //* Baseline Test 01: Open & Close set of Primary Tabs
+        //*   repeatedly
+        //*
+        //* 1. Opens 10 Primary Tabs
+        //* 2. Waits 20 seconds
+        //* 3. Closes all open tabs
+        //* 4. Repeats steps 1-3 a total of thirty times
+        //*
+        function Baseline01OpenCloseTabs() {
+            var numOfRuns = 30;          // Number of runs
+            var runInterval = 20000;     // Interval time in milliseconds between runs
+            var numOfTabs = 10;          // number of tabs to be opened in each loop
+            
+            openCloseTabsTest(numOfRuns, runInterval, numOfTabs, 'Baseline01', false);
+        }
+        
+        
+        //*
+        //* Baseline Test 02: Open & Close 1 Primary Tabs
+        //*   at a time; repeat 100 times
+        //*
+        //* 1. Opens 1 Primary Tab
+        //* 2. Waits 10 seconds
+        //* 3. Closes the open tab
+        //* 4. Repeats steps 1-3 a total of 100 times
+        //*
+        function Baseline02OpenCloseTabs() {
+        
+            var numOfRuns = 100;          // Number of runs
+            var runInterval = 10000;    // Interval time in milliseconds between runs
+            var numOfTabs = 1;         // number of tabs to be opened in each loop
+            
+            openCloseTabsTest(numOfRuns, runInterval, numOfTabs, 'Baseline02', false);
+        }
+        
+        
+        //*
+        //* Baseline Test 03: Open & Close 1 Sub Tab
+        //*   at a time; repeat 100 times
+        //*
+        //* 1. Opens 1 Primary Tab
+        //* 2. Opens 1 Sub Tab
+        //* 3. Waits 20 seconds
+        //* 4. Closes the open Sub Tab tab
+        //* 5. Repeats steps 2-4 a total of 100 times
+        //*
+        function Baseline03OpenCloseSubTabs() {
+        
+            var numOfRuns = 100;          // Number of runs
+            var runInterval = 20000;    // Interval time in milliseconds between runs
+            var numOfTabs = 1;         // number of tabs to be opened in each loop
+            
+            openCloseTabsTest(numOfRuns, runInterval, numOfTabs, 'Baseline03', true);
+            
+        }
+        
+        
+        //*
+        //* Baseline Test 04: Open 25 tabs at a
+        //*   time and refreshes them all; repeat
+        //*   10 times
+        //*
+        //* 1. Opens 25 Primary Tabs
+        //* 2. Waits 30 seconds
+        //* 3. Refreshes all Primary Tabs
+        //* 4. Repeats steps 2-3 a total of 10 times
+        //*
+        function Baseline04OpenCloseSubTabs() {
+        
+            var numOfRuns = 10;          // Number of runs
+            var runInterval = 30000;    // Interval time in milliseconds between runs
+            var numOfTabs = 25;         // number of tabs to be opened in each loop
+            
+            refreshTabsTest(numOfRuns, runInterval, numOfTabs, 'BaseLine04', false);
+        }
+        
+        //*
+        //* Baseline Test 05: Open 5 tabs, wait 20 seconds, close tabs
+        //* repeat 30 times
+        //*
+        function Baseline05OpenCloseSubTabs() {
+        
+            var numOfRuns = 30;          // Number of runs
+            var runInterval = 20000;    // Interval time in milliseconds between runs
+            var numOfTabs = 5;         // number of tabs to be opened in each loop
+            
+            openCloseTabsTest(numOfRuns, runInterval, numOfTabs, 'BaseLine05', false);
+        }
+        
+        
+    //* * * * * * * * * * * * * * * * * * * * * //
+    //************ Helper Functions ************//
+    //* * * * * * * * * * * * * * * * * * * * * //
+        
+        //*
+        //* Helper function that opens tabs, waits a specified time,
+        //* closes all tabs, and then repeats for a specified loop count
+        //*
+        //* Inputs:
+        //*    numOfRuns: The number of times to repeat the opening/closing of tabs
+        //*    runInterval: The wait time between finishing opening tabs and closing them all
+        //*    numOfTabs: The number of tabs to open at a time
+        //*    testStatusId: ID of the element on the page where we will show how many runs are
+        //*        left and indicate test completion
+        //*    subTabTest: TRUE is the test is being conducted for subtabs; false if for primary tabs
+        //*
+        function openCloseTabsTest(numOfRuns, runInterval, numOfTabs, testName, subTabTest) {
+            var loopCount = 0;
+            var runsLeft = numOfRuns;
+            var tabIds = [];
+            var entityIds = getEntityIds(numOfTabs);
+            var primTabId = '0';
+            
+            if (entityIds.length < numOfTabs){
+            	return;
+           	}
+            document.getElementById("TestName").innerHTML = testName;
+
+            // Disable the other buttons while the test is running:
+            toggleCmdButtons(false);
+
+            var startTime = new Date();
+            startMs = startTime.getTime();
+            getMemEntryForRun(numOfRuns, numOfTabs, runsLeft, false);
+            
+            if (subTabTest == true) {
+                // Open a Primary Tab that is not the same entity type as what
+                // we will open as subtabs to ensure we will not be opening a duplicate
+                var primTabEntityId = subtabEntityIds[0];
+                
+                sforce.console.openPrimaryTab(null, "/" + primTabEntityId, true,
+                    primTabEntityId, getPrimTabId, primTabEntityId);
+                
+            } else {
+                openCloseTabs();
+            }
+            
+            // Opens and Closes Primary Tabs
+            function openCloseTabs() {
+                var i;
+                var offset = loopCount*numOfTabs; // offset
+                for (i = 0; i < numOfTabs; i++) {
+                    var idx = (offset + i) % entityIds.length;
+                    sforce.console.openPrimaryTab(null, "/" + entityIds[idx],
+                        true, entityIds[idx], callback, entityIds[idx]);
+                }
+            }
+            
+            // Opens a Primary Tab for Subtab tests
+            function getPrimTabId(result) {
+                sforce.console.getFocusedPrimaryTabId(startSubTabTest);
+            }
+            
+            // Sets up for opening Subtabs under the opened
+            // Primary Tabs
+            function startSubTabTest(result) {
+                primTabId = result.id;
+                openCloseSubTabs();
+            }
+            
+            // Opens and Closes Sub Tabs
+            function openCloseSubTabs() {    
+                var i;
+                var offset = loopCount*numOfTabs; // offset
+                for (i = 0; i < numOfTabs; i++) {
+                    var idx = (offset + i) % entityIds.length;
+                    sforce.console.openSubtab(primTabId, "/" + entityIds[idx],
+                        true, entityIds[idx], null, callback, entityIds[idx]);
+                }
+            }
+            
+            // Callback for cycling the tests and waiting between runs
+            function callback(result) {
+                tabIds.push(result.id);
+                if (tabIds.length === numOfTabs) {
+                    runsLeft--;
+                    //document.getElementById("TestProgress").innerHTML =
+                    //    "Runs left: " + runsLeft;
+        
+                    setTimeout(function() {
+                        loopCount++;
+                        var i;
+                        for (i = 0; i < tabIds.length; i++) {
+                            sforce.console.closeTab(tabIds[i]);
+                        }
+                
+                        getMemEntryForRun(numOfRuns, numOfTabs, runsLeft, false);
+                        
+                        tabIds = [];
+                        if (runsLeft > 0) {
+                            if (subTabTest == true) {
+                                openCloseSubTabs(primTabId);
+                            } else {
+                                openCloseTabs();
+                            }
+                        } else {
+                            if (subTabTest == true) sforce.console.closeTab(primTabId);
+                            runsLeft = numOfRuns;
+                            
+                            // Show the buttons again
+                            toggleCmdButtons(true);
+                        }
+                    }, runInterval );
+                }
+            }
+        }
+        
+        
+        //*
+        //* Helper function that opens tabs, waits a specified time,
+        //* refreshes them, and then repeats for a specified loop count
+        //*
+        //* Inputs:
+        //*    numOfRuns: The number of times to repeat the tabs refreshes
+        //*    runInterval: The wait time between refreshes
+        //*    numOfTabs: The number of tabs to open at a time
+        //*    testStatusId: ID of the element on the page where we will show how many runs are
+        //*        left and indicate test completion
+        //*    subTabTest: TRUE is the test is being conducted for subtabs; false if for primary tabs
+        //*
+        function refreshTabsTest(numOfRuns, runInterval, numOfTabs, testName, subTabTest) {
+            numOfRuns++;  // Add 1 since the initial run is to open the tabs
+            var runsLeft = numOfRuns;
+            var tabIds = [];
+            var entityIds = getEntityIds(numOfTabs);
+            var primTabId;
+            var tabsRefreshed = numOfTabs;
+
+			if (entityIds.length < numOfTabs){
+            	return;
+           	}
+			document.getElementById("TestName").innerHTML = testName;
+            
+            // Disable the other buttons while the test is running:
+            toggleCmdButtons(false);
+
+            var startTime = new Date();
+            startMs = startTime.getTime();
+            getMemEntryForRun(numOfRuns, numOfTabs, runsLeft, true);
+            
+            if (subTabTest == true) {
+                // Open a Primary Tab that is not the same entity type as what
+                // we will open as subtabs to ensure we will not be opening a duplicate
+                var primTabEntityId = subtabEntityIds[0];
+                
+                sforce.console.openPrimaryTab(null, "/" + primTabEntityId, true,
+                    primTabEntityId, openSubTabs, primTabEntityId);
+                
+            } else {
+                openPrimaryTabsForRefresh();
+            }
+            
+            function openSubTabs(result) {
+                // To be added when/if we do any Sub Tab refresh tests
+            }
+            
+            function openPrimaryTabsForRefresh() {
+                var i;
+                for (i = 0; i < numOfTabs; i++) {
+                    sforce.console.openPrimaryTab(null, "/" + entityIds[i],
+                        true, entityIds[i], callback, entityIds[i]);
+                }
+            }
+            
+                
+            // Callback for cycling the tests and waiting between runs
+            function callback(result) {
+                tabIds.push(result.id);
+                if (tabIds.length === numOfTabs) {
+                    refTabCycle();
+                }
+            }
+            
+            function refrPrimTabs() {
+                var i;
+                for (i = 0; i < numOfTabs; i++) {
+                    sforce.console.refreshPrimaryTabById(tabIds[i], false, refTabCycle);
+                }
+            }
+            
+            function refTabCycle() {
+                if (tabsRefreshed == numOfTabs) {
+                    tabsRefreshed = 0;
+                    runsLeft--;
+                    //document.getElementById("TestProgress").innerHTML =
+                    //        "Runs left: " + runsLeft;
+                    
+                    setTimeout(function() {
+
+                        getMemEntryForRun(numOfRuns, numOfTabs, runsLeft, true);
+
+                        if (runsLeft > 0) {
+                            if (subTabTest == true) {
+                                // add when/if SubTab test is activated
+                            } else {
+                                refrPrimTabs();
+                            }
+                        } else {
+                            var i;
+                            for (i = 0; i < tabIds.length; i++) {
+                                sforce.console.closeTab(tabIds[i]);
+                            }
+                            
+                            if (subTabTest == true) sforce.console.closeTab(primTabId);
+
+                            // Show the buttons again
+                            toggleCmdButtons(true);
+                        }
+                    }, runInterval );
+                }
+                tabsRefreshed++;
+            }
+        }
+        
+        var memData = [];
+        var startTime = new Date();
+        var startMs = startTime.getTime();
+        var displayStatsOnVF = true;
+
+        function getMemEntryForRun(numOfRuns, numOfTabs, runsLeft, runRefreshTest) {
+
+            var mtx = "";
+            // Get Memory data for run
+            window.gc && window.gc(); //force GC
+            var m = getMemDataEntry(numOfRuns, numOfTabs, runsLeft);
+            memData[memData.length] = m;
+            
+            document.getElementById("TestProgress").innerHTML =
+                "Total Number of Runs Requested: " + numOfRuns + "<br />Runs Remaining: " + runsLeft + "<br />Elapsed Time: " + m.timeElapsed + " secs";
+            if (displayStatsOnVF) {
+                mtx = "Tabs Opened: " + m.tabsOpened;
+                if (runRefreshTest == false){
+                	mtx += ", Tabs Closed: " + m.tabsOpened;    
+                }
+                if (navigator.userAgent.indexOf('Chrome') != -1) {
+                    mtx = mtx + "<br />" +
+                    "(HeapSize) Limit: " + m.jsHeapSizeLimit +
+                        "<br /> Total: " + m.totalJSHeapSize +
+                        "<br /> Used: " + m.usedJSHeapSize;
+                }
+                mtx = mtx + "<br />";
+                document.getElementById("TestMemData").innerHTML = mtx;
+            }
+        }
+
+        function getMemDataEntry(numOfRuns, numOfTabs, runsLeft) {
+            var myobj = {};
+            var d = new Date()
+            myobj.ts = pad((d.getMonth()+1),2) + '/' + pad(d.getDate(),2) + '/' +
+                pad(d.getFullYear(),4) + " " + pad(d.getHours(),2) + ':' +
+                pad(d.getMinutes(),2) + ':' + pad(d.getSeconds(),2) + '.' +
+                pad(d.getMilliseconds(),3);
+            myobj.timeElapsed = Math.round((d.getTime() - startMs)/1000);
+            myobj.tabsOpened = (numOfRuns - runsLeft)*numOfTabs;
+            if (navigator.userAgent.indexOf('Chrome') != -1) {
+                myobj.jsHeapSizeLimit = performance.memory.jsHeapSizeLimit;
+                myobj.totalJSHeapSize = performance.memory.totalJSHeapSize;
+                myobj.usedJSHeapSize = performance.memory.usedJSHeapSize;
+            }
+            return myobj;
+        }
+        
+        function getMemData() {
+           return JSON.stringify({memData:memData});
+        }
+    
+        function pad(n, width, z) {
+            z = z || '0';
+            n = n + '';
+            return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+        }
+
+        addLoadEvent(function() {
+ 			getSubtabObjectListRemote();
+ 		});
+
+    </script>
+    
+    <apex:outputPanel id="jsEntityIds">
+        <script>
+            function getEntityIdList() {
+                return '{!entityIdList}';
+            }
+        </script>
+    </apex:outputPanel>
+    
+    <apex:outputPanel id="Title">
+    	<center><h1>AgentX Perf Baseline Tests: {!entityName}</h1></center>
+    </apex:outputPanel>
+
+    <apex:form rendered="true" id="frmInput">
+    	<apex:actionFunction action="{!retrieveEntityIds}" name="afRetrieveEntityIds" reRender="Title,recordTypePickList,jsEntityIds" />
+    	<apex:actionFunction action="{!retrieveEntityIds}" name="afRetrieveEntityIds_Only" reRender="jsEntityIds" />
+
+        <!-- Picklists for User to specify Entity type and ID length -->
+    	<p>
+        	<h2>Select Entity and ID Length</h2>
+        	<br/>
+        	<apex:selectList value="{!entityName}" size="1" id="entityPickList" onchange="afRetrieveEntityIds(); getSubtabObjectListRemote();">
+            	<apex:selectOptions value="{!entityList}" />
+          	</apex:selectList>
+
+        	<select id="idLengthPickList">
+            	<option value="digit15">15-digits</option>
+            	<option value="digit18">18-digits</option>
+        	</select>
+        	
+        	<br/>
+        	<h2>Record Type</h2><br/>
+            <apex:selectList value="{!recTypeSelected}" size="1" id="recordTypePickList" onchange="afRetrieveEntityIds_Only();">
+            	<apex:selectOptions value="{!recordTypeList}" />
+            </apex:selectList>
+       
+        	<br/>
+        	<h2>Subtab Test - Primary Tab Entity</h2>
+        	<br/>
+
+        	<select id="subtabEntityPicklist" size="1" onchange="getSubtabEntityIdsRemote();"></select>
+    	</p>
+     </apex:form>
+     <apex:form id="frmBase" style="margin: 0;">
+	    <!-- Baseline 01 -->
+         <div id="spn01" style="border-top: 2px solid silver; text-align: center;">Open 10 tabs, wait 20 sec, close tabs, repeat 30x<br/>
+             <center><button id="cmdBase01" value="Run Baseline01" onclick="Baseline01OpenCloseTabs(); return false;">Run Baseline01</button></center>
+        </div>
+	    <!-- Baseline 02 -->		
+        <div id="spn02" style="border-top: 2px solid silver; text-align: center;">Open 1 tab, wait 10 sec, close tab, repeat 100x<br/>
+            <center><button id="cmdBase02" value="Run Baseline02" onclick="Baseline02OpenCloseTabs(); return false;">Run Baseline02</button></center>
+        </div>
+    
+    	<!-- Baseline 03 -->
+        <div id="spn03" style="border-top: 2px solid silver; text-align: center;">Open 1 Primary tab then open 1 Subtab, wait 20 sec, close Sub Tab, repeat 100x<br/>
+            <center><button id="cmdBase03" value="Run Baseline03" onclick="Baseline03OpenCloseSubTabs(); return false;">Run Baseline03</button></center>
+        </div>    
+        <!-- Baseline 04 -->
+        <div id="spn04" style="border-top: 2px solid silver; text-align: center;">Open 25 Primary tabs, waits 30 seconds, refreshes all tabs and repeats refresh action 10x<br/>
+            <center><button id="cmdBase04" value="Run Baseline04" onclick="Baseline04OpenCloseSubTabs(); return false;">Run Baseline04</button></center>
+    	</div>
+        <!-- Baseline 05 -->
+        <div id="spn05" style="border-top: 2px solid silver; text-align: center;">Open 5 Primary tabs, waits 20 seconds, close tabs, repeat 30x<br/>
+            <center><button id="cmdBase05" value="Run Baseline05" onclick="Baseline05OpenCloseSubTabs(); return false;">Run Baseline05</button></center>
+         </div>
+    </apex:form>
+    
+    <!-- Results Display -->
+    <hr/>
+    <center><b><div width="90%" style="background-color: rgba(184, 216, 255, 1);" id="TestStatus"><span id="TestName"></span> <span id="TestMsg">Test not started</span></div></b></center>
+    <div id="TestProgress"></div>
+    <div id="TestMemData"></div>
+    
+</apex:page>

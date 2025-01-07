@@ -1,0 +1,135 @@
+﻿<!--
+LWC Name        : agentSearchFormHum.html
+Function        : Agent Search 
+
+Modification Log:
+* Developer Name                  Date                         Description
+*
+* Ashish                          11/24/2020                   Original Version 
+* Supriya Shastri                 02/24/2021                   Added generic dropdown
+* Saikumar Boga                   07/13/2021                   Chnages for Unknown Agent/Broker Form
+* Supriya Shastri                 08/23/2021                  US: 2363825 - standardizing icons
+* Mohan Kumar N                   08/09/2021              	   US: 2306519- Table freezing
+* Supriya Shastri                 09/06/2021                   Added grey headers to member detail table
+* Firoja Begam                    10/08/2021                  Character Limits - Agent Search
+* Ajay Chakradhar                 11/02/2021                  US 2498075 : Search result Validation Rules
+* Pavan Kumar M                   03/03/2022                  US-2659333
+* Ceasar Sabarre				  01/31/2023					User Story - 4214872 Display Interaction Log on Enrollment Search
+****************************************************************************************************************************-->
+<template>
+	<div class="slds-grid slds-m-top_none slds-wrap">
+		<div class="slds-col slds-size_2-of-12 hc-standard-table-border">
+			<div class="slds-var-p-around_x-small slds-theme_default">
+				<div class="form-header">
+					<lightning-icon icon-name="standard:agent_home" size="small"></lightning-icon>
+					<h1 class="slds-var-p-left_x-small slds-var-p-right_xx-small">
+						{labels.HUMAgencySearchTitle}
+					</h1>
+					<c-custom-tooltip-hum help-text={labels.agentSearchCriteriaHum}></c-custom-tooltip-hum>
+				</div>
+				<div class="slds-is-relative">
+					<lightning-input class="inputfield id-input" type="text" name="AgentId" label="Agent ID"
+						value={sAgentId} data-id="sAgentId" onchange={onFieldChange} onkeyup={enterSeach} max-length="9"
+						data-field="agent-id" onfocus={showVisualIndicator} onblur={removeVisualIndicator}>
+					</lightning-input>
+				</div>
+
+				<lightning-input class="inputfield tid-input" type="text" name="agentTaxId" label="Tax Id" value={sTaxID}
+					data-id="sTaxID" onchange={onFieldChange} onkeyup={enterSeach} max-length="9"
+					data-field="tax-id" onfocus={showVisualIndicator} onblur={removeVisualIndicator}>
+				</lightning-input>
+
+				<c-generic-drop-down-hum data-id="agent-field state-change" class="agent-type state-change" options={optionsAgentType} value={sAgentType}
+					onselect={typeSelectionHandler} label="Agent Type" has-selection={agencyValue}>
+				</c-generic-drop-down-hum>
+
+				<lightning-input class="inputfield lastname" type="text" name="agentLastName" value={sLastName} label="Last Name"
+					onfocus={showVisualIndicator} data-id="sLastName" max-length="25" onchange={onFieldChange} onblur={removeVisualIndicator}
+					data-field="last-name" onkeyup={enterSeach}></lightning-input>
+
+				<label class="slds-form-element__label slds-no-flex">Business / First Name{labels.HUMAgencySearchLabelName}</label>
+				<lightning-input class="last-name-change inputfield state-change firstname" type="text" name="agentFirstName"
+					value={sFirstName} variant="label-hidden" max-length="105"
+					data-id="sFirstName" onchange={onFieldChange} onkeyup={enterSeach}
+					data-field="first-name" onfocus={showVisualIndicator} onblur={removeVisualIndicator}>
+				</lightning-input>
+
+				<c-generic-drop-down-hum options={options} data-id="state-field" value={sState} placeholder={labels.dropdownPlaceholderHum} 
+					onfocus={highlightFields} onselect={stateSelectionHandler} onclear={clearStateHandler}
+					onblur={removehighlight} label="State" has-selection={stateValue}
+					is-valid={showValidationMsg}>
+				</c-generic-drop-down-hum>
+
+				<div if:true={showValidationMsg} class="slds-col">
+					<div class="slds-text-color_error message-container">
+						<span>{labels.agentSearchStateCriteria}</span>
+					</div>
+				</div>
+
+				<div class="slds-clearfix  slds-p-top_xx-large">
+					<div class="slds-grid slds-grid_vertical">
+						<div class="slds-col">
+							<div class="slds-grid slds-wrap">
+								<div class="slds-col">
+									<button class="slds-button slds-button_stretch slds-button_neutral"
+										onclick={handleResetAgent}>{labels.HUMResetButtonLabel}</button>
+								</div>
+								<div class="slds-col slds-var-p-left_small">
+									<button class="slds-button slds-button_stretch slds-button_brand"
+										onclick={handleFromSearch}>{labels.HUMSearchButton}</button>
+								</div>
+							</div>
+						</div>
+						<div if:true={showErrorMsg} class="slds-col">
+							<div class="slds-text-color_error message-container" id="error">
+								<span>{labels.HUM_Agency_Search_Fields_Not_Entered}</span>
+							</div>
+						</div>
+						<div class="slds-col ">
+							<div class=" slds-p-top_x-large">
+								<button class="slds-button slds-button_stretch slds-button_neutral"
+									onclick={handleFromUnknownSearch}
+									id="unknown-search">{labels.HUMGroupSearch}</button>
+							</div>
+						</div>
+						<div class="slds-col ">
+							<div class="slds-var-p-top_small">
+								<button class="slds-button slds-button_stretch slds-button_neutral" onclick={handleCreate} name="btnCreate">
+									{labels.HUMCreateUnknownAgentBroker}</button>
+							</div>
+						</div>
+						<c-unknown-agent-form-hum  onselected={handleCreateSearch}>{labels.HUMGroupSearch}</c-unknown-agent-form-hum>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<template if:true={noResults}>
+			<div class="slds-col slds-size_10-of-12">
+				<div class="slds-var-m-horizontal_medium slds-theme_default">
+					<c-search-no-result-hum no-result-message={labels.agencySearch_NoResults_HUM} message-with-icon="true">
+					</c-search-no-result-hum>
+				</div>
+			</div>
+		</template>
+
+
+		<div class="slds-col slds-size_10-of-12 container-sticky">
+			<template if:true={resultsTrue}>
+				<div class={containerCss}>
+					<c-standard-table-component-hum name-of-screen="agencyResults" response={accList}
+					oninteractions={handleRecordSelection} default-header-icon="standard:outcome" variant-type={labels.HUM_Toast_warning} 
+					display-msg={labels.Hum_Custom_toastmsg_warning} maximum-record-length={labels.HUM_response_length}>
+					</c-standard-table-component-hum>
+				</div>
+			</template>
+			<div if:true={showBackToResults} class="slds-var-p-left_small">
+				<div class="hc-backtoresults-container">
+					<a class="backResults" onclick={backToResults}>{labels.backToResultsHum}</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</template>

@@ -1,0 +1,15 @@
+﻿<!--
+Component Name   : PopUpComments_CMP_AHT_HUM
+Version          : 1.0
+Created On       : Apr 5 2017
+Function         : This Component is used as pop up to Comments on Cases and Tasks
+
+Modification Log :
+*  Developer           Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*  Amar Gadewar        04/05/2017           Original Version
+*  Amar Gadewar        08/14/2017           REQ - 323549 : SF - TECH - Remove AHT Components Dependencies (RF)
+********************************************************************************************************************************
+-->
+<apex:component >
+</apex:component>

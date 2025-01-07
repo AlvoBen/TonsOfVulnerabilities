@@ -1,0 +1,24 @@
+﻿<!--**************************************************************************************************************
+VF page Name    : ManageSLAField_VF_HUM.page
+Version         : 1.0
+Created On      : 05/06/2021
+Function        : To add button on WorkQueueSetup object to manage SLA fields
+
+* Modification Log:
+* Developer Name            Code Review                 Date                       Description
+*----------------------------------------------------------------------------------------------------------------
+* Vijaykumar                                          05/06/2021                  US-2224460  T1PRJ0001827- IR 5050 - Create new " Manage SLA setup" page -WQ summary & Queue View (CRM)
+***************************************************************************************************************** -->
+
+<apex:page standardController="Work_Queue_Setup__c">
+     
+        <div id='idSLAFields'/>
+        
+             <apex:includeLightning />
+        <script>
+            $Lightning.use("c:ManageSLAField_LTNG_APP_HUM", function() {
+                $Lightning.createComponent("c:manageSLAField_LWC_HUM",{recordId: "{!$CurrentPage.parameters.id}"},"idSLAFields", function(cmp) {
+                });
+            });
+        </script> 
+</apex:page>

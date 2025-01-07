@@ -1,0 +1,11 @@
+﻿<template>
+   <lightning-card>
+         <lightning-datatable
+                key-field="id"
+                data={veteranHistoryData}
+                columns={columns}
+                hide-checkbox-column="true"
+                is-loading={handleLoadingIcon}>
+        </lightning-datatable>
+   </lightning-card>
+</template>

@@ -1,0 +1,109 @@
+﻿<!--
+Component Name   : MTV_Remarks_CMP_HUM.component
+Version          : 1.0
+Created On       : 04/05/2019
+Function         : VF Component to display MTV Member Data from the MTV member services
+
+Modification Log: 
+ * Developer Name           Code Review                 Date                         Description
+ *------------------------------------------------------------------------------------------------------------------------------
+ * Suraj patil		                                  06/01/2019                    Original version
+ *  Sagar MN 										                    04/21/2020				            User Story 777415 :MF 09 - MTV Member Remarks– Add Entity Remark 
+ *  Sagar MN                                        05/18/2020                    User Story 1098089 Add MTV Member Remarks 'SubIdentifier' Header/Column
+ *  Ajay Chakradhar                                 06/22/2021                    User Story 1755455 - Performance Improvement
+ * Pinky Vijur                                      07/14/2023                    User Story 4647183: T1PRJ0891742 - VIT19761200 - Data Table Upgrade - Billing, Health Resource, Grievance & Appeals, & MTV (Group 1)
+ ****************************************************************************************************************************
+ -->
+<apex:component controller="MTVRemarks_Member_C_HUM" id="abcd">
+  
+   
+  <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.CRM_DataTables_1_13_4, 'datatables.min.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT, 'datatables_HUM.min.css')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.MTV_Member_Remarks, 'MTV_Member_Remarks_JS.js')}" />
+  <apex:attribute name="policyMemberName" type="string" description="The Policy Member Name for loaded Policy Member Page" assignTo="{!sPolicyMemberName}" />
+  <apex:form >
+    <apex:commandButton value="View Remarks" onclick="CallMTVService();" reRender="abcd,pnlMTVData,MTVRemarksTable"/>
+    <br>
+    </br>
+    <div id= 'PageMessageId'>
+      <apex:outputPanel id="maximumRecordMsg" Styleclass="displayNone">
+        <apex:PageMessage Summary="{!$Label.HUM_150_MTV_RECORDS}" severity="info" Strength="3" />
+        <apex:pagemessages />
+      </apex:outputPanel>
+    </div>
+    <div id="MTVAlertsSpinner" style="display:none;text-align:center;">
+      <img src="/img/loading.gif" />
+      <span class="waitingDescription"> {!$Label.LOADING_HUM}</span>
+    </div>
+
+    <apex:outputPanel id="pnlMTVData">
+      <apex:outputPanel id="pnlData">
+        <table id="MTVRemarksTable" class="enable_logging table table-striped table-bordered  table-hover responsive nowrap" style = "padding:0" cellspacing="0" width="100%" ><!--DT Defect Fix-->
+          <caption style="display:none;">MTVRemarksTable</caption>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Entity Type</th>
+              <th>Identifier</th>
+              <th>SubIdentifier
+                <apex:outputPanel styleClass="vfHelpText" id="hoverOverArea">
+                  <apex:commandLink onclick="javascript:void(O);" html-log_this="false">
+                    <apex:image id="lnkImg" style="margin-top: 2px; margin-left: 1px;" styleClass="imgMargin hoverimagesize" value="{!$Resource.HUMHoverOverQuestionMark}"/>
+                    <apex:outputPanel >
+                      {!$Label.MTV_HOVERTEXT1} <br/>
+                      {!$Label.MTV_HOVERTEXT2} <br/>
+                    </apex:outputPanel>
+                    <style>
+                      .vfHelpText a:hover span {width:253px !IMPORTANT;top: -1.15em !IMPORTANT;left: -15.50em !IMPORTANT;}
+                    </style>
+                  </apex:commandLink>
+                </apex:outputPanel>
+              </th>
+              <th>Type</th>
+              <th>Category</th>
+              <th>Create Date</th>
+              <th>Text</th>
+            </tr>
+          </thead>
+        </table>
+      </apex:outputPanel>
+    </apex:outputPanel>
+
+    <Script>
+//dont enable P9 Critical Fix      j$ = jQuery.noConflict();
+      var vMTVRemarksDataTable;
+      var sPageCriteria = 5;
+      var vPloicyMemberName = '{!policyMemberName}';
+      var vServiceCall ='{!$RemoteAction.MTVRemarks_Member_C_HUM.initiateMTVRequest}';
+      //MTVRemarksCreateTable('{"data":'+JSON.stringify('') +'}');
+      </script>
+      <style>
+        .displayNone
+        {
+        display : none;
+        }
+
+        td.details-control {
+        background: url({!URLFOR($Resource.ClaimDetails_JS_HUM,'/PlusImage.png')}) no-repeat center center;
+        background-size: 25px 25px;
+        cursor: pointer;
+        }
+
+        tr.details td.details-control {
+        background: url({!URLFOR($Resource.ClaimDetails_JS_HUM,'/MinusImage.png')}) no-repeat center center;
+        background-size: 27px 27px;
+        }
+
+        .truncate-ellipsis-MTV{
+        display:table;
+        table-layout:fixed;
+        width:100%;
+        white-space:pre-wrap;
+        }
+
+        .pagination>li>a, .pagination>li>span {
+        text-decoration: none !important;
+        }
+      </style>
+    </apex:form>
+</apex:component>

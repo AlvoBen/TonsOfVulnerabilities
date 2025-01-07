@@ -1,0 +1,22 @@
+.start-help-text {
+    position:absolute;
+    top: 0rem;
+    left: 2.8rem; 
+}
+.slds-hForm {
+    padding-top: 15px;
+}
+
+.customtop{
+    top: -15px;
+}  
+.mandatory::before {
+  content: "* ";
+  color:red;
+}
+.modal_height{
+    height: 70%;
+}
+.left-shift{
+    left: 33px;
+}

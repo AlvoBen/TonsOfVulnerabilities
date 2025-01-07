@@ -1,0 +1,19 @@
+.ErrorHelp {
+    color: var(--lwc-colorTextError, rgb(234, 0, 30)) !important;
+}
+
+.custom-tooltip-icon:hover {
+    fill: var(--sds-c-button-text-color-hover, var(--lwc-brandAccessibleActive, rgb(0, 95, 178)))
+}
+
+table.dataTable thead .sorting_asc {
+    background-image: '' !important;
+}
+
+table.dataTable thead .sorting_desc {
+    background-image: '' !important;
+}
+
+table.dataTable thead .sorting {
+    background-image: '' !important;
+}

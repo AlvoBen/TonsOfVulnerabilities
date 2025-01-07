@@ -1,0 +1,75 @@
+.ch-clear-filters {
+    max-width: 140px;
+}
+
+.ch-custom-date-button {
+    max-height: 31px;
+}
+
+.ch-date-picker {
+    width: 16%;
+    min-width: 108px;
+    flex: none;
+}
+
+.ch-date-picker button{
+    padding-left: 0;
+}
+.ch-date-button-arrow {
+    position: absolute;
+    top: 7px;
+    right: 5px;
+}
+
+.ch-checkbox-label {
+    width: 216px;
+}
+
+.ch-filter-keyword {
+    width: 20%;
+    min-width: 124px;
+}
+
+.ch-picker-fields{
+    width: 13%;
+}
+
+.ch-picker-fields-Origin{
+    width: 20%;
+    min-width: 148px;
+}
+
+.full-container {
+    height: 100%;
+    width: 100%;
+}
+
+.hc-align-header {
+    justify-content: space-between;
+}
+
+.link-placement{
+
+    margin-left: 94px;
+
+    margin-bottom: 10px;
+
+}
+
+.infomsg-placement{
+
+    margin-bottom: 14px;
+
+    margin-left: 24px;  
+
+}
+
+.custom-tooltip-link {
+
+    text-decoration: underline;
+
+    color: rgb(0, 95, 178);
+
+    cursor: pointer;
+
+}

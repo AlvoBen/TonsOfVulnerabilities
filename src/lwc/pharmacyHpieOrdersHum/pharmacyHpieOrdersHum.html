@@ -1,0 +1,156 @@
+﻿<!--
+Function        : LWC to callout HPIE Integration methods from apex .
+
+Modification Log:
+* Developer Name                  Date                         Description
+****************************************************************************************************************************
+* Nirmal Garg                    08/25/2023                    Initial Version
+* Swapnali Sonawane              10/23/2023                    US - 5058187 Pharmacy Edit Order
+* Vishal Shinde                  02/10/2024              	   US - 5109892 HPIE Mail Order Management - Pharmacy - "Prescriptions & Order summary" tab - Finance Queue /Member consent
+* Jonathan Dickinson             03/01/2024                    User Story 5058187: T1PRJ1295995 - (T1PRJ0870026)- MF 27409 HPIE/CRM SF - Tech - C12 Mail Order Management - Pharmacy - "Prescriptions & Order summary" tab - "Edit Order'
+*****************************************************************************************************************************-->
+<template>
+	<template if:false={orderIDClick}>
+		<div class="slds-grid slds-m-left_x-small slds-wrap">
+			<div class="slds-col slds-size_1-of-1 ">
+				<div class="slds-grid slds-grid_align-spread">
+					<div class="slds-col">
+						<h3>
+							<span class="slds-page-header__title slds-truncate" title="Order Summary">Order Summary
+							</span>
+						</h3>
+					</div>
+					<div class="slds-col">
+						<div class="slds-col_bump-right">
+							<lightning-button-icon icon-name="utility:refresh" variant="border-filled" size="small"
+								alternative-text="Refresh" class="slds-float_right" title="Refresh"
+								onclick={getRefreshedData}>
+							</lightning-button-icon>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="slds-grid slds-wrap">
+			<div class="slds-col slds-size_2-of-12 slds-p-around_x-small">
+				<c-generic-keyword-search-hum minchar="3" placeholder="Filter By" name="searchByWord" keyword={keyword}
+					ontextclear={clearSearchData} onkeywordvalue={handleKeywordSearch}>
+				</c-generic-keyword-search-hum>
+			</div>
+			<div class="slds-col slds-size_2-of-12 slds-p-around_x-small">
+				<c-generic-date-selector dkeyname="StartDate" dminvalue={sMinDate} onsenddatedata={handleDateChange}
+					dvalue={sStartDate} dmaxvalue={sMaxDate}>
+				</c-generic-date-selector>
+			</div>
+			<div class="slds-col slds-size_2-of-12 slds-p-around_x-small">
+				<c-generic-date-selector dkeyname="EndDate" onsenddatedata={handleDateChange} dvalue={sEndDate}
+					dmaxvalue={sMaxDate}>
+				</c-generic-date-selector>
+			</div>
+			<div class="slds-col slds-size_2-of-12 slds-p-around_x-small">
+				<c-generic-multiselect-picklist-hum keyname="otc" options={picklistValues.otc} placeholdermessage="OTC"
+					onmultiselectfilter={handlePicklistFilter} setvalues={filterObj.otc}>
+				</c-generic-multiselect-picklist-hum>
+			</div>
+			<div class="slds-col slds-size_2-of-12 slds-p-around_x-small">
+				<c-generic-multiselect-picklist-hum keyname="status" options={picklistValues.status}
+					placeholdermessage="Status" onmultiselectfilter={handlePicklistFilter}
+					setvalues={filterObj.OrderStatusLiteral}>
+				</c-generic-multiselect-picklist-hum>
+			</div>
+			<div class="slds-col slds-size_2-of-12 slds-p-around_x-small">
+				<c-generic-multiselect-picklist-hum keyname="source" options={picklistValues.source}
+					placeholdermessage="Source" onmultiselectfilter={handlePicklistFilter} setvalues={filterObj.source}>
+				</c-generic-multiselect-picklist-hum>
+			</div>
+		</div>
+		<div class="slds-grid slds-grid_align-spread slds-m-top_x-small">
+			<div class="slds-col">
+				<template if:true={pillFilterValues}>
+					<template for:each={pillFilterValues} for:item="pill" for:index="ind">
+						<lightning-pill class="slds-m-around_x-small" data-index={ind} data-key={pill.key}
+							data-value={pill.value} label={pill.value} key={pill.key} onremove={handlePillRemove}>
+						</lightning-pill>
+					</template>
+				</template>
+			</div>
+		</div>
+		<template if:true={loaded}>
+			<template if:false={serviceError}>
+				<template if:true={dataFound}>
+					<div class="slds-grid slds-p-bottom_xx-small">
+						<div class="slds-col">
+							<div class="slds-var-m-top_large">
+								<div class="slds-border_top">
+								</div>
+							</div>
+						</div>
+						<div>
+							<lightning-button class="slds-align_absolute-center" variant="brand-outline"
+								disabled={showMoreDisabled} label="Show More" onclick={showMoreCards}>
+							</lightning-button>
+						</div>
+						<div class="slds-col">
+							<div class="slds-var-m-top_large">
+								<div class="slds-border_top">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="slds-grid slds-grid_align-end">
+						<div class="slds-col">
+							<span style="text-align: right;">{filteredCount} of {totalCount} results</span>
+						</div>
+					</div>
+					<div class="slds-scrollable_y" style="max-height: 400px;" onscroll={handleScroll}>
+						<div class="slds-grid slds-wrap">
+							<template if:true={finalFilteredOrdersList}>
+								<template for:each={finalFilteredOrdersList} for:item="item">
+									<div class="slds-col slds-size_4-of-12 slds-p-around_small" key={item.key}>
+										<c-pharmacy-hpie-order-card-hum onorderidclickselect={handleOrderIDSelect}
+											enterprise-id={enterpriseid} user-id={userId} record-id={recordId}
+											item={item} onviewrx={handleViewRxClick}>
+										</c-pharmacy-hpie-order-card-hum>
+									</div>
+								</template>
+							</template>
+						</div>
+					</div>
+				</template>
+				<template if:false={dataFound}>
+					<div class="slds-grid slds-wrap">
+						<div class="slds-col slds-size_1-of-1 slds-m-top_small slds-wrap">
+							<c-generic-scoped-notification-hum iconname="utility:info"
+								message="No Orders are available for selected member.">
+							</c-generic-scoped-notification-hum>
+						</div>
+					</div>
+				</template>
+			</template>
+			<template if:true={serviceError}>
+				<div class="slds-grid slds-wrap">
+					<div class="slds-col slds-size_1-of-1 slds-m-top_small slds-wrap">
+						<c-generic-scoped-notification-hum type="error" iconname="utility:error"
+							message={labels.pharmacyOrderError}>
+						</c-generic-scoped-notification-hum>
+					</div>
+				</div>
+			</template>
+		</template>
+		<template if:false={loaded}>
+			<lightning-spinner alternative-text="Loading"></lightning-spinner>
+		</template>
+	</template>
+	<template if:true={orderIDClick}>
+		<c-pharmacy-hpie-order-details-hum prescriptions={prescriptions} onbackclick={showOrderSummary} acc-data={accData}
+			selected-order={selectedOrder} omsdetails={omsdetails} record-id={recordId} enterprise-id={enterpriseId}
+			payer={payer} user-id={userId} demographics-details={demographicsDetails} order-tasks={orderTasks} is-member-consent-required={isMemberConsentRequired}
+			cap-type={capType} member-consent={memberConsent} onrefreshtasks={handleRefreshTasks} onordercreditcardsave={handleCreditCardSave}
+			finance-details={financeDetails} onordereditsuccess={handleOrderSave} oncalldemographics ={handleCallDemographics} ongotoparentcomponent={getOrderSummary} onlognoteadded={handleLogNoteAdded}>
+		</c-pharmacy-hpie-order-details-hum>
+	</template>
+	<div class="slds-hide viexRX">
+		<c-pharmacy-view-rx-popover-hum prescriptions={prescriptions} oncloserxpanel={handleCloseRxPanel}>
+		</c-pharmacy-view-rx-popover-hum>
+	</div>
+</template>

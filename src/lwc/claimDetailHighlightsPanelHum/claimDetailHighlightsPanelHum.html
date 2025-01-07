@@ -1,0 +1,66 @@
+﻿<!--
+LWC Name        : ClaimDetailHighlightsPanelHum.js
+Function        : Highlight Panel for Claim Detail Page
+
+Modification Log:
+* Developer Name                  Date                         Description
+****************************************************************************************************************************
+* Aishwarya Pawar                 01/20/2023                   REQ-4134643 - Added alert on Claim detail Page
+* Suraj Patil                     03/05/2023                   REQ-4302400 - "Previously Logged" items message on the Non pharmacy views
+****************************************************************************************************************************
+-->
+<template>
+    <div class="slds-page-header slds-page-header_record-home">
+        <div class="highlights-container">
+            <div class="slds-page-header__row slds-grid_vertical-align-center">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <lightning-icon icon-name="standard:account" size="Large"
+                                            slot="icon">
+                            </lightning-icon>
+                        </div>
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <span>Claim/Pre-determination Details</span>
+                                        <span class="slds-page-header__title slds-truncate slds-text-heading_medium slds-m-top_x-small">
+                                            <b>{sClaimNbr} </b>
+                                            <lightning-icon icon-name="utility:copy" size="small" data-cont={sClaimNbr} onclick={copyToClipboard}
+                                                            class="slds-m-left_small slds-m-bottom_small" alternative-text="Copy">
+                                            </lightning-icon>
+                                        </span>
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                        <template if:true={displayAlertIcon}>
+                            <div class="alertContainer slds-float_right">
+                                <c-generic-alerts-view-hum record-id={accountId} member-plan-record-id={recordId}
+                                                           other-page-name="Claims Detail"></c-generic-alerts-view-hum>
+                            </div>
+                        </template>
+                        <!--Logging component-->
+
+                        <template if:true={showLoggingIcon}>
+                            <div class="slds-float_right slds-m-left_x-small">
+                                <c-lightning-logging-component-hum record-id={recordId} networkid={netWorkId} profilename={profilename} workqueue={workQueue} related-field={sMemberPlanId} auto-logging={autoLogging} type="Claims Details" subtype={clmSubType} attachmentkey={personid} attachmentdescription="Enterprise Id">  </c-lightning-logging-component-hum>
+
+                            </div>
+                        </template>
+
+                        <div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	<template if:true={accountId}>
+        <div class="slds-grid">
+        <c-previously-logged-cmp-hum s-type ="Claims Details" customtypename = "Claim information" subtype ={clmSubType} s-member-id ={accountId} s-unique-val={sClaimNbr}></c-previously-logged-cmp-hum>
+         </div>
+    </template>
+</template>

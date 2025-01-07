@@ -1,0 +1,12 @@
+<design:component label="Pinned Header and Three Regions">
+    <flexipage:template >
+        <flexipage:region name="header" defaultWidth="Large" />
+        <flexipage:region name="leftRegion" defaultWidth="Small" />
+        <flexipage:region name="centerRegion" defaultWidth="Large" />
+        <flexipage:region name="rightRegion" defaultWidth="Small" />
+      </flexipage:template>
+      <design:supportedFormFactors>
+          <design:supportedFormFactor type="Large"/>
+          <design:supportedFormFactor type="Small"/>
+      </design:supportedFormFactors>
+</design:component>

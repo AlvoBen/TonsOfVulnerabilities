@@ -1,0 +1,116 @@
+﻿<!--
+LWC Name        : demographicNonCommercialComponent.html
+Function        : 
+
+Modification Log:
+* Developer Name                     Date                         Description
+* Muthukumar                         09/08/2022                   US-3279519 update plan demographic
+*-->
+<template>
+    <div class={classStyle}>
+    <template if:true={isLoadOverlay}>
+        <div class="du-overlay"></div>
+    </template>
+    <c-error-display-component></c-error-display-component>
+    
+    <article class="slds-card slds-page-header slds-card_boundary slds-grid slds-grid--vertical" style="margin-bottom: 0.75rem">
+
+        <div class="hc-standard-table-styles slds-page-header__row">
+        <header
+            class="slds-grid slds-media slds-media_center slds-has-flexi-truncate hc-align-header">
+            <div class="slds-grid slds-grid_vertical-align-center">
+                <div class="slds-media__figure">
+                    <lightning-icon icon-name="custom:custom63" ></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title" style="font-size:20px;">{title}</h2>
+                </div>
+            </div>
+            <div if:false={showCancel}>
+                <div class="slds-grid">
+                    <div class="slds-grid slds-grid_align-end">
+                        <div class="slds-grid">
+                            <lightning-button class="slds-m-top_small slds-m-right_small" name="cancel" label="Cancel"
+                                onclick={onCancel}>
+                            </lightning-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </header>
+    </div>
+    </article>
+    <!--- close model popup  -->
+    <template if:true={openModal}>
+        <section role="dialog" tabindex="-1" style="width:40%;z-index:9999;align-self:17%;backdrop-filter:blur"
+            class="slds-modal slds-fade-in-open slds-modal_medium flow-modal-component"
+            aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+            <div class="slds-modal__container" style="margin-left:75%">
+                <header class="slds-modal__header">
+                    <h2 class="slds-modal__title slds-hyphenate" style="padding:0;margin:0">Unsaved Changes</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-12"
+                    style="text-align:center;">
+                    {closeMsg}
+                </div>
+                <footer class="slds-modal__footer" style="background-color: rgb(229,229,229);">
+                    <lightning-button label="Cancel" title="Cancel" onclick={onCloseMsg}
+                        class="slds-m-left_x-small"></lightning-button>
+                    <lightning-button variant="brand" label="Continue" title="Continue" onclick={cancelAll}
+                        class="slds-m-left_x-small"></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div style="z-index:9998;" class="slds-backdrop slds-backdrop_open flow-modal-component"></div>
+    </template>
+    
+    <lightning-card>
+        <template if:false={isNotRendered}>
+            <div class="slds-m-top_x-small slds-m-bottom_x-small 
+                        slds-col slds-size_2-of-4 top-next-btn-holder-height btn-demograph" 
+                        data-id="topNextBtnHolder">
+            </div> 
+        </template>
+        <template if:true={displayDependent.show}>
+            <div>
+                <div class="noteAlt">
+                    {displayDependent.msg}
+                </div>
+            </div>
+        </template>
+        <div class="slds-grid slds-m-top_small slds-m-bottom_small slds-m-left_large slds-m-right_large mm-container">
+            <div class="slds-medium-size_6-of-12 ">
+                <c-demographic-display-component-lightning></c-demographic-display-component-lightning>
+            </div>
+            <div class="slds-medium-size_6-of-12 ">
+                <c-demographic-driver-component-lightning></c-demographic-driver-component-lightning>
+                <!-- <c-demographic-messages-component></c-demographic-messages-component> -->
+                <div class="slds-p-left_large">
+                    <c-demographic-driven-component-lightning></c-demographic-driven-component-lightning>
+                </div>
+            </div>
+            
+        </div>
+        <template if:false={isNotRendered}>
+            <div class="slds-m-top_x-small slds-m-bottom_x-small 
+                         slds-col  top-next-btn-holder-height btn-demograph slds-m-right_large mm-container" 
+                         data-id="topNextBtnHolder">
+                 <lightning-button variant="brand" label="Next" title="Trigger Demographic Update" 
+                         disabled={isFormInvalid}
+                         onclick={handleNextClick} 
+                         class="slds-m-left_x-small"></lightning-button>
+            </div>
+         </template>
+        
+        
+        <c-demographic-loading-component-lightning></c-demographic-loading-component-lightning>
+        <c-modal-component-lightning></c-modal-component-lightning>
+        <c-demographic-summary-component-lightning></c-demographic-summary-component-lightning>
+        <c-demographic-medicare-avf-component-lightning></c-demographic-medicare-avf-component-lightning>
+        <c-demographic-medicaid-avf-component-lightning></c-demographic-medicaid-avf-component-lightning>
+        <c-demographic-update-helper-lightning></c-demographic-update-helper-lightning>
+        <c-demographic-update-finish-component-lightning></c-demographic-update-finish-component-lightning>
+    </lightning-card>
+</div>
+</template>

@@ -1,0 +1,84 @@
+﻿<!--
+Page Name        : HUMEnrollmentWelcomeCall_VF_HUM.page
+Version          : 1.0 
+Created Date     : March 7 2022
+Function         : 
+Modification Log :
+*   Developer               Code Review                     Date                 Description
+* ------------------------------------------------------------------------------------------------------------------------------                
+*   Apurva Urkude                                          03/07/2022           Original Version.
+* ------------------------------------------------------------------------------------------------------------------------------      
+-->
+<apex:page id="HUMEnrollmentWelcomeCall" controller="HUMEnrollmentWelcomeCall_C_HUM" showHeader="false" sidebar="false" lightningStylesheets="true">
+ <apex:includeScript value="/support/console/53.0/integration.js" />
+ <apex:includeScript value="{!$Resource.HUMUnSavedChangesJS}"/>
+    <html>
+    <head>
+        <apex:includeLightning />
+    </head>
+      <body class="slds-scope">
+         <div id="flowContainer" />
+         <script>		  
+		  window.onload = testSetTabUnsavedChanges('E&O Welcome Call');
+           var statusChange = function (event) {
+               if(event.getParam("status") === "FINISHED") {     
+					  sforce.console.fireEvent('EnrollmentWelcomeCallFireEvent', 'Success');  
+                      sforce.console.getEnclosingTabId(closeSubtab);                
+                  }
+            // Control what happens when the interview finishes                                
+               
+            };            
+            var closeSubtab = function closeSubtab(result){                       
+                    //Now that we have the tab ID, we can close it
+                    var tabId = result.id;
+                    sforce.console.setTabUnsavedChanges(false, undefined, tabId);                                                         
+                    sforce.console.closeTab(tabId);  
+                }; 
+            $Lightning.use("c:NBA_RecommendationDisplay_LTNG_APP_HUM", function() {
+               // Create the flow component and set the onstatuschange attribute
+               $Lightning.createComponent("lightning:flow", {"onstatuschange":statusChange},
+                  "flowContainer",
+                  function (component) {
+                       var inputVariables = [
+                        {
+                           name : 'CaseNumber',
+                           type : 'String',
+                           value : "{!CaseNumber}"
+                        },
+                        {
+                           name : 'MemberId',
+                           type : 'String',
+                           value : "{!MemberId}"
+                        },
+                        {
+                           name : 'TN',
+                           type : 'String',
+                           value : "{!TN}"
+                        },
+                        {
+                           name : 'ParamInputSID',
+                           type : 'String',
+                            value : "{!SubmissionID}"
+                        },
+						{  name : 'WhoId',
+                           type : 'String',
+                           value : "{!CaseId}"
+                        },
+						{
+                           name : 'CaseStatus',
+                           type : 'String',
+                           value : "{!sCaseStatus}"
+                        }
+
+
+                      ];                     
+                     // Start an interview in the flowContainer div, and 
+                     // initializes the input variables.
+                    component.startFlow("Enroll_Onboard_E_O_Welcome_Call", inputVariables);                      
+                  }
+               );
+            });
+         </script>
+      </body>
+   </html>
+</apex:page>

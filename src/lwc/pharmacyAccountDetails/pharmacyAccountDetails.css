@@ -1,0 +1,51 @@
+/*
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Kalyani Pachpol                 05/12/2022                  US-3188387
+****************************************************************************************************************************/
+.c-container {
+    border: 1px solid #d8dde6;
+    background-color:#ffffff;
+  /*  margin: 5px 0  0  0;*/
+}
+.page-section {
+    border: solid 3px #fafaf9;
+   
+}
+
+.page-main {
+    background:  #f0efef;
+}
+.slds-box .page{
+    background:  #f0efef;
+}
+
+.page-left,
+.page-right {
+    background: #f0efef;
+}
+.slds-box .due{
+     background-color:  #B7C4C4;
+}
+.container{
+    background-color:#ffffff;
+}
+.slds-scope .slds-gutters_small .slds-col{
+    background-color:  #B7C4C4;
+    }
+.slds-text-heading_large {
+    font-size: 1.5rem;
+}
+.style-green{
+    background-color: #04844B;
+}
+.style-red{
+    background-color: #ed2939;
+}
+.style-grey{
+   background-color: #808080;
+}
+.data-style{
+    color: #ffffff;
+}

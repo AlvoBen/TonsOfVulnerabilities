@@ -1,0 +1,175 @@
+/******************************************************************************************************************************
+Function        : Component style sheet
+
+Modification Log:
+* Developer Name                  Date                         Description
+*------------------------------------------------------------------------------------------------------------------------------
+* Mohan Kumar N                 12/18/2020                 Intial version
+* Mohan kumar N                 04/12/2021                US-1892975: View all for policy and interactions    
+* Supriya Shastri               08/23/2021                US: 2306519 freezing sections 
+* Mohan Kumar N                 09/01/2021                US: 2160764 - Configure table width
+* Supriya Shastri               09/07/2021                US: 2495201 search table formatting updates
+* Ankima/Isha                   11/23/2022                view all visibility fix
+****************************************************************************************************************************/
+
+.results-container-header {
+    display: flex;
+    align-items: center;
+    padding: 20px 20px;
+    font-size: 1rem;
+    background: #f5f1f3;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.results-container-header lightning-helptext{
+    margin: 0 0 5px 5px;
+}
+
+.results-table {
+    border-bottom: 0;
+}
+
+.results-table tr,
+.results-table th {
+    display: flex;
+}
+
+.results-table td,
+.results-table th{
+    flex: 1 1 25%;
+    align-items: center;
+    white-space: normal;
+}
+
+.results-table-cell-action {
+    max-width: 80px;
+}
+.results-icon-col {
+    max-width: 60px;
+    display: flex;
+    align-items: flex-start !important;
+}
+
+.results-table-header {    
+    background-color: #d8d8d8;
+}
+
+.results-table-header th{
+    background-color: #d8d8d8;
+    color: black;
+    align-items: center;
+}
+
+.results-table-cell {
+    display: flex;
+    align-items: flex-start !important;
+    word-break: break-word;
+}
+
+.results-table tr>td:last-child,
+.results-table tr>th:last-child {
+    padding-right: 6px;
+}
+
+
+.results-row-highlight {
+    background-color: #E6F0FC
+}
+
+
+.inner-table-width {
+    width: 100%;
+}
+
+.table-expand tr {
+    border-top: var(--lwc-borderWidthThin,1px) solid var(--lwc-colorBorder,rgb(221, 219, 218));
+}
+
+.table-expand th,
+.table-expand td {
+    border: none;
+}
+
+.table-expand .results-table-header,
+.table-expand .results-table-header th {
+    background-color: #FAFAF9;
+}
+
+.table-expand td:not(.results-icon-col),
+.table-expand th:not(.results-icon-col){
+    max-width: 20%;
+}
+
+.st-spinner{
+    max-height: 25vh;
+    position: relative;
+    background: grey;
+    height: 200px;
+    z-index: 3;
+}
+
+.st-spinner-ele {
+    bottom: 200px;
+    left: 200px;  
+    z-index: 3;  
+}
+
+.full-container {
+    height: 100%;
+    width: 100%;
+}
+
+.infinite-scroll-cont {
+    position: absolute;
+    top:0;
+    right: 0;
+    left: 0;
+    bottom:0;
+}
+
+.infinite-scroll-cont .results-table thead tr, .infinite-scroll-cont .results-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.table-overflow {
+    max-height: 23.5rem;
+    overflow-y: auto;
+}
+
+.table-overflow thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.full-container.fix-table {
+    position: sticky;
+    top: 10%;
+}
+
+
+.full-container.fix-table .results-container-header {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+}
+
+
+.full-container.fix-table .table-container thead, .full-container.fix-table .table-container thead tr {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.table-border, .full-container.fix-table {
+    border: 1px solid #d8d8d8;
+    background: #fff;
+}
+
+.hc-cursor{
+    cursor: pointer;
+    margin-bottom: 2.5rem;
+}

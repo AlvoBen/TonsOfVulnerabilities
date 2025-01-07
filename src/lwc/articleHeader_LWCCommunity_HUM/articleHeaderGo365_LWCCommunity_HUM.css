@@ -1,0 +1,95 @@
+.articleDetail-bodyContainer{
+    padding-left: 41px;
+}
+.articleHeader1Go365{
+    font-family: FSHumana;
+    font-size: 18px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: normal;
+    color: #002f87;
+    margin-bottom: 16px;
+}
+.articleHeader2Go365{
+    font-family: FSHumana;
+    font-size: 46px;
+    font-weight: 300;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.24;
+    letter-spacing: -1px;
+    color: #58595c;
+    margin-bottom: 32px;
+    width: 80%;
+    word-break: break-word;  
+} 
+  .articleHeaderContainer{
+      width: 68.5%;
+  }
+ 
+  .articleDetail-userInfo {
+  
+    font-size: 18px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: normal;
+    color: #58595c;
+     margin-bottom: 24px;
+  }
+  .articleDetail-userInfoChild{
+      margin-right: 40px;
+  }
+  .icons{
+      width: 24px;
+      height: 24px;
+      margin-right: 6px
+  }
+  .bookmarkIcon{
+      width: 32px;
+      height: 32px;
+      position: relative;
+      top: 20px;
+      cursor: pointer; 
+   
+  }
+  
+  @media only screen and (max-width: 700px){
+      .articleDetail-userInfoChild{
+          margin-right: 0px;
+      }
+      .articleDetail-userInfoParent{
+            justify-content: space-between;
+          width: 100%;
+          margin-bottom: 16px;
+      }
+      .articleHeader2Go365 {
+          font-size: 36px;
+      }
+      .articleDetail-userInfo {
+          font-size: 16px;
+      }
+      .articleHeader1Go365{
+          font-size: 16px;
+      }
+      .articleDetail-bodyContainer{
+          padding-left: 15px;
+          padding-right: 15px;
+      
+      }
+      .articleHeaderContainer{
+          width: 100%;
+      }
+      
+      .bookmarkIcon{
+      width: 24px;
+      height: 24px;
+      position: relative;
+      top: 10px;
+      }
+   
+  
+  }

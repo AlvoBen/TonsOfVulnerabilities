@@ -1,0 +1,106 @@
+﻿<!--
+Page Name        : ImageViewer_CMP_HUM
+Version          : 1.0 
+Created Date     : 03/21/2016 
+Function         : Component use to display image viewer.
+Modification Log :
+* Developer                 Code review         Date                  Description
+* -------------------------------------------------------------------------------------------------------------------                
+* Santhi Mandava            24069               03/21/2016            Original Version
+* Santhi Mandava            27512               05/12/2016            Added sorting feature as part of REQ - 263794
+* Santhi Mandava                                07/26/2016            Implemented attachment body decryption logic.
+-------------------------------------------------------------------------------------------------------------------->
+
+<apex:component controller="ImageViewer_C_HUM">
+    <apex:stylesheet value="{!URLFOR($Resource.Logging_JS_HUM,'/viewer.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.Logging_JS_HUM,'/main.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Bootstrap/dist/css/bootstrap.min.css')}"/>    
+    <apex:includescript value="{!URLFOR($Resource.Logging_JS_HUM,'/viewer.js')}"/>
+    <apex:includescript value="{!URLFOR($Resource.CRM_PLATFORM_TOOLKIT,'/Bootstrap/dist/js/bootstrap.min.js')}"/>
+    <html lang="en">
+        <head>
+            <script>
+            /* This Script should not be moved to Static resource. */
+            jQuery(function () {
+            
+            'use strict';
+            
+            var console = window.console || { log: function () {} };
+            var $images = jQuery('.docs-pictures');
+            var $toggles = jQuery('.docs-toggles');
+            var $buttons = jQuery('.docs-buttons');
+            var options = {
+                // inline: true,
+                url: 'data-original',
+                build: function (e) {
+                },
+                built: function (e) {
+                },
+                show: function (e) {
+                },
+                shown: function (e) {
+                },
+                hide: function (e) {
+                },
+                hidden: function (e) {
+                },
+                view: function (e) {
+                },
+                viewed: function (e) {
+                }
+            };
+            
+            $images.on({
+                'build.viewer': function (e) {
+                },
+                'built.viewer':  function (e) {
+                },
+                'show.viewer':  function (e) {
+                },
+                'shown.viewer':  function (e) {
+                },
+                'hide.viewer':  function (e) {
+                },
+                'hidden.viewer': function (e) {
+                },
+                'view.viewer':  function (e) {
+                },
+                'viewed.viewer': function (e) {
+                }
+                }).viewer(options);
+            
+                imgview = $images; 
+            });
+            
+            </script>
+    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Viewer</title>
+    </head>
+    <body> 
+        <div class="col-md-1"/>
+        <div class="col-md-10">
+            <apex:pageBlock mode="maindetail">
+                <apex:outputLabel id="idProfLabel" title="Image Viewer" value="Image Viewer" style="font-family:arial;font-size:15px;"/>
+                <div class="docs-galley" style="height:700px;">
+                <ul class="docs-pictures clearfix">
+                    <apex:repeat value="{!lstImages}"  var="item">
+                        <li><img src="{!item.sImageString}" style="width:100px;height:100px;" title="{!item.sAttachmentName}"/></li>
+                    </apex:repeat>
+                </ul>
+            </div>
+            </apex:pageBlock>
+        </div>
+        <div class="col-md-1"/>
+        <div id="dvProcessing" class="waitingSearchDivOpacity" style="display:none;width: 100%; height: 100%; display: none; opacity: 0.90">
+            <div class="waitingHolder" style="top: 300px; width: 110px;">
+                <img class="waitingImage" src="/img/loading.gif"/>
+                <span class="waitingDescription">{!$Label.HUMSearchResetStatus}</span>
+            </div>
+        </div>     
+    </body>
+    </html>
+    <apex:actionFunction name="loadImageViewer" action="{!loadImageViewer}" reRender="pnlImages">
+        <apex:param name="pageIds" value=""/>
+    </apex:actionFunction>    
+</apex:component>
