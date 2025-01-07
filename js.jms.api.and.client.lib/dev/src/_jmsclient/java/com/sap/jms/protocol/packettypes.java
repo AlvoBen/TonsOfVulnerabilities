@@ -1,0 +1,121 @@
+﻿/**
+ * PacketTypes.java
+ *
+ * Property of SAP AG, Walldorf
+ * (c) Copyright SAP AG, Walldorf, 2002.
+ * All rights reserved.
+ */
+package com.sap.jms.protocol;
+
+/**
+ * This interface contains the enumerated constants of all packet types
+ * 
+ * @author  Dr. Bernd Follmeg, Margarit Kirov
+ * @version 1.0
+ */
+public interface PacketTypes {
+	byte INVALID_PACKET_TYPE = 0;
+	
+	/* Connection related packet types */
+	byte CONNECTION_CLOSE_REQUEST = -0x01;
+	byte CONNECTION_CLOSE_RESPONSE = -0x02;
+	byte CONNECTION_CREATE_REQUEST = -0x03;
+	byte CONNECTION_CREATE_RESPONSE = -0x04;
+	byte CONNECTION_STOP_REQUEST = -0x05;
+	byte CONNECTION_STOP_RESPONSE = -0x06;
+	byte CONNECTION_START_REQUEST = -0x07;
+	byte CONNECTION_START_RESPONSE = -0x08;
+
+	/* Session related packet types */
+	byte SESSION_CREATE_REQUEST = -0x11;
+	byte SESSION_CREATE_RESPONSE = -0x12;
+	byte SESSION_CLOSE_REQUEST = -0x13;
+	byte SESSION_CLOSE_RESPONSE = -0x14;
+	byte SESSION_COMMIT_REQUEST = -0x15;
+	byte SESSION_COMMIT_RESPONSE = -0x16;
+	byte SESSION_ROLLBACK_REQUEST = -0x17;
+	byte SESSION_ROLLBACK_RESPONSE = -0x18;
+	byte SESSION_RECOVER_REQUEST = -0x19;
+	byte SESSION_RECOVER_RESPONSE = -0x1A;
+	byte SESSION_START_REQUEST = -0x1B;
+	byte SESSION_START_RESPONSE = -0x1C;
+	byte SESSION_STOP_REQUEST = -0x1D;
+	byte SESSION_STOP_RESPONSE = -0x1E;
+
+	byte SESSION_BEFORE_COMPLETION_REQUEST = -0x41;
+	byte SESSION_AFTER_COMPLETION_REQUEST = -0x42;
+	byte SESSION_BEFORE_COMPLETION_RESPONSE = -0x43;
+	byte SESSION_AFTER_COMPLETION_RESPONSE = -0x44;
+	byte SESSION_AFTER_BEGIN_REQUEST = -0x45;
+	byte SESSION_AFTER_BEGIN_RESPONSE = -0x46;
+	
+	
+	/* Consumer related packet types */
+	byte CONSUMER_CREATE_REQUEST = -0x21;
+	byte CONSUMER_CREATE_RESPONSE = -0x22;
+	byte CONSUMER_CLOSE_REQUEST = -0x23;
+	byte CONSUMER_CLOSE_RESPONSE = -0x24;
+    byte CONSUMER_REFRESH_REQUEST   = -0x30;
+    byte CONSUMER_REFRESH_RESPONSE  = -0x31;    
+
+	/* Producer related packet types */
+	byte PRODUCER_CREATE_REQUEST = -0x25;
+	byte PRODUCER_CREATE_RESPONSE = -0x26;
+	byte PRODUCER_CLOSE_REQUEST = -0x27;
+	byte PRODUCER_CLOSE_RESPONSE = -0x28;
+
+	/* Queue browser releated packet types */
+	byte QUEUEBROWSER_CREATE_REQUEST = -0x2A;
+	byte QUEUEBROWSER_CREATE_RESPONSE = -0x2B;
+	byte QUEUEBROWSER_CLOSE_REQUEST = -0x2C;
+	byte QUEUEBROWSER_CLOSE_RESPONSE = -0x2D;
+	byte QUEUEBROWSER_ENUMERATION_REQUEST = -0x2E;
+	byte QUEUEBROWSER_ENUMERATION_RESPONSE = -0x2F;
+
+	/* Acknowledge related packet types */
+	byte MESSAGE_ACKNOWLEDGE_REQUEST = -0x50;
+	byte MESSAGE_ACKNOWLEDGE_RESPONSE = -0x51;
+
+	/* Subscription related packet types */
+	byte SUBSCRIPTION_REMOVE_REQUEST = -0x52;
+	byte SUBSCRIPTION_REMOVE_RESPONSE = -0x53;
+
+	/* Destination related packet types */
+	byte DESTINATION_CREATE_REQUEST = -0x61;
+	byte DESTINATION_CREATE_RESPONSE = -0x62;
+	byte DESTINATION_DELETE_REQUEST = -0x63;
+	byte DESTINATION_DELETE_RESPONSE = -0x64;
+	byte DESTINATION_NAME_REQUEST = -0x65;
+	byte DESTINATION_NAME_RESPONSE = -0x66;
+
+	byte MESSAGE_RESPONSE = -0x60;
+	byte START_MESSAGE_DELIVERY_REQUEST = -0x67;
+	byte START_MESSAGE_DELIVERY_RESPONSE = -0x68;
+	byte SERVER_EXCEPTION_RESPONSE = -0x70;
+
+	
+	byte XA_START_REQUEST = -0x71;
+	byte XA_END_REQUEST = -0x72;
+	byte XA_COMMIT_REQUEST = -0x73;
+	byte XA_ROLLBACK_REQUEST = -0x74;
+	byte XA_PREPARE_REQUEST = -0x75;
+	byte XA_RESPONSE = -0x76;
+	byte XA_RECOVER_REQUEST = -0x77;
+	byte XA_RECOVER_RESPONSE = -0x78;
+	byte XA_PREPARE_RESPONSE = -0x79;
+	byte XA_FORGET_REQUEST = -0x7A;
+	byte XA_TIMEOUT_REQUEST = -0x7B;
+	byte XA_TIMEOUT_RESPONSE = -0x7C;
+	byte XA_START_RESPONSE = -0x7D;
+	
+	byte MESSAGE_DELIVERY_FAILED_REQUEST = -0x9;
+	byte MESSAGE_DELIVERY_FAILED_RESPONSE = -0xa;
+
+	/** JMS message related packet types */
+	byte JMS_BYTES_MESSAGE = 0x01;
+	byte JMS_TEXT_MESSAGE = 0x02;
+	byte JMS_STREAM_MESSAGE = 0x03;
+	byte JMS_MAP_MESSAGE = 0x04;
+	byte JMS_OBJECT_MESSAGE = 0x05;
+	byte JMS_GENERIC_MESSAGE = 0x06;
+}

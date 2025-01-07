@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+	<servlet>
+		<servlet-name>logonPage.jsp</servlet-name>
+		<jsp-file>/logonPage.jsp</jsp-file>
+	</servlet>
+	<servlet>
+		<servlet-name>changePasswordPage.jsp</servlet-name>
+		<jsp-file>/changePasswordPage.jsp</jsp-file>
+	</servlet>
+	<servlet>
+		<servlet-name>certLogonPage.jsp</servlet-name>
+		<jsp-file>/certLogonPage.jsp</jsp-file>
+	</servlet>
+	<servlet>
+		<servlet-name>helpPage.jsp</servlet-name>
+		<jsp-file>/helpPage.jsp</jsp-file>
+	</servlet>
+	<servlet>
+		<servlet-name>resetPasswordPage.jsp</servlet-name>
+		<jsp-file>/resetPasswordPage.jsp</jsp-file>
+	</servlet>
+
+
+	<taglib>
+		<taglib-uri>/SapLogon</taglib-uri>
+		<taglib-location>/WEB-INF/taglib.tld</taglib-location>
+	</taglib>
+</web-app>

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<any:container xmlns:any="any.xsd" xmlns:sdo="commonj.sdo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<any xsi:type="xsd:int">
+		5
+	</any>
+	<any xsi:type="xsd:string">hello</any>
+	<any xsi:type="xsd:string"/>
+	<any xsi:type="xsd:boolean">true</any>
+	<any xsi:type="xsd:decimal">3.14</any>
+	<any xsi:type="xsd:double">5</any>
+	<any xsi:type="xsd:float">3.14</any>
+	<any xsi:type="xsd:integer">5</any>
+	<any xsi:type="xsd:byte">5</any>
+	<any xsi:type="xsd:long">5</any>
+	<any xsi:type="xsd:short">5</any>
+	<any xsi:type="xsd:dateTime">2007-03-08T09:17:00</any>
+	<any xsi:type="xsd:hexBinary">5A</any>
+	<any xsi:type="xsd:base64Binary">SMOkdHRlbiBIw7x0ZSBlaW4gw58gaW0gTmFtZW4sIHfDpHJlbiBzaWUgbcO2Z2xpY2hlcndlaXNlIGtlaW5lIEjDvHRlIG1laHIsDQpzb25kZXJuIEjDvMOfZS4NCg==</any>
+	<any xsi:type="xsd:QName">sdo:String</any>
+</any:container>

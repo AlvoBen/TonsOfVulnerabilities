@@ -1,0 +1,15 @@
+﻿<containers>
+	<containerInfo name="app_libraries_container">
+		<isJ2EEContainer>false</isJ2EEContainer>
+		<moduleName>app_library</moduleName>
+		<priority>100</priority>
+		<fileExtensions>
+			<name>jar</name>
+			<name>war</name>
+			<name>rar</name>
+		</fileExtensions>
+		<supportsLazyStart>true</supportsLazyStart>
+		<supportingParallelism>true</supportingParallelism>
+		<supportsSingleFileUpdate>false</supportsSingleFileUpdate>
+	</containerInfo>
+</containers>

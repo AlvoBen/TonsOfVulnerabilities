@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: //shared_tc/com.sapall.security/dev/src/_deploy/dist/configuration/shared/dataSourceConfiguration_textfile.xml#4 $ from $DateTime: 2003/10/10 13:50:25 $ ($Change: 12790 $) -->
+<dataSources>
+    <dataSource id="TEXTFILE_DATASOURCE"
+                className="com.sap.security.core.persistence.datasource.imp.TextFilePersistence"
+                isReadonly="false"
+                isPrimary="true">
+
+        <homeFor>
+            <principals>
+                <principal type="*" />
+            </principals>
+        </homeFor>
+        <notHomeFor/>
+
+        <responsibleFor>
+            <principals>
+                <principal type="*" />
+            </principals>
+        </responsibleFor>
+        <notResponsibleFor/>
+
+        <attributeMapping />
+
+        <privateSection>
+        	<ume.textfile.root_path>data</ume.textfile.root_path>
+        </privateSection>
+    </dataSource>
+
+</dataSources>

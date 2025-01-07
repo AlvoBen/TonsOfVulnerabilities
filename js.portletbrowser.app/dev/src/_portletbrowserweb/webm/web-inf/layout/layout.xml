@@ -1,0 +1,8 @@
+﻿<?xml version="1.0"?>
+<portal_page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="portal_page.xsd">
+<layout direction="vertical">
+	<layout direction="horizontal">
+		<portlet application="guessNumber" name="guessNumber"/>
+	</layout>
+</layout>
+</portal_page>

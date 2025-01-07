@@ -1,0 +1,13 @@
+﻿<containers>
+	<containerInfo name="MigrationContainer">
+		<isJ2EEContainer>false</isJ2EEContainer>
+		<moduleName>MigrationModule</moduleName>
+		<priority>0</priority>
+		<fileExtensions>
+			<name>.mar</name>	
+		</fileExtensions>
+		<supportingParallelism>true</supportingParallelism>
+		<supportsLazyStart>true</supportsLazyStart>
+		<supportsSingleFileUpdate>false</supportsSingleFileUpdate>
+	</containerInfo>
+</containers>

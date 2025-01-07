@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE application-j2ee-engine SYSTEM "application-j2ee-engine.dtd">
+<application-j2ee-engine>
+    <provider-name>sap.com</provider-name>
+    <fail-over-enable mode="disable"/>
+    <start-up mode="always"/>
+</application-j2ee-engine>

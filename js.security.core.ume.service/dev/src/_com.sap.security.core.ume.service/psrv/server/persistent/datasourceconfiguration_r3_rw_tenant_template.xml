@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: //engine/js.security.core.ume.service/dev/src/_com.sap.security.core.ume.service/psrv/server/persistent/dataSourceConfiguration_r3_rw_tenant_template.xml#1 $ from $DateTime: 2008/09/17 17:07:47 $ ($Change: 217697 $) -->
+<dataSources>
+  <dataSource id="${datasourceid}" className="com.sap.security.core.persistence.datasource.imp.R3Persistence" isReadonly="false" displayName="${tenant}" isPrimary="true" policyEnforced="true" isGlobal="false">
+
+   <homeFor>
+      <principals>
+        <principal type="user"/>
+        <principal type="account"/>
+      </principals>
+    </homeFor>
+
+    <responsibleFor>
+      <principals>
+        <principal type="user">
+          <nameSpaces>
+            <nameSpace name="com.sap.security.core.usermanagement">
+              <attributes>
+                <attribute name="uniquename"/>
+                <attribute name="firstname"/>
+                <attribute name="lastname"/>
+                <attribute name="salutation"/>
+                <attribute name="title"/>
+                <attribute name="jobtitle"/>
+                <attribute name="department"/>
+                <attribute name="email"/>
+                <attribute name="telephone"/>
+                <attribute name="mobile"/>
+                <attribute name="fax"/>
+                <attribute name="locale"/>
+                <attribute name="timezone"/>
+                <attribute name="referenceuser"/>
+                <attribute name="personuuid" readonly="true"/>
+              </attributes>
+            </nameSpace>
+          </nameSpaces>
+        </principal>
+        <principal type="account">
+          <nameSpaces>
+            <nameSpace name="com.sap.security.core.usermanagement">
+              <attributes>
+                <attribute name="j_user"/>
+                <attribute name="j_password"/>
+                <attribute name="validfrom"/>
+                <attribute name="validto"/>
+                <attribute name="islocked"/>
+                <attribute name="lockreason"/>
+                <attribute name="passwordchangerequired"/>
+                <attribute name="userid"/>
+                <attribute name="ispassworddisabled"/>
+                <attribute name="logonalias"/>
+                <attribute name="SecurityPolicy"/>
+              </attributes>
+            </nameSpace>
+          </nameSpaces>
+        </principal>
+      </principals>
+    </responsibleFor>
+
+    <notResponsibleFor/>
+
+    <attributeMapping/>
+
+    <privateSection>
+    	<ume.logon.r3master.adapterid>master</ume.logon.r3master.adapterid>
+    </privateSection>
+  </dataSource>
+</dataSources>

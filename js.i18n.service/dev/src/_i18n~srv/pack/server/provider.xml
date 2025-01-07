@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE provider-descriptor SYSTEM "service.provider.dtd">
+
+  <provider-descriptor>
+    <display-name>
+        I18N Service
+    </display-name>
+    <component-name>
+      I18NService
+    </component-name>
+	<application-frame>
+      com.sap.i18n.service.I18NSyncFrame
+    </application-frame>    
+    <!--runtime-editor>
+      
+    </runtime-editor-->  
+    <major-version>7</major-version>
+    <minor-version>10</minor-version>
+    <micro-version>0</micro-version>
+    <provider-name>
+      engine.sap.com
+    </provider-name>
+    <references>
+        <reference type="library" strength="weak" provider-name="sap.com">tc/com.sap.conn.jco</reference>
+        <reference type="library" strength="hard" provider-name="sap.com">tc/i18n/saptimezone</reference>
+        <reference type="library" strength="hard" provider-name="sap.com">tc/i18n/cpbase</reference>
+        <reference type="service" strength="hard" provider-name="sap.com">basicadmin</reference>
+    </references>
+    <jars>
+      <jar-name>
+        sap.com~tc~je~i18n~impl.jar
+      </jar-name>
+    </jars>
+  </provider-descriptor>

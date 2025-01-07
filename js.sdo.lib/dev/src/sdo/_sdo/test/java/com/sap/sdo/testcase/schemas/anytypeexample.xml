@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<any:container xmlns:any="any.xsd" xmlns:sdo="commonj.sdo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<any xsi:type="co:CompanyType" name="MegaCorp" employeeOfTheMonth="E0003" xmlns:co="company.xsd">
+		<departments name="Advanced Technologies" location="NY" number="123">
+			<employees name="John Jones" SN="E0001"/>
+			<employees name="Jane Doe" SN="E0003"/>
+			<employees name="Al Smith" SN="E0004" manager="true"/>
+    	</departments>
+	</any>
+	<any xsi:type="xsd:string">hello</any>
+</any:container>

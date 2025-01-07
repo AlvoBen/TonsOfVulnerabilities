@@ -1,0 +1,6 @@
+﻿<component name="com.sap.engine.compatibility.frame.internal.ApplicationServiceContextComponent">
+	<implementation class="com.sap.engine.compatibility.frame.internal.ApplicationServiceContextComponent" />
+	<service servicefactory="true">
+		<provide interface="com.sap.engine.frame.ApplicationServiceContext"/>
+	</service>
+</component>

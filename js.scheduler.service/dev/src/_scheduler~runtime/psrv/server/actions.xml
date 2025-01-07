@@ -1,0 +1,25 @@
+﻿<BUSINESSSERVICE>
+
+	<DESCRIPTION LOCALE="en" VALUE="Job scheduler" />
+
+	<!-- Business Service Actions --> 
+	<ACTION NAME="Create_Job" >
+		<DESCRIPTION LOCALE="en" VALUE="Create a job" />
+
+		<PERMISSION CLASS="com.sap.engine.services.scheduleradapter.permissions.SchedulerAPIPermission"
+		 NAME="CREATE_JOB" VALUE="*" />
+	</ACTION>
+
+	<ACTION NAME="Run_Job" >
+		<DESCRIPTION LOCALE="en" VALUE="Execute a job" />
+
+		<PERMISSION CLASS="com.sap.engine.services.scheduleradapter.permissions.SchedulerAPIPermission"
+		 NAME="RUN_JOB" VALUE="*" />
+	</ACTION>
+
+	<ROLE NAME="Administrator" >
+		<ASSIGNEDACTION NAME="Create_Job"/>
+		<ASSIGNEDACTION NAME="Run_Job"/>
+	</ROLE>
+
+</BUSINESSSERVICE> 

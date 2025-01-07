@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE monitor-configuration SYSTEM "monitor-configuration.dtd">
+<monitor-configuration>
+<monitor-semantics>
+	<simple-configuration-group name="IIOP.IIOPService">
+		<description ID="IIOP.IIOPServ" ></description>
+	</simple-configuration-group>	
+	<integer-configuration-group name="IIOP.ExportedRemoteObjectsCount">
+		<description ID="IIOP.IIOPServ.ExpRemoteObj">Number of exported IIOP remote obejcts</description>
+		<data-collection react-on-failure="IGNORE" >
+			<polled-by-monitor period="5" unit="MINUTE"/>
+		</data-collection>		
+		<thresholds green-to-yellow="500" yellow-to-red="1000" red-to-yellow="1000" yellow-to-green="500"/>
+	</integer-configuration-group>
+	<integer-configuration-group name="IIOP.IIOPThreadUsageRate" unit="%">
+		<description ID="IIOP.IIOPServ.IIOPThreadUsage">Percent of used threads compared to the configured IIOP threads.</description>
+		<data-collection react-on-failure="IGNORE" >
+			<polled-by-monitor period="5" unit="MINUTE"/>
+		</data-collection>		
+		<thresholds green-to-yellow="80" yellow-to-red="100" red-to-yellow="100" yellow-to-green="80"/>
+	</integer-configuration-group>
+</monitor-semantics>	
+<monitor-tree>
+	<services>	
+		<object name="IIOP Provider" configuration-group="IIOP.IIOPService">
+			<integer-monitor name="ExportedRemoteObjectsCount" configuration-group="IIOP.ExportedRemoteObjectsCount">
+				<monitored-resource name="iiop" type="SERVICE"/>
+				<integer-attribute-mapping>
+					<integer-attribute>
+						<observed-resource-attribute name="ExportedRemoteObjectsCount"/>
+					</integer-attribute>
+				</integer-attribute-mapping>
+			</integer-monitor>
+			<integer-monitor name="IIOPThreadUsageRate" configuration-group="IIOP.IIOPThreadUsageRate">
+				<monitored-resource name="iiop" type="SERVICE"/>
+				<integer-attribute-mapping>
+					<integer-attribute>
+						<observed-resource-attribute name="IIOPThreadUsageRate"/>
+					</integer-attribute>
+				</integer-attribute-mapping>
+			</integer-monitor>
+		</object>					
+	</services>
+</monitor-tree>
+</monitor-configuration>
+

@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<codeClassification>
+<classificationRule attributes="test" filePattern="com.example.*"/>
+<classificationRule attributes="test" filePattern="com.sap.sdo.testcase.*"/>
+<classificationRule attributes="test" filePattern="com.sap.xml.datatype.GregorianCalendar.java"/>
+<classificationRule attributes="test" filePattern="noNamespace.*"/>
+<classificationRule attributes="test" filePattern="test.*"/>
+</codeClassification>

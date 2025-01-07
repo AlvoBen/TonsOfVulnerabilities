@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<tns:rootElement xmlns:tns="http://www.sap.com/schema/test/NoNSImport" xmlns:sdox="commonj.sdo/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sap.com/schema/test/NoNSImport NoNSImport.xsd">
+	<tns:imported base="base imported">
+		<element1>element imported</element1>
+	</tns:imported>
+	<tns:included base="base included">
+		<tns:element1>element included</tns:element1>
+	</tns:included>
+	<RootNoNS base="base ref imported">
+		<element1>element ref imported</element1>
+	</RootNoNS>
+	<tns:RootNoNS base="base ref included">
+		<tns:element1>element ref included</tns:element1>
+	</tns:RootNoNS>
+</tns:rootElement>

@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE monitor-configuration SYSTEM "monitor-configuration.dtd">
+
+<monitor-configuration>
+	<monitor-semantics>
+		<simple-configuration-group name="MEMORY.MemoryService">
+			<description ID="MEMORY.MemServ"/>
+		</simple-configuration-group>
+		<integer-configuration-group name="MEMORY.UsageRate" unit="%">
+			<description ID="MEMORY.MemServ.UsageRate">The ratio between the used memory and the total memory of the process. </description>
+			<data-collection react-on-failure="IGNORE">
+				<polled-by-monitor period="5" unit="MINUTE"/>
+			</data-collection>
+			<thresholds green-to-yellow="80" yellow-to-red="95" red-to-yellow="95" yellow-to-green="80"/>
+		</integer-configuration-group>
+		<integer-configuration-group name="MEMORY.AllocatedMemory" unit="MB">
+			<description ID="MEMORY.MemServ.AlMem">Currently allocated memory</description>
+			<data-collection react-on-failure="IGNORE">
+				<polled-by-monitor period="5" unit="MINUTE"/>
+			</data-collection>
+			<thresholds green-to-yellow="0" yellow-to-red="-1" red-to-yellow="-1" yellow-to-green="0"/>
+		</integer-configuration-group>
+		<integer-configuration-group name="MEMORY.AvailableMemory" unit="MB">
+			<description ID="MEMORY.MemServ.AvlbMem">Currently available memory</description>
+			<data-collection react-on-failure="IGNORE">
+				<polled-by-monitor period="5" unit="MINUTE"/>
+			</data-collection>
+			<thresholds green-to-yellow="0" yellow-to-red="-1" red-to-yellow="-1" yellow-to-green="0"/>
+		</integer-configuration-group>
+		<integer-configuration-group name="MEMORY.UsedMemory" unit="MB">
+			<description ID="MEMORY.MemServ.UsedMem">Currently used memory</description>
+			<data-collection react-on-failure="IGNORE">
+				<polled-by-monitor period="5" unit="MINUTE"/>
+			</data-collection>
+			<thresholds green-to-yellow="0" yellow-to-red="-1" red-to-yellow="-1" yellow-to-green="0"/>
+		</integer-configuration-group>
+		<integer-configuration-group name="MEMORY.AllocatedMemoryRate" unit="%">
+			<description ID="MEMORY.MemServ.AlMemRate">Ratio of the allocated memory to the available memory</description>
+			<data-collection react-on-failure="IGNORE">
+				<polled-by-monitor period="5" unit="MINUTE"/>
+			</data-collection>
+			<thresholds green-to-yellow="0" yellow-to-red="-1" red-to-yellow="-1" yellow-to-green="0"/>
+		</integer-configuration-group>
+		<integer-configuration-group name="MEMORY.UsedMemoryRate" unit="%">
+			<description ID="MEMORY.MemServ.UsedMemRate">Ratio of the used memory to the available memory</description>
+			<data-collection react-on-failure="IGNORE">
+				<polled-by-monitor period="5" unit="MINUTE"/>
+			</data-collection>
+			<thresholds green-to-yellow="0" yellow-to-red="-1" red-to-yellow="-1" yellow-to-green="0"/>
+		</integer-configuration-group>
+	</monitor-semantics>
+	<monitor-tree>
+		<services>
+			<object name="Memory Info" configuration-group="MEMORY.MemoryService">
+				<integer-monitor name="Usage Rate" configuration-group="MEMORY.UsageRate">
+					<monitored-resource name="memory" type="SERVICE"/>
+					<integer-attribute-mapping>
+						<integer-attribute>
+							<observed-resource-attribute name="UsageRate"/>
+						</integer-attribute>
+					</integer-attribute-mapping>
+				</integer-monitor>
+				<integer-monitor name="Allocated Memory" configuration-group="MEMORY.AllocatedMemory">
+					<monitored-resource name="memory" type="SERVICE"/>
+					<integer-attribute-mapping>
+						<integer-attribute>
+							<observed-resource-attribute name="AllocatedMemory"/>
+						</integer-attribute>
+					</integer-attribute-mapping>
+				</integer-monitor>
+				<integer-monitor name="Available Memory" configuration-group="MEMORY.AvailableMemory">
+					<monitored-resource name="memory" type="SERVICE"/>
+					<integer-attribute-mapping>
+						<integer-attribute>
+							<observed-resource-attribute name="AvailableMemory"/>
+						</integer-attribute>
+					</integer-attribute-mapping>
+				</integer-monitor>
+				<integer-monitor name="Used Memory" configuration-group="MEMORY.UsedMemory">
+					<monitored-resource name="memory" type="SERVICE"/>
+					<integer-attribute-mapping>
+						<integer-attribute>
+							<observed-resource-attribute name="UsedMemory"/>
+						</integer-attribute>
+					</integer-attribute-mapping>
+				</integer-monitor>
+				<integer-monitor name="Allocated Memory Rate" configuration-group="MEMORY.AllocatedMemoryRate">
+					<monitored-resource name="memory" type="SERVICE"/>
+					<integer-attribute-mapping>
+						<integer-attribute>
+							<observed-resource-attribute name="AllocatedMemoryRate"/>
+						</integer-attribute>
+					</integer-attribute-mapping>
+				</integer-monitor>
+				<integer-monitor name="Used Memory Rate" configuration-group="MEMORY.UsedMemoryRate">
+					<monitored-resource name="memory" type="SERVICE"/>
+					<integer-attribute-mapping>
+						<integer-attribute>
+							<observed-resource-attribute name="UsedMemoryRate"/>
+						</integer-attribute>
+					</integer-attribute-mapping>
+				</integer-monitor>
+			</object>
+		</services>
+	</monitor-tree>
+</monitor-configuration>
+
+

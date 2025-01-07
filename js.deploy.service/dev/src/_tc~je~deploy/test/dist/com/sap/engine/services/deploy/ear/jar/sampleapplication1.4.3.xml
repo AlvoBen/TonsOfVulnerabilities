@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<app14:application xmlns:app14="http://java.sun.com/xml/ns/j2ee" xmlns:app14Fake="http://java.sun.com/xml/ns/j2ee"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd"
+                    version="1.4">
+    <app14:description>EAR description sdfkjah pfdjhas;kdfj</app14:description>
+    <app14:display-name>testApplicationAKAJSHDKAJH</app14:display-name>        
+    <app14Fake:module>
+        <app14Fake:web>
+            <app14Fake:web-uri>web/webModule1.war/sdfsdf</app14Fake:web-uri>
+            <app14Fake:context-root>webModule1ContextRootLKHGLKHsdlfkgsldkf</app14Fake:context-root>
+        </app14Fake:web>
+    </app14Fake:module>    
+</app14:application>

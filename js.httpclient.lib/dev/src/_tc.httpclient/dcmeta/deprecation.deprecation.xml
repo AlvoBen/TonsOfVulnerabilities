@@ -1,0 +1,16 @@
+﻿<reason>DC tc.httpclient is obsolete and should no longer be used. It will be removed in future releases.</reason>
+<since>2007-12-01</since>
+<alternatives>
+   <alternative>
+      <dependency>
+         <dc-ref>
+            <name>tc/bl/httpclient/lib</name>
+            <vendor>sap.com</vendor>
+         </dc-ref>
+         <at-build-time/>
+         <at-deploy-time/>
+         <at-runtime/>
+      </dependency>
+      <description>This DC completely replaces the old DC tc.httpclient.</description>
+   </alternative>
+</alternatives>

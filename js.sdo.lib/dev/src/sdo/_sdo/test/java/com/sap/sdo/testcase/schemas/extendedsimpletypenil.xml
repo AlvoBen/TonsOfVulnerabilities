@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<container xmlns="ext.xsd" xmlns:sdo="commonj.sdo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<extended meta1="meta" meta2="1" xsi:nil="true" />
+	<restricted meta1="metameta" xsi:nil="true" />
+</container>

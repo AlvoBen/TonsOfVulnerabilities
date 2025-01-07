@@ -1,0 +1,245 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE cache-configuration SYSTEM "cache-configuration.dtd">
+<cache-configuration>
+  <global-configuration total_size="round(${AMOUNT_MEMORY}*1024*1024/3)"/>
+  <regions>
+    
+    <!-- JNDI -->
+    <region-configuration name="JNDI_Local">
+      <description>JNDI Local Cache</description>
+      <principal>com.sap.engine.services.jndi</principal>
+      <weight>100.0</weight>
+      <thresholds>
+        <count start="7500" upper="9500" critical="10000"/>
+        <size start="750000" upper="950000" critical="1000000"/>
+      </thresholds>
+      <scopes region="LOCAL" invalidation="NONE"/>
+      <flags direct-invalidation="FALSE" synchronous="FALSE" logging-mode="FALSE"/>
+      <plugins>
+        <storage-configuration type="STORAGE_HASH_MAP"/>
+        <eviction-configuration type="EVICTION_LOCAL_LRU"/>
+      </plugins>
+      <additional-properties>
+        <property key="_ALT_DELIMITER" value="~"/>
+      </additional-properties>
+    </region-configuration>
+
+    <!-- UME -->
+    <region-configuration name="UME_general">
+      <description>UME Inheritable Configuration</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <thresholds>
+        <count start="5000" upper="5500" critical="6000"/>
+        <size start="3276800" upper="3891200" critical="4096000"/>
+      </thresholds>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+      <flags direct-invalidation="FALSE" synchronous="FALSE" logging-mode="FALSE" inheritable="TRUE"/>
+      <plugins>
+        <storage-configuration type="STORAGE_HASH_MAP"/>
+        <eviction-configuration type="EVICTION_LOCAL_LRU"/>
+      </plugins>
+      <additional-properties>
+        <property key="_OWNER" value="UME"/>
+      </additional-properties>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.UmePolicy_mExcludedCache">
+      <description>UmePolicy Excluded Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.UmePolicy_mJ2EEPermCache">
+      <description>UmePolicy J2EE Permissions Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.UmePolicy_mUMEPermCache">
+      <description>UmePolicy UME Permissions Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.UmePolicy_mUncheckedCache">
+      <description>UmePolicy Unchecked Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.imp.GroupFactory_mCache">
+      <description>Group Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.imp.GroupFactory_mUNCache">
+      <description>Group Mapping Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.imp.PrincipalFactory_mCache">
+      <description>Principal Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.imp.PrincipalFactory_mMetaDataCache">
+      <description>Principal Metadata Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.imp.RoleFactory_mUNCache">
+      <description>Role Mapping Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.imp.RoleFactory_mm_roleCache">
+      <description>Role Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.imp.UserAccountFactory_mCache">
+      <description>User Account Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.imp.UserAccountFactory_mMappingCaches(ALL_DATASOURCES_)">
+      <description>User Account Mapping Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.imp.UserFactory_mCache">
+      <description>User Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.imp.UserFactory_mUNCache">
+      <description>User Mapping Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.role.imp.ActionFactory_mCache">
+      <description>Action Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.role.imp.PermissionFactory_mCache">
+      <description>Permission Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.acl.imp.wcm.jdbc.JDBCAclManager_default_m_aclCache">
+      <description>ACL Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.acl.imp.wcm.jdbc.JDBCAclManager_default_m_permissionCache">
+      <description>ACLPermission Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.role.imp.xml.XMLServiceRepository">
+      <description>XML Service Repository Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.srvUser.imp.ServiceUserFactory_mServiceUserIds">
+      <description>Service User Mapping Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_JmxServer">
+      <description>JMX Server Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <region-configuration name="UME_Cache_com.sap.security.core.role.jacc.LinkedContexts">
+      <description>Linked Contexts Cache</description>
+      <principal>com.sap.security.core.util.cache</principal>
+      <weight>100.0</weight>
+      <parent>UME_general</parent>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+    </region-configuration>
+
+    <!--  NetWeaver Scheduler -->
+    <region-configuration name="NetWeaverSchedulerCacheRegion">
+      <description>NetWeaver Scheduler Cache</description>
+        <principal>com.sap.engine.services.scheduler.runtime.db</principal>
+        <weight>100.0</weight>
+        <thresholds>
+          <count start="100" upper="150" critical="200"/>
+          <size start="75000" upper="95000" critical="100000"/>
+        </thresholds>
+      <scopes region="LOCAL" invalidation="CLUSTER"/>
+      <flags direct-invalidation="FALSE" synchronous="FALSE" 
+             logging-mode="FALSE" inheritable="FALSE"/>
+      <plugins>
+        <storage-configuration type="STORAGE_HASH_MAP"/>
+        <eviction-configuration type="EVICTION_LOCAL_LRU"/>
+      </plugins>
+      <additional-properties>
+        <property key="_OWNER" value="SCHEDULER"/>
+      </additional-properties>
+    </region-configuration>
+
+  </regions>
+</cache-configuration>

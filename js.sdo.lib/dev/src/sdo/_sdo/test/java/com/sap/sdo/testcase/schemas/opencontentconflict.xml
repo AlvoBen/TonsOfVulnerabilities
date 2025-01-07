@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ns1:root xmlns:ns1="http://tns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://tns OpenContentConflict.xsd">
+  <ns1:foo>defined</ns1:foo>
+  <ns1:foo>open</ns1:foo>
+</ns1:root>

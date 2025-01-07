@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<purchaseOrder datens:orderDate="1999-10-20"
+  xmlns:datens="com.sap.sdo.test.date"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<shipTo country="US">
+		<name>Alice Smith</name>
+		<street>123 Maple Street</street>
+		<city>Mill Valley</city>
+		<state>PA</state>
+		<zipns:zip xmlns:zipns="com.sap.sdo.test.zip">90952</zipns:zip>
+	</shipTo>
+	<billTo country="US">
+		<name>Robert Smith</name>
+		<street>8 Oak Avenue</street>
+		<city>Mill Valley</city>
+		<zip xsi:type="xsd:positiveInteger">95819</zip>
+	</billTo>
+	<comment xml:lang="EN">Hurry, my lawn is going wild!</comment>
+	<items>
+		<item partNum="872-AA" cons:country="US" xmlns:cons="com.sap.sdo.test.country">
+			<productName>Lawnmower</productName>
+			<quantity>1</quantity>
+			<USPrice>148.95</USPrice>
+			<comment>Confirm this is electric</comment>
+		</item>
+		<item partNum="926-AA">
+			<productName>Baby Monitor</productName>
+			<USPrice>39.98</USPrice>
+			<shipDate>1999-05-21</shipDate>
+		</item>
+	</items>
+</purchaseOrder>

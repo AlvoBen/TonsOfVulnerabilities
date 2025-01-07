@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ws:wsstuff xmlns:v1="com.sap.test.euau" xmlns:ws="com.sap.test.ws">
+<v1:aElement a1="value1" a2="value2">
+  <v1:aElement a1="childA1"/>
+  <a a2="childA2"/>
+  <b>
+    <a a1="childBA1" a2="childBA2"/>
+    <v1:aElement a1="childBAElement1" a2="childBAElement2"/>
+  </b>
+</v1:aElement>
+</ws:wsstuff>

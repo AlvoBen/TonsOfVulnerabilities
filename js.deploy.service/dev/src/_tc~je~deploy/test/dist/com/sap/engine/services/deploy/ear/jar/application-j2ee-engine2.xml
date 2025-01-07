@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE application-j2ee-engine SYSTEM "application-j2ee-engine.dtd">
+<application-j2ee-engine>
+  <reference reference-type="hard">
+    <reference-target target-type="application" provider-name="sap.com">restartHardReferancesAfterUpdateRefToAppName</reference-target>
+  </reference>
+  <reference reference-type="weak">
+    <reference-target target-type="library" provider-name="ma.ga">testingLibrary</reference-target>
+  </reference>
+  <reference reference-type="hard">
+    <reference-target target-type="library">testingLibrary</reference-target>
+  </reference>
+
+  <classpath>/classes/myClass.jar;myLibDir/test;myLIbDir/classes.jar</classpath>
+  <provider-name>foo.bar</provider-name>
+  <modules-additional>
+    <module>
+      <entry-name>fooBar/SonicDestination.fobar</entry-name>
+      <container-type>FooBarContainer</container-type>
+    </module>
+    <module>
+      <entry-name>jms/SonicDestination.xml</entry-name>
+      <container-type>JMSConnector</container-type>
+    </module>
+    <module>
+      <entry-name>portal/portalApp.par</entry-name>
+      <container-type>Portals</container-type>
+    </module>
+  </modules-additional>
+
+  <fail-over-enable mode="disable"/>
+  <start-up mode="always"/>
+</application-j2ee-engine>

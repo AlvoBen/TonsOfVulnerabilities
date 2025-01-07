@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE monitor-configuration SYSTEM "monitor-configuration.dtd">
+<monitor-configuration>
+	<monitor-semantics>
+		<simple-configuration-group name="SECURITY.SecurityService">
+			<description ID="SEC.SecSrv"/>
+		</simple-configuration-group>
+		<simple-configuration-group name="SECURITY.AggregatedData">
+			<description ID="SEC.SecSrv.AggregatedData"/>
+		</simple-configuration-group>
+		<simple-configuration-group name="SECURITY.DataPerApplication">
+			<description ID="SEC.SecSrv.DataPerApplication"/>
+		</simple-configuration-group>
+		<simple-configuration-group name="SECURITY.ApplicationInstance">
+			<description ID="SEC.SecSrv.ApplicationInstance"/>
+		</simple-configuration-group>
+		<long-configuration-group name="SECURITY.UnsuccessfullLogonAttemptsCount">
+			<description ID="SEC.SecSrv.UnsuccLogonAttCount">Number of all unsuccessful logon attepmpts since server startup</description>
+			<data-collection react-on-failure="IGNORE">
+				<polled-by-monitor period="5" unit="MINUTE"/>
+			</data-collection>
+			<thresholds green-to-yellow="2147483646" yellow-to-red="2147483647" red-to-yellow="2147483647" yellow-to-green="2147483646"/>
+		</long-configuration-group>
+	</monitor-semantics>
+	<monitor-tree>
+		<services>
+			<summary name="Security" configuration-group="SECURITY.SecurityService">
+				<object name="Aggregated Data" configuration-group="SECURITY.AggregatedData">
+
+					<long-monitor name="UnsuccessfulLogonAttemptsCount" configuration-group="SECURITY.UnsuccessfullLogonAttemptsCount">
+						<monitored-resource name="security" type="SERVICE"/>
+						<long-attribute-mapping>
+							<long-attribute>
+								<observed-resource-attribute name="UnsuccessfullLogonAttemptsCount"/>
+							</long-attribute>
+						</long-attribute-mapping>
+					</long-monitor>
+					
+				</object>
+				
+				<summary name="Data Per Application" configuration-group="SECURITY.DataPerApplication">
+				    <object name="%0" configuration-group="SECURITY.ApplicationInstance">
+
+					<template-info template-name="SECURITY.InstanceName">
+						<polled-by-template period="5" unit="MINUTE">
+							<generating-resource name="security" type="SERVICE"/>
+							<template-attribute-mapping>
+								 <observed-resource-attribute name="AuthenticationStacks"/>
+							</template-attribute-mapping>  
+						</polled-by-template>
+					</template-info>
+
+					<long-monitor name="UnsuccessfulLogonAttemptsCount" configuration-group="SECURITY.UnsuccessfullLogonAttemptsCount">
+						<monitored-resource name="security" type="SERVICE"/>
+						<long-attribute-mapping>
+							<long-attribute>
+								<invoked-resource-method name="getUnsuccessfullLogonAttemptsCount">
+								<parameter position="0" type="String" value="%0"></parameter>
+								</invoked-resource-method>
+							</long-attribute>
+						</long-attribute-mapping>
+					</long-monitor>
+				    </object>
+				</summary>
+			</summary>
+		</services>
+	</monitor-tree>
+</monitor-configuration>

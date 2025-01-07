@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<sdo:datagraph xmlns:sdo="commonj.sdo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:data="com.sap.sdo.testcase.typefac">
+  <xsd>
+<xsd:schema targetNamespace="com.sap.sdo.testcase.typefac" xmlns:sdox="commonj.sdo/xml" xmlns:sdoj="commonj.sdo/java" sdoj:package="com.sap.sdo.testcase.typefac">
+<xsd:complexType name="SequencedInheritedIntf" sdox:sequence="true">
+  <xsd:complexContent>
+    <xsd:extension base="data:SequencedParentIntf">
+      <xsd:choice maxOccurs="unbounded">
+        <xsd:element name="moreInfo" type="xsd:string" nillable="true" sdox:many="false"></xsd:element>
+        <xsd:any namespace="##other" processContents="lax" minOccurs="0"></xsd:any>
+        <xsd:any namespace="##targetNamespace" processContents="lax" minOccurs="0"></xsd:any>
+      </xsd:choice>
+      <xsd:attribute name="extraAttribute" type="xsd:string"></xsd:attribute>
+      <xsd:anyAttribute namespace="##any" processContents="lax"></xsd:anyAttribute>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:complexType name="SequencedParentIntf" sdox:sequence="true">
+    <xsd:choice maxOccurs="unbounded">
+        <xsd:element name="contained" type="data:SequencedParentIntf" nillable="true"/>
+        <xsd:element name="name" type="xsd:string" sdox:many="false" nillable="true"/>
+        <xsd:element name="referenced" type="xsd:anyURI" sdox:propertyType="data:SequencedParentIntf" nillable="true"/>
+        <xsd:any namespace="##other" processContents="lax" minOccurs="0"/>
+        <xsd:any namespace="##targetNamespace" processContents="lax" minOccurs="0"/>
+    </xsd:choice>
+    <xsd:attribute name="attribute" type="xsd:string"/>
+    <xsd:anyAttribute namespace="##any" processContents="lax"/>
+</xsd:complexType>
+</xsd:schema>
+  </xsd>
+  <changeSummary>
+    <data:contained sdo:ref="#/sdo:dataObject/contained.0" attribute="Attribute" extraAttribute="Extra">
+      <name>Child</name>
+      <moreInfo>extends SequencedParentIntf</moreInfo>
+    </data:contained>
+  </changeSummary>
+  <sdo:dataObject xsi:type="data:SequencedParentIntf">
+    <name>Parent</name>
+    <referenced>#/sdo:dataObject/contained.0</referenced>
+    <contained xsi:type="data:SequencedInheritedIntf" attribute="Attribute2" extraAttribute="Extra2">
+      <name>Child2</name>
+      <moreInfo>extends SequencedParentIntf</moreInfo>
+    </contained>
+  </sdo:dataObject>
+</sdo:datagraph>

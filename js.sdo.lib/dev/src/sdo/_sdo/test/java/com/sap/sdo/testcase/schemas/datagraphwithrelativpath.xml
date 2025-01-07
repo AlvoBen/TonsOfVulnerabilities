@@ -1,0 +1,48 @@
+﻿<sdo:datagraph xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:company="companydatagraphwithoutid.xsd"
+xmlns:sdoXml="commonj.sdo/xml"
+xmlns:sdo="commonj.sdo">
+<xsd>
+<xsd:schema targetNamespace="companydatagraphwithoutid.xsd">
+<xsd:element name="company" type="company:CompanyType"/>
+<xsd:complexType name="CompanyType">
+	<xsd:sequence>
+		<xsd:element name="departments" type="company:DepartmentType"
+			minOccurs="0" maxOccurs="unbounded"/>
+	</xsd:sequence>
+	<xsd:attribute name="name" type="xsd:string"/>
+	<xsd:attribute name="employeeOfTheMonth" type="xsd:IDREF" sdoXml:propertyType="company:EmployeeType"/>
+</xsd:complexType>
+<xsd:complexType name="DepartmentType">
+	<xsd:sequence>
+	<xsd:element name="employees" type="company:EmployeeType"
+		minOccurs="0" maxOccurs="unbounded"/>
+	</xsd:sequence>
+	<xsd:attribute name="name" type="xsd:string"/>
+	<xsd:attribute name="location" type="xsd:string"/>
+	<xsd:attribute name="number" type="xsd:int"/>
+</xsd:complexType>
+<xsd:complexType name="EmployeeType">
+	<xsd:attribute name="name" type="xsd:string"/>
+	<xsd:attribute name="SN" type="xsd:string"/>
+	<xsd:attribute name="manager" type="xsd:boolean"/>
+</xsd:complexType>
+</xsd:schema>
+</xsd>
+<changeSummary create="#/company:company/departments.0/employees.2" delete="#departments.0/employees.1">
+	<company sdo:ref="#/company:company" name="ACME" employeeOfTheMonth="#../departments.0/employees.1" xsi:type="company:CompanyType"/>
+	<departments sdo:ref="#/company:company/departments.0" xsi:type="company:DepartmentType">
+		<employees sdo:ref="#/company:company/departments.0/employees.0"/>
+		<employees name="Mary Smith" SN="E0002" manager="true"/>
+		<employees sdo:ref="#/company:company/departments.0/employees.1"/>
+	</departments>
+</changeSummary>
+<company:company name="MegaCorp" employeeOfTheMonth="#departments.0/employees.2">
+	<departments name="Advanced Technologies" location="NY" number="123">
+		<employees name="John Jones" SN="E0001"/>
+		<employees name="Jane Doe" SN="E0003"/>
+		<employees name="Al Smith" SN="E0004" manager="true"/>
+	</departments>
+</company:company>
+</sdo:datagraph>

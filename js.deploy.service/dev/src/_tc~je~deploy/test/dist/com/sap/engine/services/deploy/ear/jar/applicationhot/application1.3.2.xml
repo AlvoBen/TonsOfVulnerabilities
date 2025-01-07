@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE application [
+<!ELEMENT application (icon?, display-name, description?, module+, security-role*)>
+<!ATTLIST application id ID #IMPLIED>
+<!ELEMENT icon (small-icon?, large-icon?)>
+<!ATTLIST icon id ID #IMPLIED>
+<!ELEMENT small-icon (#PCDATA)>
+<!ATTLIST small-icon id ID #IMPLIED>
+<!ELEMENT large-icon (#PCDATA)>
+<!ATTLIST large-icon id ID #IMPLIED>
+<!ELEMENT display-name (#PCDATA)>
+<!ATTLIST display-name id ID #IMPLIED>
+<!ELEMENT description (#PCDATA)>
+<!ATTLIST description id ID #IMPLIED>
+<!ELEMENT module ((ejb | java | web), alt-dd?)>
+<!ATTLIST module id ID #IMPLIED>
+<!ELEMENT ejb (#PCDATA)>
+<!ATTLIST ejb id ID #IMPLIED>
+<!ELEMENT java (#PCDATA)>
+<!ATTLIST java id ID #IMPLIED>
+<!ELEMENT web (web-uri, context-root)>
+<!ATTLIST web id ID #IMPLIED>
+<!ELEMENT web-uri (#PCDATA)>
+<!ATTLIST web-uri id ID #IMPLIED>
+<!ELEMENT context-root (#PCDATA)>
+<!ATTLIST context-root id ID #IMPLIED>
+<!ELEMENT alt-dd (#PCDATA)>
+<!ATTLIST alt-dd id ID #IMPLIED>
+<!ELEMENT security-role (description?, role-name)>
+<!ATTLIST security-role id ID #IMPLIED>
+<!ELEMENT role-name (#PCDATA)>
+<!ATTLIST role-name id ID #IMPLIED>
+]>
+
+  <application>
+    <display-name>
+      benchtest
+    </display-name>
+    <module>
+      <web>
+        <web-uri>
+          multi.war
+        </web-uri>
+        <context-root>
+          benchtest
+        </context-root>
+      </web>
+    </module>
+    <module>
+      <ejb>
+        IncrementorSession.jar
+      </ejb>
+    </module>
+    <module>
+      <ejb>
+        multiplierSession.jar
+      </ejb>
+    </module>
+    <module>
+      <ejb>
+        beanexample.jar
+      </ejb>
+    </module>
+  </application>

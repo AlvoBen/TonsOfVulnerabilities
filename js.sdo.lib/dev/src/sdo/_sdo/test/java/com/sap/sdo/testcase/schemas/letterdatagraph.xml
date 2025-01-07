@@ -1,0 +1,29 @@
+﻿<sdo:datagraph xmlns:sdo="commonj.sdo"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:letter="letter.xsd">
+<xsd>
+<xsd:schema targetNamespace="letter.xsd" xmlns:sdox="commonj.sdo/xml">
+<xsd:element name="letters" type="letter:FormLetter"/>
+<xsd:complexType name="FormLetter" mixed="true" sdox:sequence="true">
+<xsd:choice maxOccurs="unbounded">
+<xsd:element name="date" type="xsd:string"/>
+<xsd:element name="firstName" type="xsd:string"/>
+<xsd:element name="lastName" type="xsd:string"/>
+<xsd:any namespace="##other" processContents="lax" minOccurs="0"/>
+<xsd:any namespace="##targetNamespace" processContents="lax" minOccurs="0"/>
+</xsd:choice>
+<xsd:anyAttribute namespace="##any" processContents="lax"/>
+</xsd:complexType>
+</xsd:schema>
+</xsd>
+<letter:letters>
+<date>August 1, 2003</date>
+Mutual of Omaha
+Wild Kingdom, USA
+Dear
+<firstName>Casy</firstName>
+<lastName>Crocodile</lastName>
+Please buy more shark repellent.
+Your premium is past due.
+</letter:letters>
+</sdo:datagraph>

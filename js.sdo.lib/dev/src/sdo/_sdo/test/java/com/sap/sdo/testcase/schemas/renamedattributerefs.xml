@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<rar:container
+	xmlns:rar="com.sap.test.rar"
+	xmlns:sdoXML="commonj.sdo/xml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="com.sap.test.rar renamedAttributeRefs.xsd"
+	rar:xml1="String1"
+	rar:xml2="String2"
+	rar:xml3="String3"/>

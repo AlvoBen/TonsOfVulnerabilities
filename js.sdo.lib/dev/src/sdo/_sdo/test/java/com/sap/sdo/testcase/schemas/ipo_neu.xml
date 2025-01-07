@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--XML-Beispieldatei von XMLSpy generiert v2006 sp2 U (http://www.altova.com)-->
+<tns1:purchaseOrder xmlns:tns1="http://www.example.com/IPO1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.com/IPO1 ipo_neu.xsd">
+	<tns1:comment>String</tns1:comment>
+	<items>
+		<item partNum="000-AA" weightKg="3.1415926535897932384626433832795" shipBy="air">
+			<productName>String</productName>
+			<quantity>2</quantity>
+			<USPrice>3.14</USPrice>
+			<tns1:comment>String</tns1:comment>
+		</item>
+	</items>
+	<NewDate>1967-08-13</NewDate>
+</tns1:purchaseOrder>

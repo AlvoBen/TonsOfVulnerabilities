@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE Algorithms [
+  <!ELEMENT Algorithms (Algorithm)+>
+  <!-- Provider attribute defines the default cryptographic provider to be used -->
+  <!ATTLIST Algorithms
+    Provider CDATA #REQUIRED
+    MaxPoolSize CDATA #REQUIRED>
+  <!ELEMENT Algorithm EMPTY>
+
+  <!-- Uri stands for  the uri which specifies this algorithm in the XML Encryption/Signature specification and Class is the name of the class which implements it-->
+  <!ATTLIST Algorithm
+    Uri  CDATA #REQUIRED
+    Class CDATA  #REQUIRED>
+  ]>
+<Algorithms Provider='IAIK' MaxPoolSize='5'>
+  <Algorithm Uri='http://www.w3.org/2001/04/xmlenc#aes128-cbc' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableAESCipher'/>
+  <Algorithm Uri='http://www.w3.org/2001/04/xmlenc#aes192-cbc' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableAESCipher'/>
+  <Algorithm Uri='http://www.w3.org/2001/04/xmlenc#aes256-cbc' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableAESCipher'/>
+  <Algorithm Uri='http://www.w3.org/2001/04/xmlenc#aes128-cbc_gen' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableAESSecretKeyFactory'/>
+  <Algorithm Uri='http://www.w3.org/2001/04/xmlenc#aes192-cbc_gen' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableAESSecretKeyFactory'/>
+  <Algorithm Uri='http://www.w3.org/2001/04/xmlenc#aes256-cbc_gen' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableAESSecretKeyFactory'/>
+  <Algorithm Uri='http://www.w3.org/2001/04/xmlenc#tripledes-cbc' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableDESedeCipher'/>
+  <Algorithm Uri='http://www.w3.org/2001/04/xmlenc#tripledes-cbc_gen' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableDESedeSecretKeyFactory'/>
+  <Algorithm Uri='http://www.w3.org/2000/09/xmldsig#dsa-sha1' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableDSASignature'/>
+  <Algorithm Uri='http://www.w3.org/2000/09/xmldsig#hmac-sha1' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableHMACSignature'/>
+  <Algorithm Uri='http://www.w3.org/2000/09/xmldsig#rsa-sha1' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableRSASignature'/>
+  <Algorithm Uri='http://www.acme.com/secran#sha1-prng' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableSecureRandom'/>
+  <Algorithm Uri='http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableRSAOAEPCipher'/>
+  <Algorithm Uri='http://www.w3.org/2001/04/xmlenc#rsa-1_5' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableRSA15Cipher'/>
+  <Algorithm Uri='http://www.w3.org/2001/04/xmldsig-more#md5' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableMD5Digest'/>
+  <Algorithm Uri='http://www.w3.org/2000/09/xmldsig#sha1' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableSHA1Digest'/>
+  <Algorithm Uri='http://www.w3.org/2001/04/xmlenc#sha256' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableSHA256Digest'/>
+  <Algorithm Uri='http://www.w3.org/2001/04/xmlenc#sha512' Class='com.sap.engine.lib.xml.signature.crypto.impl.ReusableSHA512Digest'/>
+</Algorithms>

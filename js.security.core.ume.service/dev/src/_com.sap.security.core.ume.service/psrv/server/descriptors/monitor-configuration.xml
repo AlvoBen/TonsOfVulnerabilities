@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE monitor-configuration SYSTEM "monitor-configuration.dtd">
+<monitor-configuration>
+<monitor-semantics>
+    <simple-configuration-group name="SERVICE.SEC.UME">    
+        <description ID="SERVICE.SEC.UME">Security UME Service</description>
+    </simple-configuration-group>
+    <simple-configuration-group name="SERVICE.SEC.UME.REPORTER">    
+        <description ID="SERVICE.SEC.UME.REPORTER">Security UME Configuration Reporter</description>
+    </simple-configuration-group>
+    <config-configuration-group name="SERVICE.SEC.UME.MONITOR"> 
+        <description ID="SERVICE.SEC.UME.MONITOR">Security UME Configuration Monitor</description>   
+            <data-collection>
+                 <polled-by-monitor period="1" unit="DAY"/>
+            </data-collection>
+    </config-configuration-group>
+    <simple-configuration-group name="SERVICE.SEC.UME.PERSISTENCE">    
+        <description ID="SERVICE.SEC.UME.PERSISTENCE">Security UME Service LDAP Persistence</description>
+    </simple-configuration-group>
+    <simple-configuration-group name="SERVICE.SEC.UME.PERS">    
+        <description ID="SERVICE.SEC.UME.PERS">Security UME Service Persistences</description>
+    </simple-configuration-group>
+
+<long-configuration-group name="SERVICE.SEC.UME.LDAPComErrors" unit="">
+		<description ID="SERVICE.SEC.UME.LDAPComErrors">The number of communication errors occurred since last start-up in relation to ldap requests. </description>
+		<data-collection react-on-failure="IGNORE" >
+			<polled-by-monitor period="30" unit="MINUTE"/>
+		</data-collection>		
+		<thresholds green-to-yellow="-2" yellow-to-red="-3" red-to-yellow="-3" yellow-to-green="-1" /> 
+</long-configuration-group>
+
+<integer-configuration-group name="SERVICE.SEC.UME.PoolExhCount" unit="">
+		<description ID="SERVICE.SEC.UME.PoolExhCount">The number how often the defined limits of the LDAP pool are reached.</description>
+		<data-collection react-on-failure="IGNORE" >
+			<polled-by-monitor period="1" unit="HOUR"/>
+		</data-collection>		
+		<thresholds green-to-yellow="-2" yellow-to-red="-3" red-to-yellow="-3" yellow-to-green="-1" /> 
+</integer-configuration-group>
+
+<long-configuration-group name="SERVICE.SEC.UME.FallbackConnections" unit="">
+		<description ID="SERVICE.SEC.UME.FallbackConnections">Number of fallbacks to backup LDAP server (for LDAP High Availability). </description>
+		<data-collection react-on-failure="IGNORE" >
+			<polled-by-monitor period="1" unit="MINUTE"/>
+		</data-collection>		
+		<thresholds green-to-yellow="-2" yellow-to-red="-3" red-to-yellow="-3" yellow-to-green="-1" /> 
+</long-configuration-group>	
+<long-configuration-group name="SERVICE.SEC.UME.MainConnections" unit="">
+		<description ID="SERVICE.SEC.UME.MainConnections">Number of connections to the main server.</description>
+		<data-collection react-on-failure="IGNORE" >
+			<polled-by-monitor period="1" unit="MINUTE"/>
+		</data-collection>		
+		<thresholds green-to-yellow="-2" yellow-to-red="-3" red-to-yellow="-3" yellow-to-green="-1" /> 
+</long-configuration-group>
+<long-configuration-group name="SERVICE.SEC.UME.MainConUsg" unit="%">
+		<description ID="SERVICE.SEC.UME.SrvFallUsg">Number of connection to main LDAP server (for LDAP High Availability) in comparison to the connectivity to the failover server </description>
+		<data-collection react-on-failure="IGNORE" >
+			<polled-by-monitor period="30" unit="MINUTE"/>
+		</data-collection>		
+		<thresholds green-to-yellow="-2" yellow-to-red="-3" red-to-yellow="-3" yellow-to-green="-1" /> 
+</long-configuration-group>
+<long-configuration-group name="SERVICE.SEC.UME.MainSrvReqs" unit="">
+		<description ID="SERVICE.SEC.UME.MainSrvReqs">Requests count to main LDAP server.</description>
+		<data-collection react-on-failure="IGNORE" >
+			<polled-by-monitor period="1" unit="MINUTE"/>
+		</data-collection>		
+		<thresholds green-to-yellow="-2" yellow-to-red="-3" red-to-yellow="-3" yellow-to-green="-1" /> 
+</long-configuration-group>	
+<long-configuration-group name="SERVICE.SEC.UME.Reqs" unit="">
+		<description ID="SERVICE.SEC.UME.Reqs">All requests count to LDAP servers .</description>
+		<data-collection react-on-failure="IGNORE" >
+			<polled-by-monitor period="1" unit="MINUTE"/>
+		</data-collection>		
+		<thresholds green-to-yellow="-2" yellow-to-red="-3" red-to-yellow="-3" yellow-to-green="-1" /> 
+</long-configuration-group>
+<long-configuration-group name="SERVICE.SEC.UME.MainSrvUsg" unit="%">
+		<description ID="SERVICE.SEC.UME.MainSrvUsg">The percentage of ldap request served by the main server in case of a UME High Availability configuration.</description>
+		<data-collection react-on-failure="IGNORE" >
+			<polled-by-monitor period="30" unit="MINUTE"/>
+		</data-collection>		
+		<thresholds green-to-yellow="-2" yellow-to-red="-3" red-to-yellow="-3" yellow-to-green="-1" /> 
+</long-configuration-group>
+	
+</monitor-semantics>
+
+<monitor-tree>
+  <services>
+    <summary name="Security UME" configuration-group="SERVICE.SEC.UME">
+      <object name="Security UME Config Reporter" configuration-group="SERVICE.SEC.UME.REPORTER"> 
+	        <configuration-monitor name="Security UME Configuration" configuration-group="SERVICE.SEC.UME.MONITOR"> 
+	            <monitored-resource name="com.sap.default:name=ConfigurationReporter,j2eeType=GenericConfigurationResourceMBean" type="MBEAN"/>
+	            <configuration-attribute-mapping>
+	              <configuration-attribute>
+	                        <observed-property-sheet>
+                                <service-properties service-name="com.sap.security.core.ume.service">                                 
+                                </service-properties>
+	                        </observed-property-sheet>
+	              </configuration-attribute>
+	            </configuration-attribute-mapping>
+	        </configuration-monitor>
+	</object>
+	<summary name="Security UME Persistence" configuration-group="SERVICE.SEC.UME.PERS">
+	<object name="Security UME LDAP Persistence" configuration-group="SERVICE.SEC.UME.PERSISTENCE">
+		<long-monitor name="LDAPCommunicationErrors" configuration-group="SERVICE.SEC.UME.LDAPComErrors">
+				<monitored-resource name="com.sap.security.core.ume.service" type="SERVICE"/>
+				<long-attribute-mapping>
+					<long-attribute>
+						<observed-resource-attribute name="LDAPCommunicationErrors"/>
+					</long-attribute>
+				</long-attribute-mapping>
+		</long-monitor>
+		<integer-monitor name="LDAPPoolExhaustionCount" configuration-group="SERVICE.SEC.UME.PoolExhCount">
+				<monitored-resource name="com.sap.security.core.ume.service" type="SERVICE"/>
+				<integer-attribute-mapping>
+					<integer-attribute>
+						<observed-resource-attribute name="LDAPPoolExhaustionCount"/>
+					</integer-attribute>
+				</integer-attribute-mapping>
+		</integer-monitor>
+		<long-monitor name="LDAPFallbackConnectionCount" configuration-group="SERVICE.SEC.UME.FallbackConnections">
+				<monitored-resource name="com.sap.security.core.ume.service" type="SERVICE"/>
+				<long-attribute-mapping>
+					<long-attribute>
+						<observed-resource-attribute name="LDAPFallbackConnectionCount"/>
+					</long-attribute>
+				</long-attribute-mapping>
+		</long-monitor>
+		<long-monitor name="LDAPMainConnectionCount" configuration-group="SERVICE.SEC.UME.MainConnections">
+				<monitored-resource name="com.sap.security.core.ume.service" type="SERVICE"/>
+				<long-attribute-mapping>
+					<long-attribute>
+						<observed-resource-attribute name="LDAPMainConnectionCount"/>
+					</long-attribute>
+				</long-attribute-mapping>
+		</long-monitor>
+		<long-monitor name="LDAPMainConnectionUsage" configuration-group="SERVICE.SEC.UME.MainConUsg">
+				<monitored-resource name="com.sap.security.core.ume.service" type="SERVICE"/>
+				<long-attribute-mapping>
+					<long-attribute>
+						<observed-resource-attribute name="LDAPMainConnectionUsage"/>
+					</long-attribute>
+				</long-attribute-mapping>
+		</long-monitor>
+		<long-monitor name="LDAPMainRequestCount" configuration-group="SERVICE.SEC.UME.MainSrvReqs">
+				<monitored-resource name="com.sap.security.core.ume.service" type="SERVICE"/>
+				<long-attribute-mapping>
+					<long-attribute>
+						<observed-resource-attribute name="LDAPMainRequestCount"/>
+					</long-attribute>
+				</long-attribute-mapping>
+		</long-monitor>
+		<long-monitor name="LDAPRequestCount" configuration-group="SERVICE.SEC.UME.Reqs">
+				<monitored-resource name="com.sap.security.core.ume.service" type="SERVICE"/>
+				<long-attribute-mapping>
+					<long-attribute>
+						<observed-resource-attribute name="LDAPRequestCount"/>
+					</long-attribute>
+				</long-attribute-mapping>
+		</long-monitor>
+
+		<long-monitor name="LDAPMainServerUsage" configuration-group="SERVICE.SEC.UME.MainSrvUsg">
+				<monitored-resource name="com.sap.security.core.ume.service" type="SERVICE"/>
+				<long-attribute-mapping>
+					<long-attribute>
+						<observed-resource-attribute name="LDAPMainServerUsage"/>
+					</long-attribute>
+				</long-attribute-mapping>
+		</long-monitor>
+      </object>
+      </summary>
+    </summary>      
+  </services>
+</monitor-tree>
+</monitor-configuration>
+
+
+

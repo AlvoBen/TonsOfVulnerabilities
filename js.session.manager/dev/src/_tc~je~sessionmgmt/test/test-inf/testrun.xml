@@ -1,0 +1,44 @@
+﻿<test>
+   <run type="junit">
+	  <jvmArg>-Xmx512m</jvmArg> 
+      <include>com.sap.engine.session.AllTest</include>
+      <exclude></exclude>
+	  <code-coverage>com.sap.engine.*</code-coverage> 
+   </run>
+   <run type="junit">
+	  <jvmArg>-Xmx512m</jvmArg> 
+      <include>com.sap.engine.core.session.configuration.TestConfigs_T_F_T</include>
+      <exclude></exclude>
+	  <code-coverage>com.sap.engine.*</code-coverage> 
+   </run>
+   <run type="junit">
+	  <jvmArg>-Xmx512m</jvmArg> 
+      <include>com.sap.engine.core.session.configuration.TestConfigs_T_F_F</include>
+      <exclude></exclude>
+	  <code-coverage>com.sap.engine.*</code-coverage> 
+   </run>
+   <run type="junit">
+	  <jvmArg>-Xmx512m</jvmArg> 
+      <include>com.sap.engine.core.session.configuration.TestConfigs_N_F_T</include>
+      <exclude></exclude>
+	  <code-coverage>com.sap.engine.*</code-coverage> 
+   </run>
+   <run type="junit">
+	  <jvmArg>-Xmx512m</jvmArg> 
+      <include>com.sap.engine.core.session.configuration.TestConfigs_N_F_F</include>
+      <exclude></exclude>
+	  <code-coverage>com.sap.engine.*</code-coverage> 
+   </run>
+   <run type="junit">
+	  <jvmArg>-Xmx512m</jvmArg> 
+      <include>com.sap.engine.core.session.configuration.TestConfigs_F_F_T</include>
+      <exclude></exclude>
+	  <code-coverage>com.sap.engine.*</code-coverage> 
+   </run>
+   <run type="junit">
+	  <jvmArg>-Xmx512m</jvmArg> 
+      <include>com.sap.engine.core.session.configuration.TestConfigs_F_F_F</include>
+      <exclude></exclude>
+	  <code-coverage>com.sap.engine.*</code-coverage> 
+   </run>
+</test>

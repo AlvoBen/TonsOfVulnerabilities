@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" ?>
+<!DOCTYPE provider-descriptor SYSTEM "library.provider.dtd">
+<provider-descriptor>
+    <display-name>The library provides the Portlet 2.0 API specification.</display-name>
+    <component-name>tc~je~portlet~plb</component-name>
+    <major-version>7</major-version>
+    <minor-version>12</minor-version>
+    <micro-version>0</micro-version>
+    <provider-name>engine.sap.com</provider-name>
+    <references>
+    	<reference type="library" strength="weak">servlet</reference>
+    </references>
+    <jars>
+        <jar-name>portlet.jar</jar-name>
+    </jars>
+</provider-descriptor>

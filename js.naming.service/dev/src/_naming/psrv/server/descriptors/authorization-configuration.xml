@@ -1,0 +1,17 @@
+﻿<BUSINESSSERVICE NAME="naming">
+  <DESCRIPTION LOCALE="en" VALUE="Naming Service"/>
+  <ACTION NAME="jndi_get_initial_context">
+    <DESCRIPTION LOCALE="en" VALUE="Allows allows to get initial context."/>
+    <PERMISSION CLASS="com.sap.engine.interfaces.security.ServiceAccessPermission" NAME="naming" VALUE="jndi_get_initial_context"/>
+  </ACTION>
+  <ACTION NAME="jndi_all_operations">
+    <DESCRIPTION LOCALE="en" VALUE="Allows all operations to the naming service."/>
+    <PERMISSION CLASS="com.sap.engine.interfaces.security.ServiceAccessPermission" NAME="naming" VALUE="jndi_all_operations"/>
+  </ACTION>
+  <ROLE NAME="Administrator">
+    <ASSIGNEDACTION NAME="jndi_all_operations"/>
+  </ROLE> 
+  <ROLE NAME="Everyone">
+    <ASSIGNEDACTION NAME="jndi_get_initial_context"/>
+  </ROLE>   
+</BUSINESSSERVICE>

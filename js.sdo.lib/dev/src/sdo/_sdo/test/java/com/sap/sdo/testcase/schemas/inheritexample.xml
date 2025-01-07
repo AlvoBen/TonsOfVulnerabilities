@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<company name="MegaCorp" employeeOfTheMonth="E0003" xmlns="inherit.xsd" xmlns:sdo="commonj.sdo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<departments name="Advanced Technologies" location="NY" number="123">
+		<employees name="John Jones" SN="E0001"/>
+		<employees name="Jane Doe" SN="E0003" salary="hdhd" xsi:type="SalariedEmployeeType"/>
+		<employees name="Al Smith" SN="E0004" manager="true"/>
+    </departments>
+</company>

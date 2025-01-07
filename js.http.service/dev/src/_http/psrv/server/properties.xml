@@ -1,0 +1,430 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE properties SYSTEM "properties.dtd">
+  <properties>
+    <!-- all http service properties -->		
+    
+    <!-- Log Properties -->
+		<property name="LogCLF"
+	     value="false"
+	     short_description="Enables or disables logging in Common Log Format (CLF)."
+	     description="The Common Log Format (CLF) tracks seven different elements of the Web transaction: remote host, client user name, authenticated user name, date, request line, status code and bytes sent. Each request is written to one line with elements separated by spaces and all missing elements replaced with hyphen or dash."
+	     type="BOOLEAN"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />	  
+	  <property name="LogResponseTime"
+	     value="false"
+	     short_description="Enable or disable logging of response time."
+	     description="Logs the time the server generated the response for to the HTTP access log file. This time is measured in milliseconds from the moment of parsing the request to the moment the processing thread ends."
+	     type="BOOLEAN"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />	  
+	  <property name="LogHeaderValue"
+	     value=""
+	     short_description="Enables or disables logging of the value of a given header."
+	     description="Specifies the name of an HTTP request header. If this header is present in the request, its value is logged to the HTTP access log."
+	     type="STRING"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+	  <property name="FileBufferSize"
+	     value="round((${AMOUNT_MEMORY}/${CPU_COUNT})*8)"
+	     parameterized="true"
+	     computed="true"
+	     short_description="Specifies the size of the file buffer used for downloading or uploading static files using HTTP."
+	     description="The correct size of the file buffer depends heavily on the size of files being transferred, as well as the HTTP traffic type. For example, in case of transferring large files via HTTP, performance can be optimized if you increase the size of the buffer so that fewer data chunks are transmitted.
+	     	The value of the property should be number dividable by 4Kbytes.
+	     	In general, the size of the file buffer should not exceed 16 Kbytes."
+	     type="LONG"
+	     range="[2048-2147483647]"
+	     visibility="EXPERT"
+	     onlinemodifiable="true"
+	  />
+	  <property name="Mime"
+	     value="{{.java,text/plain},{.wbmp,image/vnd.wap.wbmp},{.wmls,text/vnd.wap.wmlscript},{.uu,application/octet-stream},{.cc,text/plain},{.wmlc,application/vnd.wap.wmlc},{.wml,text/vnd.wap.wml},{.hdmlc,application/x-hdmlc},{.vcs,text/x-vCalendar},{.jar,application/zip},{.wbxml,application/vnd.wap.wbxml},{.hdml,text/x-hdml},{.wmlsc,application/vnd.wap.wmlscriptc},{.vcf,text/x-vCard},{.ttml,text/x-ttml},{.h,text/plain},{.c++,text/plain},{.cert,application/vnd.wap.wtls-ca-certificate},{.c,text/plain},{.text,text/plain},{.pl,text/plain},{,content/unknown},{.DLL,application/octet-stream},{.doc,application/msword},{.bin,application/octet-stream},{.dms,application/octet-stream},{.lha,application/octet-stream},{.lzh,application/octet-stream},{.exe,application/octet-stream},{.class,application/octet-stream},{.dll,application/octet-stream},{.oda,application/oda},{.pdf,application/pdf},{.ai,application/postscript},{.eps,application/postscript},{.ps,application/postscript},{.rtf,application/rtf},{.xls,application/vnd.ms-excel},{.ppt,application/vnd.ms-powerpoint},{.bcpio,application/x-bcpio},{.vcd,application/x-cdlink},{.pgn,application/x-chess-pgn},{.cpio,application/x-cpio},{.csh,application/x-csh},{.dcr,application/x-director},{.dir,application/x-director},{.dxr,application/x-director},{.dvi,application/x-dvi},{.spl,application/x-futuresplash},{.gtar,application/x-gtar},{.hdf,application/x-hdf},{.js,application/x-javascript},{.skp,application/x-koan},{.skd,application/x-koan},{.skt,application/x-koan},{.skm,application/x-koan},{.latex,application/x-latex},{.nc,application/x-netcdf},{.cdf,application/x-netcdf},{.sh,application/x-sh},{.shar,application/x-shar},{.swf,application/x-shockwave-flash},{.swc,application/octet-stream},{.swd,application/x-shockwave-flash},{.swt,application/octet-stream},{.swz,application/x-swz},{.swa,audio/x-shockwave},{.sit,application/x-stuffit},{.sv4cpio,application/x-sv4cpio},{.sv4crc,application/x-sv4crc},{.tar,application/x-tar},{.tcl,application/x-tcl},{.tex,application/x-tex},{.texinfo,application/x-texinfo},{.texi,application/x-texinfo},{.t,application/x-troff},{.tr,application/x-troff},{.roff,application/x-troff},{.man,application/x-troff-man},{.me,application/x-troff-me},{.ms,application/x-troff-ms},{.ustar,application/x-ustar},{.src,application/x-wais-source},{.zip,application/zip},{.au,audio/basic},{.snd,audio/basic},{.mid,audio/midi},{.midi,audio/midi},{.kar,audio/midi},{.mpga,audio/mpeg},{.mp2,audio/mpeg},{.mp3,audio/mpeg},{.aif,audio/x-aiff},{.aiff,audio/x-aiff},{.aifc,audio/x-aiff},{.ram,audio/x-pn-realaudio},{.rm,audio/x-pn-realaudio},{.rpm,audio/x-pn-realaudio-plugin},{.ra,audio/x-realaudio},{.wav,audio/x-wav},{.pdb,chemical/x-pdb},{.xyz,chemical/x-pdb},{.bmp,image/bmp},{.gif,image/gif},{.ief,image/ief},{.jpeg,image/jpeg},{.jpg,image/jpeg},{.jpe,image/jpeg},{.png,image/png},{.tiff,image/tiff},{.tif,image/tiff},{.ras,image/x-cmu-raster},{.pnm,image/x-portable-anymap},{.pbm,image/x-portable-bitmap},{.pgm,image/x-portable-graymap},{.ppm,image/x-portable-pixmap},{.rgb,image/x-rgb},{.xbm,image/x-xbitmap},{.xpm,image/x-xpixmap},{.xwd,image/x-xwindowdump},{.igs,model/iges},{.iges,model/iges,},{.msh,model/mesh},{.mesh,model/mesh},{.silo,model/mesh},{.wrl,model/vrml},{.vrml,model/vrml},{.css,text/css},{.html,text/html},{.htm,text/html},{.asc,text/plain},{.txt,text/plain},{.rtx,text/richtext},{.rtf,text/rtf},{.sgml,text/sgml},{.sgm,text/sgml},{.tsv,text/tab-separated-values},{.etx,text/x-setext},{.xml,text/xml},{.mpeg,video/mpeg},{.mpg,video/mpeg},{.mpe,video/mpeg},{.qt,video/quicktime},{.mov,video/quicktime},{.avi,video/x-msvideo},{.movie,video/x-sgi-movie},{.ice,x-conference/x-cooltalk},{.gzip,application/x-gzip},{.sda,application/zip},{.sar,application/zip},{.htc,text/x-component}{.vxml,application/voicexml+xml}{.ssml,application/ssml+xml}{.grxml,application/srgs+xml}{.ccxml,application/ccxml+xml}{.pls,application/pls+xml}{.gram,application/srgs}}"
+	     short_description="Defines the list of supported MIME types."
+	     description="The value of this property is a list of different MIME type entries enclosed in curly brackets. You must specify the file extension first and then the MIME type, and separate them by a comma. For example, {.html,text/plain}. Numerous MIME type entries in the list are also separated by comma."
+	     type="STRING"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />		
+	  <property name="InferNames"
+	     value="{index.html,index.htm,default.html,default.htm}"
+	     short_description="Defines the list of welcome files."
+	     description="The value of the property is a comma-separated list of file names. All welcome files are enclosed in curly brackets."
+	     type="STRING"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+	  <property name="PoolSize"
+	     value="{2, 5000, 8}"
+	     short_description="Defines the size of the pool of objects used for handling client requests."
+	     description="At server startup, the HTTP Provider service creates a pool of instances of request-handling objects, which it later uses for parsing clients requests. If max limit of the pool is reached, all requests will be refused.
+	     	The values are given if format {minPoolSize, maxPoolSize, decreaseCapacity}"
+	     type="STRING"
+	     visibility="EXPERT"
+	     onlinemodifiable="false"
+	  />	  
+	  <property name="UseServerHeader"
+	     value="true"
+	     short_description="Enables or disables sending of the HTTP header, which contains the name of the server."
+	     description="Specifies whether the header, which contains the name of the server that responds to the request is sent to the client with the generated HTTP response."
+	     type="BOOLEAN"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+	  <property name="SystemCookiesDataProtection"
+	     value="false"
+	     short_description="Enables or disables setting of the HttpOnly attribute for system cookies (jsessionid and saplb_)"
+	     description="This property specifies if the Application Server Java sets the HttpOnly attribute to the session (jsessionid) and load balancing (saplb_) cookies it issues.
+	     	If the property is set to true, then the HttpOnly attribute is set to the system cookies. The effect of the attribute is that it prevents client scripts (for example, JavaScript) from accessing the cookie value.
+	     	Note: Currently this attribute is taken into consideration only by Internet Explorer since version 6 SP1."
+	     type="BOOLEAN"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+	  <property name="SystemCookiesHTTPSProtection"
+	     value="false"
+	     short_description="Enables or disables setting of the Secure attribute for system cookies (jsessionid and saplb_)"
+	     description="This property specifies if the Application Server Java sets the Secure attribute to the session (jsessionid) and load balancing (saplb_) cookies it issues.
+	     	If the property is set to true, then the Secure attribute is set to the system cookies and the cookies marked as secure will only be transmitted if the communications channel is a secure one (https)."
+	     type="BOOLEAN"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+
+<!-- Cache Properties -->
+	  <property name="MaxFileLengthForCache"
+	     value="round((${AMOUNT_MEMORY}/${CPU_COUNT})*32)"
+	     parameterized="true"
+	     computed="true"
+	     short_description="The upper limit of file size for HTTP cache."
+	     description="Sets a limit to the size of the file that can be written to the cache.
+	     	Limitations and Dependencies: The value of this property multiplied by the value of CacheSize property gives the maximum memory that could be used for http cache for a virtual host. (By default only one virtual host is available.) The value of the property multiplied by the number of client threads must be less than the available memory."
+	     type="LONG"
+	     
+	     visibility="EXPERT"
+	     onlinemodifiable="true"
+	  />
+	  <property name="SapCacheControl"
+	     value="86400"
+	     short_description="Server cache expiration period."
+	     description="Sets timeout for storing responses from Application Server Java into the cache of the Internet Communication Manager (ICM). The period is specified in seconds."
+	     type="LONG"
+	     range="{-1}|[0-2147483647]"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />	  
+	  <property name="CacheControl"
+	     value="86400"
+	     short_description="Client cache expiration period."
+	     description="Sets the expiration period for static files stored by client caches. Possible values are all response directives of the Cache-Control header (comma separated if multiple entries) or any positive number, which denotes time period in seconds."
+	     type="STRING"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />	  
+	  
+	  
+	<!-- Proxy Servers Properties -->
+		<property name="ProtocolHeaderName"
+	     value="ClientProtocol"
+	     short_description="Protocol header name."
+	     description="Specifies the name of the header that contains the name of the communication protocol used between the client and the proxy."
+	     type="STRING"
+	     visibility="EXPERT"
+	     onlinemodifiable="true"
+	  />
+		<property name="ClientIpHeaderName"
+	     value=""
+	     short_description="HTTP header name for client IP forwarding."
+	     description="Specifies the name of the HTTP request header that is used for forwarding the IP of the client by the proxy servers."
+	     type="STRING"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+
+		<!-- GZIP Properties -->
+		<property name="AlwaysCompressed"
+	     value="*.htm,*.html,text/html"
+	     short_description="Always compressed files."
+	     description="Specifies a comma-separated list of file extensions and HTTP message content types that must always be compressed with gzip transfer encoding when returned as HTTP responses."
+	     type="STRING"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+		<property name="NeverCompressed"
+	     value="*.zip,*.cs,*.rar,*.arj,*.z,*.gz,*.tar,*.lzh,*.cab,*.hqx,*.ace,*.jar,*.ear,*.war,*.css,*.pdf,*.js,*.gzip,*.uue,*.bz2,*.iso,*.sda,*.sar,*.swf,*.swc,*.swd,*.swt,*.swz,*.swa,image,application/x-compressed,application/zip,application/x-gzip,application/x-zip-compressed,application/pdf,application/x-shockwave-flash,content/unknown,text/javascript,application/x-javascript,[unknown]"
+	     short_description="Never compressed files."
+	     description="Specifies a comma-separated list of file extensions and HTTP message content types that must never be compressed with gzip transfer encoding when returned as HTTP responses."
+	     type="STRING"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />	
+		<property name="CompressedOthers"
+	     value="true"
+	     short_description="Flag for compression of other files."
+	     description="Specifies whether to compress HTTP responses that transfer files or have content types that do not appear in the AlwaysCompressed and NeverCompressed lists."
+	     type="BOOLEAN"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+		<property name="MinimumGZipLength"
+	     value="8192"
+	     short_description="Minimum size of the HTTP response that can be compressed to be gzipped."
+	     description="Specifies the minimum length of the HTTP response that can be compressed using gzip transfer encoding. Response messages that are shorter than the value of this property are never compressed. The response length is specified in bytes.
+	     	Limitations and Dependencies: CPU and network bandwidth."
+	     type="LONG"
+	     range = "{-1}|[0-2147483647]"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+		<property name="GZipOutputStreamImplementation"
+	     value=""
+	     short_description="Implementation class of GZipOutputStream."
+	     description="Specifies the fully-qualified class name of a custom GZipOutputStream implementation for writing compressed data in GZIP file format. In this case, the custom implementation is used instead of standard one provided by the underlying Java Development Kit (JDK)."
+	     type="STRING"
+	     visibility="EXPERT"
+	     onlinemodifiable="true"
+	  />	
+		<property name="MaximumCompressedURLLength"
+	     value="-1"
+	     short_description="The maximum length of the URL of the requested resource that will be compressed"
+	     description="Specifies the maximum length of the URL (in characters) of the requested resource that will be compressed. If the URL is longer than the value of this property, the resource will not be compressed. The default value for 'MaximumCompressedURLLength' property is -1, that is, URL's length is not taken into account in the compression process.
+	     	Use this property if you request resources with very long URLs and you experience problem with GZIP compression of these resources, or they are not accessible from the browser (Microsoft's Internet Explorer) cache."
+	     type="LONG"
+	     range = "{-1}|[0-2147483647]"
+	     visibility="EXPERT"
+	     onlinemodifiable="true"
+	  />
+
+		<!-- FCA Properties -->
+		<property name="FCAServerThreadCount"
+	     value="5"
+	     short_description="Number of FCA threads which process HTTP requests"
+	     description="Specifies the number of server threads for handling Internet Communication Manager (ICM) requests. These threads handle HTTP requests delegated by ICM. This thread count does not influence size of any engine thread pool."
+	     type="LONG"
+	     range = "[0-2147483647]"
+	     visibility="NOVICE"
+	     onlinemodifiable="false"
+	  />
+		<property name="UsePostponedRequestQueue"
+	     value="true"
+	     short_description="Enables usage of postponed (per instance) queue for postponed client requests"
+	     description="If the property is set to true then the service will use additional ICM queue to place requests that target resources that could not process them at the moment."
+	     type="BOOLEAN"
+	     visibility="EXPERT"
+	     onlinemodifiable="false"
+	  />
+		<property name="ProxyMappings"
+	     value=""
+	     short_description="Proxy mappings"
+	     description="Defines a comma-separated list of proxy mappings. A valid mapping must contain the hostname, port, and the communication scheme of the host, to which the requests from the original port are to be redirected. Optionally, you can set the Override attribute to true to force the system to override the host and port from the original request with the host and port values specified in this property."
+	     type="STRING"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+		<property name="GroupInfoLocation"
+	     value=""
+	     short_description="The location of the text file that contains the logon groups definition that the SAP Web Dispatcher and AS Java use for load balancing."
+	     description="This property specifies the location of the text file that contains the logon groups definition that the SAP Web Dispatcher and AS Java use for load balancing.The value of this property is the absolute path to the text file. This path must be exactly the same as the one specified in the SAP Web Dispatcher's profile parameter wdisp/group_info_location. The syntax of the text file follows the syntax of icrgroups.txt file.
+	     	Configuring this property makes sense only if you configure the UrlMapLocation property as well."
+	     type="STRING"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+		<property name="UrlMapLocation"
+	     value=""
+	     short_description="The location of the text file containing URL mapping information that the SAP Web Dispatcher and AS Java use for load balancing."
+	     description="This property specifies the location of the text file containing URL mapping information that the SAP Web Dispatcher and AS Java use for load balancing. The value of this property is the absolute path to the text file. This path must be the same as the one specified by the SAP Web Dispatcher's profile parameter wdisp/url_map_location. The syntax of the text file follows the syntax of urlinfo.txt file.
+	     	Configuring this property makes sense only if you configure the GroupInfoLocation property as well."
+	     type="STRING"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+		<property name="GroupInfoRequest"
+	     value=""
+	     short_description="Specifies the URL for internal communication between AS Java and SAP Web Dispatcher for retrieving the list of instances from logon groups definition."
+	     description="This property specifies the URL for internal communication between AS Java and SAP Web Dispatcher for retrieving the list of instances from logon groups definition. The response has a strictly defined format and follows the syntax of groupinfo.txt. The value of this property must be the same as the one specified by SAP Web Dispatcher's profile parameter /JavaEE/public/icf_info/icr_groups.
+	     	Configuring this property makes sense only if you configure the UrlMapRequest property as well.
+	     	Make sure that the URL you specify as value of this property does not start with the /sap/ string. In this case, SAP Web Dispatcher would redirect them to AS ABAP rather than to AS Java, which is critical in an ABAP+Java system."
+	     type="STRING"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+		<property name="UrlMapRequest"
+	     value=""
+	     short_description="Specifies the URL for internal communication between AS Java and SAP Web Dispatcher for retrieving the list of logon groups."
+	     description="This property specifies the URL for internal communication between AS Java and SAP Web Dispatcher for retrieving the list of logon groups. The response has a strictly defined format and follows the syntax of urlinfo.txt. The value of this property must be the same as the one specified by the SAP Web Dispatcher's profile parameter /JavaEE/public/icf_info/icr_urlprefix.
+	     	Configuring this property makes sense only if you configure the GroupInfoRequest property as well.
+	     	Make sure that the URL you specify as value of this property does not start with the /sap/ string. In this case, SAP Web Dispatcher would redirect them to AS ABAP rather than to AS Java, which is critical in an ABAP+Java system."
+	     type="STRING"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+		<property name="LogIsStatic"
+	     value="false"
+	     short_description="Logs the type of requested resource - static or dynamic."
+	     description="Adds the following information to the general information being logged for the corresponding HTTP request:
+	     	        s[t] if the requested resource is a static file;
+	     	        s[f] if the requested resource is a dynamic one (such as a servlet, or JSP)"
+	     type="BOOLEAN"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+		<property name="DetailedErrorResponse"
+	     value="false"
+	     short_description="Used for switching verbosity of server-generated error pages."
+	     description="Setting this property to false means that generated error pages should not contain details like stack traces and detailed file locations.
+	     	This property affects only the server-generated error pages returned to browsers and other HTTP clients. It does not affect application-defined error responses.
+	     	It is set to false in order to prevent sensitive information disclosure. You may switch it to true for internal systems that are used for testing or development purposes. Details of the error may also be seen in the default trace file."
+	     type="BOOLEAN"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+		<property name="LogRequestResponseHeaders"
+	     value="false"
+	     short_description="Logs information about the HTTP headers contained in the request and the response."
+	     description="If the property is set to true, the system will log all HTTP headers from the requests and the responses to the HTTP access log file."
+	     type="BOOLEAN"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+		<property name="TraceResponseTimeAbove"
+	     value="-1"
+	     short_description="Activates tracing of HTTP requests based on response time threshold."
+	     description="This property specifies a time period in milliseconds. If the response time for a given HTTP request exceeds that period, then additional tracing information for this respective request is written to the default trace file.
+	     	If property's value is -1 (the default value), tracing of such requests is disabled."
+	     type="LONG"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+		<property name="LogRequestMemoryTrace"
+	     value="false"
+	     short_description="Use this to control Memory allocation statistic per request and response."
+	     description="If the property is set to true, the system will start to collect information about memory allocation triggered by the request."
+	     type="BOOLEAN"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+		<property name="GenerateErrorReports"
+	     value="false"
+	     short_description="Generate error reports flag"
+	     description="If the property is enabled then when an error occurs there will be a button in the error page and clicking on this button an error report will be generated."
+	     type="BOOLEAN"
+	     visibility="EXPERT"
+	     onlinemodifiable="true"
+	  />
+
+	  <property name="GenerateNewErrorReportTimeout"
+	     value="3600"
+	     short_description="Specifies the timeout in seconds before a new error report for a certain problem should be generated."
+	     description=" Specifies a timeout period in seconds. New error report file for a certain ISE 500 problem is generated only if the specified timeout period has expired since the last error report file was created. By default the timeout is set to 3600 seconds (one hour). New error report files are always generated if timeout's value is equal or less than 0, or if no error report files have ever been generated for the occurred problem."
+	     type="LONG"
+	     visibility="EXPERT"
+	     onlinemodifiable="true"
+	  />
+
+  
+		<property name="TroubleShootingGuideURL"
+	     value="https://sdn.sap.com/irj/sdn/wiki?path=/display/JSTSG/Home"
+	     short_description="Trouble Shooting Guide URL"
+	     description="Specifies the URL of the TSG that will be displayed on every error page.
+	     	The URL can be the internal one or the external - on SDN. Or if you want you can disable the property - i.e. the URL of the TSG will not be displayed on the error page..
+	     	By default is the external one - on SDN.
+	     	The external TSG - https://sdn.sap.com/irj/sdn/wiki?path=/display/JSTSG/Home
+	     	The internal TSG - https://jst.wdf.sap.corp
+	     	For disabling the URL of the TSG you can use - 'disable'."
+	     type="STRING"
+	     visibility="EXPERT"
+	     onlinemodifiable="true"
+	  />
+		<property name="UseClientObjectsPool"
+	     value="true"
+	     short_description="Enables usage of pooled Client objects"
+	     description="If the property is set to true then the service will use pool of Client objects, otherwise a new Client object will be created for each incoming client request."
+	     type="BOOLEAN"
+	     visibility="EXPERT"
+	     onlinemodifiable="true"
+	  />
+	  <property name="ConsumerTypeIsAlias"
+	     value="false"
+	     short_description="Sets the Quality of Service (QoS) consumer type for HTTP service to be a resource or an alias."
+	     description="If the property is set to false, the Quality of Service (QoS) analysis is based on HTTP resources, otherwise - based on aliases."
+	     type="BOOLEAN"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+	  <property name="ErrorPageTemplateLocation"
+	     value=""
+	     short_description="Sets the path to the custom template for error pages."
+	     description="Sets the path to the custom error page's template. By default the template for error pages is provided by HTTP Provider service.
+	      One must specify the full path on the file system to the custom template for error pages."
+	     type="STRING"
+	     visibility="EXPERT"
+	     onlinemodifiable="true"
+	  />	  
+		<nested_property name="ReverseProxyMappings">			
+	  </nested_property>
+	  <property name="EnableRequestAccounting"
+	     value="false"
+	     short_description="Enables accounting for each HTTP request."
+	     description="Enables accounting for each HTTP request which includes the processing in HTTP service, Webcontainer service, Servlet's service method and RequestDispatching."
+	     type="BOOLEAN"
+	     visibility="NOVICE"
+	     onlinemodifiable="true"
+	  />
+	  <property name="UseIPv6Format"
+	     value="false"
+	     short_description="Specify the preferred format of the IP representation in case of IPv6 (IPv4-mapped) address."
+	     description="If set to true, and if the IP is IPv6 (IPv4-mapped), the value format used in the Servlet API is IPv6. Else, the IPv4 format value is used."
+	     type="BOOLEAN"
+	     visibility="EXPERT"
+	     onlinemodifiable="true"
+	  />
+	  <nested_property name ="measureSessionSize">
+		<property name ="measurementEnabled"
+			value ="false"
+			short_description="Enables measurement of the retain size of each http session."
+			description="Specifies if the session size measurement feature is enabled. If set to true the retain size of each http request is measured by the Web Container. The results may be obtained through the DRS API and via the Http memory status line. Note that there is performance overhead when the feature is enabled. Possible values: true/false. The default value is false."
+			type="BOOLEAN"
+			visibility="EXPERT"
+			onlinemodifiable="true"
+		/>
+		<property name ="maxSizeAllowed"
+			value ="-1"
+			short_description="Specifies the maximum session size (in bytes) to be measured by the measurement utility."
+			description="Specifies the maximum session size (in bytes) to be measured by the measurement utility. If an http session size goes above that limit the measurement utility would report an error code (-2) indicating that the maximum allowed size is reached. If a negative number is specified, no limitations of the overall size are applied. By default it is -1."
+			type="LONG"
+			visibility="EXPERT"
+			onlinemodifiable="true"
+		/>
+		<nested_property name = "libSettings">
+			<property name ="maxGraphDepth"
+				value ="2"
+				short_description="Specifies the maximum number of reference levels to be measured within the measured session object."
+				description="Specifies the maximum number of reference levels to be measured within the measured session object. The inner objects that belong to that session but are at a deeper level than the specified one are not included in the session size calculations. Possible values: any positive number up to 3. The default value is 2."
+				type="INTEGER"
+				visibility="EXPERT"
+				onlinemodifiable="true"
+			/>
+			<property name ="maxGraphNodes"
+				value ="10000"
+				short_description="Specifies the maximum number of objects to  be measured within the measured session object."
+				description="Specifies the maximum number of objects to  be measured within the measured session object. Once this number is reached the calculation is stopped and an error code (-4) is returned for the calculated session size. Possible values:Any positive integer value up to 200 000. The default value is 10000"
+				type="INTEGER"
+				visibility="EXPERT"
+				onlinemodifiable="true"
+			/>
+			<property name ="filters"
+				value =""
+				short_description="Specifies a list of classes(or packages) that need to be excluded from the session size calculation."
+				description="Specifies a list of classes(or packages) that need to be excluded from the session size calculation. When an object of these classes(packages) is reached during the measurement, the calculations do not go any further in that object. If the specified filters are packages, they should end with a wildcard *. In case of multiple filters, they should be separated with a comma and an interval. Example value:com.sap.engine.ExcludedClass.class, com.sap.engine.ExcludedPackege.*. By default no filters are specified."
+				type="STRING"
+				visibility="EXPERT"
+				onlinemodifiable="true"
+			/>
+		</nested_property>
+	  </nested_property>
+
+	</properties>	  

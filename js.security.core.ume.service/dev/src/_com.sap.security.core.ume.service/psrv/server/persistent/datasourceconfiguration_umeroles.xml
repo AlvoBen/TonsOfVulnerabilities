@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: //shared_tc/com.sapall.security/dev/src/_deploy/dist/configuration/shared/dataSourceConfiguration_UMERoles.xml#6 $ from $DateTime: 2004/07/12 14:24:31 $ ($Change: 16737 $) -->
+<dataSources>	
+	<dataSource id="UME_ROLE_PERSISTENCE"
+			className="com.sap.security.core.persistence.datasource.imp.DataBasePersistence"
+			isReadonly="false"
+			isPrimary="true">
+			
+		<homeFor>
+			<principals>
+				<principal type="role"/>
+			</principals>
+		</homeFor>
+		
+		<notHomeFor/>
+		
+		<responsibleFor>
+			<principals>
+				<principal type="role"/>
+			</principals>
+		</responsibleFor>
+		
+		<notResponsibleFor>
+		</notResponsibleFor>
+	
+		<attributeMapping/>
+		
+		<privateSection/>
+		
+	</dataSource>		
+
+	<dataSource id="AUTH_DS"
+			className="com.sap.security.core.persistence.datasource.imp.DataBasePersistence"
+			isReadonly="false"
+			isPrimary="true">
+			
+		<homeFor>
+			<principals>
+				<principal type="ACTN" />
+				<principal type="PERM" />
+			</principals>
+		</homeFor>
+		
+		
+		<responsibleFor>
+			<principals>
+				<principal type="ACTN" />
+				<principal type="PERM" />
+			</principals>
+		</responsibleFor>		
+		<attributeMapping/>
+		
+		<privateSection>
+			<ume.db.table.principals_distributed_by_typeidentifier>true</ume.db.table.principals_distributed_by_typeidentifier>
+			<ume.db.table.strings>UME_STRINGS</ume.db.table.strings>
+			<ume.db.table.blobs>UME_BLOBS</ume.db.table.blobs>
+		</privateSection>
+		
+	</dataSource>
+</dataSources>

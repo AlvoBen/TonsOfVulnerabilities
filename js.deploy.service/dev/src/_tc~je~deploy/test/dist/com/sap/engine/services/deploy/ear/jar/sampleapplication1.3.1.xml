@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE application PUBLIC "-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN" "http://java.sun.com/dtd/application_1_3.dtd">
+<application>
+    <icon>
+        <small-icon>META-INF</small-icon>
+        <large-icon>largeIcon</large-icon>
+    </icon>
+    <display-name>testApplication</display-name>
+    <description>EAR description</description>
+    <module>
+        <web>
+            <web-uri>web/webModule1.war</web-uri>
+            <context-root>webModule1ContextRoot</context-root>
+        </web>
+    </module>
+    <module>
+        <web>
+            <web-uri>web/web"?o\&lt;|ot&gt;Module2.war</web-uri>
+            <context-root>webModule*/2ContextR"?o\&lt;|ot&gt;</context-root>
+        </web>
+        <alt-dd>test1.dd</alt-dd>
+    </module>
+    <module>
+        <ejb>ejb/ejbProject.jar</ejb>
+        <alt-dd>test.dd</alt-dd>
+    </module>
+    <module>
+        <ejb>ejb/ejbProject2.jar</ejb>
+    </module>
+    <module>
+        <connector>connector/connector.jar</connector>
+    </module>
+    <module>
+        <java>java/apps/javaApp.jar</java>
+    </module>        
+    <security-role>
+        <description>test role description</description>
+        <role-name>testRoleName</role-name>
+    </security-role>
+    <security-role>
+        <description>test role description 1</description>
+        <role-name>testRoleName 1</role-name>
+    </security-role>
+</application>

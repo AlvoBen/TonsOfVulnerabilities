@@ -1,0 +1,66 @@
+﻿<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- =========== FULL CONFIGURATION FILE ================================== -->
+
+<faces-config version="1.2" 
+    xmlns="http://java.sun.com/xml/ns/javaee" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+    
+    <navigation-rule>
+        <description>
+             The decision rule used by the NavigationHandler to
+             determine which view must be displayed after the
+             current view, applications.jsp is processed.
+        </description>
+        <from-view-id>/services.jsp</from-view-id>
+        <navigation-case>
+             <description>
+                Indicates to the NavigationHandler that the app_view.jsp
+                view must be displayed if the Action referenced by a 
+                UICommand component on the greeting.jsp view returns 
+                the outcome "view".
+             </description>
+             <from-outcome>view</from-outcome>
+             <to-view-id>/services_props.jsp</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+  
+    <navigation-rule>
+         <description>
+              The decision rule used by the NavigationHandler to
+              determine which view must be displayed after the
+              current view, app_view.jsp is processed.
+         </description>
+         <from-view-id>/services_props.jsp</from-view-id>
+         <navigation-case>
+              <description>
+                  Indicates to the NavigationHandler that the applications.jsp
+                  view must be displayed if the Action referenced by a 
+                  UICommand component on the app_view.jsp view returns 
+              </description>
+              <from-outcome>services</from-outcome>
+              <to-view-id>/services.jsp</to-view-id>
+         </navigation-case>
+    </navigation-rule>
+  
+  
+  
+
+        
+       <managed-bean>
+           <managed-bean-name>ServicesBean</managed-bean-name>
+           <managed-bean-class>com.sap.liteadmin.services.ServicesMBean</managed-bean-class>
+           <managed-bean-scope>session</managed-bean-scope>
+       </managed-bean>
+       
+        <managed-bean>
+           <managed-bean-name>ServicePropertiesBean</managed-bean-name>
+           <managed-bean-class>com.sap.liteadmin.services.ServicePropertiesMBean</managed-bean-class>
+           <managed-bean-scope>session</managed-bean-scope>
+       </managed-bean>
+
+       
+</faces-config>
+

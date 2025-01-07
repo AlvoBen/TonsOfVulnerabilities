@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: //shared_tc/com.sapall.security/dev/src/_deploy/dist/configuration/shared/dataSourceConfiguration_database_only.xml#5 $ from $DateTime: 2004/07/12 14:24:31 $ ($Change: 16737 $) -->
+<dataSources>    
+    <dataSource id="PRIVATE_DATASOURCE"
+                className="com.sap.security.core.persistence.datasource.imp.DataBasePersistence"
+                isReadonly="false"
+                isPrimary="true">
+
+        <homeFor>
+            <principals>
+            	<principal type="group"/>
+            	<principal type="user"/>
+            	<principal type="account"/>
+                <principal type="team"/>
+                <principal type="ROOT" />
+                <principal type="OOOO" />
+            </principals>
+        </homeFor>
+        <notHomeFor/>
+
+        <responsibleFor>
+            <principals>
+            	<principal type="group"/>
+            	<principal type="user"/>
+            	<principal type="account"/>
+                <principal type="team"/>
+                <principal type="ROOT" />
+                <principal type="OOOO" />                
+                
+            </principals>
+        </responsibleFor>
+
+        <privateSection/>
+    </dataSource>
+
+</dataSources>

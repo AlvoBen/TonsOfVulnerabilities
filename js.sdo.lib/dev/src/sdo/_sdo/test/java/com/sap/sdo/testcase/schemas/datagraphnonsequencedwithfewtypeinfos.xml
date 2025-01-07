@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<sdo:datagraph xmlns:sdo="commonj.sdo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:data="com.sap.sdo.testcase.typefac">
+  <xsd>
+<xsd:schema targetNamespace="com.sap.sdo.testcase.typefac" xmlns:sdox="commonj.sdo/xml" xmlns:sdoj="commonj.sdo/java" sdoj:package="com.sap.sdo.testcase.typefac">
+<xsd:complexType name="NonSequencedInheritedIntf" sdox:sequence="false">
+  <xsd:complexContent>
+    <xsd:extension base="data:NonSequencedParentIntf">
+      <xsd:sequence>
+        <xsd:element name="moreInfo" type="xsd:string" minOccurs="0" nillable="true"></xsd:element>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:any namespace="##other" processContents="lax" minOccurs="0"></xsd:any>
+          <xsd:any namespace="##targetNamespace" processContents="lax" minOccurs="0"></xsd:any>
+        </xsd:choice>
+      </xsd:sequence>
+      <xsd:attribute name="extraAttribute" type="xsd:string"></xsd:attribute>
+      <xsd:anyAttribute namespace="##any" processContents="lax"></xsd:anyAttribute>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:complexType name="NonSequencedParentIntf" sdox:sequence="false">
+    <xsd:sequence>
+        <xsd:element name="contained" type="data:NonSequencedParentIntf" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        <xsd:element name="name" type="xsd:string" minOccurs="0" nillable="true"/>
+        <xsd:element name="referenced" type="xsd:anyURI" sdox:propertyType="data:NonSequencedParentIntf" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+        <xsd:choice maxOccurs="unbounded">
+            <xsd:any namespace="##other" processContents="lax" minOccurs="0"/>
+            <xsd:any namespace="##targetNamespace" processContents="lax" minOccurs="0"/>
+        </xsd:choice>
+    </xsd:sequence>
+    <xsd:attribute name="attribute" type="xsd:string"/>
+    <xsd:anyAttribute namespace="##any" processContents="lax"/>
+</xsd:complexType>
+</xsd:schema>
+  </xsd>
+  <changeSummary>
+    <data:contained sdo:ref="#/sdo:dataObject/contained.0" attribute="Attribute" extraAttribute="Extra">
+      <name>Child</name>
+    </data:contained>
+  </changeSummary>
+  <sdo:dataObject xsi:type="data:NonSequencedParentIntf">
+    <referenced>#/sdo:dataObject/contained.0</referenced>
+    <contained xsi:type="data:NonSequencedInheritedIntf" attribute="Attribute2" extraAttribute="Extra2">
+      <name>Child2</name>
+      <moreInfo>extends SequencedParentIntf</moreInfo>
+    </contained>
+    <name>Parent</name>
+  </sdo:dataObject>
+</sdo:datagraph>

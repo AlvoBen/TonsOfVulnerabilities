@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--  Configuration File for Authentication Schemes -->
+<!-- $Id: //shared_tc/com.sapall.security/dev/src/_deploy/dist/configuration/shared/authschemes.xml#5 $ from $DateTime: 2004/01/22 15:00:46 $ ($Change: 14214 $) -->
+<document>
+
+     <authschemes>
+        <!--  authschemes, the name of the node is used -->
+        <authscheme name="uidpwdlogon">
+            <!-- multiple login modules can be defined -->
+            <authentication-template>
+              ticket
+            </authentication-template>
+            <priority>20</priority>
+            <!-- the frontendtype TARGET_FORWARD = 0, TARGET_REDIRECT = 1, TARGET_JAVAIVIEW = 2 -->
+            <frontendtype>2</frontendtype>
+            <!-- target object -->
+            <frontendtarget>com.sap.portal.runtime.logon.certlogon</frontendtarget>
+        </authscheme>
+        
+        <authscheme name="certlogon">
+            <authentication-template>
+                client_cert
+            </authentication-template>
+            <priority>21</priority>
+            <frontendtype>2</frontendtype>
+            <frontendtarget>com.sap.portal.runtime.logon.certlogon</frontendtarget>
+        </authscheme>
+
+        <authscheme name="basicauthentication">
+            <authentication-template>
+                ticket
+            </authentication-template>
+            <priority>20</priority>
+            <frontendtype>2</frontendtype>
+            <frontendtarget>com.sap.portal.runtime.logon.basicauthentication</frontendtarget>
+        </authscheme>
+
+        <authscheme name="header">
+            <authentication-template>
+                header
+            </authentication-template>
+            <priority>5</priority>
+            <frontendtype>2</frontendtype>
+            <frontendtarget>com.sap.portal.runtime.logon.header</frontendtarget>
+        </authscheme>
+
+        <!-- Reserved 'anonymous' authscheme added for being in the list of authschemes -->
+        <authscheme name="anonymous">
+            <priority>-1</priority>
+        </authscheme>
+
+    </authschemes>
+
+    <!--  References for Authentication Schemes, this section must be after authschemes -->
+
+    <authscheme-refs>
+        <authscheme-ref name="default">
+            <authscheme>uidpwdlogon</authscheme>
+        </authscheme-ref>
+
+        <authscheme-ref name="UserAdminScheme">
+            <authscheme>uidpwdlogon</authscheme>
+        </authscheme-ref>
+    </authscheme-refs>
+
+</document>

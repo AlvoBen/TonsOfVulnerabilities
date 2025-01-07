@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: //engine/js.security.core.ume.service/dev/src/_com.sap.security.core.ume.service/psrv/server/persistent/dataSourceConfiguration_UMERoles_tenant_template.xml#1 $ from $DateTime: 2008/09/17 17:07:47 $ ($Change: 217697 $) -->
+<dataSources>	
+  <dataSource id="UME_ROLE_PERSISTENCE" className="com.sap.security.core.persistence.datasource.imp.DataBasePersistence" isReadonly="false" isPrimary="true">
+    <homeFor>
+      <principals>
+        <principal type="role"/>
+      </principals>
+    </homeFor>
+    <notHomeFor/>
+    <responsibleFor>
+      <principals>
+        <principal type="role" exclude="${excludefilter}"/>
+      </principals>
+    </responsibleFor>
+    <notResponsibleFor/>
+    <attributeMapping/>
+    <privateSection/>
+  </dataSource>
+</dataSources>

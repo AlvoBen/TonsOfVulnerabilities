@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ns1:root xmlns:ns1="http://www.target.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.target.com targetMerge2.xsd">
+  <singleComplex id="0">
+    <singleSimple id="100">a</singleSimple>
+    <manySimple id="101">b</manySimple>
+    <manySimple id="102">c</manySimple>
+    <manySimple id="103">d</manySimple>
+    <manySimple id="204">e</manySimple>
+  </singleComplex>
+  <manyComplex id="1">
+    <singleSimple id="210">a</singleSimple>
+    <manySimple id="211">b</manySimple>
+    <manySimple id="212">c</manySimple>
+    <manySimple id="213">d</manySimple>
+  </manyComplex>
+  <manyComplex id="2">
+    <singleSimple id="120">d</singleSimple>
+    <manySimple id="121">e</manySimple>
+    <manySimple id="122">f</manySimple>
+    <manySimple id="123">g</manySimple>
+  </manyComplex>
+  <manyComplex id="3">
+    <singleSimple id="230"></singleSimple>
+    <manySimple id="231">i</manySimple>
+    <manySimple id="232">j</manySimple>
+    <manySimple>k</manySimple>
+  </manyComplex>
+  <manyComplex id="4">
+    <singleSimple id="140">h</singleSimple>
+    <manySimple id="141">i</manySimple>
+    <manySimple id="242">j</manySimple>
+    <manySimple id="143">k</manySimple>
+  </manyComplex>
+  <manyComplex id="5">
+    <singleSimple id="250">p</singleSimple>
+    <manySimple>q</manySimple>
+  </manyComplex>
+</ns1:root>

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" ?>
+
+<SDA >
+	<SoftwareType>FS</SoftwareType>
+		<fs-deployment-descriptor version="2.0">
+			<display-name>J2EE Engine Deploy ANT tasks</display-name>
+				<fileset id="J2EE_Engine_Deploy_ANT_fileset">
+					<display-name>Complete</display-name>
+					<description>Files for J2EE Engine Deploy ANT tasks</description>
+					<default-deployment-dir>${com.sap.engine.installdir}/deployment/ant</default-deployment-dir>
+					<substitute>
+        					<file substitute="yes">cfg/ant.properties</file>
+       					
+     					 </substitute>
+
+				</fileset>
+		</fs-deployment-descriptor>
+</SDA>

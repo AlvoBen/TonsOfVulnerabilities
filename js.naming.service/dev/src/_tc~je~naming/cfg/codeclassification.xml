@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" ?>
+<codeClassification>
+  <!-- Turn off JLIN checks on selected generated files, making up the
+       parser. This is done by appropriate JLIN classification.
+       (Note that JLIN as of May-05 does not offer another classification
+        than 'test' for disabling checking.)
+    -->
+  <classificationRule filePattern=".*com.sap.engine.services.jndi.TestJNDI" attributes="test"/>
+  <classificationRule filePattern=".*com.sap.engine.services.jndi.ServiceReferenceImplp4_Skel" attributes="test"/>
+  <classificationRule filePattern=".*com.sap.engine.services.jndi.RemoteServiceReference_Stub" attributes="test"/>
+  <classificationRule filePattern=".*com.sap.engine.services.jndi.PermissionAdministratorp4_Skel" attributes="test"/>
+  <classificationRule filePattern=".*com.sap.engine.services.jndi.JNDIProxyImplp4_Skel" attributes="test"/>
+  <classificationRule filePattern=".*com.sap.engine.services.jndi.JNDIProxy_Stub" attributes="test"/>
+  <classificationRule filePattern=".*com.sap.engine.services.jndi.JNDIManagementInterface_Stub" attributes="test"/>
+  <classificationRule filePattern=".*com.sap.engine.services.jndi.implserver.ServerContextImplp4_Skel" attributes="test"/>
+  <classificationRule filePattern=".*com.sap.engine.services.jndi.implserver.ServerContextInface_Stub" attributes="test"/>
+  <classificationRule filePattern=".*com.sap.engine.services.jndi.implserver.ServerNamingEnum_Stub" attributes="test"/>
+  <classificationRule filePattern=".*com.sap.engine.services.jndi.implserver.ServerNamingEnumImplp4_Skel" attributes="test"/>
+  <classificationRule filePattern=".*com.sap.engine.services.jndi.implserver.ServerNamingOneObjectEnumImplp4_Skel" attributes="test"/>
+  <classificationRule filePattern=".*com.sap.engine.services.jndi.implserver.ServerNamingSearchEnumImplp4_Skel" attributes="test"/>
+  <classificationRule filePattern=".*com.sap.engine.services.jndi.implserver.ServerNamingSearchFilterEnumImplp4_Skel" attributes="test"/>
+  </codeClassification>

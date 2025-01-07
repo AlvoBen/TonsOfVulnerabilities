@@ -1,0 +1,13 @@
+﻿<?xml version="1.0"?>
+<container type="applicationUpgradeRequest" version="1.0">
+  <applicationPackage vendor="sap.com" name="J2EE-APPS">
+    <requestList type="migrate">
+      <request>
+        <archiveList>
+          <archive extract="DEPLOYARCHIVES/rfcengine.migration.sda" type="controller">$(J2EE-APPS)</archive>
+        </archiveList>
+      </request>
+    </requestList>
+  </applicationPackage>
+</container>
+

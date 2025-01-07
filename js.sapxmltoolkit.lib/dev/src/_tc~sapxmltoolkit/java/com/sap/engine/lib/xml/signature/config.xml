@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE XMLSecurity [
+  <!ELEMENT XMLSecurity (Provider)+>
+  <!-- defaultProvider attribute defines the default cryptographic provider to be used -->
+  <!ATTLIST XMLSecurity
+    defaultProvider CDATA #REQUIRED>
+  <!ELEMENT Provider (SignatureAlgorithms, MessageDigestAlgorithms ,CipherAlgorithms)>
+
+  <!-- name attribute defines the name of this cryptographic provider, while jceString attribute stands for the name under which it is registered. -->
+  <!ATTLIST Provider
+    name CDATA #IMPLIED
+    uri  CDATA #IMPLIED
+    jceString CDATA #REQUIRED>
+
+  <!ELEMENT SignatureAlgorithms (Algorithm)*>
+
+  <!ELEMENT MessageDigestAlgorithms (Algorithm)*>
+
+  <!ELEMENT CipherAlgorithms (Algorithm)*>
+
+  <!ELEMENT Algorithm EMPTY>
+
+  <!-- uri stands for  the uri which specifies this algorithm in the XML Encryption/Signature specification, jce means the jce name under which this algorithm is registered, ivlen stands for the lenght of the initialization vector in some cryptographic algorithms  and name is the human name of this algorithm -->
+  <!ATTLIST Algorithm
+    uri  CDATA #REQUIRED
+    jce CDATA  #REQUIRED
+    name CDATA #IMPLIED
+    ivlen CDATA #IMPLIED>
+  ]>
+<XMLSecurity defaultProvider="IAIK">
+  <Provider name="IAIK" jceString="IAIK">
+    <SignatureAlgorithms>
+      <Algorithm name="SHA-1/DSA" uri="http://www.w3.org/2000/09/xmldsig#dsa-sha1" jce="SHAwithDSA"/>
+      <Algorithm name="SHA-1/RSA" uri="http://www.w3.org/2000/09/xmldsig#rsa-sha1" jce="SHAwithRSA"/>
+    </SignatureAlgorithms>
+    <MessageDigestAlgorithms>
+      <Algorithm name="SHA1" uri="http://www.w3.org/2000/09/xmldsig#sha1" jce="SHA-1"/>
+      <Algorithm name="SHA256" uri="http://www.w3.org/2001/04/xmlenc#sha256" jce="SHA256"/>
+      <Algorithm name="SHA384" uri="http://www.w3.org/2001/04/xmlenc#sha384" jce="SHA384"/>
+      <Algorithm name="SHA512" uri="http://www.w3.org/2001/04/xmlenc#sha512" jce="SHA512"/>      
+      <Algorithm name="MD5" uri="http://www.w3.org/2001/04/xmldsig-more#md5" jce="MD5"/>
+    </MessageDigestAlgorithms>
+    <CipherAlgorithms>
+      <Algorithm name="Triple DES CBC" uri="http://www.w3.org/2001/04/xmlenc#tripledes-cbc" jce="DESede" ivlen="8"/>
+      <Algorithm name="AES 128" uri="http://www.w3.org/2001/04/xmlenc#aes128-cbc" jce="AES" ivlen="16"/>
+      <Algorithm name="AES 256" uri="http://www.w3.org/2001/04/xmlenc#aes256-cbc" jce="AES" ivlen="16"/>
+      <Algorithm name="AES 192" uri="http://www.w3.org/2001/04/xmlenc#aes192-cbc" jce="AES" ivlen="16"/>
+<!--      <Algorithm name="AES ZIP" uri="http://www.sap.com/2005/07/xmlenc#aes128-cbc-zip" jce="AES" ivlen="16"/>       -->
+      <Algorithm name="RSA 1-5" uri="http://www.w3.org/2001/04/xmlenc#rsa-1_5" jce="RSA" ivlen="0"/>
+      <Algorithm name="RSA OAEP" uri="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p" jce="RSA" ivlen="0"/>
+    </CipherAlgorithms>
+  </Provider>
+  <Provider name="BouncyCastle" jceString="BC">
+    <SignatureAlgorithms>
+      <Algorithm name="SHA-1/DSA" uri="http://www.w3.org/2000/09/xmldsig#dsa-sha1" jce="SHA1withDSA"/>
+      <Algorithm name="SHA-1/RSA" uri="http://www.w3.org/2000/09/xmldsig#rsa-sha1" jce="SHA1withRSA"/>
+    </SignatureAlgorithms>
+    <MessageDigestAlgorithms>
+      <Algorithm name="SHA1" uri="http://www.w3.org/2000/09/xmldsig#sha1" jce="SHA-1"/>
+      <Algorithm name="SHA256" uri="http://www.w3.org/2001/04/xmlenc#sha256" jce="SHA256"/>
+      <Algorithm name="SHA384" uri="http://www.w3.org/2001/04/xmlenc#sha384" jce="SHA384"/>
+      <Algorithm name="SHA512" uri="http://www.w3.org/2001/04/xmlenc#sha512" jce="SHA512"/>       
+      <Algorithm name="MD5" uri="http://www.w3.org/2001/04/xmldsig-more#md5" jce="MD5"/>
+    </MessageDigestAlgorithms>
+    <CipherAlgorithms>
+      <Algorithm name="Triple DES CBC" uri="http://www.w3.org/2001/04/xmlenc#tripledes-cbc" jce="DESEDE" ivlen="8"/>
+      <Algorithm name="AES 128" uri="http://www.w3.org/2001/04/xmlenc#aes128-cbc" jce="AES" ivlen="16"/>
+      <Algorithm name="AES 192" uri="http://www.w3.org/2001/04/xmlenc#aes192-cbc" jce="AES" ivlen="16"/>
+      <Algorithm name="AES 256" uri="http://www.w3.org/2001/04/xmlenc#aes256-cbc" jce="AES" ivlen="16"/>
+   <!--   <Algorithm name="AES 256" uri="http://www.w3.org/2001/04/xmlenc#aes256-cbc" jce="AES-256" ivlen="32"/>-->
+      <Algorithm name="RSA 1-5" uri="http://www.w3.org/2001/04/xmlenc#rsa-1_5" jce="RSA" ivlen="0"/>
+      <Algorithm name="RSA OAEP" uri="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p" jce="RSA" ivlen="0"/>
+    </CipherAlgorithms>
+  </Provider>
+</XMLSecurity>

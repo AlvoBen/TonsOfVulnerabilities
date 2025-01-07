@@ -1,0 +1,7 @@
+﻿<test>
+   <run type="junit">
+      <include>com.sap.engine.core.cluster.impl6.p2pnio.Test*</include>
+	  <code-coverage>com.sap.engine.core.cluster.*</code-coverage>
+	<jvmArg>-Xmx512m</jvmArg>
+   </run>
+</test>

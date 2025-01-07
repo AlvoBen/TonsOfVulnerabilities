@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE application-j2ee-engine SYSTEM "application-j2ee-engine.dtd">
+<application-j2ee-engine>
+	<provider-name>sap.com</provider-name>
+<fail-over-enable
+		mode="disable"/>
+<modules-additional>
+	<module>
+		<entry-name>test.bot</entry-name>
+		<container-type>DeployNotUpdateContainer</container-type>
+	</module>
+
+</modules-additional>
+
+</application-j2ee-engine>

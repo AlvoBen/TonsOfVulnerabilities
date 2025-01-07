@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<im:root xmlns:im="com.sap.sdo.testcase.import" xmlns:gr="com.sap.sdo.testcase.groups" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="com.sap.sdo.testcase.import GroupsImport.xsd" a1="a1value" gr:a2="a2value">
+	<gr:e1>e1value</gr:e1>
+	<e2>e2value</e2>
+</im:root>

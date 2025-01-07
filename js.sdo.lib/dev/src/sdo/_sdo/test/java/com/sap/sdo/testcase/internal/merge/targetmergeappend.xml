@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ns1:root xmlns:ns1="http://www.target.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.target.com targetMerge.xsd">
+  <singleComplex id="0">
+    <singleSimple>a</singleSimple>
+    <manySimple>b</manySimple>
+    <manySimple>c</manySimple>
+    <manySimple>d</manySimple>
+    <manySimple>e</manySimple>
+    <manySimple>b</manySimple>
+    <manySimple>c</manySimple>
+    <manySimple>d</manySimple>
+  </singleComplex>
+  <manyComplex id="1">
+    <singleSimple>a</singleSimple>
+    <manySimple>b</manySimple>
+    <manySimple>c</manySimple>
+    <manySimple>d</manySimple>
+    <manySimple>b</manySimple>
+    <manySimple>c</manySimple>
+  </manyComplex>
+  <manyComplex id="2">
+    <singleSimple>d</singleSimple>
+    <manySimple>f</manySimple>
+    <manySimple>g</manySimple>
+    <manySimple>e</manySimple>
+    <manySimple>f</manySimple>
+    <manySimple>g</manySimple>
+  </manyComplex>
+  <manyComplex id="3">
+    <singleSimple></singleSimple>
+    <manySimple>i</manySimple>
+    <manySimple>j</manySimple>
+    <manySimple>k</manySimple>
+  </manyComplex>
+  <manyComplex id="4">
+    <singleSimple>h</singleSimple>
+    <manySimple>m</manySimple>
+    <manySimple>n</manySimple>
+    <manySimple>o</manySimple>
+    <manySimple>i</manySimple>
+    <manySimple>j</manySimple>
+    <manySimple>k</manySimple>
+  </manyComplex>
+  <manyComplex id="5">
+    <singleSimple>p</singleSimple>
+    <manySimple>q</manySimple>
+  </manyComplex>
+</ns1:root>

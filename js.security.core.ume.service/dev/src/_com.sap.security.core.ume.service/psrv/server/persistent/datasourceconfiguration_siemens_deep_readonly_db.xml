@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: //shared_tc/com.sapall.security/630_SP_COR/src/_deploy/dist/configuration/shared/dataSourceConfiguration_siemens_deep_readonly_db.xml#6 $ from $DateTime: 2004/08/20 09:55:24 $ ($Change: 17140 $) -->
+<dataSources>
+    <dataSource id="PRIVATE_DATASOURCE"
+                className="com.sap.security.core.persistence.datasource.imp.DataBasePersistence"
+                isReadonly="false"
+                isPrimary="true">
+
+        <homeFor>
+            <principals>
+            	<principal type="group"/>
+            	<principal type="user"/>
+            	<principal type="account"/>
+                <principal type="team"/>
+                <principal type="ROOT" />
+                <principal type="OOOO" />
+            </principals>
+        </homeFor>
+        <notHomeFor/>
+
+        <responsibleFor>
+            <principals>
+            	<principal type="group"/>
+            	<principal type="user"/>
+            	<principal type="account"/>
+                <principal type="team"/>
+                <principal type="ROOT" />
+                <principal type="OOOO" />
+            </principals>
+        </responsibleFor>
+
+        <privateSection/>
+    </dataSource>
+
+	<dataSource id="CORP_LDAP"
+			className="com.sap.security.core.persistence.datasource.imp.LDAPPersistence"
+			isReadonly="true"
+			isPrimary="true">
+
+		<homeFor/>
+
+		<responsibleFor>
+
+				<principal type="account">
+
+						<nameSpace name="com.sap.security.core.usermanagement">
+
+							<attributes>
+								<attribute name="j_user"/>
+								<attribute name="logonalias"/>
+								<attribute name="j_password"/>
+								<attribute name="userid"/>
+							</attributes>
+
+						</nameSpace>
+				</principal>
+
+				<principal type="user">
+					<nameSpaces>
+						<nameSpace name="com.sap.security.core.usermanagement">
+							<attributes>
+								<attribute name="firstname" populateInitially="true"/>
+								<attribute name="displayname" populateInitially="true"/>
+								<attribute name="lastname" populateInitially="true"/>
+								<attribute name="fax"/>
+								<attribute name="email"/>
+								<attribute name="title"/>
+								<attribute name="department"/>
+								<attribute name="description"/>
+								<attribute name="mobile"/>
+								<attribute name="telephone"/>
+								<attribute name="streetaddress"/>
+								<attribute name="uniquename" populateInitially="true"/>
+							</attributes>
+						</nameSpace>
+						<nameSpace name="com.sap.security.core.usermanagement.relation">
+							<attributes>
+								<attribute name="PRINCIPAL_RELATION_PARENT_ATTRIBUTE"/>
+							</attributes>
+						</nameSpace>
+						<nameSpace name="$usermapping$">
+   							<attributes>
+   								<attribute name="REFERENCE_SYSTEM_USER"/>
+   							</attributes>
+   						</nameSpace>
+					</nameSpaces>
+ 				</principal>
+ 				<principal type="group">
+ 					<nameSpaces>
+ 						<nameSpace name="com.sap.security.core.usermanagement">
+ 							<attributes>
+	 							<attribute name="displayname" populateInitially="true"/>
+	 							<attribute name="description" populateInitially="true"/>
+	 							<attribute name="uniquename"/>
+	 						</attributes>
+ 						</nameSpace>
+ 						<nameSpace name="com.sap.security.core.usermanagement.relation">
+ 							<attributes>
+	 							<attribute name="PRINCIPAL_RELATION_MEMBER_ATTRIBUTE"/>
+	 							<attribute name="PRINCIPAL_RELATION_PARENT_ATTRIBUTE"/>
+							</attributes>
+ 						</nameSpace>
+						<nameSpace name="com.sap.security.core.bridge">
+ 							<attributes>
+ 								<attribute name="dn"/>
+ 							</attributes>
+ 						</nameSpace>
+ 					</nameSpaces>
+ 				</principal>
+
+		</responsibleFor>
+
+		<attributeMapping>
+			<principals>
+
+				<principal type="account">
+					<nameSpaces>
+						<nameSpace name="com.sap.security.core.usermanagement">
+							<attributes>
+								<attribute name="j_user">
+									<physicalAttribute name="uid"/>
+								</attribute>
+								<attribute name="logonalias">
+									<physicalAttribute name="uid"/>
+								</attribute>
+								<attribute name="j_password">
+									<physicalAttribute name="userpassword"/>
+								</attribute>
+								<attribute name="userid">
+									<physicalAttribute name="*null*"/>
+								</attribute>
+							</attributes>
+						</nameSpace>
+					</nameSpaces>
+				</principal>
+
+				<principal type="user">
+					<nameSpaces>
+						<nameSpace name="com.sap.security.core.usermanagement">
+							<attributes>
+								<attribute name="firstname">
+									<physicalAttribute name="givenname"/>
+								</attribute>
+								<attribute name="displayname">
+									<physicalAttribute name="displayname"/>
+								</attribute>
+								<attribute name="lastname">
+									<physicalAttribute name="sn"/>
+								</attribute>
+								<attribute name="fax">
+									<physicalAttribute name="facsimiletelephonenumber"/>
+								</attribute>
+								<attribute name="uniquename">
+									<physicalAttribute name="uid"/>
+								</attribute>
+								<attribute name="loginid">
+									<physicalAttribute name="*null*"/>
+								</attribute>
+								<attribute name="email">
+									<physicalAttribute name="mail"/>
+								</attribute>
+								<attribute name="mobile">
+									<physicalAttribute name="mobile"/>
+								</attribute>
+								<attribute name="telephone">
+									<physicalAttribute name="telephonenumber"/>
+								</attribute>
+								<attribute name="department">
+									<physicalAttribute name="ou"/>
+								</attribute>
+								<attribute name="description">
+									<physicalAttribute name="description"/>
+								</attribute>
+								<attribute name="streetaddress">
+									<physicalAttribute name="postaladdress"/>
+								</attribute>
+								<attribute name="pobox">
+									<physicalAttribute name="postofficebox"/>
+								</attribute>
+							</attributes>
+						</nameSpace>
+						<nameSpace name="com.sap.security.core.usermanagement.relation">
+							<attributes>
+								<attribute name="PRINCIPAL_RELATION_PARENT_ATTRIBUTE">
+									<physicalAttribute name="*null*"/>
+								</attribute>
+							</attributes>
+						</nameSpace>
+						<nameSpace name="$usermapping$">
+   							<attributes>
+   								<attribute name="REFERENCE_SYSTEM_USER">
+   									<physicalAttribute name="sapusername"/>
+   								</attribute>
+   							</attributes>
+   						</nameSpace>
+					</nameSpaces>
+				</principal>
+
+				<principal type="group">
+					<nameSpaces>
+						<nameSpace name="com.sap.security.core.usermanagement">
+							<attributes>
+	 							<attribute name="displayname">
+	 								<physicalAttribute name="displayname"/>
+	 							</attribute>
+	 							<attribute name="description">
+	 								<physicalAttribute name="description"/>
+	 							</attribute>
+	 							<attribute name="uniquename" populateInitially="true">
+	 								<physicalAttribute name="ou"/>
+	 							</attribute>
+	 						</attributes>
+						</nameSpace>
+						<nameSpace name="com.sap.security.core.usermanagement.relation">
+							<attributes>
+	 							<attribute name="PRINCIPAL_RELATION_MEMBER_ATTRIBUTE">
+	 								<physicalAttribute name="*null*"/>
+	 							</attribute>
+	 							<attribute name="PRINCIPAL_RELATION_PARENT_ATTRIBUTE">
+	 								<physicalAttribute name="*null*"/>
+	 							</attribute>
+	 						</attributes>
+						</nameSpace>
+						<nameSpace name="com.sap.security.core.bridge">
+							<attributes>
+								<attribute name="dn">
+									<physicalAttribute name="*null*"/>
+								</attribute>
+							</attributes>
+						</nameSpace>
+					</nameSpaces>
+				</principal>
+
+			</principals>
+		</attributeMapping>
+
+		<privateSection>
+			<ume.ldap.access.server_type>SIEMENS</ume.ldap.access.server_type>
+			<ume.ldap.access.context_factory>com.sun.jndi.ldap.LdapCtxFactory</ume.ldap.access.context_factory>
+			<ume.ldap.access.authentication>simple</ume.ldap.access.authentication>
+			<ume.ldap.access.flat_group_hierachy>false</ume.ldap.access.flat_group_hierachy>
+			<ume.ldap.access.user_as_account>true</ume.ldap.access.user_as_account>
+			<ume.ldap.access.dynamic_groups>false</ume.ldap.access.dynamic_groups>
+			<ume.ldap.access.ssl_socket_factory>com.sap.security.core.server.https.SecureConnectionFactory</ume.ldap.access.ssl_socket_factory>
+
+			<ume.ldap.access.objectclass.user>inetOrgPerson</ume.ldap.access.objectclass.user>
+			<ume.ldap.access.objectclass.uacc>inetOrgPerson</ume.ldap.access.objectclass.uacc>
+			<ume.ldap.access.objectclass.grup>organizationalUnit</ume.ldap.access.objectclass.grup>
+
+			<ume.ldap.access.naming_attribute.user>cn</ume.ldap.access.naming_attribute.user>
+			<ume.ldap.access.auxiliary_naming_attribute.user>uid</ume.ldap.access.auxiliary_naming_attribute.user>
+			<ume.ldap.access.naming_attribute.uacc>cn</ume.ldap.access.naming_attribute.uacc>
+			<ume.ldap.access.auxiliary_naming_attribute.uacc>uid</ume.ldap.access.auxiliary_naming_attribute.uacc>
+			<ume.ldap.access.naming_attribute.grup>ou</ume.ldap.access.naming_attribute.grup>
+
+
+
+		</privateSection>
+	</dataSource>
+
+</dataSources>

@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://services.ots.bpem.sap.com/"
+  xmlns:tns1="http://services.ots.bpem.sap.com/"
+  xmlns:sdo="commonj.sdo"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="createSalesOrder" type="tns1:createSalesOrder" ns1:name="$http://services.ots.bpem.sap.com/:createSalesOrder" xmlns:ns1="commonj.sdo/xml"></xsd:element>
+  <xsd:complexType name="createSalesOrder" ns2:name="#createSalesOrder" xmlns:ns2="commonj.sdo/xml">
+    <xsd:sequence>
+      <xsd:element name="subject" type="xsd:string" minOccurs="0" ns2:name="$subject"></xsd:element>
+      <xsd:element name="description" type="xsd:string" minOccurs="0" ns2:name="$description"></xsd:element>
+      <xsd:element name="customer" type="tns1:customer" minOccurs="0" ns2:name="$customer"></xsd:element>
+      <xsd:element name="orderItems" type="tns1:orderItemTO" minOccurs="0" maxOccurs="unbounded" ns2:name="$orderItems"></xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="customer" ns3:name="#customer" xmlns:ns3="commonj.sdo/xml">
+    <xsd:complexContent>
+      <xsd:extension base="tns1:modelEntity">
+        <xsd:sequence>
+          <xsd:element name="address" type="xsd:string" minOccurs="0" ns3:name="$address"></xsd:element>
+          <xsd:element name="name" type="xsd:string" minOccurs="0" ns3:name="$name"></xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="modelEntity" ns4:name="#modelEntity" xmlns:ns4="commonj.sdo/xml">
+    <xsd:sequence>
+      <xsd:element name="id" type="xsd:long" ns4:name="$id"></xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="orderItemTO" ns5:name="#orderItemTO" xmlns:ns5="commonj.sdo/xml">
+    <xsd:sequence>
+      <xsd:element name="productCode" type="xsd:string" minOccurs="0" ns5:name="$productCode"></xsd:element>
+      <xsd:element name="quantity" type="xsd:int" ns5:name="$quantity"></xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema> 
+

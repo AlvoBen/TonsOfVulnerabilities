@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" ?>
+
+<SDA >
+	<SoftwareType>FS</SoftwareType>
+		<fs-deployment-descriptor version="2.0">
+			<display-name>J2EE Engine Deployment Manager</display-name>
+				<fileset id="J2EE_Engine_Deployment_Manager_fileset">
+					<display-name>Complete</display-name>
+					<description>Files for J2EE Engine Deployment Manager</description>
+					<default-deployment-dir>${com.sap.engine.installdir}/deployment</default-deployment-dir>
+					<substitute>
+        				<file substitute="yes" permissions="755">local.sh</file>
+						<file substitute="yes">scripts/workers/deploy.bat</file>
+       					<file substitute="yes" permissions="755">scripts/deploy.csh</file>
+						<file substitute="yes">scripts/workers/make_SDA.bat</file>
+						<file substitute="yes" permissions="755">scripts/make_SDA.csh</file>
+						<file substitute="yes">scripts/workers/make_SDAs.bat</file>
+						<file substitute="yes" permissions="755">scripts/make_SDAs.csh</file>
+     				 </substitute>
+				</fileset>
+		</fs-deployment-descriptor>
+</SDA>

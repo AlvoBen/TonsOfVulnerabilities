@@ -1,0 +1,9 @@
+﻿<job-definitions>
+	<job-definition name="CleanJob" retention-period="1" description="This job removes outdated job scheduler data. By default it only handles jobs in status COMPLETED. The job parameters can be used to change that behavior.">
+		<job-parameter name="HandleStateUnknown" direction="in" data_type="boolean" data_default="false" nullable="Y" description="Jobs in status UNKNOWN are not removed by the clean job. When set to true, jobs in status UNKNOWN will be handled like jobs in status COMPLETED and removed according to their retention period."/>
+		<job-parameter name="HandleStateStarting" direction="in" data_type="boolean" data_default="false" nullable="Y" description="Jobs in status STARTING are not removed by the clean job. When set to true, jobs in status STARTING will be handled like jobs in status COMPLETED and removed according to their retention period."/>
+		<job-parameter name="HandleStateError" direction="in" data_type="boolean" data_default="false" nullable="Y" description="Jobs in status ERROR are not removed by the clean job. When set to true, jobs in status ERROR will be handled like jobs in status COMPLETED and removed according their retention period."/>
+	</job-definition>
+
+</job-definitions>
+

@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE provider-descriptor SYSTEM "service.provider.dtd">
+
+  <provider-descriptor>
+    <display-name>
+      Migration Service
+    </display-name>
+    <component-name>
+      MigrationService
+    </component-name>
+    <application-frame>
+    com.sap.engine.services.appmigration.server.container.MigrationContainerFrame
+    </application-frame>
+    <major-version>7</major-version>
+    <minor-version>10</minor-version>
+    <micro-version>0</micro-version>
+    <provider-name>
+      sap.com
+    </provider-name>
+    <references>
+      <reference type="interface" strength="hard" >
+        container
+      </reference>
+      <reference type="interface" strength="weak" >
+        log
+      </reference>
+      <reference type="library" strength="weak" >
+      	tc/SL/utility
+      </reference>
+      <reference type="service" strength="weak" >
+      	p4
+      </reference>
+    </references>
+    <jars>
+      <jar-name>
+        sap.com~tc~sdt~appmigration~impl.jar
+      </jar-name>
+    </jars>
+  </provider-descriptor>

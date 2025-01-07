@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<web-j2ee-engine xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="web-j2ee-engine.xsd">
+	<server-component-ref>
+		<name>scrportletcontainer</name>
+		<type>SERVICE</type>
+		<jndi-name>tc~je~portletcontainer~srv</jndi-name>
+	</server-component-ref>
+	<security-role-map>
+		<role-name>Administrators</role-name>
+		<server-role-name>Administrator</server-role-name>
+	</security-role-map>
+</web-j2ee-engine>
+
+
+

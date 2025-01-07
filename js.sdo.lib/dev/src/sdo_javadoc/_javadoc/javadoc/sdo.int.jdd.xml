@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" ?>
+<!-- specify the title (will be used everywhere) and the description (is used on an all-SAP javadoc overview page -->
+<javadoc title="Internal Service Data Objects (SDO) API" description="Internal and external Service Data Objects (SDO) API (2.1)." >
+</javadoc>

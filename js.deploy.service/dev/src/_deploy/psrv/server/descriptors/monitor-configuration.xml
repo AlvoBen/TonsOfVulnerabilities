@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE monitor-configuration SYSTEM "monitor-configuration.dtd">
+
+
+<monitor-configuration>
+
+  <monitor-semantics>
+
+    <simple-configuration-group name="DEPLOY.DeployService">
+      <description ID="DEPLOY.DeployService"></description>
+    </simple-configuration-group>
+    <simple-configuration-group name="DEPLOY.AppInfoSimple">
+      <description ID="DEPLOY.DeployService"></description>
+    </simple-configuration-group>
+
+    <table-configuration-group name="DEPLOY.ApplicationInfo">
+      <description ID="DEPLOY.ApplicationInfo">Application information</description>
+      <data-collection>
+        <polled-by-monitor period="5" unit="MINUTE"/>
+      </data-collection>
+      <columns>
+        <column>Application name</column>
+        <column>Status</column>
+        <column>Startup Mode</column>
+        <column>Start Error</column>
+      </columns>
+    </table-configuration-group>
+
+    <integer-configuration-group name="DEPLOY.FailedToStart" unit="applications">
+      <description ID="DEPLOY.FailedToStart">This monitor shows the number of applications that failed to start. First Option - Open the Start and Stop plug-in and filter for failed and implicit statuses to find failed ones. Navigate to Logs to identify the errors. Second Option - Enable and check Start Error in Application Properties above Failed To Start Applications</description>
+      <data-collection>
+        <pushed-by-resource/>
+      </data-collection>
+      <thresholds green-to-yellow="0" yellow-to-red="1" red-to-yellow="1" yellow-to-green="0"/>
+    </integer-configuration-group>
+
+  </monitor-semantics>
+
+  <monitor-tree>
+
+    <services>
+      <summary name="Deploy" configuration-group="DEPLOY.DeployService">
+        <object name="Common Information" configuration-group="DEPLOY.AppInfoSimple">
+          <table-monitor name="Application Properties" filename="DEPLOY.Table" configuration-group="DEPLOY.ApplicationInfo">
+            <monitored-resource name="deploy" type="SERVICE"/>
+            <table-attribute-mapping>
+              <table-entries-attribute>
+                <observed-resource-attribute name="ApplicationsInfo"/>
+              </table-entries-attribute>
+            </table-attribute-mapping>
+          </table-monitor>
+          <integer-monitor name="Failed To Start Applications" configuration-group="DEPLOY.FailedToStart">
+            <monitored-resource name="deploy" type="SERVICE"/>
+              <integer-attribute-mapping>
+              <integer-attribute>
+                <observed-resource-attribute name="FailedToStart"/>
+              </integer-attribute>
+            </integer-attribute-mapping>
+          </integer-monitor>
+        </object>
+      </summary>
+    </services>
+
+  </monitor-tree>
+
+</monitor-configuration>
+

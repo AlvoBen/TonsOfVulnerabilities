@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<test-cases>
+	<test-case>
+		<tests 
+			type="junit">
+			<test 
+				class-name="com.sap.engine.services.deploy.**.*Test" 
+				container="stand-alone" 
+				path="."/>
+		</tests>
+		<ats-server>
+			<sharedVM>true</sharedVM>
+			<classpath/>
+			<jvm-system-classpath/>
+			<jvm-properties>
+				<jvm-property 
+					key="-Djavax.xml.parsers.DocumentBuilderFactory=com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl"/>
+				<jvm-property 
+					key="-Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl"/>
+				<jvm-property 
+					key="-Djavax.xml.transform.TransformerFactory=com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl"/>
+			</jvm-properties>
+			<tests-properties/>
+		</ats-server>
+	</test-case>
+</test-cases>

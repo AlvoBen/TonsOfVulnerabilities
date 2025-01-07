@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: //engine/js.security.core.ume.service/dev/src/_com.sap.security.core.ume.service/psrv/server/persistent/dataSourceConfiguration_r3_roles_db.xml#1 $ from $DateTime: 2008/09/17 17:07:47 $ ($Change: 217697 $) -->
+<dataSources>
+  <dataSource id="PRIVATE_DATASOURCE" className="com.sap.security.core.persistence.datasource.imp.DataBasePersistence" isReadonly="false" isPrimary="true">
+    <homeFor>
+      <principals>
+        <principal type="account">
+          <nameSpace name="$serviceUser$">
+            <attribute name="SERVICEUSER_ATTRIBUTE">
+              <values>
+                <value>IS_SERVICEUSER</value>
+              </values>
+            </attribute>
+          </nameSpace>
+        </principal>
+        <principal type="user">
+          <nameSpace name="$serviceUser$">
+            <attribute name="SERVICEUSER_ATTRIBUTE">
+              <values>
+                <value>IS_SERVICEUSER</value>
+              </values>
+            </attribute>
+          </nameSpace>
+        </principal>
+        <principal type="group"/>
+        <principal type="team"/>
+        <principal type="ROOT"/>
+        <principal type="OOOO"/>
+      </principals>
+    </homeFor>
+    <notHomeFor/>
+    <responsibleFor>
+      <principals>
+        <principal type="account"/>
+        <principal type="user"/>
+        <principal type="group"/>
+        <principal type="team"/>
+        <principal type="ROOT"/>
+        <principal type="OOOO"/>
+      </principals>
+    </responsibleFor>
+    <notResponsibleFor/>
+    <privateSection/>
+  </dataSource>
+  <dataSource id="R3_USER_DS" className="com.sap.security.core.persistence.datasource.imp.R3Persistence" isReadonly="false" isPrimary="true" policyEnforced="true">
+    <homeFor>
+      <principals>
+        <principal type="user"/>
+        <principal type="account"/>
+      </principals>
+    </homeFor>
+    <notHomeFor>
+      <principal type="user">
+        <nameSpace name="$serviceUser$">
+          <attribute name="SERVICEUSER_ATTRIBUTE">
+            <values>
+              <value>IS_SERVICEUSER</value>
+            </values>
+          </attribute>
+        </nameSpace>
+      </principal>
+      <principal type="account">
+        <nameSpace name="$serviceUser$">
+          <attribute name="SERVICEUSER_ATTRIBUTE">
+            <values>
+              <value>IS_SERVICEUSER</value>
+            </values>
+          </attribute>
+        </nameSpace>
+      </principal>
+    </notHomeFor>
+    <responsibleFor>
+      <principals>
+        <principal type="user">
+          <nameSpaces>
+            <nameSpace name="com.sap.security.core.usermanagement">
+              <attributes>
+                <attribute name="uniquename"/>
+                <attribute name="firstname"/>
+                <attribute name="lastname"/>
+                <attribute name="salutation"/>
+                <attribute name="title"/>
+                <attribute name="jobtitle"/>
+                <attribute name="department"/>
+                <attribute name="email"/>
+                <attribute name="telephone"/>
+                <attribute name="mobile"/>
+                <attribute name="fax"/>
+                <attribute name="locale"/>
+                <attribute name="timezone"/>
+                <attribute name="referenceuser"/>
+                <attribute name="personuuid" readonly="true"/>
+              </attributes>
+            </nameSpace>
+          </nameSpaces>
+        </principal>
+        <principal type="account">
+          <nameSpaces>
+            <nameSpace name="com.sap.security.core.usermanagement">
+              <attributes>
+                <attribute name="j_user"/>
+                <attribute name="j_password"/>
+                <attribute name="validfrom"/>
+                <attribute name="validto"/>
+                <attribute name="islocked"/>
+                <attribute name="lockreason"/>
+                <attribute name="passwordchangerequired"/>
+                <attribute name="userid"/>
+                <attribute name="ispassworddisabled"/>
+                <attribute name="logonalias"/>
+                <attribute name="SecurityPolicy"/>
+              </attributes>
+            </nameSpace>
+          </nameSpaces>
+        </principal>
+      </principals>
+    </responsibleFor>
+    <notResponsibleFor/>
+    <attributeMapping/>
+    <privateSection/>
+  </dataSource>
+  <dataSource id="R3_ROLE_DS" className="com.sap.security.core.persistence.datasource.imp.R3RoleDataSource" isReadonly="true" isPrimary="true">
+    <homeFor/>
+    <notHomeFor/>
+    <responsibleFor>
+      <principals>
+        <principal type="group">
+          <nameSpaces>
+            <nameSpace name="com.sap.security.core.usermanagement">
+              <attributes>
+                <attribute name="description"/>
+                <attribute name="displayname"/>
+                <attribute name="uniquename"/>
+              </attributes>
+            </nameSpace>
+            <nameSpace name="com.sap.security.core.usermanagement.relation">
+              <attributes>
+                <attribute name="PRINCIPAL_RELATION_MEMBER_ATTRIBUTE"/>
+              </attributes>
+            </nameSpace>
+          </nameSpaces>
+        </principal>
+      </principals>
+    </responsibleFor>
+    <notResponsibleFor/>
+    <attributeMapping/>
+    <privateSection>
+      <ume.r3.roles.user_datasource_id>R3_USER_DS</ume.r3.roles.user_datasource_id>
+    </privateSection>
+  </dataSource>
+</dataSources>

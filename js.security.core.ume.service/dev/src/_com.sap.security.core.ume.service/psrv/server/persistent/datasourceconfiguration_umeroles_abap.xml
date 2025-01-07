@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: //engine/js.security.core.ume.service/dev/src/_com.sap.security.core.ume.service/psrv/server/persistent/dataSourceConfiguration_UMERoles_abap.xml#1 $ from $DateTime: 2008/09/17 17:07:47 $ ($Change: 217697 $) -->
+<!-- 
+    **********************************************************************************************
+    * This file replaces the UMERoles.xml file when the assignments of ABAP users to PCD roles
+    * shall be persisted in the ABAP backend system in which the users are located.
+    *
+    * This file can only be used in conjunction with "dataSourceConfiguration_abap.xml" file for
+    * users and groups. 
+    **********************************************************************************************
+-->
+<dataSources>
+  <dataSource id="UME_ROLE_PERSISTENCE" className="com.sap.security.core.persistence.datasource.imp.DataBasePersistence" isReadonly="false" isPrimary="true">
+    <homeFor>
+      <principals>
+        <principal type="role"/>
+      </principals>
+    </homeFor>
+    <notHomeFor/>
+    <responsibleFor>
+      <principals>
+        <principal type="role" exclude="ROLE.PCD_ROLE_PERSISTENCE.*:USER.R3_DATASOURCE.*"/>
+      </principals>
+    </responsibleFor>
+    <notResponsibleFor/>
+    <attributeMapping/>
+    <privateSection/>
+  </dataSource>
+  <dataSource id="R3_PORTALROLE_ASSIGNMENTS" className="com.sap.security.core.persistence.datasource.imp.R3PortalRoleDataSource" isReadonly="false" isPrimary="true">
+    <homeFor/>
+    <notHomeFor/>
+    <responsibleFor>
+      <principals>
+        <principal type="role" include="ROLE.PCD_ROLE_PERSISTENCE.*:USER.R3_DATASOURCE.*">
+          <nameSpaces>
+            <nameSpace name="com.sap.security.core.usermanagement.relation">
+              <attributes>
+                <attribute name="PRINCIPAL_RELATION_MEMBER_ATTRIBUTE"/>
+              </attributes>
+            </nameSpace>
+          </nameSpaces>
+        </principal>
+      </principals>
+    </responsibleFor>
+    <notResponsibleFor/>
+    <attributeMapping/>
+    <privateSection>
+      <ume.r3.portalroles.user_datasource_id>R3_DATASOURCE</ume.r3.portalroles.user_datasource_id>
+      <ume.r3.portalroles.pcd_datasource_id>PCD_ROLE_PERSISTENCE</ume.r3.portalroles.pcd_datasource_id>
+    </privateSection>
+  </dataSource>
+  <dataSource id="AUTH_DS" className="com.sap.security.core.persistence.datasource.imp.DataBasePersistence" isReadonly="false" isPrimary="true">
+    <homeFor>
+      <principals>
+        <principal type="ACTN"/>
+        <principal type="PERM"/>
+      </principals>
+    </homeFor>
+    <responsibleFor>
+      <principals>
+        <principal type="ACTN"/>
+        <principal type="PERM"/>
+      </principals>
+    </responsibleFor>
+    <attributeMapping/>
+    <privateSection>
+      <ume.db.table.principals_distributed_by_typeidentifier>true</ume.db.table.principals_distributed_by_typeidentifier>
+      <ume.db.table.strings>UME_STRINGS</ume.db.table.strings>
+      <ume.db.table.blobs>UME_BLOBS</ume.db.table.blobs>
+    </privateSection>
+  </dataSource>
+</dataSources>

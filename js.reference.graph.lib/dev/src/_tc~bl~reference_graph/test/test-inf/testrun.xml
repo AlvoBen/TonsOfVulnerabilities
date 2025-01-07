@@ -1,0 +1,6 @@
+﻿<test> 
+  <run type="junit">
+    <include>com.sap.engine.lib.refgraph.**</include> 
+    <code-coverage>com.sap.engine.lib.refgraph*</code-coverage> 
+  </run>
+</test>

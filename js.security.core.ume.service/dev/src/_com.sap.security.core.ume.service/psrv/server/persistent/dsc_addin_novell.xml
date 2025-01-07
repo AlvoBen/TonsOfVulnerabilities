@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: //engine/js.security.core.ume.service/dev/src/_com.sap.security.core.ume.service/psrv/server/persistent/dSC_addin_novell.xml#1 $ from $DateTime: 2008/09/17 17:07:47 $ ($Change: 217697 $) -->
+<dataSources>
+	<dataSource id="AUTH_LDAP"
+			className="com.sap.security.core.persistence.datasource.imp.ldap.LDAPPersistenceExt"
+			isReadonly="false"
+			isPrimary="true">
+
+		<homeFor/>
+
+		<responsibleFor>
+			<principal type="account">
+				<nameSpace name="com.sap.security.core.usermanagement">
+					<attribute name="j_user"/>
+					<attribute name="logonalias"/>
+					<attribute name="j_password"/>
+				</nameSpace>
+				<nameSpace name="$usermapping$">
+					<attribute name="REFERENCE_SYSTEM_USER"/>
+				</nameSpace>
+			</principal>
+			<principal type="user">
+				<nameSpace name="com.sap.security.core.usermanagement">
+					<attribute name="uniquename" populateInitially="true"/>
+				</nameSpace>
+				<nameSpace name="$usermapping$">
+					<attribute name="REFERENCE_SYSTEM_USER"/>
+				</nameSpace>
+				<nameSpace name="com.sap.security.core.usermanagement.relation">
+					<attributes>
+						<attribute name="PRINCIPAL_RELATION_PARENT_ATTRIBUTE"/>
+					</attributes>
+				</nameSpace>
+			</principal>
+			<principal type="group">
+				<nameSpace name="com.sap.security.core.usermanagement">
+					<attributes>
+						<attribute name="description" populateInitially="true"/>
+						<attribute name="uniquename"/>
+					</attributes>
+				</nameSpace>
+				<nameSpace name="com.sap.security.core.usermanagement.relation">
+					<attributes>
+						<attribute name="PRINCIPAL_RELATION_MEMBER_ATTRIBUTE"/>
+ 						<attribute name="PRINCIPAL_RELATION_PARENT_ATTRIBUTE"/>
+					</attributes>
+				</nameSpace>
+				<nameSpace name="com.sap.security.core.bridge">
+					<attributes>
+						<attribute name="dn"/>
+					</attributes>
+				</nameSpace>
+ 			</principal>
+		</responsibleFor>
+
+		<attributeMapping>
+			<principal type="account">
+				<nameSpace name="com.sap.security.core.usermanagement">
+					<attributes>
+						<attribute name="j_user">
+							<physicalAttribute name="${ABAP_LDAP_LOGONUID}"/>
+						</attribute>
+						<attribute name="logonalias">
+							<physicalAttribute name="${ABAP_LDAP_LOGONUID}"/>
+						</attribute>						
+						<attribute name="j_password">
+							<physicalAttribute name="userpassword"/>
+						</attribute>
+						<attribute name="userid">
+							<physicalAttribute name="*null*"/>
+						</attribute>
+					</attributes>
+				</nameSpace>
+				<nameSpace name="$usermapping$">
+					<attribute name="REFERENCE_SYSTEM_USER">
+						<physicalAttribute name="${ABAP_LDAP_SAP_USERNAME}"/>
+					</attribute>
+				</nameSpace>
+			</principal>
+			<principal type="user">
+				<nameSpace name="com.sap.security.core.usermanagement">
+					<attributes>
+						<attribute name="uniquename">
+							<physicalAttribute name="${ABAP_LDAP_LOGONUID}"/>
+						</attribute>
+					</attributes>
+				</nameSpace>
+				<nameSpace name="com.sap.security.core.usermanagement.relation">
+					<attributes>
+						<attribute name="PRINCIPAL_RELATION_PARENT_ATTRIBUTE">
+							<physicalAttribute name="groupmembership"/>
+						</attribute>
+					</attributes>
+				</nameSpace>
+				<nameSpace name="$usermapping$">
+					<attributes>
+						<attribute name="REFERENCE_SYSTEM_USER">
+							<physicalAttribute name="${ABAP_LDAP_SAP_USERNAME}"/>
+						</attribute>
+					</attributes>
+				</nameSpace>
+			</principal>
+			<principal type="group">
+				<nameSpace name="com.sap.security.core.usermanagement">
+					<attributes>
+						<attribute name="description">
+							<physicalAttribute name="description"/>
+						</attribute>
+						<attribute name="uniquename" populateInitially="true">
+							<physicalAttribute name="cn"/>
+						</attribute>
+					</attributes>
+				</nameSpace>
+				<nameSpace name="com.sap.security.core.usermanagement.relation">
+					<attributes>
+						<attribute name="PRINCIPAL_RELATION_MEMBER_ATTRIBUTE">
+							<physicalAttribute name="member"/>
+						</attribute>
+						<attribute name="PRINCIPAL_RELATION_PARENT_ATTRIBUTE">
+							<physicalAttribute name="*null*"/>
+						</attribute>
+					</attributes>
+				</nameSpace>
+				<nameSpace name="com.sap.security.core.bridge">
+					<attributes>
+						<attribute name="dn">
+							<physicalAttribute name="*null*"/>
+						</attribute>
+					</attributes>
+				</nameSpace>
+			</principal>
+		</attributeMapping>
+
+		<privateSection>
+			<ume.ldap.access.context_factory>com.sun.jndi.ldap.LdapCtxFactory</ume.ldap.access.context_factory>
+			<ume.ldap.access.authentication>simple</ume.ldap.access.authentication>
+			<ume.ldap.access.flat_group_hierachy>true</ume.ldap.access.flat_group_hierachy>
+			<ume.ldap.access.user_as_account>true</ume.ldap.access.user_as_account>
+			<ume.ldap.access.dynamic_groups>false</ume.ldap.access.dynamic_groups>
+			<ume.ldap.access.ssl_socket_factory>com.sap.security.core.server.https.SecureConnectionFactory</ume.ldap.access.ssl_socket_factory>
+			
+
+			<ume.ldap.access.server_type>${ABAP_LDAP_PRODUCT}</ume.ldap.access.server_type>
+			<ume.ldap.access.server_name>${ABAP_LDAP_HOST}</ume.ldap.access.server_name>
+			<ume.ldap.access.server_port>${ABAP_LDAP_PORT}</ume.ldap.access.server_port>
+			<ume.ldap.access.user>${ABAP_LDAP_ADMIN_USER}</ume.ldap.access.user>
+			<ume.ldap.access.password>${ABAP_LDAP_ADMIN_PASSWORD}</ume.ldap.access.password>			
+			<ume.ldap.access.base_path.user>${ABAP_LDAP_BASE_DN}</ume.ldap.access.base_path.user>			
+			<ume.ldap.access.base_path.grup>${ABAP_LDAP_BASE_DN}</ume.ldap.access.base_path.grup>			
+			<ume.ldap.access.ssl>false</ume.ldap.access.ssl>
+
+			<ume.ldap.access.objectclass.user>${ABAP_LDAP_OBJECTCLASSES}</ume.ldap.access.objectclass.user>
+			<ume.ldap.access.auxiliary_objectclass.user>${ABAP_LDAP_AUX_OBJECTCLASSES}</ume.ldap.access.auxiliary_objectclass.user>
+			<ume.ldap.access.objectclass.grup>groupofnames</ume.ldap.access.objectclass.grup>
+
+		</privateSection>
+	</dataSource>
+</dataSources>

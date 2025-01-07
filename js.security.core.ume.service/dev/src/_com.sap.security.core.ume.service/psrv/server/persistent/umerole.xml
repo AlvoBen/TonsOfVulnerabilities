@@ -1,0 +1,2 @@
+﻿<!-- The UMErole.xml file is obsolete. Please change the Action definitions in the ..\descriptors\authorization-configuration.xml file --> 
+<BUSINESSSERVICE NAME="UME"/>

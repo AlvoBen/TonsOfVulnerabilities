@@ -1,0 +1,5 @@
+﻿<test> 
+   <run type="junit">
+      <include>com.sap.ats.tests.scheduler.JobsOrderingTest</include>       
+   </run>
+</test>

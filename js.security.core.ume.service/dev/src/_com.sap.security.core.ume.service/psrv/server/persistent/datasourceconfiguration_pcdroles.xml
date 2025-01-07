@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: //shared_tc/com.sapall.security/dev/src/_deploy/dist/configuration/shared/dataSourceConfiguration_PCDRoles.xml#8 $ from $DateTime: 2004/05/13 17:03:36 $ ($Change: 15940 $) -->
+<dataSources>	
+	<dataSource id="PCD_ROLE_PERSISTENCE"
+			className="com.sapportals.portal.prt.service.usermanagement.persistence.pcd.GLRolePersistence"
+			isReadonly="false"
+			isPrimary="true">
+			
+		<homeFor/>
+		
+		<notHomeFor/>
+		
+		<responsibleFor>
+			<principals>
+				<principal type="role"/>
+			</principals>
+		</responsibleFor>
+		
+		<notResponsibleFor>
+			<principals>
+				<principal type="role">
+					<nameSpaces>
+						<nameSpace name="$usermapping$"/>
+						<nameSpace name="com.sap.security.core.usermanagement">
+							<attributes>
+								<attribute name="PRINCIPAL_MODIFY_DATE"/>
+								<attribute name="lastChangeOfUserAssignmentTimestamp"/>
+							</attributes>
+						</nameSpace>					
+						<nameSpace name="com.sap.security.core.usermanagement.relation">
+							<attributes>
+								<attribute name="PRINCIPAL_RELATION_MEMBER_ATTRIBUTE"/>
+							</attributes>
+						</nameSpace>
+					</nameSpaces>
+				</principal>
+			</principals>
+		</notResponsibleFor>
+	
+		<attributeMapping/>
+		
+		<privateSection>
+			<ume.pcd.access.user>ume_service</ume.pcd.access.user>
+			<ume.pcd.blocked_roles.prefix>com.sap.portal,com.sap.km</ume.pcd.blocked_roles.prefix>
+		</privateSection>
+		
+	</dataSource>		
+</dataSources>

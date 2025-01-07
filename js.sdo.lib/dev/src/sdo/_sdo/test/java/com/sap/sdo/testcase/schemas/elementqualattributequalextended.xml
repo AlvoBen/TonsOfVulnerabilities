@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ns1:cElement xmlns:ns1="com.sap.test.eqaq.ext" ns2:a1="value1" xmlns:ns2="com.sap.test.eqaq" ns2:a2="value2" a3="value3" ns3:refAttribute="Ref" xmlns:ns3="com.sap.test.euau.ref" ns1:extAttribute="extended" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="com.sap.test.eqaq.ext ElementQualAttributeQualExtended.xsd">
+  <ns2:aElement ns2:a1="childA1"></ns2:aElement>
+  <ns2:a ns2:a2="childA2"></ns2:a>
+  <ns2:b>
+    <ns2:a ns2:a1="childBA1" ns2:a2="childBA2"></ns2:a>
+    <ns2:aElement ns2:a1="childBAElement1" ns2:a2="childBAElement2"></ns2:aElement>
+  </ns2:b>
+  <c>test</c>
+  <ns3:refElement>refref</ns3:refElement>
+  <ns1:extElement>extend</ns1:extElement>
+</ns1:cElement>

@@ -1,0 +1,17 @@
+﻿<BUSINESSSERVICE>
+
+	<DESCRIPTION LOCALE="en" VALUE="Task Scheduler" />
+
+	<!-- Business Service Actions --> 
+	<ACTION NAME="AdministerScheduler" >
+		<DESCRIPTION LOCALE="en" VALUE="Administer the scheduler" />
+
+		<PERMISSION CLASS="com.sap.engine.services.scheduler.security.ExecuteAdministrativeMethod"
+		 NAME="ExecuteAdministrativeMethod"/>
+	</ACTION>
+
+	<ROLE NAME="Administrator" >
+		<ASSIGNEDACTION NAME="AdministerScheduler"/>
+	</ROLE>
+
+</BUSINESSSERVICE> 

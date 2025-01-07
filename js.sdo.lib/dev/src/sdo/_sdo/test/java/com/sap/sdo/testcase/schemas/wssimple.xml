@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ws:wsstuff xmlns:sc="WsSimple.xsd" xmlns:ws="com.sap.test.ws" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="sc:SimpleContentContainer">
+<sc:intSimpleContent>555</sc:intSimpleContent>
+<sc:qnameSimpleContent>ws:testQname</sc:qnameSimpleContent>
+<sc:nillableContent xsi:nil="true"/>
+</ws:wsstuff>

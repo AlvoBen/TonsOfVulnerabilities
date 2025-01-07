@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ejb-j2ee-engine SYSTEM "ejb-j2ee-engine.dtd">
+<ejb-j2ee-engine>
+	<enterprise-beans>
+		<enterprise-bean>
+			<ejb-name>MEJBBean</ejb-name>
+			<jndi-name>j2ee_tools/mgmt/MEJB</jndi-name>
+			<session-props/>
+		</enterprise-bean>
+	</enterprise-beans>
+</ejb-j2ee-engine>

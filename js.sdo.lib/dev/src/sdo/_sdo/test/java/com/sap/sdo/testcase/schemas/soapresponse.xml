@@ -1,0 +1,18 @@
+﻿<yq1:getAllStudentsResponse
+	xmlns:yq1="http://www.sap.com/caf/demo.sap.com/sa_local_svc_interfaces/modeled">
+	<students1>
+		<students>
+			<id>xyz</id>
+			<firstName>John</firstName>
+			<middleName>Howard</middleName>
+			<lastName>Smith</lastName>
+		</students>
+		<students>
+			<id xsi:nil="true"
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" />
+			<firstName>Steve</firstName>
+			<lastName xsi:nil="true"
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" />
+		</students>
+	</students1>
+</yq1:getAllStudentsResponse>

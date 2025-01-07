@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" ?> 
+<codeClassification>
+   <!-- JLin code classification file: suppress warnings from generated code -->
+   <classificationRule filePattern="com/sap/engine/lib/descriptors/.*" attributes="suppressed" /> 
+   <classificationRule filePattern="com/sap/engine/lib/descriptors5/.*" attributes="suppressed" /> 
+</codeClassification>

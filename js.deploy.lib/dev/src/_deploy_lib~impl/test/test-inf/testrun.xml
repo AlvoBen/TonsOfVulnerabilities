@@ -1,0 +1,6 @@
+﻿<test> 
+  <run type="junit">
+    <include>com.sap.engine.lib.deploy.**</include> 
+    <code-coverage>com.sap.engine.lib.deploy*</code-coverage> 
+  </run>
+</test>

@@ -1,0 +1,386 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<tns:hotelManagement xmlns:tns="com.sap.sdo.tutorial"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="com.sap.sdo.tutorial xsd/hotel_management.xsd ">
+	<city>
+		<name>Berlin</name>
+		<state>Berlin</state>
+		<zip>10000</zip>
+		<hotel id="1">
+			<name>Park Inn Berlin-Alexanderplatz</name>
+			<address>Alexanderplatz</address>
+			<rooms>
+				<price>199.99</price>
+				<type>common-single</type>
+				<quantity>71</quantity>
+			</rooms>
+			<rooms>
+				<price>249.99</price>
+				<type>common-double</type>
+				<quantity>32</quantity>
+			</rooms>
+			<rooms>
+				<reservations>r059</reservations>
+				<price>359.99</price>
+				<type>luxus-single</type>
+				<quantity>14</quantity>
+			</rooms>
+			<rooms>
+				<price>459.99</price>
+				<type>luxus-double</type>
+				<quantity>19</quantity>
+			</rooms>
+		</hotel>
+		<hotel id="2">
+			<name>Kempinski Hotel Bristol</name>
+			<address>Kurfuerstendamm 27</address>
+			<rooms>
+				<reservations>r088</reservations>
+				<price>159.99</price>
+				<type>common-single</type>
+				<quantity>42</quantity>
+			</rooms>
+			<rooms>
+				<price>189.99</price>
+				<type>common-double</type>
+				<quantity>14</quantity>
+			</rooms>
+			<rooms>
+				<price>389.99</price>
+				<type>luxus-single</type>
+				<quantity>5</quantity>
+			</rooms>
+			<rooms>
+				<price>419.99</price>
+				<type>luxus-double</type>
+				<quantity>9</quantity>
+			</rooms>
+		</hotel>
+	</city>
+	<city>
+		<name>Muenchen</name>
+		<state>Bayern</state>
+		<zip>80000</zip>
+		<hotel id="3">
+			<name>Novotel Muenchen Messe</name>
+			<address>Willy-Brandt-Platz 1</address>
+			<rooms>
+				<reservations>r097</reservations>
+				<price>209.99</price>
+				<type>common-single</type>
+				<quantity>63</quantity>
+			</rooms>
+			<rooms>
+				<price>289.99</price>
+				<type>common-double</type>
+				<quantity>43</quantity>
+			</rooms>
+			<rooms>
+				<price>399.99</price>
+				<type>luxus-single</type>
+				<quantity>25</quantity>
+			</rooms>
+			<rooms>
+				<price>499.99</price>
+				<type>luxus-double</type>
+				<quantity>19</quantity>
+			</rooms>
+		</hotel>
+		<hotel id="4">
+			<name>Hotel Orly</name>
+			<address>Gabrielenstrasse 6</address>
+			<rooms>
+				<price>129.99</price>
+				<type>common-single</type>
+				<quantity>23</quantity>
+			</rooms>
+			<rooms>
+				<price>159.99</price>
+				<type>common-double</type>
+				<quantity>12</quantity>
+			</rooms>
+			<rooms>
+				<reservations>r078</reservations>
+				<price>219.99</price>
+				<type>luxus-single</type>
+				<quantity>7</quantity>
+			</rooms>
+			<rooms>
+				<price>269.99</price>
+				<type>luxus-double</type>
+				<quantity>4</quantity>
+			</rooms>
+		</hotel>
+	</city>
+	<city>
+		<name>Stuttgart</name>
+		<state>Baden-Wuerttemberg</state>
+		<zip>70000</zip>
+		<hotel id="5">
+			<name>Hotel Royal</name>
+			<address>Sophienstrasse 35</address>
+			<rooms>
+				<price>119.99</price>
+				<type>common-single</type>
+				<quantity>52</quantity>
+			</rooms>
+			<rooms>
+				<reservations>r067</reservations>
+				<price>149.99</price>
+				<type>common-double</type>
+				<quantity>102</quantity>
+			</rooms>
+			<rooms>
+				<price>289.99</price>
+				<type>luxus-single</type>
+				<quantity>17</quantity>
+			</rooms>
+			<rooms>
+				<price>319.99</price>
+				<type>luxus-double</type>
+				<quantity>13</quantity>
+			</rooms>
+		</hotel>
+		<hotel id="6">
+			<name>Hotel Astoria</name>
+			<address>Hospitalstrasse 29</address>
+			<rooms>
+				<reservations>r058</reservations>
+				<price>179.99</price>
+				<type>common-single</type>
+				<quantity>52</quantity>
+			</rooms>
+			<rooms>
+				<price>219.99</price>
+				<type>common-double</type>
+				<quantity>34</quantity>
+			</rooms>
+		</hotel>
+	</city>
+	<city>
+		<name>Hamburg</name>
+		<state>Hamburg</state>
+		<zip>20000</zip>
+		<hotel id="7">
+			<name>InterContinental Hotel</name>
+			<address>Fontenay 10</address>
+			<rooms>
+				<price>179.99</price>
+				<type>common-single</type>
+				<quantity>73</quantity>
+			</rooms>
+			<rooms>
+				<price>229.99</price>
+				<type>common-double</type>
+				<quantity>36</quantity>
+			</rooms>
+			<rooms>
+				<price>359.99</price>
+				<type>luxus-single</type>
+				<quantity>21</quantity>
+			</rooms>
+			<rooms>
+				<price>489.99</price>
+				<type>luxus-double</type>
+				<quantity>11</quantity>
+			</rooms>
+		</hotel>
+		<hotel id="8">
+			<name>Crowne Plaza Hotel Hamburg</name>
+			<address>Graumannsweg 10</address>
+			<rooms>
+				<reservations>r099</reservations>
+				<price>119.99</price>
+				<type>common-single</type>
+				<quantity>87</quantity>
+			</rooms>
+			<rooms>
+				<price>159.99</price>
+				<type>common-double</type>
+				<quantity>32</quantity>
+			</rooms>
+			<rooms>
+				<price>249.99</price>
+				<type>luxus-single</type>
+				<quantity>25</quantity>
+			</rooms>
+			<rooms>
+				<reservations>r079</reservations>
+				<price>319.99</price>
+				<type>luxus-double</type>
+				<quantity>9</quantity>
+			</rooms>
+		</hotel>
+	</city>
+	<city>
+		<name>Frankfurt am Main</name>
+		<state>Hesse</state>
+		<zip>60000</zip>
+		<hotel id="9">
+			<name>Hotel Excelsior</name>
+			<address>Mannheimerstrasse 7-9</address>
+			<rooms>
+				<reservations>r089</reservations>
+				<price>109.99</price>
+				<type>common-single</type>
+				<quantity>52</quantity>
+			</rooms>
+			<rooms>
+				<reservations>r069</reservations>
+				<price>139.99</price>
+				<type>common-double</type>
+				<quantity>34</quantity>
+			</rooms>
+			<rooms>
+				<price>289.99</price>
+				<type>luxus-single</type>
+				<quantity>17</quantity>
+			</rooms>
+			<rooms>
+				<price>369.99</price>
+				<type>luxus-double</type>
+				<quantity>12</quantity>
+			</rooms>
+		</hotel>
+	</city>
+	<city>
+		<name>Leipzig</name>
+		<state>Sachsen</state>
+		<zip>00000</zip>
+		<hotel id="10">
+			<name>Seaside Park Hotel Leipzig</name>
+			<address>Richard-Wagner-Strasse 7</address>
+			<rooms>
+				<price>179.99</price>
+				<type>common-single</type>
+				<quantity>92</quantity>
+			</rooms>
+			<rooms>
+				<reservations>r068</reservations>
+				<reservations>r098</reservations>
+				<price>219.99</price>
+				<type>common-double</type>
+				<quantity>54</quantity>
+			</rooms>
+		</hotel>
+	</city>
+	<customer id="c001">
+		<firstName>Sabine</firstName>
+		<lastName>Behm</lastName>
+		<address>Lahnstrasse 25</address>
+		<city>#/tns:hotelManagement/city.0</city>
+		<title>Mrs.</title>
+		<reservations id="r097">
+			<arrival>2007-06-13T11:00:00</arrival>
+			<departure>2007-06-15T09:00:00</departure>
+			<hotelRoom>
+				#/tns:hotelManagement/city.1/hotel.0/rooms.0
+			</hotelRoom>
+		</reservations>
+		<reservations id="r098">
+			<arrival>2007-07-18T15:00:00</arrival>
+			<departure>2007-07-21T07:00:00</departure>
+			<hotelRoom>
+				#/tns:hotelManagement/city.5/hotel.0/rooms.1
+			</hotelRoom>
+		</reservations>
+		<reservations id="r099">
+			<arrival>2007-09-08T12:00:00</arrival>
+			<departure>2007-09-09T11:00:00</departure>
+			<hotelRoom>
+				#/tns:hotelManagement/city.3/hotel.1/rooms.0
+			</hotelRoom>
+		</reservations>
+	</customer>
+	<customer id="c002">
+		<firstName>Oliver</firstName>
+		<lastName>Schmidt</lastName>
+		<address>Kaulbachstrasse 13</address>
+		<city>#/tns:hotelManagement/city.1</city>
+		<title>Mr.</title>
+		<reservations id="r088">
+			<arrival>2007-10-01T13:00:00</arrival>
+			<departure>2007-10-03T08:00:00</departure>
+			<hotelRoom>
+				#/tns:hotelManagement/city.0/hotel.1/rooms.0
+			</hotelRoom>
+		</reservations>
+		<reservations id="r089">
+			<arrival>2007-11-27T13:00:00</arrival>
+			<departure>2007-11-30T09:00:00</departure>
+			<hotelRoom>
+				#/tns:hotelManagement/city.4/hotel.0/rooms.0
+			</hotelRoom>
+		</reservations>
+	</customer>
+	<customer id="c003">
+		<firstName>Sophie</firstName>
+		<lastName>Petzold</lastName>
+		<address>Archivestrasse 62</address>
+		<city>#/tns:hotelManagement/city.2</city>
+		<title>Mrs.</title>
+		<reservations id="r078">
+			<arrival>2007-05-15T12:00:00</arrival>
+			<departure>2007-05-17T11:00:00</departure>
+			<hotelRoom>
+				#/tns:hotelManagement/city.1/hotel.1/rooms.2
+			</hotelRoom>
+		</reservations>
+		<reservations id="r079">
+			<arrival>2007-05-28T13:00:00</arrival>
+			<departure>2007-05-31T09:00:00</departure>
+			<hotelRoom>
+				#/tns:hotelManagement/city.3/hotel.1/rooms.3
+			</hotelRoom>
+		</reservations>
+	</customer>
+	<customer id="c004">
+		<firstName>Andreas</firstName>
+		<lastName>Bollen</lastName>
+		<address>Niedernstegen 7</address>
+		<city>#/tns:hotelManagement/city.3</city>
+		<title>Mr.</title>
+		<reservations id="r067">
+			<arrival>2007-07-14T13:00:00</arrival>
+			<departure>2007-07-16T08:00:00</departure>
+			<hotelRoom>
+				#/tns:hotelManagement/city.2/hotel.0/rooms.1
+			</hotelRoom>
+		</reservations>
+		<reservations id="r068">
+			<arrival>2007-08-22T12:00:00</arrival>
+			<departure>2007-08-23T09:00:00</departure>
+			<hotelRoom>
+				#/tns:hotelManagement/city.5/hotel.0/rooms.1
+			</hotelRoom>
+		</reservations>
+		<reservations id="r069">
+			<arrival>2007-09-04T13:00:00</arrival>
+			<departure>2007-09-06T10:00:00</departure>
+			<hotelRoom>
+				#/tns:hotelManagement/city.4/hotel.0/rooms.1
+			</hotelRoom>
+		</reservations>
+	</customer>
+	<customer id="c005">
+		<firstName>Julia</firstName>
+		<lastName>Raab</lastName>
+		<address>Zuckelhausen 9</address>
+		<city>#/tns:hotelManagement/city.5</city>
+		<title>Mrs.</title>
+		<reservations id="r058">
+			<arrival>2007-12-01T14:30:00</arrival>
+			<departure>2007-12-03T10:00:00</departure>
+			<hotelRoom>
+				#/tns:hotelManagement/city.2/hotel.1/rooms.0
+			</hotelRoom>
+		</reservations>
+		<reservations id="r059">
+			<arrival>2007-12-11T12:00:00</arrival>
+			<departure>2007-12-13T09:00:00</departure>
+			<hotelRoom>
+				#/tns:hotelManagement/city.0/hotel.0/rooms.2
+			</hotelRoom>
+		</reservations>
+	</customer>
+</tns:hotelManagement>
